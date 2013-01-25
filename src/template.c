@@ -1,4 +1,6 @@
+#include <iostream>
 #include <fstream>
+use namespace std;
 
 #define MAXINPFILES 4096
 #define MAXLINESIZE 4096

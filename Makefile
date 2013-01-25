@@ -8,4 +8,4 @@ all:
 	$(CC) $(CFLAGS) src/manipPDB.c -o bin/manipPDB
 
 clean:
-	rm -rf bin *~ src/*~ lib/*~
+	rm -rf bin *~ src/*~ lib/*~ tests/*~
