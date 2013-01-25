@@ -1,6 +1,8 @@
 #include <fstream>
 using namespace std;
 
+#include <pdb.h>
+
 #define MAXINPFILES 4096
 #define MAXLINESIZE 4096
 
