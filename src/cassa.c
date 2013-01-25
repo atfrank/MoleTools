@@ -1,3 +1,4 @@
+#include <cstdlib> //exit()
 #include <iostream>
 #include <fstream>
 use namespace std;
@@ -6,7 +7,7 @@ use namespace std;
 #define MAXLINESIZE 4096
 
 void usage(){
-
+  exit(0);
 }
 
 int main (int argc, char **argv){
