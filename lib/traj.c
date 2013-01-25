@@ -2,3 +2,6 @@
 
 #include <fstream>
 #include <strings>
+
+
+#Deal with Endianess
