@@ -2,7 +2,7 @@
 
 #include <fstream>
 #include <strings>
-#include <limits>
+#include <climits>
 
 
 #Deal with Endianess
