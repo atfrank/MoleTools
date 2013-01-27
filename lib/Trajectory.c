@@ -1,4 +1,4 @@
-#include "traj.h"
+#include "Trajectory.h"
 
 #include <fstream>
 #include <strings>
