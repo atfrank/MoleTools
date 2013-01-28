@@ -1,4 +1,4 @@
-#include "Molecule.h"
+#include "Molecule.hpp"
 
 #include <fstream>
 #include <strings>

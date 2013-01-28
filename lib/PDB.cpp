@@ -1,4 +1,4 @@
-#include "PDB.h"
+#include "PDB.hpp"
 
 #include <fstream>
 #include <string>

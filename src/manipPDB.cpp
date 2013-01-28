@@ -4,7 +4,8 @@
 #include <string>
 using namespace std;
 
-#include <PDB.h>
+#include <Molecule.hpp>
+#include <PDB.hpp>
 
 #define MAXINPFILES 4096
 #define MAXLINESIZE 4096
@@ -44,7 +45,7 @@ int main (int argc, char **argv){
   fpdb.open(pdb.c_str());
 
   if (fpdb){
-    cerr << "File: " << pdb;
+//    cerr << "File: " << pdb;
   }
 
   return 0;
