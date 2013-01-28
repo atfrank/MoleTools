@@ -42,7 +42,7 @@ int main (int argc, char **argv){
     }
   }
   
-  fpdb.open(pdb.c_str());
+//  fpdb.open(pdb.c_str());
 
   if (fpdb){
 //    cerr << "File: " << pdb;
