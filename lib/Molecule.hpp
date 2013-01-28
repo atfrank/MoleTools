@@ -1,5 +1,7 @@
 //Sean M. Law
 
+#include "Vector.hpp"
+
 class Molecule {
   private:
     char recname[6]; //Record name: "ATOM  ", "HETATM"
@@ -12,4 +14,4 @@ class Molecule {
     char icode; //Code for insertion of residues
     Vector coor;
     
-}
+};
