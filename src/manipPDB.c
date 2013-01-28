@@ -4,7 +4,7 @@
 #include <string>
 using namespace std;
 
-#include <pdb.h>
+#include <PDB.h>
 
 #define MAXINPFILES 4096
 #define MAXLINESIZE 4096
