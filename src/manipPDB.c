@@ -1,5 +1,4 @@
-//#include <cstdlib> //exit()
-//#include <iostream>
+#include <iostream>
 #include <fstream>
 #include <sstream> //string stream
 #include <string>
@@ -11,9 +10,10 @@ using namespace std;
 #define MAXLINESIZE 4096
 
 void usage (){
-  fprintf (stderr, "\nUsage:  manipPDB [options] <PDBfile>\n");
-  fprintf (stderr, "Options: [-h || -help]\n");
-  fprintf (stderr, "\n\n");
+  cerr << endl;
+  cerr << "Usage:  manipPDB [options] <PDBfile>" << endl;
+  cerr << "Options: [-h || -help]" << endl;
+  cerr << endl << endl;
   return;
 }
 
@@ -22,6 +22,7 @@ int main (int argc, char **argv){
   ifstream fpdb;
   int i;
   int model;
+  string pdb;
   string currArg;
   stringstream ss;
   
@@ -31,16 +32,19 @@ int main (int argc, char **argv){
       usage();
     }
     else if (currArg == "-model"){
-      ss << argv[i++];
-      ss >> model;
+      currArg=argv[++i];
+      ss << currArg;
+      ss >> model; //atoi
     }
     else{
-      fpdb.open(currArg.c_str());
+      pdb=currArg;
     }
   }
   
-  if (!fpdb){
-    fprintf (stderr, "HERE\n");
+  fpdb.open(pdb.c_str());
+
+  if (fpdb){
+    cerr << "File: " << pdb;
   }
 
   return 0;
