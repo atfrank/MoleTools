@@ -1,11 +1,11 @@
 #
 
 CC=g++
-CFLAGS=-c -Wall -Ilib
+CFLAGS=-Wall -Ilib
 
 all:
-	mkdir bin
-	$(CC) $(CFLAGS) src/manipPDB.c -o bin/manipPDB
+	mkdir -p bin
+	$(CC) $(CFLAGS) src/manipPDB.c -o bin/manipPDB 
 
 clean:
 	rm -rf bin *~ src/*~ lib/*~ tests/*~
