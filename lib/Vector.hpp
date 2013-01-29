@@ -30,7 +30,10 @@ class Vector {
     Vector& operator/ (const double val);
     Vector& operator/= (const double val);
 
-//    Vector operator-() const;
+    Vector operator- () const;
+    Vector operator- (const Vector& vec) const;
+    Vector operator+ (const Vector& vec) const;
+    Vector operator* (const Vector& vec) const;
 };
 
 

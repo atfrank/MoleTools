@@ -150,6 +150,20 @@ Vector& Vector::operator/= (const double val){
   return(*this);
 }
 
-//Vector Vector::operator-() const {
+Vector Vector::operator- () const {
+  return Vector(-x,-y,-z);
+}
 
-//}
+Vector Vector::operator- (const Vector& vec) const {
+    return Vector(x-vec.x,y-vec.y,z-vec.z);
+}
+
+Vector Vector::operator+ (const Vector& vec) const {
+    return Vector(x+vec.x,y+vec.y,z+vec.z);
+}
+
+Vector Vector::operator* (const Vector& vec) const {
+    return Vector(x*vec.x,y*vec.y,z*vec.z);
+}
+
+
