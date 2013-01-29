@@ -15,18 +15,22 @@ class Vector {
 
     Vector& operator= (const Vector& vec);
     Vector& operator= (const double val);
+    //Addition
     Vector& operator+ (const Vector& vec);
     Vector& operator+= (const Vector& vec);
     Vector& operator+ (const double val);
     Vector& operator+= (const double val);
+    //Subtraction
     Vector& operator- (const Vector& vec);
     Vector& operator-= (const Vector& vec);
     Vector& operator- (const double val);
     Vector& operator-= (const double val);
+    //Multiplication
     Vector& operator* (const Vector& vec);
     Vector& operator*= (const Vector& vec);
     Vector& operator* (const double val);
     Vector& operator*= (const double val);
+    //Division
     Vector& operator/ (const Vector& vec);
     Vector& operator/= (const Vector& vec);
     Vector& operator/ (const double val);
