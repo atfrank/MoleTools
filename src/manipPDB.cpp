@@ -6,7 +6,6 @@
 using namespace std;
 
 #include <Molecule.hpp>
-#include <PDB.hpp>
 
 #define MAXINPFILES 4096
 #define MAXLINESIZE 4096
@@ -40,7 +39,11 @@ int main (int argc, char **argv){
       pdb=currArg;
     }
   }
-  
+
+  Molecule mol;
+
+  mol.readPDB(pdb);
+
 //  fpdb.open(pdb.c_str());
 
   if (fpdb){
