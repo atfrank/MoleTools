@@ -150,4 +150,6 @@ Vector& Vector::operator/= (const double val){
   return(*this);
 }
 
+//Vector Vector::operator-() const {
 
+//}

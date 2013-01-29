@@ -29,6 +29,8 @@ class Vector {
     Vector& operator/= (const Vector& vec);
     Vector& operator/ (const double val);
     Vector& operator/= (const double val);
+
+//    Vector operator-() const;
 };
 
 
