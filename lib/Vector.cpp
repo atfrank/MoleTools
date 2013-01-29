@@ -162,8 +162,16 @@ Vector Vector::operator+ (const Vector& vec) const {
     return Vector(x+vec.x,y+vec.y,z+vec.z);
 }
 
-Vector Vector::operator* (const Vector& vec) const {
-    return Vector(x*vec.x,y*vec.y,z*vec.z);
+double Vector::operator* (const Vector& vec) const { //Dot Product
+    return x*vec.x+y*vec.y+z*vec.z;
 }
 
+Vector Vector::cross (const Vector& vec) const { //Cross Product
+  return Vector(y*vec.z - z*vec.y,
+                z*vec.x - x*vec.z,
+                x*vec.y - y*vec.x);
+}
 
+double Vector::norm () const { //Normal
+  return sqrt(x*x+y*y+z*z);
+}

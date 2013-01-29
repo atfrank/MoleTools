@@ -1,5 +1,7 @@
 //Sean M. Law
 
+#include <cmath>
+
 class Vector {
   private:
     double x;
@@ -9,7 +11,7 @@ class Vector {
   public:
     Vector();
     Vector(double xin, double yin, double zin); //Constructor
-    Vector(const Vector& vec); //Overload constructor 
+    Vector(const Vector& vec); //Overload Constructor 
 
     Vector& operator= (const Vector& vec);
     Vector& operator= (const double val);
@@ -33,7 +35,9 @@ class Vector {
     Vector operator- () const;
     Vector operator- (const Vector& vec) const;
     Vector operator+ (const Vector& vec) const;
-    Vector operator* (const Vector& vec) const;
+    double operator* (const Vector& vec) const; //Dot Product
+    Vector cross (const Vector& vec) const; //Cross Product
+    double norm () const;
 };
 
 
