@@ -8,7 +8,7 @@ class Vector {
 
   public:
     Vector(double xin=0.0, double yin=0.0, double zin=0.0) :
-      x(xin), y(yin), z(zin) {}
+      x(xin), y(yin), z(zin) {} //constructor initialization
 
     Vector(const Vector& vec){
       x=vec.x;

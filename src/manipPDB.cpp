@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream> //string stream
 #include <string>
+#include <cstdlib>
 using namespace std;
 
 #include <Molecule.hpp>
@@ -15,7 +16,7 @@ void usage (){
   cerr << "Usage:  manipPDB [options] <PDBfile>" << endl;
   cerr << "Options: [-h || -help]" << endl;
   cerr << endl << endl;
-  return;
+  exit(0);
 }
 
 int main (int argc, char **argv){
@@ -25,7 +26,6 @@ int main (int argc, char **argv){
   int model;
   string pdb;
   string currArg;
-  stringstream ss;
   
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -34,8 +34,7 @@ int main (int argc, char **argv){
     }
     else if (currArg == "-model"){
       currArg=argv[++i];
-      ss << currArg;
-      ss >> model; //atoi
+      stringstream(currArg) >> model; //atoi
     }
     else{
       pdb=currArg;
