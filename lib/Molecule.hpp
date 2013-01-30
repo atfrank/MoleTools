@@ -10,5 +10,5 @@ class Molecule {
 
   public:
   
-    int readPDB (string *ifile);
+    int readPDB (string *ifile, int model=0);
 };
