@@ -10,7 +10,7 @@
 #include <cstdlib>
 using namespace std;
 
-class Molecule {
+class Atom {
   private:
     string recname; //Record name: "ATOM  ", "HETATM"
     int  atmnum; //Atom serial number
@@ -27,8 +27,8 @@ class Molecule {
     int sel; //Selection flag
 
   public:
-    Molecule(); //Constructor
-    Molecule(int atmnum, string atmname, string resname, int resnum, Vector vec, string seg=0); //Overload constructor
+    Atom(); //Constructor
+    Atom(int atmnum, string atmname, string resname, int resnum, Vector vec, string seg=0); //Overload constructor
 
     int readPDB (string *ifile);
 };

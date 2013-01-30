@@ -1,6 +1,6 @@
-#include "Molecule.hpp"
+#include "Atom.hpp"
 
-Molecule::Molecule(){
+Atom::Atom(){
   atmnum=0;
   atmname="0";
   alt=0;
@@ -14,7 +14,7 @@ Molecule::Molecule(){
   sel=0;
 }
 
-Molecule::Molecule(int atmnumin, string atmnamein, string resnamein, int residin, Vector coorin, string segidin){
+Atom::Atom(int atmnumin, string atmnamein, string resnamein, int residin, Vector coorin, string segidin){
 
   atmnum=atmnumin;
   atmname=atmnamein;
@@ -29,7 +29,7 @@ Molecule::Molecule(int atmnumin, string atmnamein, string resnamein, int residin
   sel=0;
 }
 
-int Molecule::readPDB (string *ifile){
+int Atom::readPDB (string *ifile){
   
   ifstream pdbFile;
   string line;

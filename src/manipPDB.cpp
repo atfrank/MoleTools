@@ -5,7 +5,7 @@
 #include <cstdlib>
 using namespace std;
 
-#include <Molecule.hpp>
+#include "Molecule.hpp"
 
 #define MAXINPFILES 4096
 #define MAXLINESIZE 4096
@@ -39,8 +39,8 @@ int main (int argc, char **argv){
     }
   }
 
-  Molecule *mol = new Molecule;
-  (*mol).readPDB(pdb);
+//  Molecule *mol = new Molecule;
+//  (*mol).readPDB(pdb);
 
   return 0;
 }
