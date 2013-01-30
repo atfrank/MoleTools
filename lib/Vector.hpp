@@ -4,13 +4,13 @@
 
 class Vector {
   private:
-    double x;
-    double y;
-    double z;
+    double xcoor;
+    double ycoor;
+    double zcoor;
 
   public:
     Vector();
-    Vector(double xin, double yin, double zin); //Constructor
+    Vector(double xcoorin, double ycoorin, double zcoorin); //Constructor
     Vector(const Vector& vec); //Overload Constructor 
 
     Vector& operator= (const Vector& vec);
@@ -36,11 +36,9 @@ class Vector {
     Vector& operator/ (const double val);
     Vector& operator/= (const double val);
 
-/*    
     double& x(){return xcoor;};
     double& y(){return ycoor;};
     double& z(){return zcoor;};
-*/    
 
     Vector operator- () const;
     Vector operator- (const Vector& vec) const;

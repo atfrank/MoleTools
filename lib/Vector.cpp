@@ -3,175 +3,175 @@
 #include "Vector.hpp"
 
 Vector::Vector(){
-  x=0.0;
-  y=0.0;
-  z=0.0;
+  xcoor=0.0;
+  ycoor=0.0;
+  zcoor=0.0;
 }
 
-Vector::Vector(double xin, double yin, double zin){
-  x=xin;
-  y=yin;
-  z=zin;
+Vector::Vector(double xcoorin, double ycoorin, double zcoorin){
+  xcoor=xcoorin;
+  ycoor=ycoorin;
+  zcoor=zcoorin;
 }
 
 Vector::Vector(const Vector& vec){
-      x=vec.x;
-      y=vec.y;
-      z=vec.z;
+      xcoor=vec.xcoor;
+      ycoor=vec.ycoor;
+      zcoor=vec.zcoor;
     }
 
 Vector& Vector::operator= (const Vector& vec){
-  x=vec.x;
-  y=vec.y;
-  z=vec.z;
+  xcoor=vec.xcoor;
+  ycoor=vec.ycoor;
+  zcoor=vec.zcoor;
   return(*this);
 }
 
 Vector& Vector::operator= (const double val){
-  x=val;
-  y=val;
-  z=val;
+  xcoor=val;
+  ycoor=val;
+  zcoor=val;
   return(*this);
 }
 
 //Addition
 Vector& Vector::operator+ (const Vector& vec){
-  x+=vec.x;
-  y+=vec.y;
-  z+=vec.z;
+  xcoor+=vec.xcoor;
+  ycoor+=vec.ycoor;
+  zcoor+=vec.zcoor;
   return(*this);
 }
 
 Vector& Vector::operator+= (const Vector& vec){
-  x+=vec.x;
-  y+=vec.y;
-  z+=vec.z;
+  xcoor+=vec.xcoor;
+  ycoor+=vec.ycoor;
+  zcoor+=vec.zcoor;
   return(*this);
 }
 
 Vector& Vector::operator+ (const double val){
-  x+=val;
-  y+=val;
-  z+=val;
+  xcoor+=val;
+  ycoor+=val;
+  zcoor+=val;
   return(*this);
 }
 
 Vector& Vector::operator+= (const double val){
-  x+=val;
-  y+=val;
-  z+=val;
+  xcoor+=val;
+  ycoor+=val;
+  zcoor+=val;
   return(*this);
 }
 
 //Subtraction
 Vector& Vector::operator- (const Vector& vec){
-  x-=vec.x;
-  y-=vec.y;
-  z-=vec.z;
+  xcoor-=vec.xcoor;
+  ycoor-=vec.ycoor;
+  zcoor-=vec.zcoor;
   return(*this);
 }
 
 Vector& Vector::operator-= (const Vector& vec){
-  x-=vec.x;
-  y-=vec.y;
-  z-=vec.z;
+  xcoor-=vec.xcoor;
+  ycoor-=vec.ycoor;
+  zcoor-=vec.zcoor;
   return(*this);
 }
 
 Vector& Vector::operator- (const double val){
-  x-=val;
-  y-=val;
-  z-=val;
+  xcoor-=val;
+  ycoor-=val;
+  zcoor-=val;
   return(*this);
 }
 
 Vector& Vector::operator-= (const double val){
-  x-=val;
-  y-=val;
-  z-=val;
+  xcoor-=val;
+  ycoor-=val;
+  zcoor-=val;
   return(*this);
 }
 
 //Multiplication
 Vector& Vector::operator* (const Vector& vec){
-  x*=vec.x;
-  y*=vec.y;
-  z*=vec.z;
+  xcoor*=vec.xcoor;
+  ycoor*=vec.ycoor;
+  zcoor*=vec.zcoor;
   return(*this);
 }
 
 Vector& Vector::operator*= (const Vector& vec){
-  x*=vec.x;
-  y*=vec.y;
-  z*=vec.z;
+  xcoor*=vec.xcoor;
+  ycoor*=vec.ycoor;
+  zcoor*=vec.zcoor;
   return(*this);
 }
 
 Vector& Vector::operator* (const double val){
-  x*=val;
-  y*=val;
-  z*=val;
+  xcoor*=val;
+  ycoor*=val;
+  zcoor*=val;
   return(*this);
 }
 
 Vector& Vector::operator*= (const double val){
-  x*=val;
-  y*=val;
-  z*=val;
+  xcoor*=val;
+  ycoor*=val;
+  zcoor*=val;
   return(*this);
 }
 
 //Division
 Vector& Vector::operator/ (const Vector& vec){
-  x/=vec.x;
-  y/=vec.y;
-  z/=vec.z;
+  xcoor/=vec.xcoor;
+  ycoor/=vec.ycoor;
+  zcoor/=vec.zcoor;
   return(*this);
 }
 
 Vector& Vector::operator/= (const Vector& vec){
-  x/=vec.x;
-  y/=vec.y;
-  z/=vec.z;
+  xcoor/=vec.xcoor;
+  ycoor/=vec.ycoor;
+  zcoor/=vec.zcoor;
   return(*this);
 }
 
 Vector& Vector::operator/ (const double val){
-  x/=val;
-  y/=val;
-  z/=val;
+  xcoor/=val;
+  ycoor/=val;
+  zcoor/=val;
   return(*this);
 }
 
 Vector& Vector::operator/= (const double val){
-  x/=val;
-  y/=val;
-  z/=val;
+  xcoor/=val;
+  ycoor/=val;
+  zcoor/=val;
   return(*this);
 }
 
 Vector Vector::operator- () const {
-  return Vector(-x,-y,-z);
+  return Vector(-xcoor,-ycoor,-zcoor);
 }
 
 Vector Vector::operator- (const Vector& vec) const {
-    return Vector(x-vec.x,y-vec.y,z-vec.z);
+    return Vector(xcoor-vec.xcoor,ycoor-vec.ycoor,zcoor-vec.zcoor);
 }
 
 Vector Vector::operator+ (const Vector& vec) const {
-    return Vector(x+vec.x,y+vec.y,z+vec.z);
+    return Vector(xcoor+vec.xcoor,ycoor+vec.ycoor,zcoor+vec.zcoor);
 }
 
 double Vector::operator* (const Vector& vec) const { //Dot Product
-    return x*vec.x+y*vec.y+z*vec.z;
+    return xcoor*vec.xcoor+ycoor*vec.ycoor+zcoor*vec.zcoor;
 }
 
 Vector Vector::cross (const Vector& vec) const { //Cross Product
-  return Vector(y*vec.z - z*vec.y,
-                z*vec.x - x*vec.z,
-                x*vec.y - y*vec.x);
+  return Vector(ycoor*vec.zcoor - zcoor*vec.ycoor,
+                zcoor*vec.xcoor - xcoor*vec.zcoor,
+                xcoor*vec.ycoor - ycoor*vec.xcoor);
 }
 
 double Vector::norm () const { //Normal
-  return sqrt(x*x+y*y+z*z);
+  return sqrt(xcoor*xcoor+ycoor*ycoor+zcoor*zcoor);
 }
