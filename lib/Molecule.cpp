@@ -6,7 +6,7 @@ int Molecule::readPDB (string *ifile){
 
   ifstream pdbFile;
   string line;
-//  double x,y,z;
+  double x,y,z;
 
   if (*ifile == "-"){
 
@@ -25,9 +25,11 @@ int Molecule::readPDB (string *ifile){
           chainid=(line.substr(22,1))[0];
           stringstream(line.substr(23,4)) >> resid;
           icode=(line.substr(27,1))[0];
+        */
           stringstream(line.substr(31,8)) >> x;
           stringstream(line.substr(39,8)) >> y;
           stringstream(line.substr(47,8)) >> z;
+        /*
           coor=Vector(x,y,z);
           stringstream(line.substr(55,6)) >> occu;
           stringstream(line.substr(61,6)) >> bfac;
