@@ -30,5 +30,4 @@ class Atom {
     Atom(); //Constructor
     Atom(int atmnum, string atmname, string resname, int resnum, Vector vec, string seg=0); //Overload constructor
 
-    int readPDB (string *ifile);
 };

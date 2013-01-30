@@ -7,4 +7,6 @@ class Molecule {
     Chain *chn;
     Residue *res;
     Atom *atm;
+
+  int readPDB (string *ifile);
 };
