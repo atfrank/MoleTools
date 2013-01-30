@@ -1,9 +1,10 @@
 //Sean M. Law
 
-#include "Atom.hpp"
+#include "Chain.hpp"
 
 class Molecule {
   private:
-    Atom *atom;
-
+    Chain *chn;
+    Residue *res;
+    Atom *atm;
 };
