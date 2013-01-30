@@ -7,7 +7,7 @@ Molecule::Molecule(){
   resname="0";
   chainid=0;
   resid=0;
-//  coor=(0.0, 0.0, 0.0);
+  coor=Vector(0.0, 0.0, 0.0);
   occu=0.0;
   bfac=0.0;
   segid="0";
