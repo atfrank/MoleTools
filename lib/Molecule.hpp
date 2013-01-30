@@ -5,4 +5,5 @@
 class Molecule {
   private:
     Atom *atom;
-}
+
+};

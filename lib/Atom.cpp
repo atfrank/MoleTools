@@ -1,3 +1,5 @@
+//Sean M. Law
+
 #include "Atom.hpp"
 
 Atom::Atom(){
