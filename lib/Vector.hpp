@@ -36,6 +36,12 @@ class Vector {
     Vector& operator/ (const double val);
     Vector& operator/= (const double val);
 
+/*    
+    double& x(){return xcoor;};
+    double& y(){return ycoor;};
+    double& z(){return zcoor;};
+*/    
+
     Vector operator- () const;
     Vector operator- (const Vector& vec) const;
     Vector operator+ (const Vector& vec) const;
