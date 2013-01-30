@@ -28,5 +28,5 @@ class Molecule {
     Molecule(); //Constructor
     Molecule(int atmnum, char *atmname, char *resname, int resnum, Vector vec, char *seg=0); //Overload constructor
 
-    void readPDB (string ifile);
+    void readPDB (string *ifile);
 };

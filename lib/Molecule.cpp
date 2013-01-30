@@ -8,13 +8,14 @@ Molecule::Molecule(int atmnum, char *atmname, char *resname, int resnum, Vector 
 
 }
 
-void Molecule::readPDB (string ifile){
+void Molecule::readPDB (string *ifile){
+  
   ifstream PDBfile;
 
-  if (ifile == "-"){
+  if (*ifile == "-"){
 
   }
   else{
-    PDBfile.open(ifile.c_str());
+    PDBfile.open((*ifile).c_str());
   }
 }

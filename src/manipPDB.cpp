@@ -20,10 +20,9 @@ void usage (){
 
 int main (int argc, char **argv){
 
-  ifstream fpdb;
   int i;
   int model;
-  string pdb;
+  string *pdb = new string;
   string currArg;
   
   for (i=1; i<argc; i++){
@@ -36,19 +35,13 @@ int main (int argc, char **argv){
       stringstream(currArg) >> model; //atoi
     }
     else{
-      pdb=currArg;
+      *pdb=currArg;
     }
   }
 
-  Molecule mol;
+  Molecule *mol = new Molecule;
 
-  mol.readPDB(pdb);
-
-//  fpdb.open(pdb.c_str());
-
-  if (fpdb){
-//    cerr << "File: " << pdb;
-  }
+  (*mol).readPDB(pdb);
 
   return 0;
 }
