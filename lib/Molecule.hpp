@@ -2,11 +2,13 @@
 
 #include "Chain.hpp"
 
+#include <vector>
+
 class Molecule {
   private:
-    Chain *chn;
-    Residue *res;
-    Atom *atm;
+    vector<Chain> chn;
+    vector<Residue> res;
+    vector<Atom> atm;
 
   public:
   
