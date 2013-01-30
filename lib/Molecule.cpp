@@ -2,11 +2,11 @@
 
 #include "Molecule.hpp"
 
-int Atom::readPDB (string *ifile){
+int Molecule::readPDB (string *ifile){
 
   ifstream pdbFile;
   string line;
-  double x,y,z;
+//  double x,y,z;
 
   if (*ifile == "-"){
 
@@ -17,7 +17,7 @@ int Atom::readPDB (string *ifile){
       while (pdbFile.good()){
         getline(pdbFile,line);
         if (line.length() > 50 && line.compare(1,4,"ATOM") && line.compare(1,6,"HETATM")){
-/*
+        /*
           stringstream(line.substr(7,5)) >> atmnum;
           atmname=line.substr(13,4);
           alt=(line.substr(17,1))[0];
@@ -32,7 +32,7 @@ int Atom::readPDB (string *ifile){
           stringstream(line.substr(55,6)) >> occu;
           stringstream(line.substr(61,6)) >> bfac;
           segid=line.substr(73,4);
-*/
+        */
         }
       }
       pdbFile.close();

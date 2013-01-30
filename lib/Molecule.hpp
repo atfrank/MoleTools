@@ -8,5 +8,7 @@ class Molecule {
     Residue *res;
     Atom *atm;
 
-  int readPDB (string *ifile);
+  public:
+  
+    int readPDB (string *ifile);
 };

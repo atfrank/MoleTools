@@ -19,18 +19,31 @@ $(OBJDIR):
 
 manipPDB: $(BINDIR)/manipPDB;
 $(BINDIR)/manipPDB: manipPDB.cpp \
-  $(LIBDIR)/Vector.hpp $(LIBDIR)/Atom.hpp $(LIBDIR)/PDB.hpp \
-  $(OBJDIR)/Vector.o $(OBJDIR)/Atom.o $(OBJDIR)/PDB.o
-	$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ manipPDB.cpp \
-    $(OBJDIR)/Vector.o $(OBJDIR)/Atom.o $(OBJDIR)/PDB.o
+		$(LIBDIR)/Molecule.hpp $(OBJDIR)/Molecule.o
+		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ manipPDB.cpp \
+			$(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
+      $(OBJDIR)/Atom.o $(OBJDIR)/Vector.o
 
 $(LIBDIR)/Vector.cpp: 
 
+$(OBJDIR)/Molecule.o: $(LIBDIR)/Molecule.cpp $(LIBDIR)/Molecule.hpp \
+		$(LIBDIR)/Chain.hpp $(OBJDIR)/Chain.o
+		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c $(LIBDIR)/Molecule.cpp
+
+$(OBJDIR)/Chain.o: $(LIBDIR)/Chain.cpp $(LIBDIR)/Chain.hpp \
+		$(LIBDIR)/Residue.hpp $(OBJDIR)/Residue.o
+		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c $(LIBDIR)/Chain.cpp
+
+$(OBJDIR)/Residue.o: $(LIBDIR)/Residue.cpp $(LIBDIR)/Residue.hpp \
+		$(LIBDIR)/Atom.hpp $(OBJDIR)/Atom.o
+		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c $(LIBDIR)/Residue.cpp
+
+$(OBJDIR)/Atom.o: $(LIBDIR)/Atom.cpp $(LIBDIR)/Atom.hpp \
+		$(LIBDIR)/Vector.hpp $(OBJDIR)/Vector.o
+		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c $(LIBDIR)/Atom.cpp
+
 $(OBJDIR)/Vector.o: $(LIBDIR)/Vector.cpp $(LIBDIR)/Vector.hpp
 	$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c $(LIBDIR)/Vector.cpp
-
-$(OBJDIR)/Atom.o: $(LIBDIR)/Atom.cpp $(LIBDIR)/Atom.hpp
-	$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c $(LIBDIR)/Atom.cpp
 
 $(OBJDIR)/PDB.o: $(LIBDIR)/PDB.cpp $(LIBDIR)/PDB.hpp
 	$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c $(LIBDIR)/PDB.cpp
