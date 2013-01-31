@@ -3,6 +3,7 @@
 #include "Chain.hpp"
 
 #include <vector>
+using namespace std;
 
 class Molecule {
   private:
