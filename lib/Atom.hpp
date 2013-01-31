@@ -29,7 +29,35 @@ class Atom {
   public:
     Atom(); //Constructor
     Atom(int atmnum, string atmname, string resname, int resnum, Vector vec, string seg=0); //Overload constructor
-    Vector getCoor ();
-    void setCoor (Vector coor);
-    double x ();
+
+    //Get atom info
+    string& getRecName();
+    int& getAtmNum();
+    string& getAtmName();
+    char& getAlt();
+    string& getResName();
+    char& getChainId();
+    int& getResId();
+    char& getICode();
+    Vector& getCoor ();
+    double& getX();
+    double& getY();
+    double& getZ();
+    double& getOccu();
+    double& getBFac();
+    string& getSegId();
+
+    //Set atom info
+    void setRecName(const string& recnamein);
+    void setAtmNum(const int& atmnumin);
+    void setAtmName(const string& atmnamein);
+    void setAlt(const char& altin);
+    void setResName(const string& resnamein);
+    void setChainId(const char& chainidin);
+    void setResId(const int& residin);
+    void setICode(const char& icodein);
+    void setCoor(const Vector& coorin);
+    void setOccu(const double& occuin);
+    void setBFac(const double& bfacin);
+    void setSegId(const string& segidin);
 };

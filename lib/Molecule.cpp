@@ -2,6 +2,8 @@
 
 #include "Molecule.hpp"
 
+#include <iomanip>
+
 int Molecule::readPDB (string *ifile, int model){
 
   ifstream pdbFile;
@@ -10,6 +12,12 @@ int Molecule::readPDB (string *ifile, int model){
   double x,y,z;
   char lastChain;
   Atom *atmEntry;
+  string recname; //Record name: "ATOM  ", "HETATM"
+  int  atmnum; //Atom serial number
+  int  resid; //Residue sequence number
+  double occu; //Occupancy
+  double bfac; //B-factor or Temperature factor
+  string segid; //Segment identifier
 
   if (*ifile == "-"){
 
@@ -38,47 +46,69 @@ int Molecule::readPDB (string *ifile, int model){
             lastChain=line.substr(21,1)[0];
             //cout << "CHAIN " << lastChain << endl;
           }
-         // stringstream(line.substr(6,5)) >> (*atmEntry).atmnum;
-        /*  
           stringstream(line.substr(6,5)) >> atmnum;
-          atmname=line.substr(12,4);
-          alt=(line.substr(16,1))[0];
-          resname=line.substr(17,3);
-          chainid=(line.substr(21,1))[0];
+          atmEntry->setAtmNum(atmnum);
+          atmEntry->setAtmName(line.substr(12,4));
+          atmEntry->setAlt((line.substr(16,1))[0]);
+          atmEntry->setResName(line.substr(17,3));
+          atmEntry->setChainId((line.substr(21,1))[0]);
           stringstream(line.substr(22,4)) >> resid;
-          icode=(line.substr(26,1))[0];
-        */
+          atmEntry->setResId(resid);
+          atmEntry->setICode((line.substr(26,1))[0]);
           stringstream(line.substr(30,8)) >> x;
           stringstream(line.substr(38,8)) >> y;
           stringstream(line.substr(46,8)) >> z;
           atmEntry->setCoor(Vector(x,y,z));
-        /*
-          coor=Vector(x,y,z);
           if (line.size() >= 60){
             stringstream(line.substr(54,6)) >> occu;
+            atmEntry->setOccu(occu);
           }
           if (line.size() >= 66){
             stringstream(line.substr(60,6)) >> bfac;
+            atmEntry->setBFac(bfac);
           }
           if (line.size() >= 76){
             segid=line.substr(72,4);
+            atmEntry->setSegId(segid);
           }
-        */
           //cout << x << " " << y << " " << z << endl;
           atmVec.push_back(*atmEntry);
         }
       }
+      /*
       for (unsigned int i=0; i<atmVec.size(); i++){
       cout << atmVec.at(i).getCoor().x() << "  ";
       cout << atmVec.at(i).getCoor().y() << "  ";
       cout << atmVec.at(i).getCoor().z() << endl;
       }
+      */
       pdbFile.close();
     }
   }
   return 0;
 }
 
+int Molecule::writePDB(string *ofile){
+
+  ostringstream out;
+  Atom atm;
+
+  for (unsigned int i=0; i<atmVec.size(); i++){
+    atm=this->getAtom(i);
+    out << setw(6) << left << atm.getRecName() << endl;
+//    out << endl;
+  }
+
+  if(ofile !=0){
+    
+  }
+  else{
+    cout << out.str();    
+  }
+
+  return 0;
+}
+
 Atom Molecule::getAtom(int atmnum){
-  return atmVec[atmnum];
+  return atmVec.at(atmnum);
 }

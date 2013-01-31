@@ -14,5 +14,6 @@ class Molecule {
   public:
   
     int readPDB (string *ifile, int model=0);
+    int writePDB (string *ofile=0);
     Atom getAtom(int atmnum);
 };

@@ -5,7 +5,7 @@
 #include <cstdlib>
 using namespace std;
 
-#include "Molecule.hpp"
+#include "PDB.hpp"
 
 #define MAXINPFILES 4096
 #define MAXLINESIZE 4096
@@ -41,9 +41,13 @@ int main (int argc, char **argv){
 
   Molecule *mol = new Molecule;
   mol->readPDB(pdb);
-//  cout << mol->getAtom(0).getCoor().x() ;
+  mol->writePDB();
+  /*
+  cout << mol->getAtom(0).getCoor().x() ;
   Atom t=mol->getAtom(0);
-  cout << t.getCoor().x();
-  cout << t.x();
+  cout << t.getCoor().x() << endl;
+  cout << t.getX() << endl;
+  cout << t.getAtmnum() << endl;
+  */
   return 0;
 }
