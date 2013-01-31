@@ -1,23 +1,22 @@
 //Sean M. Law
 
 #include "Molecule.hpp"
+#include "PDB.hpp"
 
-#include <iomanip>
+int Molecule::readPDB (std::string *ifile, int model){
 
-int Molecule::readPDB (string *ifile, int model){
-
-  ifstream pdbFile;
-  string line;
+  std::ifstream pdbFile;
+  std::string line;
   int currModel;
   double x,y,z;
   char lastChain;
   Atom *atmEntry;
-  string recname; //Record name: "ATOM  ", "HETATM"
+  std::string recname; //Record name: "ATOM  ", "HETATM"
   int  atmnum; //Atom serial number
   int  resid; //Residue sequence number
   double occu; //Occupancy
   double bfac; //B-factor or Temperature factor
-  string segid; //Segment identifier
+  std::string segid; //Segment identifier
 
   if (*ifile == "-"){
 
@@ -30,7 +29,7 @@ int Molecule::readPDB (string *ifile, int model){
         getline(pdbFile,line);
         //Check the model
         if (line.size() > 6 && line.compare(0,6,"MODEL ")==0){
-          stringstream(line.substr(10,4)) >> currModel;
+          std::stringstream(line.substr(10,4)) >> currModel;
           if (model==0){
             model=1; //Use first model if undefined
           }
@@ -46,25 +45,25 @@ int Molecule::readPDB (string *ifile, int model){
             lastChain=line.substr(21,1)[0];
             //cout << "CHAIN " << lastChain << endl;
           }
-          stringstream(line.substr(6,5)) >> atmnum;
+          std::stringstream(line.substr(6,5)) >> atmnum;
           atmEntry->setAtmNum(atmnum);
           atmEntry->setAtmName(line.substr(12,4));
           atmEntry->setAlt((line.substr(16,1))[0]);
           atmEntry->setResName(line.substr(17,3));
           atmEntry->setChainId((line.substr(21,1))[0]);
-          stringstream(line.substr(22,4)) >> resid;
+          std::stringstream(line.substr(22,4)) >> resid;
           atmEntry->setResId(resid);
           atmEntry->setICode((line.substr(26,1))[0]);
-          stringstream(line.substr(30,8)) >> x;
-          stringstream(line.substr(38,8)) >> y;
-          stringstream(line.substr(46,8)) >> z;
+          std::stringstream(line.substr(30,8)) >> x;
+          std::stringstream(line.substr(38,8)) >> y;
+          std::stringstream(line.substr(46,8)) >> z;
           atmEntry->setCoor(Vector(x,y,z));
           if (line.size() >= 60){
-            stringstream(line.substr(54,6)) >> occu;
+            std::stringstream(line.substr(54,6)) >> occu;
             atmEntry->setOccu(occu);
           }
           if (line.size() >= 66){
-            stringstream(line.substr(60,6)) >> bfac;
+            std::stringstream(line.substr(60,6)) >> bfac;
             atmEntry->setBFac(bfac);
           }
           if (line.size() >= 76){
@@ -88,27 +87,20 @@ int Molecule::readPDB (string *ifile, int model){
   return 0;
 }
 
-int Molecule::writePDB(string *ofile){
+int Molecule::writePDB(std::string *ofile){
 
-  ostringstream out;
+//  ostringstream out;
   Atom atm;
+  PDB out;
 
-  for (unsigned int i=0; i<atmVec.size(); i++){
-    atm=this->getAtom(i);
-    out << setw(6) << left << atm.getRecName() << endl;
-//    out << endl;
-  }
+  return out.writePDB(*this,ofile);
 
-  if(ofile !=0){
-    
-  }
-  else{
-    cout << out.str();    
-  }
-
-  return 0;
 }
 
 Atom Molecule::getAtom(int atmnum){
   return atmVec.at(atmnum);
+}
+
+unsigned int Molecule::getAtmVecSize(){
+  return atmVec.size();
 }

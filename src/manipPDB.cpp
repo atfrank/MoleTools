@@ -42,6 +42,7 @@ int main (int argc, char **argv){
   Molecule *mol = new Molecule;
   mol->readPDB(pdb);
   mol->writePDB();
+  
   /*
   cout << mol->getAtom(0).getCoor().x() ;
   Atom t=mol->getAtom(0);

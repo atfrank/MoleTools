@@ -1,11 +1,16 @@
 //Sean M. Law
+#ifndef PDB_H
+#define PDB_H
 
 #include "Molecule.hpp"
 
+//#include <string>
+
 class PDB {
   private:
-    Molecule *mol;
+    //All instances are declared as arguments to the functions below
 
   public:
-
+    int writePDB (Molecule& mol, std::string *ofile);
 };
+#endif

@@ -19,7 +19,7 @@ Atom::Atom(){
   sel=0;
 }
 
-Atom::Atom(int atmnumin, string atmnamein, string resnamein, int residin, Vector coorin, string segidin){
+Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int residin, Vector coorin, std::string segidin){
 
   recname="ATOM";
   atmnum=atmnumin;
@@ -36,7 +36,7 @@ Atom::Atom(int atmnumin, string atmnamein, string resnamein, int residin, Vector
 }
 
 //Get atom info
-string& Atom::getRecName(){
+std::string& Atom::getRecName(){
   return recname;
 }
 
@@ -44,7 +44,7 @@ int& Atom::getAtmNum(){
   return atmnum;
 }
 
-string& Atom::getAtmName(){
+std::string& Atom::getAtmName(){
   return atmname;
 }
 
@@ -52,7 +52,7 @@ char& Atom::getAlt(){
   return alt;
 }
 
-string& Atom::getResName(){
+std::string& Atom::getResName(){
   return resname;
 }
 
@@ -92,12 +92,12 @@ double& Atom::getBFac(){
   return bfac;
 }
 
-string& Atom::getSegId(){
+std::string& Atom::getSegId(){
   return segid;
 }
 
 //Set atom info
-void Atom::setRecName(const string& recnamein){
+void Atom::setRecName(const std::string& recnamein){
   this->recname=recnamein;
 }
 
@@ -105,7 +105,7 @@ void Atom::setAtmNum(const int& atmnumin){
   this->atmnum=atmnumin;
 }
 
-void Atom::setAtmName(const string& atmnamein){
+void Atom::setAtmName(const std::string& atmnamein){
   this->atmname=atmnamein;
 }
 
@@ -113,7 +113,7 @@ void Atom::setAlt(const char& altin){
   this->alt=altin;
 }
 
-void Atom::setResName(const string& resnamein){
+void Atom::setResName(const std::string& resnamein){
   this->resname=resnamein;
 }
 
@@ -141,7 +141,7 @@ void Atom::setBFac(const double& bfacin){
   this->bfac=bfacin;
 }
 
-void Atom::setSegId(const string& segidin){
+void Atom::setSegId(const std::string& segidin){
   this->segid=segidin;
 }
 
