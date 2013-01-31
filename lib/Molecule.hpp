@@ -7,11 +7,12 @@ using namespace std;
 
 class Molecule {
   private:
-    vector<Chain> chn;
-    vector<Residue> res;
-    vector<Atom> atm;
+    vector<Chain> chnVec;
+    vector<Residue> resVec;
+    vector<Atom> atmVec;
 
   public:
   
     int readPDB (string *ifile, int model=0);
+    Atom getAtom(int atmnum);
 };

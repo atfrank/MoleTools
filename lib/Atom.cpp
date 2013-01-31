@@ -31,3 +31,14 @@ Atom::Atom(int atmnumin, string atmnamein, string resnamein, int residin, Vector
   sel=0;
 }
 
+Vector Atom::getCoor (){
+  return coor;
+}
+
+void Atom::setCoor (Vector coor){
+  this->coor=coor;
+}
+
+double Atom::x (){
+  return coor.x();
+}

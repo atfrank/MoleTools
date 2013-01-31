@@ -29,5 +29,7 @@ class Atom {
   public:
     Atom(); //Constructor
     Atom(int atmnum, string atmname, string resname, int resnum, Vector vec, string seg=0); //Overload constructor
-
+    Vector getCoor ();
+    void setCoor (Vector coor);
+    double x ();
 };

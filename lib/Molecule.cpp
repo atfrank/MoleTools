@@ -9,6 +9,7 @@ int Molecule::readPDB (string *ifile, int model){
   int currModel;
   double x,y,z;
   char lastChain;
+  Atom *atmEntry;
 
   if (*ifile == "-"){
 
@@ -31,12 +32,14 @@ int Molecule::readPDB (string *ifile, int model){
         }
         //Process atom entry
         if (line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0)){
+          atmEntry=new Atom;
           //substr: first character is denoted by a value of 0 (not 1)
           if ((line.substr(21,1))[0] != lastChain){
             lastChain=line.substr(21,1)[0];
-            cout << "CHAIN " << lastChain << endl;
+            //cout << "CHAIN " << lastChain << endl;
           }
-        /*
+         // stringstream(line.substr(6,5)) >> (*atmEntry).atmnum;
+        /*  
           stringstream(line.substr(6,5)) >> atmnum;
           atmname=line.substr(12,4);
           alt=(line.substr(16,1))[0];
@@ -48,6 +51,7 @@ int Molecule::readPDB (string *ifile, int model){
           stringstream(line.substr(30,8)) >> x;
           stringstream(line.substr(38,8)) >> y;
           stringstream(line.substr(46,8)) >> z;
+          atmEntry->setCoor(Vector(x,y,z));
         /*
           coor=Vector(x,y,z);
           if (line.size() >= 60){
@@ -60,11 +64,21 @@ int Molecule::readPDB (string *ifile, int model){
             segid=line.substr(72,4);
           }
         */
-          cout << x << " " << y << " " << z << endl;
+          //cout << x << " " << y << " " << z << endl;
+          atmVec.push_back(*atmEntry);
         }
+      }
+      for (unsigned int i=0; i<atmVec.size(); i++){
+      cout << atmVec.at(i).getCoor().x() << "  ";
+      cout << atmVec.at(i).getCoor().y() << "  ";
+      cout << atmVec.at(i).getCoor().z() << endl;
       }
       pdbFile.close();
     }
   }
   return 0;
+}
+
+Atom Molecule::getAtom(int atmnum){
+  return atmVec[atmnum];
 }
