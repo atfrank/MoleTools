@@ -79,19 +79,11 @@ int Molecule::readPDB (std::string ifile, int model){
   return 0;
 }
 
-int Molecule::writeMolecule(std::string format){
+int Molecule::writePDB(){
 
   std::string out;
 
-  if (format.compare("pdb")==0){
-    out=PDB::writePDBFormat(*this);
-  }
-  else{
-    std::cerr << std::endl;
-    std::cerr << "Error: Unrecognized output format \"" << format << "\"";
-    std::cerr << std::endl;
-    return 1;
-  }
+  out=PDB::writePDBFormat(*this);
 
   std::cout << out;
 
