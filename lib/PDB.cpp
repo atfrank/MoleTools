@@ -67,7 +67,7 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
     getline(*inp,line);
 
     if (line.size() > 6 && line.compare(0,6,"MODEL ")==0){
-      currModel=PDB::getCurrModel(line);
+      std::stringstream(line.substr(10,4)) >> currModel;
       if (model==0){
         model=1; //Use first model if undefined
       }
@@ -83,12 +83,6 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
   if (ifile != "-"){
     pdbFile.close();
   }
-}
-
-int PDB::getCurrModel (std::string line){
-  int model;
-  std::stringstream(line.substr(10,4)) >> model;
-  return model;
 }
 
 Atom PDB::processAtomLine (std::string line){
