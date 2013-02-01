@@ -13,6 +13,7 @@ class PDB {
   public:
     static std::string writePDBFormat (Molecule& mol);
     static void readPDB (Molecule& mol, std::string ifile, int model=0);
+    static int getCurrModel (std::string line);
     static Atom processAtomLine (std::string line);
 };
 

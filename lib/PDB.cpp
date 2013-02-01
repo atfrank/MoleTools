@@ -50,50 +50,45 @@ std::string PDB::writePDBFormat (Molecule& mol){
 void PDB::readPDB(Molecule& mol, std::string ifile, int model){
 
   std::ifstream pdbFile;
+  std::istream* inp;
   std::string line;
-  //int currModel;
-  //char lastChain;
+  int currModel=0;
 
-  if (ifile == "-"){
-    while (true){
-      std::getline(std::cin, line);
-      if (line.empty()==1){
-        break;
-      }
-      if (line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0)){
-        mol.addAtom(PDB::processAtomLine(line));
-      }
-    }
+  if (ifile == "-"){ //Input from pipe
+    inp=&std::cin;
   }
-  else{
+  else{ //Input from file
     pdbFile.open((ifile).c_str());
-    if (pdbFile.is_open()){
-      //lastChain='+';
-      while (pdbFile.good()){
-        getline(pdbFile,line);
-        if (line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0)){
-          mol.addAtom(PDB::processAtomLine(line));
-        }
-        /*****
-        //Check the model
-        if (line.size() > 6 && line.compare(0,6,"MODEL ")==0){
-          std::stringstream(line.substr(10,4)) >> currModel;
-          if (model==0){
-            model=1; //Use first model if undefined
-          }
-        }
-        if (model && currModel != model){
-          continue;
-        }
-        if (atmEntry->getChainId() != lastChain){
-          lastChain=atmEntry->getChainId();
-          //cout << "CHAIN " << lastChain << endl;
-        }
-        ******/
+    inp=&pdbFile;
+  }
+
+  while (!(inp->eof())){
+
+    getline(*inp,line);
+
+    if (line.size() > 6 && line.compare(0,6,"MODEL ")==0){
+      currModel=PDB::getCurrModel(line);
+      if (model==0){
+        model=1; //Use first model if undefined
       }
-      pdbFile.close();
+    }
+    else if (currModel==model && line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0)){
+      mol.addAtom(PDB::processAtomLine(line));
+    }
+    else{
+      continue;
     }
   }
+
+  if (ifile != "-"){
+    pdbFile.close();
+  }
+}
+
+int PDB::getCurrModel (std::string line){
+  int model;
+  std::stringstream(line.substr(10,4)) >> model;
+  return model;
 }
 
 Atom PDB::processAtomLine (std::string line){
@@ -106,8 +101,8 @@ Atom PDB::processAtomLine (std::string line){
   std::string segid; //Segment identifier
   Atom atmEntry;
 
-  atmEntry.setRecName(line.substr(0,6));
   //substr: first character is denoted by a value of 0 (not 1)
+  atmEntry.setRecName(line.substr(0,6));
   std::stringstream(line.substr(6,5)) >> atmnum;
   atmEntry.setAtmNum(atmnum);
   atmEntry.setAtmName(line.substr(12,4));
