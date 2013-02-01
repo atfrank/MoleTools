@@ -70,17 +70,9 @@ int Molecule::readPDB (std::string ifile, int model){
             segid=line.substr(72,4);
             atmEntry->setSegId(segid);
           }
-          //cout << x << " " << y << " " << z << endl;
           atmVec.push_back(*atmEntry);
         }
       }
-      /*
-      for (unsigned int i=0; i<atmVec.size(); i++){
-      cout << atmVec.at(i).getCoor().x() << "  ";
-      cout << atmVec.at(i).getCoor().y() << "  ";
-      cout << atmVec.at(i).getCoor().z() << endl;
-      }
-      */
       pdbFile.close();
     }
   }
