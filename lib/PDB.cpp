@@ -77,7 +77,7 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
     else if (currModel==model && line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0)){
       atmEntry=PDB::processAtomLine(line);
       mol.addAtom(atmEntry);
-//      mol.addChain(PDB::compareChains(lastChain,);
+      //mol.addChain(PDB::compareChains(lastChain,atmEntry.getChainId()));
       atmEntry.reset();
     }
     else{
@@ -99,6 +99,8 @@ Atom PDB::processAtomLine (std::string line){
   double bfac; //B-factor or Temperature factor
   std::string segid; //Segment identifier
   Atom atmEntry;
+
+  atmEntry.reset();
 
   //substr: first character is denoted by a value of 0 (not 1)
   atmEntry.setRecName(line.substr(0,6));
@@ -131,3 +133,9 @@ Atom PDB::processAtomLine (std::string line){
 
   return atmEntry;
 }
+
+/*
+Chain PDB::compareChains(std::string ch1, std::string ch2){
+
+}
+*/
