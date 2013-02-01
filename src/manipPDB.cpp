@@ -23,7 +23,7 @@ void usage (){
 int main (int argc, char **argv){
 
   int i;
-  int model;
+  int model=0;
   string pdb;
   string currArg;
 
@@ -49,7 +49,7 @@ int main (int argc, char **argv){
   }
 
   Molecule *mol = new Molecule;
-  mol->readPDB(pdb);
+  mol->readPDB(pdb, model);
   mol->writePDB();
   
   /*
