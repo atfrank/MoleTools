@@ -15,10 +15,10 @@ Vector::Vector(double xcoorin, double ycoorin, double zcoorin){
 }
 
 Vector::Vector(const Vector& vec){
-      xcoor=vec.xcoor;
-      ycoor=vec.ycoor;
-      zcoor=vec.zcoor;
-    }
+  xcoor=vec.xcoor;
+  ycoor=vec.ycoor;
+  zcoor=vec.zcoor;
+}
 
 Vector& Vector::operator= (const Vector& vec){
   xcoor=vec.xcoor;

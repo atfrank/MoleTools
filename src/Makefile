@@ -18,31 +18,36 @@ $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
 manipPDB: $(BINDIR)/manipPDB;
-$(BINDIR)/manipPDB: manipPDB.cpp \
-		$(LIBDIR)/PDB.hpp $(OBJDIR)/PDB.o
-		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ manipPDB.cpp \
-			$(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
-      $(OBJDIR)/Atom.o $(OBJDIR)/Vector.o $(OBJDIR)/PDB.o
+$(BINDIR)/manipPDB: $(OBJDIR)/manipPDB.o $(OBJDIR)/Molecule.o \
+			$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
+			$(OBJDIR)/Atom.o $(OBJDIR)/Vector.o $(OBJDIR)/PDB.o
+		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ \
+			$(OBJDIR)/manipPDB.o $(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
+			$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
+			$(OBJDIR)/PDB.o
+
+$(OBJDIR)/manipPDB.o: manipPDB.cpp \
+    	$(LIBDIR)/PDB.hpp
+		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c manipPDB.cpp
 
 $(OBJDIR)/PDB.o: $(LIBDIR)/PDB.cpp $(LIBDIR)/PDB.hpp \
-		$(LIBDIR)/Molecule.hpp $(OBJDIR)/Molecule.o
+			$(LIBDIR)/Molecule.hpp 
 		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c $(LIBDIR)/PDB.cpp
 
 $(OBJDIR)/Molecule.o: $(LIBDIR)/Molecule.cpp $(LIBDIR)/Molecule.hpp \
-		$(LIBDIR)/PDB.hpp $(LIBDIR)/Chain.hpp \
-		$(OBJDIR)/PDB.o $(OBJDIR)/Chain.o
+			$(LIBDIR)/PDB.hpp $(LIBDIR)/Chain.hpp 
 		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c $(LIBDIR)/Molecule.cpp
 
 $(OBJDIR)/Chain.o: $(LIBDIR)/Chain.cpp $(LIBDIR)/Chain.hpp \
-		$(LIBDIR)/Residue.hpp $(OBJDIR)/Residue.o
+			$(LIBDIR)/Residue.hpp 
 		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c $(LIBDIR)/Chain.cpp
 
 $(OBJDIR)/Residue.o: $(LIBDIR)/Residue.cpp $(LIBDIR)/Residue.hpp \
-		$(LIBDIR)/Atom.hpp $(OBJDIR)/Atom.o
+			$(LIBDIR)/Atom.hpp 
 		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c $(LIBDIR)/Residue.cpp
 
 $(OBJDIR)/Atom.o: $(LIBDIR)/Atom.cpp $(LIBDIR)/Atom.hpp \
-		$(LIBDIR)/Vector.hpp $(OBJDIR)/Vector.o
+			$(LIBDIR)/Vector.hpp 
 		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c $(LIBDIR)/Atom.cpp
 
 $(OBJDIR)/Vector.o: $(LIBDIR)/Vector.cpp $(LIBDIR)/Vector.hpp

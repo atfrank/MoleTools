@@ -13,11 +13,12 @@ class Molecule {
     std::vector<Atom> atmVec;
 
   public:
-  
     int readPDB (std::string ifile, int model=0);
     int writePDB ();
+    void addAtom(Atom atmEntry);
     Atom getAtom(int atmnum);
     unsigned int getAtmVecSize();
+    void addChain(Chain chnEntry);
 };
 
 #endif
