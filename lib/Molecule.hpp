@@ -14,8 +14,8 @@ class Molecule {
 
   public:
   
-    int readPDB (std::string *ifile, int model=0);
-    int writePDB (std::string *ofile=0);
+    int readPDB (std::string ifile, int model=0);
+    int writeMolecule (std::string format="pdb");
     Atom getAtom(int atmnum);
     unsigned int getAtmVecSize();
 };

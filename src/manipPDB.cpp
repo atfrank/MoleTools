@@ -15,7 +15,7 @@ using namespace std;
 void usage (){
   cerr << endl;
   cerr << "Usage:  manipPDB [options] <PDBfile>" << endl;
-  cerr << "Options: [-h || -help]" << endl;
+  cerr << "Options: [-model num] [-format type]" << endl;
   cerr << endl << endl;
   exit(0);
 }
@@ -24,8 +24,11 @@ int main (int argc, char **argv){
 
   int i;
   int model;
-  string *pdb = new string;
+  string pdb;
   string currArg;
+  string format="pdb";
+
+  pdb.clear();
   
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -36,14 +39,23 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       stringstream(currArg) >> model; //atoi
     }
-    else{
-      *pdb=currArg;
+    else if (currArg == "-format"){
+      currArg=argv[++i];
+      format=currArg;
     }
+    else{
+      pdb=currArg;
+    }
+  }
+
+  if (pdb.length() == 0){
+    cerr << endl << "Error: Please provide an input file" << endl << endl;
+    usage();
   }
 
   Molecule *mol = new Molecule;
   mol->readPDB(pdb);
-  mol->writePDB();
+  mol->writeMolecule(format);
   
   /*
   cout << mol->getAtom(0).getCoor().x() ;

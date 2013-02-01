@@ -3,7 +3,7 @@
 #include "Molecule.hpp"
 #include "PDB.hpp"
 
-int Molecule::readPDB (std::string *ifile, int model){
+int Molecule::readPDB (std::string ifile, int model){
 
   std::ifstream pdbFile;
   std::string line;
@@ -18,13 +18,13 @@ int Molecule::readPDB (std::string *ifile, int model){
   double bfac; //B-factor or Temperature factor
   std::string segid; //Segment identifier
 
-  if (*ifile == "-"){
+  if (ifile == "-"){
 
   }
   else{
-    pdbFile.open((*ifile).c_str());
+    pdbFile.open((ifile).c_str());
     if (pdbFile.is_open()){
-      lastChain='0';
+      lastChain='+';
       while (pdbFile.good()){
         getline(pdbFile,line);
         //Check the model
@@ -87,12 +87,23 @@ int Molecule::readPDB (std::string *ifile, int model){
   return 0;
 }
 
-int Molecule::writePDB(std::string *ofile){
+int Molecule::writeMolecule(std::string format){
 
-//  ostringstream out;
+  std::string out;
 
-  return PDB::writePDB(*this,ofile);
+  if (format.compare("pdb")==0){
+    out=PDB::writePDBFormat(*this);
+  }
+  else{
+    std::cerr << std::endl;
+    std::cerr << "Error: Unrecognized output format \"" << format << "\"";
+    std::cerr << std::endl;
+    return 1;
+  }
 
+  std::cout << out;
+
+  return 0;
 }
 
 Atom Molecule::getAtom(int atmnum){
