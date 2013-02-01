@@ -7,10 +7,11 @@
 
 class Chain {
   private:
-    std::string *id;
-    Residue *res;
-    Atom *atm;
+    std::string id;
+    Residue *start, *end;
 
+  public:
+    Chain();
 };
 
 #endif
