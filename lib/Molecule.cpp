@@ -40,6 +40,7 @@ int Molecule::readPDB (std::string ifile, int model){
         //Process atom entry
         if (line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0)){
           atmEntry=new Atom;
+          atmEntry->setRecName(line.substr(0,6));
           //substr: first character is denoted by a value of 0 (not 1)
           if ((line.substr(21,1))[0] != lastChain){
             lastChain=line.substr(21,1)[0];

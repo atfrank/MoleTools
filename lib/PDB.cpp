@@ -20,7 +20,7 @@ std::string PDB::writePDBFormat (Molecule& mol){
       lastChain=atm.getChainId();
     }
     out << std::setw(6) << std::left << atm.getRecName(); 
-    out << std::setw(5) << std::left << atm.getAtmNum();
+    out << std::setw(5) << std::right << atm.getAtmNum();
     out << " ";
     out << std::setw(4) << std::left << atm.getAtmName();
     out << std::setw(1) << std::left << atm.getAlt();
