@@ -1,5 +1,8 @@
 //Sean M. Law
 
+#ifndef VECTOR_H
+#define VECTOR_H
+
 #include <cmath>
 
 class Vector {
@@ -48,4 +51,4 @@ class Vector {
     double norm () const;
 };
 
-
+#endif

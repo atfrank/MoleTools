@@ -1,11 +1,13 @@
+//Sean M. Law
+
+#include "Molecule.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <sstream> //string stream
 #include <string>
 #include <cstdlib>
 using namespace std;
-
-#include "PDB.hpp"
 
 #define MAXINPFILES 4096
 #define MAXLINESIZE 4096

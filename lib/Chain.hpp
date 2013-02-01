@@ -1,5 +1,8 @@
 //Sean M. Law
 
+#ifndef CHAIN_H
+#define CHAIN_H
+
 #include "Residue.hpp"
 
 class Chain {
@@ -9,3 +12,5 @@ class Chain {
     Atom *atm;
 
 };
+
+#endif

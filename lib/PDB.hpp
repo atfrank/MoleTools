@@ -11,6 +11,7 @@ class PDB {
     //All instances are declared as arguments to the functions below
 
   public:
-    int writePDB (Molecule& mol, std::string *ofile);
+    static int writePDB (Molecule& mol, std::string *ofile);
 };
+
 #endif

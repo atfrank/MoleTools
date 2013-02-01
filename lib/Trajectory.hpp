@@ -1,1 +1,8 @@
-//Declarations
+//Sean M. Law
+
+#ifndef TRAJECTORY_H
+#define TRAJECTORY_H
+
+
+
+#endif

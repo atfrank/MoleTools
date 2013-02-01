@@ -90,10 +90,8 @@ int Molecule::readPDB (std::string *ifile, int model){
 int Molecule::writePDB(std::string *ofile){
 
 //  ostringstream out;
-  Atom atm;
-  PDB out;
 
-  return out.writePDB(*this,ofile);
+  return PDB::writePDB(*this,ofile);
 
 }
 

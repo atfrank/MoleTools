@@ -29,7 +29,8 @@ $(OBJDIR)/PDB.o: $(LIBDIR)/PDB.cpp $(LIBDIR)/PDB.hpp \
 		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c $(LIBDIR)/PDB.cpp
 
 $(OBJDIR)/Molecule.o: $(LIBDIR)/Molecule.cpp $(LIBDIR)/Molecule.hpp \
-		$(LIBDIR)/Chain.hpp $(OBJDIR)/Chain.o
+		$(LIBDIR)/PDB.hpp $(LIBDIR)/Chain.hpp \
+		$(OBJDIR)/PDB.o $(OBJDIR)/Chain.o
 		$(CC) $(CFLAGS) $(OPTFLAGS) -o $@ -c $(LIBDIR)/Molecule.cpp
 
 $(OBJDIR)/Chain.o: $(LIBDIR)/Chain.cpp $(LIBDIR)/Chain.hpp \

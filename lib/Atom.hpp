@@ -1,4 +1,6 @@
 //Sean M. Law
+#ifndef ATOM_H
+#define ATOM_H
 
 #include "Vector.hpp"
 
@@ -60,3 +62,5 @@ class Atom {
     void setBFac(const double& bfacin);
     void setSegId(const std::string& segidin);
 };
+
+#endif

@@ -19,4 +19,5 @@ class Molecule {
     Atom getAtom(int atmnum);
     unsigned int getAtmVecSize();
 };
+
 #endif
