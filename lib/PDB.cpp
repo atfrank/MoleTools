@@ -8,13 +8,13 @@
 std::string PDB::writePDBFormat (Molecule& mol){
   std::ostringstream out;
   Atom atm;
-  char lastChain='+';
+  std::string lastChain="+";
 
   out.clear();
   for (unsigned int i=0; i<mol.getAtmVecSize(); i++){
     atm=mol.getAtom(i);
     if (atm.getChainId() != lastChain){
-      if (lastChain != '+'){
+      if (lastChain != "+"){
         out << "TER" << std::endl;
       }
       lastChain=atm.getChainId();
@@ -48,11 +48,13 @@ std::string PDB::writePDBFormat (Molecule& mol){
 }
 
 void PDB::readPDB(Molecule& mol, std::string ifile, int model){
-
   std::ifstream pdbFile;
   std::istream* inp;
   std::string line;
   int currModel=0;
+  std::string lastChain="+";
+  std::string lastRes; //Check string.size()
+  Atom atmEntry;
 
   if (ifile == "-"){ //Input from pipe
     inp=&std::cin;
@@ -73,7 +75,10 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
       }
     }
     else if (currModel==model && line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0)){
-      mol.addAtom(PDB::processAtomLine(line));
+      atmEntry=PDB::processAtomLine(line);
+      mol.addAtom(atmEntry);
+//      mol.addChain(PDB::compareChains(lastChain,);
+      atmEntry.reset();
     }
     else{
       continue;
@@ -100,12 +105,12 @@ Atom PDB::processAtomLine (std::string line){
   std::stringstream(line.substr(6,5)) >> atmnum;
   atmEntry.setAtmNum(atmnum);
   atmEntry.setAtmName(line.substr(12,4));
-  atmEntry.setAlt((line.substr(16,1))[0]);
+  atmEntry.setAlt(line.substr(16,1));
   atmEntry.setResName(line.substr(17,3));
-  atmEntry.setChainId((line.substr(21,1))[0]);
+  atmEntry.setChainId(line.substr(21,1));
   std::stringstream(line.substr(22,4)) >> resid;
   atmEntry.setResId(resid);
-  atmEntry.setICode((line.substr(26,1))[0]);
+  atmEntry.setICode(line.substr(26,1));
   std::stringstream(line.substr(30,8)) >> x;
   std::stringstream(line.substr(38,8)) >> y;
   std::stringstream(line.substr(46,8)) >> z;
@@ -122,6 +127,7 @@ Atom PDB::processAtomLine (std::string line){
     segid=line.substr(72,4);
     atmEntry.setSegId(segid);
   }
+  atmEntry.setSel(1);
 
   return atmEntry;
 }

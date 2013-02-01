@@ -14,6 +14,7 @@ class PDB {
     static std::string writePDBFormat (Molecule& mol);
     static void readPDB (Molecule& mol, std::string ifile, int model=0);
     static Atom processAtomLine (std::string line);
+//    static Chain compareChains();
 };
 
 #endif

@@ -16,11 +16,11 @@ class Atom {
     std::string recname; //Record name: "ATOM  ", "HETATM"
     int  atmnum; //Atom serial number
     std::string atmname; //Atom name
-    char alt; //Alternate location indicator
+    std::string alt; //Alternate location indicator
     std::string resname; //Residue name
-    char chainid; //Chain identifier
+    std::string chainid; //Chain identifier
     int  resid; //Residue sequence number
-    char icode; //Code for insertion of residues
+    std::string icode; //Code for insertion of residues
     Vector coor; //X, Y, Z Coordinates
     double occu; //Occupancy
     double bfac; //B-factor or Temperature factor
@@ -31,15 +31,17 @@ class Atom {
     Atom(); //Constructor
     Atom(int atmnum, std::string atmname, std::string resname, int resnum, Vector vec, std::string seg=0); //Overload constructor
 
+    void reset();
+
     //Get atom info
     std::string& getRecName();
     int& getAtmNum();
     std::string& getAtmName();
-    char& getAlt();
+    std::string& getAlt();
     std::string& getResName();
-    char& getChainId();
+    std::string& getChainId();
     int& getResId();
-    char& getICode();
+    std::string& getICode();
     Vector& getCoor ();
     double& getX();
     double& getY();
@@ -47,20 +49,28 @@ class Atom {
     double& getOccu();
     double& getBFac();
     std::string& getSegId();
+    int& getSel();
 
     //Set atom info
     void setRecName(const std::string& recnamein);
     void setAtmNum(const int& atmnumin);
     void setAtmName(const std::string& atmnamein);
-    void setAlt(const char& altin);
+    void setAtmName(); //Clear
+    void setAlt(const std::string& altin);
+    void setAlt(); //Clear
     void setResName(const std::string& resnamein);
-    void setChainId(const char& chainidin);
+    void setResName(); //Clear
+    void setChainId(const std::string& chainidin);
+    void setChainId(); //Clear
     void setResId(const int& residin);
-    void setICode(const char& icodein);
+    void setICode(const std::string& icodein);
+    void setICode(); //Clear
     void setCoor(const Vector& coorin);
     void setOccu(const double& occuin);
     void setBFac(const double& bfacin);
     void setSegId(const std::string& segidin);
+    void setSegId(); //Clear
+    void setSel(const int selin);
 };
 
 #endif

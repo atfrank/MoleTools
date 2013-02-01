@@ -7,15 +7,15 @@
 Atom::Atom(){
   recname="ATOM";
   atmnum=0;
-  atmname="0";
-  alt=0;
-  resname="0";
-  chainid=0;
+  atmname.clear();
+  alt.clear();
+  resname.clear();
+  chainid.clear();
   resid=0;
   coor=Vector(0.0, 0.0, 0.0);
   occu=0.0;
   bfac=0.0;
-  segid="0";
+  segid.clear();
   sel=0;
 }
 
@@ -24,15 +24,30 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
   recname="ATOM";
   atmnum=atmnumin;
   atmname=atmnamein;
-  alt=0;
+  alt.clear();
   resname=resnamein;
-  chainid=0;
+  chainid.clear();
   resid=residin;
   coor=coorin;
   occu=0.0;
   bfac=0.0;
   segid=segidin;
   sel=0;
+}
+
+void Atom::reset(){
+  this->setRecName("ATOM");
+  this->setAtmNum(0);
+  this->setAtmName();
+  this->setAlt();
+  this->setResName();
+  this->setChainId();
+  this->setResId(0);
+  this->setCoor(Vector(0.0, 0.0, 0.0));
+  this->setOccu(0.0);
+  this->setBFac(0.0);
+  this->setSegId();
+  this->setSel(0);  
 }
 
 //Get atom info
@@ -48,7 +63,7 @@ std::string& Atom::getAtmName(){
   return atmname;
 }
 
-char& Atom::getAlt(){
+std::string& Atom::getAlt(){
   return alt;
 }
 
@@ -56,7 +71,7 @@ std::string& Atom::getResName(){
   return resname;
 }
 
-char& Atom::getChainId(){
+std::string& Atom::getChainId(){
   return chainid;
 }
 
@@ -64,7 +79,7 @@ int& Atom::getResId(){
   return resid;
 }
 
-char& Atom::getICode(){
+std::string& Atom::getICode(){
   return icode;
 }
 
@@ -96,6 +111,10 @@ std::string& Atom::getSegId(){
   return segid;
 }
 
+int& Atom::getSel(){
+  return sel;
+}
+
 //Set atom info
 void Atom::setRecName(const std::string& recnamein){
   this->recname=recnamein;
@@ -109,24 +128,44 @@ void Atom::setAtmName(const std::string& atmnamein){
   this->atmname=atmnamein;
 }
 
-void Atom::setAlt(const char& altin){
+void Atom::setAtmName(){
+  this->atmname.clear();
+}
+
+void Atom::setAlt(const std::string& altin){
   this->alt=altin;
+}
+
+void Atom::setAlt(){
+  this->alt.clear();
 }
 
 void Atom::setResName(const std::string& resnamein){
   this->resname=resnamein;
 }
 
-void Atom::setChainId(const char& chainidin){
+void Atom::setResName(){
+  this->resname.clear();
+}
+
+void Atom::setChainId(const std::string& chainidin){
   this->chainid=chainidin;
+}
+
+void Atom::setChainId(){
+  this->chainid.clear();
 }
 
 void Atom::setResId(const int& residin){
   this->resid=residin;
 }
 
-void Atom::setICode(const char& icodein){
+void Atom::setICode(const std::string& icodein){
   this->icode=icodein;
+}
+
+void Atom::setICode(){
+  this->icode.clear();
 }
 
 void Atom::setCoor (const Vector& coorin){
@@ -145,3 +184,10 @@ void Atom::setSegId(const std::string& segidin){
   this->segid=segidin;
 }
 
+void Atom::setSegId(){
+  this->segid.clear();
+}
+
+void Atom::setSel(const int selin){
+  this->sel=selin;
+}

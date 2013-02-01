@@ -7,7 +7,7 @@
 
 class Chain {
   private:
-    char *id;
+    std::string *id;
     Residue *res;
     Atom *atm;
 

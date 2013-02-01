@@ -22,7 +22,9 @@ int Molecule::writePDB(){
 }
 
 void Molecule::addAtom(Atom atmEntry) {
-  atmVec.push_back(atmEntry);
+  if (atmEntry.getAtmNum()){
+    atmVec.push_back(atmEntry);
+  }
 }
 
 Atom Molecule::getAtom(int atmnum){
