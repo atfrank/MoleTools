@@ -142,7 +142,7 @@ Chain PDB::processChain (Atom atmEntry){
   }
   else{
     //Add new id to map
-    chnMap[id]=1;
+    chnMap[id]=chnMap.size()+1; //Value = chain order
     chnEntry.setChainId(id);
   }
 
