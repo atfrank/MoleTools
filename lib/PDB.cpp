@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <map>
 
 std::string PDB::writePDBFormat (Molecule& mol){
   std::ostringstream out;
@@ -52,9 +53,8 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
   std::istream* inp;
   std::string line;
   int currModel=0;
-  std::string lastChain="+";
-  std::string lastRes; //Check string.size()
   Atom atmEntry;
+  PDB pdb;
 
   if (ifile == "-"){ //Input from pipe
     inp=&std::cin;
@@ -75,12 +75,9 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
       }
     }
     else if (currModel==model && line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0)){
-      atmEntry=PDB::processAtomLine(line);
+      atmEntry=pdb.processAtomLine(line);
       mol.addAtom(atmEntry);
-      //mol.addChain();
-      if (lastChain != atmEntry.getChainId()){
-        
-      }
+      mol.addChain(pdb.processChain(atmEntry));
       atmEntry.reset();
     }
     else{
@@ -135,8 +132,14 @@ Atom PDB::processAtomLine (std::string line){
   return atmEntry;
 }
 
-/*
-Chain PDB::compareChains(){
+Chain PDB::processChain (Atom atmEntry){
+  std::string id=atmEntry.getChainId();
+  Chain chnEntry;
 
+  if(chnMap.find(id) == chnMap.end()){
+    chnMap[id]=1;
+    chnEntry.setChainId(id);
+  }
+
+  return chnEntry;
 }
-*/

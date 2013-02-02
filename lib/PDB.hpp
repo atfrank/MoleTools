@@ -4,17 +4,17 @@
 
 #include "Molecule.hpp"
 
-//#include <string>
+#include <map>
 
 class PDB {
   private:
-    //All instances are declared as arguments to the functions below
+    std::map<std::string, int> chnMap;
 
   public:
     static std::string writePDBFormat (Molecule& mol);
     static void readPDB (Molecule& mol, std::string ifile, int model=0);
-    static Atom processAtomLine (std::string line);
-//    static Chain compareChains();
+    Atom processAtomLine (std::string line);
+    Chain processChain(Atom atmEntry);
 };
 
 #endif

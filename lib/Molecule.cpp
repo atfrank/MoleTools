@@ -27,8 +27,8 @@ void Molecule::addAtom(Atom atmEntry) {
   }
 }
 
-Atom Molecule::getAtom(int atmnum){
-  return atmVec.at(atmnum);
+Atom Molecule::getAtom(int element){
+  return atmVec.at(element);
 }
 
 unsigned int Molecule::getAtmVecSize(){
@@ -36,5 +36,15 @@ unsigned int Molecule::getAtmVecSize(){
 }
 
 void Molecule::addChain(Chain chnEntry){
-  chnVec.push_back(chnEntry);
+  if(chnEntry.getChainIdSize()){
+    chnVec.push_back(chnEntry);
+  }
+}
+
+Chain Molecule::getChain(int element){
+  return chnVec.at(element);
+}
+
+unsigned int Molecule::getChnVecSize(){
+  return chnVec.size();
 }

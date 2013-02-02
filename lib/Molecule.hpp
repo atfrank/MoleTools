@@ -16,9 +16,11 @@ class Molecule {
     int readPDB (std::string ifile, int model=0);
     int writePDB ();
     void addAtom(Atom atmEntry);
-    Atom getAtom(int atmnum);
+    Atom getAtom(int element);
     unsigned int getAtmVecSize();
     void addChain(Chain chnEntry);
+    Chain getChain(int element);
+    unsigned int getChnVecSize();
 };
 
 #endif

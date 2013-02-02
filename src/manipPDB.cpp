@@ -51,7 +51,13 @@ int main (int argc, char **argv){
   Molecule *mol = new Molecule;
   mol->readPDB(pdb, model);
   mol->writePDB();
-  
+
+  /*
+  for (int i=0; i<mol->getChnVecSize(); i++){
+    cout << mol->getChain(i).getChainId() << endl;
+  }
+  */
+
   /*
   cout << mol->getAtom(0).getCoor().x() ;
   Atom t=mol->getAtom(0);
