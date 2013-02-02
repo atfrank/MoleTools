@@ -4,11 +4,14 @@
 
 Chain::Chain (){
   id.clear();
+  resVec.clear();
   atmVec.clear();
 }
 
 void Chain::reset(){
   id.clear();
+  resVec.clear();
+  atmVec.clear();
 }
 
 int Chain::getChainIdSize(){

@@ -136,7 +136,12 @@ Chain PDB::processChain (Atom atmEntry){
   std::string id=atmEntry.getChainId();
   Chain chnEntry;
 
-  if(chnMap.find(id) == chnMap.end()){
+  if(chnMap.find(id) != chnMap.end()){ 
+    //id already exists in map
+    //map::find Returns map::end if id not found
+  }
+  else{
+    //Add new id to map
     chnMap[id]=1;
     chnEntry.setChainId(id);
   }

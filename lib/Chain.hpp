@@ -10,6 +10,7 @@
 class Chain {
   private:
     std::string id;
+    std::vector<Residue> resVec;
     std::vector<Atom> atmVec;
 
   public:
