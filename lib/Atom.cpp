@@ -36,18 +36,18 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
 }
 
 void Atom::reset(){
-  this->setRecName("ATOM");
-  this->setAtmNum(0);
-  this->setAtmName();
-  this->setAlt();
-  this->setResName();
-  this->setChainId();
-  this->setResId(0);
-  this->setCoor(Vector(0.0, 0.0, 0.0));
-  this->setOccu(0.0);
-  this->setBFac(0.0);
-  this->setSegId();
-  this->setSel(0);  
+  recname="ATOM";
+  atmnum=0;
+  atmname.clear();
+  alt.clear();
+  resname.clear();
+  chainid.clear();
+  resid=0;
+  coor=Vector(0.0, 0.0, 0.0);
+  occu=0.0;
+  bfac=0.0;
+  segid.clear();
+  sel=0;
 }
 
 //Get atom info
@@ -117,77 +117,77 @@ int& Atom::getSel(){
 
 //Set atom info
 void Atom::setRecName(const std::string& recnamein){
-  this->recname=recnamein;
+  recname=recnamein;
 }
 
 void Atom::setAtmNum(const int& atmnumin){
-  this->atmnum=atmnumin;
+  atmnum=atmnumin;
 }
 
 void Atom::setAtmName(const std::string& atmnamein){
-  this->atmname=atmnamein;
+  atmname=atmnamein;
 }
 
 void Atom::setAtmName(){
-  this->atmname.clear();
+  atmname.clear();
 }
 
 void Atom::setAlt(const std::string& altin){
-  this->alt=altin;
+  alt=altin;
 }
 
 void Atom::setAlt(){
-  this->alt.clear();
+  alt.clear();
 }
 
 void Atom::setResName(const std::string& resnamein){
-  this->resname=resnamein;
+  resname=resnamein;
 }
 
 void Atom::setResName(){
-  this->resname.clear();
+  resname.clear();
 }
 
 void Atom::setChainId(const std::string& chainidin){
-  this->chainid=chainidin;
+  chainid=chainidin;
 }
 
 void Atom::setChainId(){
-  this->chainid.clear();
+  chainid.clear();
 }
 
 void Atom::setResId(const int& residin){
-  this->resid=residin;
+  resid=residin;
 }
 
 void Atom::setICode(const std::string& icodein){
-  this->icode=icodein;
+  icode=icodein;
 }
 
 void Atom::setICode(){
-  this->icode.clear();
+  icode.clear();
 }
 
 void Atom::setCoor (const Vector& coorin){
-  this->coor=coorin;
+  coor=coorin;
 }
 
 void Atom::setOccu(const double& occuin){
-  this->occu=occuin;
+  occu=occuin;
 }
 
 void Atom::setBFac(const double& bfacin){
-  this->bfac=bfacin;
+  bfac=bfacin;
 }
 
 void Atom::setSegId(const std::string& segidin){
-  this->segid=segidin;
+  segid=segidin;
 }
 
 void Atom::setSegId(){
-  this->segid.clear();
+  segid.clear();
 }
 
 void Atom::setSel(const int selin){
-  this->sel=selin;
+  sel=selin;
 }

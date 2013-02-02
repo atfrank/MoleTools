@@ -5,13 +5,23 @@
 
 #include "Residue.hpp"
 
+#include <vector>
+
 class Chain {
   private:
     std::string id;
-    Residue *start, *end;
+    std::vector<Atom> atmVec;
 
   public:
     Chain();
+
+    void reset();
+
+    //Get Chain info
+
+    //Set Chain info
+    void setChainId(const std::string& chainidin);
+    void setChainId(); //Clear
 };
 
 #endif
