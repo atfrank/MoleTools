@@ -18,8 +18,8 @@ class PDB {
     static std::string writePDBFormat (Molecule& mol);
     static void readPDB (Molecule& mol, std::string ifile, int model=0);
     Atom processAtomLine (std::string line);
-    Residue processResidue (Atom& atmEntry);
-    Chain processChain(Atom atmEntry);
+    void processResidue (Molecule& mol);
+    void processChain (Molecule& mol);
     void setTer (int terin);
 };
 

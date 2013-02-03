@@ -88,8 +88,8 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
     }
     else if (currModel==model && line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0 || line.compare(0,5,"HETAT")==0)){
       mol.addAtom(pdb.processAtomLine(line));
-      pdb.processResidue(mol.getLastAtomRef()); //Use last atmEntry from Molecule!!
-      //mol.addChain(pdb.processChain());
+      pdb.processResidue(mol); 
+      pdb.processChain(mol);
     }
     else{
       continue;
@@ -162,27 +162,12 @@ Atom PDB::processAtomLine (std::string line){
   return atmEntry;
 }
 
-Chain PDB::processChain (Atom atmEntry){
-  std::string id=atmEntry.getChainId();
-  Chain chnEntry;
-
-  if(chnMap.find(id) != chnMap.end()){ 
-    //id already exists in map
-    //map::find Returns map::end if id not found
-  }
-  else{
-    //Add new id to map
-    chnMap[id]=chnMap.size()+1; //Value = chain order
-    chnEntry.setChainId(id);
-  }
-
-  return chnEntry;
+void PDB::processChain (Molecule& mol){
+  mol.getLastAtomRef();
 }
 
-Residue PDB::processResidue (Atom& atmEntry){
-  Residue resEntry;
-
-  return resEntry;
+void PDB::processResidue (Molecule& mol){
+  mol.getLastAtomRef();
 }
 
 void PDB::setTer (int terin){

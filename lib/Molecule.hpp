@@ -21,6 +21,9 @@ class Molecule {
     void addChain(Chain chnEntry);
     Chain getChain(int element);
     unsigned int getChnVecSize();
+    Chain& getLastChainRef();
+    unsigned int getResVecSize();
+    Residue& getLastResidueRef();
     Atom& getLastAtomRef();
 };
 

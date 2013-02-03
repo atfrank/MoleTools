@@ -49,6 +49,18 @@ unsigned int Molecule::getChnVecSize(){
   return chnVec.size();
 }
 
+Chain& Molecule::getLastChainRef(){
+  return chnVec.at(chnVec.size()-1);
+}
+
+unsigned int Molecule::getResVecSize(){
+  return resVec.size();
+}
+
+Residue& Molecule::getLastResidueRef(){
+  return resVec.at(resVec.size()-1);
+}
+
 Atom& Molecule::getLastAtomRef(){
   return atmVec.at(atmVec.size()-1);
 }
