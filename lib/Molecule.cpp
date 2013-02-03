@@ -41,6 +41,12 @@ void Molecule::addChain(Chain chnEntry){
   }
 }
 
+void Molecule::addResidue(Residue resEntry){
+  if (resEntry.getResNum()){
+    resVec.push_back(resEntry);
+  }
+}
+
 Chain Molecule::getChain(int element){
   return chnVec.at(element);
 }

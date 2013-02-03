@@ -17,13 +17,14 @@ class Molecule {
     int writePDB ();
     void addAtom(Atom atmEntry);
     Atom getAtom(int element);
-    unsigned int getAtmVecSize();
     void addChain(Chain chnEntry);
+    void addResidue(Residue resEntry);
     Chain getChain(int element);
     unsigned int getChnVecSize();
     Chain& getLastChainRef();
     unsigned int getResVecSize();
     Residue& getLastResidueRef();
+    unsigned int getAtmVecSize();
     Atom& getLastAtomRef();
 };
 

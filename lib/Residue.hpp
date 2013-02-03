@@ -16,6 +16,10 @@ class Residue {
     int end;
     std::string segid;
     std::vector<Atom> *atmVec;
+
+  public:
+    Residue();
+    int getResNum();
 };
 
 #endif
