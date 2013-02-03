@@ -7,15 +7,15 @@
 Atom::Atom(){
   recname="ATOM";
   atmnum=0;
-  atmname.clear();
-  alt.clear();
-  resname.clear();
-  chainid.clear();
+  atmname="    ";
+  alt=" ";
+  resname="   ";
+  chainid=" ";
   resid=0;
   coor=Vector(0.0, 0.0, 0.0);
   occu=0.0;
   bfac=0.0;
-  segid.clear();
+  segid="   ";
   sel=0;
 }
 
@@ -38,15 +38,15 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
 void Atom::reset(){
   recname="ATOM";
   atmnum=0;
-  atmname.clear();
-  alt.clear();
-  resname.clear();
-  chainid.clear();
+  atmname="    ";
+  alt=" ";
+  resname="   ";
+  chainid=" ";
   resid=0;
   coor=Vector(0.0, 0.0, 0.0);
   occu=0.0;
   bfac=0.0;
-  segid.clear();
+  segid="    ";
   sel=0;
 }
 

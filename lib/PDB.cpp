@@ -6,6 +6,12 @@
 #include <iomanip>
 #include <map>
 
+PDB::PDB(){
+  lastChain="+";
+  ter=0;
+  chnMap.clear();
+}
+
 std::string PDB::writePDBFormat (Molecule& mol){
   std::ostringstream out;
   Atom atm;
@@ -74,10 +80,13 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
         model=1; //Use first model if undefined
       }
     }
+    else if (line.compare(0,3,"TER")==0){
+      pdb.setTer(1); //TER found
+    }
     else if (currModel==model && line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0)){
       atmEntry=pdb.processAtomLine(line);
       mol.addAtom(atmEntry);
-      mol.addChain(pdb.processChain(atmEntry));
+      //mol.addChain(pdb.processChain(atmEntry));
       atmEntry.reset();
     }
     else{
@@ -94,6 +103,7 @@ Atom PDB::processAtomLine (std::string line){
   double x,y,z;
   std::string recname; //Record name: "ATOM  ", "HETATM"
   int  atmnum; //Atom serial number
+  std::string chainid;
   int  resid; //Residue sequence number
   double occu; //Occupancy
   double bfac; //B-factor or Temperature factor
@@ -107,7 +117,23 @@ Atom PDB::processAtomLine (std::string line){
   atmEntry.setAtmName(line.substr(12,4));
   atmEntry.setAlt(line.substr(16,1));
   atmEntry.setResName(line.substr(17,3));
-  atmEntry.setChainId(line.substr(21,1));
+  chainid=line.substr(21,1);
+  if(ter || lastChain != chainid){
+    //New chain, check if duplicate
+    if (chnMap.find(chainid) == chnMap.end()){
+      chnMap[chainid]=chnMap.size();
+    }
+    else{
+      //Duplicate, likely HETATM ligand bound to same chain
+      //Assign numeric chainid, this is valid PDB format
+      std::ostringstream ossChainId;
+      ossChainId<< chnMap.find(chainid)->second;
+      //chainid=ossChainId.str();
+    }
+    lastChain=chainid;
+    ter=0;
+  }
+  atmEntry.setChainId(chainid);
   std::stringstream(line.substr(22,4)) >> resid;
   atmEntry.setResId(resid);
   atmEntry.setICode(line.substr(26,1));
@@ -147,4 +173,8 @@ Chain PDB::processChain (Atom atmEntry){
   }
 
   return chnEntry;
+}
+
+void PDB::setTer (int terin){
+  ter=terin;
 }
