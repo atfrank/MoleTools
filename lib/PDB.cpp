@@ -163,10 +163,12 @@ Atom PDB::processAtomLine (std::string line){
 }
 
 void PDB::processChain (Molecule& mol){
+  //Check size before accessing reference
   mol.getLastAtomRef();
 }
 
 void PDB::processResidue (Molecule& mol){
+  //Check size before accessing reference
   mol.getLastAtomRef();
 }
 
