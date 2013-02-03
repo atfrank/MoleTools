@@ -8,6 +8,7 @@
 
 PDB::PDB(){
   lastChain="+";
+  lastRes=0;
   ter=0;
   chnMap.clear();
 }
@@ -59,6 +60,8 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
   std::istream* inp;
   std::string line;
   int currModel=0;
+  Chain chnEntry;
+  Residue resEntry;
   Atom atmEntry;
   PDB pdb;
 
@@ -83,11 +86,10 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
     else if (line.compare(0,3,"TER")==0){
       pdb.setTer(1); //TER found
     }
-    else if (currModel==model && line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0)){
-      atmEntry=pdb.processAtomLine(line);
-      mol.addAtom(atmEntry);
-      //mol.addChain(pdb.processChain(atmEntry));
-      atmEntry.reset();
+    else if (currModel==model && line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0 || line.compare(0,5,"HETAT")==0)){
+      mol.addAtom(pdb.processAtomLine(line));
+      pdb.processResidue(mol.getLastAtomRef()); //Use last atmEntry from Molecule!!
+      //mol.addChain(pdb.processChain());
     }
     else{
       continue;
@@ -126,9 +128,11 @@ Atom PDB::processAtomLine (std::string line){
     else{
       //Duplicate, likely HETATM ligand bound to same chain
       //Assign numeric chainid, this is valid PDB format
-      std::ostringstream ossChainId;
-      ossChainId<< chnMap.find(chainid)->second;
+      //std::ostringstream ossChainId;
+      //ossChainId<< chnMap.find(chainid)->second;
       //chainid=ossChainId.str();
+      //Set chainid to blank
+      chainid=" ";
     }
     lastChain=chainid;
     ter=0;
@@ -173,6 +177,12 @@ Chain PDB::processChain (Atom atmEntry){
   }
 
   return chnEntry;
+}
+
+Residue PDB::processResidue (Atom& atmEntry){
+  Residue resEntry;
+
+  return resEntry;
 }
 
 void PDB::setTer (int terin){

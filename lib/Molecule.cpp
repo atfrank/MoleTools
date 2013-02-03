@@ -48,3 +48,7 @@ Chain Molecule::getChain(int element){
 unsigned int Molecule::getChnVecSize(){
   return chnVec.size();
 }
+
+Atom& Molecule::getLastAtomRef(){
+  return atmVec.at(atmVec.size()-1);
+}

@@ -9,6 +9,7 @@
 class PDB {
   private:
     std::string lastChain;
+    int lastRes;
     int ter;
     std::map<std::string, int> chnMap;
 
@@ -17,6 +18,7 @@ class PDB {
     static std::string writePDBFormat (Molecule& mol);
     static void readPDB (Molecule& mol, std::string ifile, int model=0);
     Atom processAtomLine (std::string line);
+    Residue processResidue (Atom& atmEntry);
     Chain processChain(Atom atmEntry);
     void setTer (int terin);
 };
