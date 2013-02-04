@@ -190,10 +190,13 @@ void PDB::processChain (Molecule& mol){
 }
 
 void PDB::processResidue (Molecule& mol){
+  Residue *resRef;
   Atom *atmRef;
+
+  resRef=mol.getLastResidueRef();
   atmRef=mol.getLastAtomRef();
   if (atmRef != NULL){
-
+    
   }
 }
 
