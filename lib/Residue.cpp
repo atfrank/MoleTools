@@ -4,7 +4,7 @@
 
 Residue::Residue (){
   resname="   ";
-  resnum=0;
+  resid=0;
   chainid=" ";
   start=NULL;
   end=NULL;
@@ -16,8 +16,8 @@ void Residue::setResName(std::string resnamein){
   resname=resnamein;
 }
 
-void Residue::setResNum(int resnumin){
-  resnum=resnumin;
+void Residue::setResId(int residin){
+  resid=residin;
 }
 
 void Residue::setChainId(std::string chainidin){
@@ -42,6 +42,6 @@ void Residue::addAtom(Atom* atmEntry){
   }
 }
 
-int Residue::getResNum(){
-  return resnum;
+int Residue::getResId(){
+  return resid;
 }

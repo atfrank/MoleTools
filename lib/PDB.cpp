@@ -185,18 +185,31 @@ void PDB::processChain (Molecule& mol){
     Atom *atmRef;
     atmRef=mol.getLastAtomRef();
     if (atmRef != NULL){
-
+      
     }
 }
 
 void PDB::processResidue (Molecule& mol){
   Residue *resRef;
   Atom *atmRef;
+  Residue resEntry;
 
   resRef=mol.getLastResidueRef();
   atmRef=mol.getLastAtomRef();
+
   if (atmRef != NULL){
-    
+    if (resRef != NULL){
+      //Compare lastRes
+    }
+    else{
+      resEntry.setResName(atmRef->getResName());
+      resEntry.setResId(atmRef->getResId());
+      resEntry.setChainId(atmRef->getChainId());
+      resEntry.setStart(atmRef);
+      resEntry.setSegId(atmRef->getSegId());
+      resEntry.addAtom(atmRef);
+      mol.addResidue(resEntry);
+    }
   }
 }
 

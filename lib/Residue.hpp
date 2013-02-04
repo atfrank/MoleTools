@@ -10,7 +10,7 @@
 class Residue {
   private:
     std::string resname;
-    int resnum;
+    int resid;
     std::string chainid;
     Atom *start;
     Atom *end;
@@ -20,12 +20,12 @@ class Residue {
   public:
     Residue();
     void setResName(std::string resnamein);
-    void setResNum(int resnumin);
+    void setResId(int residin);
     void setChainId(std::string chainidin);
     void setStart(Atom* startin);
     void setEnd(Atom* endin);
     void setSegId(std::string segidin);
-    int getResNum();
+    int getResId();
     void addAtom(Atom* atmEntry);
 };
 

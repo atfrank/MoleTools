@@ -42,7 +42,7 @@ void Molecule::addChain(Chain chnEntry){
 }
 
 void Molecule::addResidue(Residue resEntry){
-  if (resEntry.getResNum()){
+  if (resEntry.getResId()){
     resVec.push_back(resEntry);
   }
 }
