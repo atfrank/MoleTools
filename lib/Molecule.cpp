@@ -55,18 +55,33 @@ unsigned int Molecule::getChnVecSize(){
   return chnVec.size();
 }
 
-Chain& Molecule::getLastChainRef(){
-  return chnVec.at(chnVec.size()-1);
+Chain* Molecule::getLastChainRef(){
+  if (chnVec.size() >0){
+    return &(chnVec.at(chnVec.size()-1));
+  }
+  else{
+    return NULL;
+  }
 }
 
 unsigned int Molecule::getResVecSize(){
   return resVec.size();
 }
 
-Residue& Molecule::getLastResidueRef(){
-  return resVec.at(resVec.size()-1);
+Residue* Molecule::getLastResidueRef(){
+  if (resVec.size() > 0){
+    return &(resVec.at(resVec.size()-1));
+  }
+  else{
+    return NULL;
+  }
 }
 
-Atom& Molecule::getLastAtomRef(){
-  return atmVec.at(atmVec.size()-1);
+Atom* Molecule::getLastAtomRef(){
+  if (atmVec.size() >0){
+    return &(atmVec.at(atmVec.size()-1));
+  }
+  else{
+    return NULL;
+  }
 }

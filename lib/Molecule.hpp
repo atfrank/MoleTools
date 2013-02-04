@@ -21,11 +21,11 @@ class Molecule {
     void addResidue(Residue resEntry);
     Chain getChain(int element);
     unsigned int getChnVecSize();
-    Chain& getLastChainRef();
+    Chain* getLastChainRef();
     unsigned int getResVecSize();
-    Residue& getLastResidueRef();
+    Residue* getLastResidueRef();
     unsigned int getAtmVecSize();
-    Atom& getLastAtomRef();
+    Atom* getLastAtomRef();
 };
 
 #endif
