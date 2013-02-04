@@ -9,19 +9,22 @@
 class PDB {
   private:
     std::string lastChain;
+    bool newChain;
     int lastRes;
-    int ter;
+    bool ter;
     std::map<std::string, int> chnMap;
 
   public:
     PDB();
     void setLastChain(std::string chainid);
+    void setNewChain(bool val);
+    void setLastRes(int resnum);
     static std::string writePDBFormat (Molecule& mol);
     static void readPDB (Molecule& mol, std::string ifile, int model=0);
     Atom processAtomLine (std::string line);
     void processResidue (Molecule& mol);
     void processChain (Molecule& mol);
-    void setTer (int terin);
+    void setTer (bool val);
 };
 
 #endif

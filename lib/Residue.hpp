@@ -15,7 +15,7 @@ class Residue {
     int start;
     int end;
     std::string segid;
-    std::vector<Atom> *atmVec;
+    std::vector<Atom *> atmVec;
 
   public:
     Residue();
