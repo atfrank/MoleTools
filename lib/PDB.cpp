@@ -13,6 +13,10 @@ PDB::PDB(){
   chnMap.clear();
 }
 
+void PDB::setLastChain(std::string chainid){
+  lastChain=chainid;
+}
+
 std::string PDB::writePDBFormat (Molecule& mol){
   std::ostringstream out;
   Atom atm;
@@ -87,9 +91,15 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
       pdb.setTer(1); //TER found
     }
     else if (currModel==model && line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0 || line.compare(0,5,"HETAT")==0)){
-      mol.addAtom(pdb.processAtomLine(line));
+      atmEntry=pdb.processAtomLine(line);
+      mol.addAtom(atmEntry);
       pdb.processResidue(mol); 
       pdb.processChain(mol);
+
+      //Reset for next atom
+      pdb.setLastChain(atmEntry.getChainId());
+      pdb.setTer(0);
+      atmEntry.reset();
     }
     else{
       continue;
@@ -134,8 +144,8 @@ Atom PDB::processAtomLine (std::string line){
       //Set chainid to blank
       chainid=" ";
     }
-    lastChain=chainid;
-    ter=0;
+    //lastChain=chainid;
+    //ter=0;
   }
   atmEntry.setChainId(chainid);
   std::stringstream(line.substr(22,4)) >> resid;

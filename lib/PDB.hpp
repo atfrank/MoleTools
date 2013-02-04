@@ -15,6 +15,7 @@ class PDB {
 
   public:
     PDB();
+    void setLastChain(std::string chainid);
     static std::string writePDBFormat (Molecule& mol);
     static void readPDB (Molecule& mol, std::string ifile, int model=0);
     Atom processAtomLine (std::string line);
