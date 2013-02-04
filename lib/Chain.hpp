@@ -18,6 +18,9 @@ class Chain {
 
     void reset();
 
+    void addResidue(Residue* resEntry);
+    void addAtom(Atom* atmEntry);
+
     //Get Chain info
     int getChainIdSize();
     std::string getChainId();

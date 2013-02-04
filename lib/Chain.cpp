@@ -14,6 +14,18 @@ void Chain::reset(){
   atmVec.clear();
 }
 
+void Chain::addResidue(Residue* resEntry){
+  if (resEntry->getResNum()){
+    resVec.push_back(resEntry);
+  }
+}
+
+void Chain::addAtom(Atom* atmEntry){
+  if (atmEntry->getAtmNum()){
+    atmVec.push_back(atmEntry);
+  }
+}
+
 int Chain::getChainIdSize(){
   return id.size();
 }
