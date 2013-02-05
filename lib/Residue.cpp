@@ -12,6 +12,16 @@ Residue::Residue (){
   atmVec.clear();
 }
 
+void Residue::reset(){
+  resname="   ";
+  resid=0;
+  chainid=" ";
+  start=NULL;
+  end=NULL;
+  segid="    ";
+  atmVec.clear();
+}
+
 void Residue::setResName(std::string resnamein){
   resname=resnamein;
 }
