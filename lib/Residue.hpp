@@ -19,6 +19,7 @@ class Residue {
 
   public:
     Residue();
+    void reset();
     void setResName(std::string resnamein);
     void setResId(int residin);
     void setChainId(std::string chainidin);

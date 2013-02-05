@@ -22,8 +22,8 @@ void PDB::setNewChain(bool val){
   newChain=val;
 }
 
-void PDB::setLastRes(int resnum){
-  lastRes=resnum;
+void PDB::setLastRes(int resid){
+  lastRes=resid;
 }
 
 std::string PDB::writePDBFormat (Molecule& mol){
@@ -105,7 +105,8 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
       pdb.processResidue(mol); 
       pdb.processChain(mol);
 
-      //Reset for next atom
+      //Update for next atom
+      pdb.setLastRes(atmEntry.getResId()); 
       pdb.setNewChain(false);
       pdb.setLastChain(atmEntry.getChainId());
       pdb.setTer(false);
@@ -184,6 +185,7 @@ Atom PDB::processAtomLine (std::string line){
 void PDB::processChain (Molecule& mol){
     Atom *atmRef;
     atmRef=mol.getLastAtomRef();
+
     if (atmRef != NULL){
       
     }
@@ -198,17 +200,24 @@ void PDB::processResidue (Molecule& mol){
   atmRef=mol.getLastAtomRef();
 
   if (atmRef != NULL){
-    if (resRef != NULL){
-      //Compare lastRes
-    }
-    else{
+    if (lastRes != atmRef->getResId() || newChain == true){
       resEntry.setResName(atmRef->getResName());
       resEntry.setResId(atmRef->getResId());
       resEntry.setChainId(atmRef->getChainId());
       resEntry.setStart(atmRef);
+      resEntry.setEnd(atmRef);
       resEntry.setSegId(atmRef->getSegId());
       resEntry.addAtom(atmRef);
       mol.addResidue(resEntry);
+    }
+    else{
+      if (atmRef != NULL){
+        resRef->setEnd(atmRef); //Update "end"
+        resRef->addAtom(atmRef); //Add atom reference to vector
+      }
+      else{
+        std::cerr << "PDB::processResidue - I shouldn't be here\n";
+      }
     }
   }
 }
