@@ -11,6 +11,7 @@ Atom::Atom(){
   alt=" ";
   resname="   ";
   chainid=" ";
+  realid=" ";
   resid=0;
   coor=Vector(0.0, 0.0, 0.0);
   occu=0.0;
@@ -24,9 +25,10 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
   recname="ATOM";
   atmnum=atmnumin;
   atmname=atmnamein;
-  alt.clear();
+  alt=" ";
   resname=resnamein;
-  chainid.clear();
+  chainid=" ";
+  realid=" ";
   resid=residin;
   coor=coorin;
   occu=0.0;
@@ -42,6 +44,7 @@ void Atom::reset(){
   alt=" ";
   resname="   ";
   chainid=" ";
+  realid=" ";
   resid=0;
   coor=Vector(0.0, 0.0, 0.0);
   occu=0.0;
@@ -73,6 +76,10 @@ std::string& Atom::getResName(){
 
 std::string& Atom::getChainId(){
   return chainid;
+}
+
+std::string& Atom::getRealId(){
+  return realid;
 }
 
 int& Atom::getResId(){
@@ -129,7 +136,7 @@ void Atom::setAtmName(const std::string& atmnamein){
 }
 
 void Atom::setAtmName(){
-  atmname.clear();
+  atmname="    ";
 }
 
 void Atom::setAlt(const std::string& altin){
@@ -137,7 +144,7 @@ void Atom::setAlt(const std::string& altin){
 }
 
 void Atom::setAlt(){
-  alt.clear();
+  alt=" ";
 }
 
 void Atom::setResName(const std::string& resnamein){
@@ -145,15 +152,25 @@ void Atom::setResName(const std::string& resnamein){
 }
 
 void Atom::setResName(){
-  resname.clear();
+  resname=" ";
 }
 
 void Atom::setChainId(const std::string& chainidin){
+  //Modified chain id if duplicated
   chainid=chainidin;
 }
 
+void Atom::setRealId(const std::string& realidin){
+  //Original chain id from PDB
+  realid=realidin;
+}
+
 void Atom::setChainId(){
-  chainid.clear();
+  chainid=" ";
+}
+
+void Atom::setRealId(){
+  realid=" ";
 }
 
 void Atom::setResId(const int& residin){
@@ -165,7 +182,7 @@ void Atom::setICode(const std::string& icodein){
 }
 
 void Atom::setICode(){
-  icode.clear();
+  icode=" ";
 }
 
 void Atom::setCoor (const Vector& coorin){
@@ -185,7 +202,7 @@ void Atom::setSegId(const std::string& segidin){
 }
 
 void Atom::setSegId(){
-  segid.clear();
+  segid="    ";
 }
 
 void Atom::setSel(const int selin){

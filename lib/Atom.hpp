@@ -18,7 +18,8 @@ class Atom {
     std::string atmname; //Atom name
     std::string alt; //Alternate location indicator
     std::string resname; //Residue name
-    std::string chainid; //Chain identifier
+    std::string chainid; //Chain identifier, modified if realid is duplicated
+    std::string realid; //Store original chainid
     int  resid; //Residue sequence number
     std::string icode; //Code for insertion of residues
     Vector coor; //X, Y, Z Coordinates
@@ -40,6 +41,7 @@ class Atom {
     std::string& getAlt();
     std::string& getResName();
     std::string& getChainId();
+    std::string& getRealId();
     int& getResId();
     std::string& getICode();
     Vector& getCoor ();
@@ -61,7 +63,9 @@ class Atom {
     void setResName(const std::string& resnamein);
     void setResName(); //Clear
     void setChainId(const std::string& chainidin);
+    void setRealId(const std::string& realidin);
     void setChainId(); //Clear
+    void setRealId(); //Clear
     void setResId(const int& residin);
     void setICode(const std::string& icodein);
     void setICode(); //Clear

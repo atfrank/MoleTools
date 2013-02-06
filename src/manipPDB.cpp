@@ -50,6 +50,16 @@ int main (int argc, char **argv){
 
   Molecule *mol = new Molecule;
   mol->readPDB(pdb, model);
+
+  for (unsigned int i=0; i<mol->getResVecSize(); i++){
+    Residue *res=mol->getResidue(i);
+    for (unsigned int j=0; j<res->getAtmVecSize(); j++){
+      //Atom *atm=res->getAtom(j);
+      //Looks like getAtom(j) is pointing to the wrong place! *atm is not NULL though
+      //cout << res->getResId() << ":" << atm->getResName() << endl;
+    }
+  }
+
   mol->writePDB();
 
   /*

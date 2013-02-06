@@ -109,7 +109,7 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
       //Update for next atom
       pdb.setLastRes(atmEntry.getResId()); 
       pdb.setNewChain(false);
-      pdb.setLastChain(atmEntry.getChainId());
+      pdb.setLastChain(atmEntry.getRealId());//RealId = Original chainid
       pdb.setTer(false);
       atmEntry.reset();
     }
@@ -159,6 +159,7 @@ Atom PDB::processAtomLine (std::string line){
     }
   }
   atmEntry.setChainId(chainid);
+  atmEntry.setRealId(line.substr(21,1)); 
   std::stringstream(line.substr(22,4)) >> resid;
   atmEntry.setResId(resid);
   atmEntry.setICode(line.substr(26,1));
@@ -216,7 +217,7 @@ void PDB::processResidue (Molecule& mol){
         throw std::runtime_error("PDB::processResidue: resRef is NULL\n");
 
       resRef->setEnd(atmRef); //Update "end"
-      resRef->addAtom(atmRef); //Add atom reference to vector
+      //resRef->addAtom(atmRef); //Add atom reference to vector
     }
   }
 }

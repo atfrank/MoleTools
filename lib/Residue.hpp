@@ -27,7 +27,12 @@ class Residue {
     void setEnd(Atom* endin);
     void setSegId(std::string segidin);
     int getResId();
+    std::string getResName();
+    std::string getChainId();
+    std::string getSegId();
     void addAtom(Atom* atmEntry);
+    Atom* getAtom (int element);
+    unsigned int getAtmVecSize();
 };
 
 #endif

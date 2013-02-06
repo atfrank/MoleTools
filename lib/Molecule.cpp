@@ -47,8 +47,8 @@ void Molecule::addResidue(Residue resEntry){
   }
 }
 
-Chain Molecule::getChain(int element){
-  return chnVec.at(element);
+Chain* Molecule::getChain(int element){
+  return &(chnVec.at(element));
 }
 
 unsigned int Molecule::getChnVecSize(){
@@ -75,6 +75,10 @@ Residue* Molecule::getLastResidueRef(){
   else{
     return NULL;
   }
+}
+
+Residue* Molecule::getResidue(int element){
+  return &(resVec.at(element));
 }
 
 Atom* Molecule::getLastAtomRef(){

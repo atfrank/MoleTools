@@ -55,3 +55,23 @@ void Residue::addAtom(Atom* atmEntry){
 int Residue::getResId(){
   return resid;
 }
+
+std::string Residue::getResName(){
+  return resname;
+}
+
+std::string Residue::getChainId(){
+  return chainid;
+}
+
+std::string Residue::getSegId(){
+  return segid;
+}
+
+Atom* Residue::getAtom (int element){
+  return atmVec.at(element);
+}
+
+unsigned int Residue::getAtmVecSize (){
+  return atmVec.size();
+}
