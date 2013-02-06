@@ -59,3 +59,4 @@ clean:
 	rm -rf $(LIBDIR)/*~
 	rm -rf $(TSTDIR)/*~
 	rm -rf *~
+	rm -rf *stackdump
