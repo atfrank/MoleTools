@@ -5,6 +5,7 @@
 #include <iostream>
 #include <iomanip>
 #include <map>
+#include <stdexcept>
 
 PDB::PDB(){
   lastChain="+";
@@ -211,13 +212,11 @@ void PDB::processResidue (Molecule& mol){
       mol.addResidue(resEntry);
     }
     else{
-      if (atmRef != NULL){
-        resRef->setEnd(atmRef); //Update "end"
-        resRef->addAtom(atmRef); //Add atom reference to vector
-      }
-      else{
-        std::cerr << "PDB::processResidue - I shouldn't be here\n";
-      }
+      if (resRef == NULL)
+        throw std::runtime_error("PDB::processResidue: resRef is NULL\n");
+
+      resRef->setEnd(atmRef); //Update "end"
+      resRef->addAtom(atmRef); //Add atom reference to vector
     }
   }
 }
