@@ -13,42 +13,45 @@ PDB::PDB(){
 
 std::string PDB::writePDBFormat (Molecule* mol){
   std::ostringstream out;
+  Chain *chn;
+  Residue *res;
   Atom *atm;
   std::string lastChain="+";
 
   out.clear();
-  for (unsigned int i=0; i<mol->getAtmVecSize(); i++){
-    atm=mol->getAtom(i);
-    if (atm->getChainId() != lastChain){
-      if (lastChain != "+"){
-        out << "TER" << std::endl;
+
+  for (unsigned int i=0; i< mol->getChnVecSize(); i++){
+    chn=mol->getChain(i);
+    for (unsigned int j=0; j< chn->getResVecSize(); j++){
+      res=chn->getResidue(j);
+      for (unsigned int k=0; k< res->getAtmVecSize(); k++){
+        atm=res->getAtom(k);
+        out << std::setw(6) << std::left << atm->getRecName(); 
+        out << std::setw(5) << std::right << atm->getAtmNum();
+        out << " ";
+        out << std::setw(4) << std::left << atm->getAtmName();
+        out << std::setw(1) << std::left << atm->getAlt();
+        out << std::setw(3) << std::left << atm->getResName();
+        out << " ";
+        out << std::setw(1) << std::left << atm->getChainId();
+        out << std::setw(4) << std::right << atm->getResId();
+        out << std::setw(1) << std::left << atm->getICode();
+        out << "   ";
+        out << std::fixed; //For setting precision
+        out << std::setw(8) << std::right << std::setprecision(3) << atm->getX();
+        out << std::setw(8) << std::right << std::setprecision(3) << atm->getY();
+        out << std::setw(8) << std::right << std::setprecision(3) << atm->getZ();
+        out << std::setw(6) << std::right << std::setprecision(2) << atm->getOccu();
+        out << std::setw(6) << std::right << std::setprecision(2) << atm->getBFac();
+        out << "      ";
+        out << std::setw(4) << std::left << atm->getSegId();
+        out << std::endl;
       }
-      lastChain=atm->getChainId();
     }
-    out << std::setw(6) << std::left << atm->getRecName(); 
-    out << std::setw(5) << std::right << atm->getAtmNum();
-    out << " ";
-    out << std::setw(4) << std::left << atm->getAtmName();
-    out << std::setw(1) << std::left << atm->getAlt();
-    out << std::setw(3) << std::left << atm->getResName();
-    out << " ";
-    out << std::setw(1) << std::left << atm->getChainId();
-    out << std::setw(4) << std::right << atm->getResId();
-    out << std::setw(1) << std::left << atm->getICode();
-    out << "   ";
-    out << std::fixed; //For setting precision
-    out << std::setw(8) << std::right << std::setprecision(3) << atm->getX();
-    out << std::setw(8) << std::right << std::setprecision(3) << atm->getY();
-    out << std::setw(8) << std::right << std::setprecision(3) << atm->getZ();
-    out << std::setw(6) << std::right << std::setprecision(2) << atm->getOccu();
-    out << std::setw(6) << std::right << std::setprecision(2) << atm->getBFac();
-    out << "      ";
-    out << std::setw(4) << std::left << atm->getSegId();
-    out << std::endl;
+    out << "TER" << std::endl;
   }
-  if (mol->getAtmVecSize()){
-    out << "TER" << std::endl << "END" << std::endl;
-  }
+
+  out << "END" << std::endl;
 
   return out.str();
 }
@@ -59,12 +62,13 @@ Molecule* PDB::readPDB(std::string ifile, int model){
   std::string line;
   int currModel=0;
   Molecule *mol=new Molecule;
-//  Chain *chnEntry=new Chain;
-//  Residue *resEntry=new Residue;
+  Chain *chnEntry=new Chain;
+  Residue *resEntry=new Residue;
   Atom *atmEntry; //Created in heap by processAtomLine
   Atom *lastAtom;
   PDB pdb;
 
+  atmEntry=NULL;
   lastAtom=NULL;
 
   if (ifile == "-"){ //Input from pipe
@@ -85,8 +89,35 @@ Molecule* PDB::readPDB(std::string ifile, int model){
       }
     }
     else if (currModel==model && line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0 || line.compare(0,5,"HETAT")==0)){
+      //Atom
       atmEntry=pdb.processAtomLine(line, lastAtom);
       mol->addAtom(atmEntry);
+
+      //Residue/Chain
+      if (lastAtom == NULL){
+        resEntry->addAtom(atmEntry);
+        chnEntry->addAtom(atmEntry);
+      }
+      else if (atmEntry->getChainId() != lastAtom->getChainId()) {
+        //Store last
+        chnEntry->addResidue(resEntry);
+        mol->addResidue(resEntry);
+        mol->addChain(chnEntry);
+        //Create new
+        chnEntry=new Chain;
+        chnEntry->addAtom(atmEntry);
+        resEntry=new Residue;
+        resEntry->addAtom(atmEntry);
+      }
+      else if (lastAtom->getResId() != atmEntry->getResId()){
+        chnEntry->addResidue(resEntry);
+        mol->addResidue(resEntry);
+        resEntry=new Residue;
+        resEntry->addAtom(atmEntry);
+      }
+      else{
+        resEntry->addAtom(atmEntry);
+      }
 
       //Update for next atom
       lastAtom=atmEntry;
@@ -95,6 +126,9 @@ Molecule* PDB::readPDB(std::string ifile, int model){
       continue;
     }
   }
+  chnEntry->addResidue(resEntry);
+  mol->addResidue(resEntry);
+  mol->addChain(chnEntry);
 
   if (ifile != "-"){
     pdbFile.close();

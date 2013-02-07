@@ -9,7 +9,7 @@
 
 class Chain {
   private:
-    std::string id;
+    std::string *id;
     std::vector<Residue *> resVec; //Vector of residue pointers
     std::vector<Atom *> atmVec; //Vector of atom pointers
 
@@ -22,12 +22,11 @@ class Chain {
     void addAtom(Atom* atmEntry);
 
     //Get Chain info
-    int getChainIdSize();
+    Atom* getAtom(int element);
+    Residue* getResidue(int element);
     std::string getChainId();
-
-    //Set Chain info
-    void setChainId(const std::string& chainidin);
-    void setChainId(); //Clear
+    unsigned int getAtmVecSize();
+    unsigned int getResVecSize();
 };
 
 #endif

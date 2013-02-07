@@ -3,13 +3,13 @@
 #include "Chain.hpp"
 
 Chain::Chain (){
-  id.clear();
+  id=NULL;
   resVec.clear();
   atmVec.clear();
 }
 
 void Chain::reset(){
-  id.clear();
+  id=NULL;
   resVec.clear();
   atmVec.clear();
 }
@@ -26,19 +26,22 @@ void Chain::addAtom(Atom* atmEntry){
   }
 }
 
-int Chain::getChainIdSize(){
-  return id.size();
+Atom* Chain::getAtom (int element){
+  return atmVec.at(element);
+}
+
+Residue* Chain::getResidue (int element){
+  return resVec.at(element);
 }
 
 std::string Chain::getChainId(){
-  return id;
+  return this->getAtom(0)->getChainId();
 }
 
-void Chain::setChainId(const std::string& chainidin){
-  id=chainidin;
+unsigned int Chain::getAtmVecSize(){
+  return atmVec.size();
 }
 
-void Chain::setChainId(){
-  id.clear();
+unsigned int Chain::getResVecSize(){
+  return resVec.size();
 }
-

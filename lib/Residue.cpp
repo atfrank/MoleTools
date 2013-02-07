@@ -3,47 +3,23 @@
 #include "Residue.hpp"
 
 Residue::Residue (){
-  resname="   ";
-  resid=0;
-  chainid=" ";
+  resname=NULL;
+  resid=NULL;
+  chainid=NULL;
   start=NULL;
   end=NULL;
-  segid="    ";
+  segid=NULL;
   atmVec.clear();
 }
 
 void Residue::reset(){
-  resname="   ";
-  resid=0;
-  chainid=" ";
+  resname=NULL;
+  resid=NULL;
+  chainid=NULL;
   start=NULL;
   end=NULL;
-  segid="    ";
+  segid=NULL;
   atmVec.clear();
-}
-
-void Residue::setResName(std::string resnamein){
-  resname=resnamein;
-}
-
-void Residue::setResId(int residin){
-  resid=residin;
-}
-
-void Residue::setChainId(std::string chainidin){
-  chainid=chainidin;
-}
-
-void Residue::setStart(Atom* startin){
-  start=startin;
-}
-
-void Residue::setEnd(Atom* endin){
-  end=endin;
-}
-
-void Residue::setSegId(std::string segidin){
-  segid=segidin;
 }
 
 void Residue::addAtom(Atom* atmEntry){
@@ -53,19 +29,27 @@ void Residue::addAtom(Atom* atmEntry){
 }
 
 int Residue::getResId(){
-  return resid;
+  return this->getAtom(0)->getResId();
 }
 
 std::string Residue::getResName(){
-  return resname;
+  return this->getAtom(0)->getResName();
 }
 
 std::string Residue::getChainId(){
-  return chainid;
+  return this->getAtom(0)->getChainId();
+}
+
+Atom* Residue::getStart(){
+  return this->getAtom(0);
+}
+
+Atom* Residue::getEnd(){
+  return this->getAtom(atmVec.size()-1);
 }
 
 std::string Residue::getSegId(){
-  return segid;
+  return this->getAtom(0)->getSegId();
 }
 
 Atom* Residue::getAtom (int element){

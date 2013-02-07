@@ -9,30 +9,28 @@
 
 class Residue {
   private:
-    std::string resname;
-    int resid;
-    std::string chainid;
+    std::string *resname;
+    int *resid;
+    std::string *chainid;
     Atom *start;
     Atom *end;
-    std::string segid;
-    std::vector<Atom *> atmVec;
+    std::string *segid;
+    std::vector<Atom*> atmVec;
 
   public:
     Residue();
+
     void reset();
-    void setResName(std::string resnamein);
-    void setResId(int residin);
-    void setChainId(std::string chainidin);
-    void setStart(Atom* startin);
-    void setEnd(Atom* endin);
-    void setSegId(std::string segidin);
     int getResId();
     std::string getResName();
     std::string getChainId();
+    Atom* getStart();
+    Atom* getEnd();
     std::string getSegId();
     void addAtom(Atom* atmEntry);
     Atom* getAtom (int element);
     unsigned int getAtmVecSize();
+
 };
 
 #endif

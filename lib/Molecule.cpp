@@ -34,8 +34,8 @@ unsigned int Molecule::getAtmVecSize(){
   return atmVec.size();
 }
 
-void Molecule::addChain(Chain chnEntry){
-  if(chnEntry.getChainIdSize()){
+void Molecule::addChain(Chain* chnEntry){
+  if(chnEntry->getChainId().size()){ //Check if empty string
     chnVec.push_back(chnEntry);
   }
 }
@@ -47,7 +47,7 @@ void Molecule::addResidue(Residue* resEntry){
 }
 
 Chain* Molecule::getChain(int element){
-  return &(chnVec.at(element));
+  return chnVec.at(element);
 }
 
 unsigned int Molecule::getChnVecSize(){
@@ -56,7 +56,7 @@ unsigned int Molecule::getChnVecSize(){
 
 Chain* Molecule::getLastChainRef(){
   if (chnVec.size() >0){
-    return &(chnVec.at(chnVec.size()-1));
+    return chnVec.at(chnVec.size()-1);
   }
   else{
     return NULL;
