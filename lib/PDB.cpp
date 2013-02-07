@@ -8,76 +8,64 @@
 #include <stdexcept>
 
 PDB::PDB(){
-  lastChain="+";
-  newChain=false;
-  lastRes=0;
-  ter=false;
   chnMap.clear();
 }
 
-void PDB::setLastChain(std::string chainid){
-  lastChain=chainid;
-}
-
-void PDB::setNewChain(bool val){
-  newChain=val;
-}
-
-void PDB::setLastRes(int resid){
-  lastRes=resid;
-}
-
-std::string PDB::writePDBFormat (Molecule& mol){
+std::string PDB::writePDBFormat (Molecule* mol){
   std::ostringstream out;
-  Atom atm;
+  Atom *atm;
   std::string lastChain="+";
 
   out.clear();
-  for (unsigned int i=0; i<mol.getAtmVecSize(); i++){
-    atm=mol.getAtom(i);
-    if (atm.getChainId() != lastChain){
+  for (unsigned int i=0; i<mol->getAtmVecSize(); i++){
+    atm=mol->getAtom(i);
+    if (atm->getChainId() != lastChain){
       if (lastChain != "+"){
         out << "TER" << std::endl;
       }
-      lastChain=atm.getChainId();
+      lastChain=atm->getChainId();
     }
-    out << std::setw(6) << std::left << atm.getRecName(); 
-    out << std::setw(5) << std::right << atm.getAtmNum();
+    out << std::setw(6) << std::left << atm->getRecName(); 
+    out << std::setw(5) << std::right << atm->getAtmNum();
     out << " ";
-    out << std::setw(4) << std::left << atm.getAtmName();
-    out << std::setw(1) << std::left << atm.getAlt();
-    out << std::setw(3) << std::left << atm.getResName();
+    out << std::setw(4) << std::left << atm->getAtmName();
+    out << std::setw(1) << std::left << atm->getAlt();
+    out << std::setw(3) << std::left << atm->getResName();
     out << " ";
-    out << std::setw(1) << std::left << atm.getChainId();
-    out << std::setw(4) << std::right << atm.getResId();
-    out << std::setw(1) << std::left << atm.getICode();
+    out << std::setw(1) << std::left << atm->getChainId();
+    out << std::setw(4) << std::right << atm->getResId();
+    out << std::setw(1) << std::left << atm->getICode();
     out << "   ";
     out << std::fixed; //For setting precision
-    out << std::setw(8) << std::right << std::setprecision(3) << atm.getX();
-    out << std::setw(8) << std::right << std::setprecision(3) << atm.getY();
-    out << std::setw(8) << std::right << std::setprecision(3) << atm.getZ();
-    out << std::setw(6) << std::right << std::setprecision(2) << atm.getOccu();
-    out << std::setw(6) << std::right << std::setprecision(2) << atm.getBFac();
+    out << std::setw(8) << std::right << std::setprecision(3) << atm->getX();
+    out << std::setw(8) << std::right << std::setprecision(3) << atm->getY();
+    out << std::setw(8) << std::right << std::setprecision(3) << atm->getZ();
+    out << std::setw(6) << std::right << std::setprecision(2) << atm->getOccu();
+    out << std::setw(6) << std::right << std::setprecision(2) << atm->getBFac();
     out << "      ";
-    out << std::setw(4) << std::left << atm.getSegId();
+    out << std::setw(4) << std::left << atm->getSegId();
     out << std::endl;
   }
-  if (mol.getAtmVecSize()){
+  if (mol->getAtmVecSize()){
     out << "TER" << std::endl << "END" << std::endl;
   }
 
   return out.str();
 }
 
-void PDB::readPDB(Molecule& mol, std::string ifile, int model){
+Molecule* PDB::readPDB(std::string ifile, int model){
   std::ifstream pdbFile;
   std::istream* inp;
   std::string line;
   int currModel=0;
-  Chain chnEntry;
-  Residue resEntry;
-  Atom atmEntry;
+  Molecule *mol=new Molecule;
+//  Chain *chnEntry=new Chain;
+//  Residue *resEntry=new Residue;
+  Atom *atmEntry; //Created in heap by processAtomLine
+  Atom *lastAtom;
   PDB pdb;
+
+  lastAtom=NULL;
 
   if (ifile == "-"){ //Input from pipe
     inp=&std::cin;
@@ -90,28 +78,18 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
   while (!(inp->eof())){
 
     getline(*inp,line);
-
     if (line.size() > 6 && line.compare(0,6,"MODEL ")==0){
       std::stringstream(line.substr(10,4)) >> currModel;
       if (model==0){
         model=1; //Use first model if undefined
       }
     }
-    else if (line.compare(0,3,"TER")==0){
-      pdb.setTer(true); //TER found
-    }
     else if (currModel==model && line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0 || line.compare(0,5,"HETAT")==0)){
-      atmEntry=pdb.processAtomLine(line);
-      mol.addAtom(atmEntry);
-      pdb.processResidue(mol); 
-      pdb.processChain(mol);
+      atmEntry=pdb.processAtomLine(line, lastAtom);
+      mol->addAtom(atmEntry);
 
       //Update for next atom
-      pdb.setLastRes(atmEntry.getResId()); 
-      pdb.setNewChain(false);
-      pdb.setLastChain(atmEntry.getRealId());//RealId = Original chainid
-      pdb.setTer(false);
-      atmEntry.reset();
+      lastAtom=atmEntry;
     }
     else{
       continue;
@@ -121,9 +99,11 @@ void PDB::readPDB(Molecule& mol, std::string ifile, int model){
   if (ifile != "-"){
     pdbFile.close();
   }
+
+  return mol;
 }
 
-Atom PDB::processAtomLine (std::string line){
+Atom* PDB::processAtomLine (std::string line, Atom* lastAtom){
   double x,y,z;
   std::string recname; //Record name: "ATOM  ", "HETATM"
   int  atmnum; //Atom serial number
@@ -132,18 +112,17 @@ Atom PDB::processAtomLine (std::string line){
   double occu; //Occupancy
   double bfac; //B-factor or Temperature factor
   std::string segid; //Segment identifier
-  Atom atmEntry;
+  Atom *atmEntry=new Atom;
 
   //substr: first character is denoted by a value of 0 (not 1)
-  atmEntry.setRecName(line.substr(0,6));
+  atmEntry->setRecName(line.substr(0,6));
   std::stringstream(line.substr(6,5)) >> atmnum;
-  atmEntry.setAtmNum(atmnum);
-  atmEntry.setAtmName(line.substr(12,4));
-  atmEntry.setAlt(line.substr(16,1));
-  atmEntry.setResName(line.substr(17,3));
+  atmEntry->setAtmNum(atmnum);
+  atmEntry->setAtmName(line.substr(12,4));
+  atmEntry->setAlt(line.substr(16,1));
+  atmEntry->setResName(line.substr(17,3));
   chainid=line.substr(21,1);
-  if(ter || lastChain != chainid){
-    newChain=true;
+  if(lastAtom == NULL || lastAtom->getChainId() != chainid){
     //New chain, check if duplicate
     if (chnMap.find(chainid) == chnMap.end()){
       chnMap[chainid]=chnMap.size();
@@ -158,70 +137,28 @@ Atom PDB::processAtomLine (std::string line){
       chainid=" ";
     }
   }
-  atmEntry.setChainId(chainid);
-  atmEntry.setRealId(line.substr(21,1)); 
+  atmEntry->setChainId(chainid);
+  atmEntry->setRealId(line.substr(21,1)); 
   std::stringstream(line.substr(22,4)) >> resid;
-  atmEntry.setResId(resid);
-  atmEntry.setICode(line.substr(26,1));
+  atmEntry->setResId(resid);
+  atmEntry->setICode(line.substr(26,1));
   std::stringstream(line.substr(30,8)) >> x;
   std::stringstream(line.substr(38,8)) >> y;
   std::stringstream(line.substr(46,8)) >> z;
-  atmEntry.setCoor(Vector(x,y,z));
+  atmEntry->setCoor(Vector(x,y,z));
   if (line.size() >= 60){
     std::stringstream(line.substr(54,6)) >> occu;
-    atmEntry.setOccu(occu);
+    atmEntry->setOccu(occu);
   }
   if (line.size() >= 66){
     std::stringstream(line.substr(60,6)) >> bfac;
-    atmEntry.setBFac(bfac);
+    atmEntry->setBFac(bfac);
   }
   if (line.size() >= 76){
     segid=line.substr(72,4);
-    atmEntry.setSegId(segid);
+    atmEntry->setSegId(segid);
   }
-  atmEntry.setSel(1);
+  atmEntry->setSel(1);
 
   return atmEntry;
-}
-
-void PDB::processChain (Molecule& mol){
-    Atom *atmRef;
-    atmRef=mol.getLastAtomRef();
-
-    if (atmRef != NULL){
-      
-    }
-}
-
-void PDB::processResidue (Molecule& mol){
-  Residue *resRef;
-  Atom *atmRef;
-  Residue resEntry;
-
-  resRef=mol.getLastResidueRef();
-  atmRef=mol.getLastAtomRef();
-
-  if (atmRef != NULL){
-    if (lastRes != atmRef->getResId() || newChain == true){
-      resEntry.setResName(atmRef->getResName());
-      resEntry.setResId(atmRef->getResId());
-      resEntry.setChainId(atmRef->getChainId());
-      resEntry.setStart(atmRef);
-      resEntry.setEnd(atmRef);
-      resEntry.setSegId(atmRef->getSegId());
-      resEntry.addAtom(atmRef);
-      mol.addResidue(resEntry);
-    }
-    else{
-      if (resRef == NULL)
-        throw std::runtime_error("PDB::processResidue: resRef is NULL\n");
-
-      resRef->setEnd(atmRef); //Update "end"
-      //resRef->addAtom(atmRef); //Add atom reference to vector
-    }
-  }
-}
-
-void PDB::setTer (bool val){
-  ter=val;
 }

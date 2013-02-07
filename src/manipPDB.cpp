@@ -1,6 +1,7 @@
 //Sean M. Law
 
 #include "Molecule.hpp"
+#include "PDB.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -48,25 +49,9 @@ int main (int argc, char **argv){
     usage();
   }
 
-  Molecule *mol = new Molecule;
-  mol->readPDB(pdb, model);
-
-  for (unsigned int i=0; i<mol->getResVecSize(); i++){
-    Residue *res=mol->getResidue(i);
-    for (unsigned int j=0; j<res->getAtmVecSize(); j++){
-      //Atom *atm=res->getAtom(j);
-      //Looks like getAtom(j) is pointing to the wrong place! *atm is not NULL though
-      //cout << res->getResId() << ":" << atm->getResName() << endl;
-    }
-  }
+  Molecule *mol=Molecule::readPDB(pdb, model);
 
   mol->writePDB();
-
-  /*
-  for (int i=0; i<mol->getChnVecSize(); i++){
-    cout << mol->getChain(i).getChainId() << endl;
-  }
-  */
 
   /*
   cout << mol->getAtom(0).getCoor().x() ;

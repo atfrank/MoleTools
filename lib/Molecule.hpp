@@ -9,16 +9,16 @@
 class Molecule {
   private:
     std::vector<Chain> chnVec;
-    std::vector<Residue> resVec;
-    std::vector<Atom> atmVec;
+    std::vector<Residue*> resVec;
+    std::vector<Atom*> atmVec;
 
   public:
-    int readPDB (std::string ifile, int model=0);
+    static Molecule* readPDB (std::string ifile, int model=0);
     int writePDB ();
-    void addAtom(Atom atmEntry);
-    Atom getAtom(int element); //This should not be pointer!
+    void addAtom(Atom* atmEntry);
+    Atom* getAtom(int element); //This should not be pointer!
     void addChain(Chain chnEntry);
-    void addResidue(Residue resEntry);
+    void addResidue(Residue* resEntry);
     Chain* getChain(int element);
     unsigned int getChnVecSize();
     Chain* getLastChainRef();

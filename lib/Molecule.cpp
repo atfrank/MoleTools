@@ -3,31 +3,30 @@
 #include "Molecule.hpp"
 #include "PDB.hpp"
 
-int Molecule::readPDB (std::string ifile, int model){
- 
-  PDB::readPDB(*this, ifile, model);
+Molecule* Molecule::readPDB (std::string ifile, int model){
 
-  return 0;
+  return PDB::readPDB(ifile, model);
+
 }
 
 int Molecule::writePDB(){
 
   std::string out;
 
-  out=PDB::writePDBFormat(*this);
+  out=PDB::writePDBFormat(this);
 
   std::cout << out;
 
   return 0;
 }
 
-void Molecule::addAtom(Atom atmEntry) {
-  if (atmEntry.getAtmNum()){
+void Molecule::addAtom(Atom* atmEntry) {
+  if (atmEntry->getAtmNum()){
     atmVec.push_back(atmEntry);
   }
 }
 
-Atom Molecule::getAtom(int element){
+Atom* Molecule::getAtom(int element){
   return atmVec.at(element);
 }
 
@@ -41,8 +40,8 @@ void Molecule::addChain(Chain chnEntry){
   }
 }
 
-void Molecule::addResidue(Residue resEntry){
-  if (resEntry.getResId()){
+void Molecule::addResidue(Residue* resEntry){
+  if (resEntry->getResId()){
     resVec.push_back(resEntry);
   }
 }
@@ -70,7 +69,7 @@ unsigned int Molecule::getResVecSize(){
 
 Residue* Molecule::getLastResidueRef(){
   if (resVec.size() > 0){
-    return &(resVec.at(resVec.size()-1));
+    return resVec.at(resVec.size()-1);
   }
   else{
     return NULL;
@@ -78,12 +77,12 @@ Residue* Molecule::getLastResidueRef(){
 }
 
 Residue* Molecule::getResidue(int element){
-  return &(resVec.at(element));
+  return resVec.at(element);
 }
 
 Atom* Molecule::getLastAtomRef(){
   if (atmVec.size() >0){
-    return &(atmVec.at(atmVec.size()-1));
+    return atmVec.at(atmVec.size()-1);
   }
   else{
     return NULL;
