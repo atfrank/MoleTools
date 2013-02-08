@@ -15,6 +15,7 @@ class Molecule {
   public:
     static Molecule* readPDB (std::string ifile, int model=0);
     int writePDB ();
+    Molecule* clone();
     void addAtom(Atom* atmEntry);
     Atom* getAtom(int element); 
     void addChain(Chain* chnEntry);
