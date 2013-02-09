@@ -17,7 +17,7 @@ Atom::Atom(){
   occu=0.0;
   bfac=0.0;
   segid="   ";
-  sel=0;
+  sel=true;
 }
 
 Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int residin, Vector coorin, std::string segidin){
@@ -34,7 +34,7 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
   occu=0.0;
   bfac=0.0;
   segid=segidin;
-  sel=0;
+  sel=true;
 }
 
 void Atom::reset(){
@@ -50,7 +50,7 @@ void Atom::reset(){
   occu=0.0;
   bfac=0.0;
   segid="    ";
-  sel=0;
+  sel=true;
 }
 
 //Get atom info
@@ -118,7 +118,7 @@ std::string& Atom::getSegId(){
   return segid;
 }
 
-int& Atom::getSel(){
+bool& Atom::getSel(){
   return sel;
 }
 
@@ -205,6 +205,6 @@ void Atom::setSegId(){
   segid="    ";
 }
 
-void Atom::setSel(const int selin){
+void Atom::setSel(const bool selin){
   sel=selin;
 }

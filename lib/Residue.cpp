@@ -10,6 +10,7 @@ Residue::Residue (){
   end=NULL;
   segid=NULL;
   atmVec.clear();
+  sel=true;
 }
 
 void Residue::reset(){
@@ -20,6 +21,7 @@ void Residue::reset(){
   end=NULL;
   segid=NULL;
   atmVec.clear();
+  sel=true;
 }
 
 void Residue::addAtom(Atom* atmEntry){
@@ -58,4 +60,12 @@ Atom* Residue::getAtom (int element){
 
 unsigned int Residue::getAtmVecSize (){
   return atmVec.size();
+}
+
+void Residue::setSel (bool selin){
+  sel=selin;
+}
+
+bool& Residue::getSel (){
+  return sel;
 }

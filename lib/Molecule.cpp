@@ -30,8 +30,9 @@ Molecule* Molecule::clone (){
   //Deep copy
   Molecule *cmol=new Molecule;
 
+
   //Create new Chains, Residues, Atoms
-  
+    
   //Adjust pointers
   return cmol;
 }

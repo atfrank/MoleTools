@@ -12,6 +12,7 @@ class Chain {
     std::string *id;
     std::vector<Residue *> resVec; //Vector of residue pointers
     std::vector<Atom *> atmVec; //Vector of atom pointers
+    bool sel;
 
   public:
     Chain();
@@ -27,6 +28,8 @@ class Chain {
     std::string getChainId();
     unsigned int getAtmVecSize();
     unsigned int getResVecSize();
+    void setSel(bool selin);
+    bool& getSel();
 };
 
 #endif

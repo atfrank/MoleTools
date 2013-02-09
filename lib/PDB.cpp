@@ -192,7 +192,7 @@ Atom* PDB::processAtomLine (std::string line, Atom* lastAtom){
     segid=line.substr(72,4);
     atmEntry->setSegId(segid);
   }
-  atmEntry->setSel(1);
+  atmEntry->setSel(true);
 
   return atmEntry;
 }
