@@ -51,6 +51,8 @@ int main (int argc, char **argv){
 
   Molecule *mol=Molecule::readPDB(pdb, model);
 
+  mol->clone();
+
   mol->writePDB();
 
   /*

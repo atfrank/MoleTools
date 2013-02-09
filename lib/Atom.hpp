@@ -33,6 +33,7 @@ class Atom {
     Atom(int atmnum, std::string atmname, std::string resname, int resnum, Vector vec, std::string seg=0); //Overload constructor
 
     void reset();
+    void clone(Atom* atmin);
 
     //Get atom info
     std::string& getRecName();

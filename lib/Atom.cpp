@@ -53,6 +53,22 @@ void Atom::reset(){
   sel=true;
 }
 
+void Atom::clone(Atom* atmin){
+  recname=atmin->getRecName();
+  atmnum=atmin->getAtmNum();
+  atmname=atmin->getAtmName();
+  alt=atmin->getAlt();
+  resname=atmin->getResName();
+  chainid=atmin->getChainId();
+  realid=atmin->getRealId();
+  resid=atmin->getResId();
+  coor=atmin->getCoor();
+  occu=atmin->getOccu();
+  bfac=atmin->getBFac();
+  segid=atmin->getSegId();
+  sel=atmin->getSel();
+}
+
 //Get atom info
 std::string& Atom::getRecName(){
   return recname;

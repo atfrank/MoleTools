@@ -28,13 +28,21 @@ void Molecule::addAtom(Atom* atmEntry) {
 
 Molecule* Molecule::clone (){
   //Deep copy
-  Molecule *cmol=new Molecule;
+  Molecule *mol=new Molecule;
+  Atom *lastAtom;
 
+  lastAtom=NULL;
 
   //Create new Chains, Residues, Atoms
-    
+  for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+    Atom *atmEntry=new Atom;
+    atmEntry->clone(this->getAtom(i)); //Clone Atom
+    mol->addAtom(atmEntry);
+
+  }
+
   //Adjust pointers
-  return cmol;
+  return mol;
 }
 
 Atom* Molecule::getAtom(int element){
