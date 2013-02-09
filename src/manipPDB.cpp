@@ -54,8 +54,8 @@ int main (int argc, char **argv){
   Molecule *cmol=mol->clone();
   cmol->resetSel();
 
-  mol->writePDB();
-//  cmol->writePDB();
+//  mol->writePDB();
+  cmol->writePDB();
 
   /*
   cout << mol->getAtom(0).getCoor().x() ;

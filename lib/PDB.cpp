@@ -17,11 +17,14 @@ std::string PDB::writePDBFormat (Molecule* mol){
   Residue *res;
   Atom *atm;
   std::string lastChain="+";
+  int natom=0;
+  int catom=0;
 
   out.clear();
 
   for (unsigned int i=0; i< mol->getChnVecSize(); i++){
     chn=mol->getChain(i);
+    catom=0;
     if(!chn->getSel()){continue;}
     for (unsigned int j=0; j< chn->getResVecSize(); j++){
       res=chn->getResidue(j);
@@ -49,12 +52,18 @@ std::string PDB::writePDBFormat (Molecule* mol){
         out << "      ";
         out << std::setw(4) << std::left << atm->getSegId();
         out << std::endl;
+        natom++;
+        catom++;
       }
     }
-    out << "TER" << std::endl;
+    if (catom>0){
+      out << "TER" << std::endl;
+    }
   }
 
-  out << "END" << std::endl;
+  if (natom > 0){
+    out << "END" << std::endl;
+  }
 
   return out.str();
 }
