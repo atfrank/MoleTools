@@ -55,6 +55,7 @@ int main (int argc, char **argv){
   cmol->deselAll();
   cmol->selAll();
 
+  cmol->select("A:_B:");
 //  mol->writePDB();
   cmol->writePDB();
 

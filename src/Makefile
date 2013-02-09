@@ -22,11 +22,12 @@ manipPDB: $(BINDIR)/manipPDB;
 $(BINDIR)/manipPDB: $(OBJDIR)/manipPDB.o $(OBJDIR)/Molecule.o \
 			$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
 			$(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
-			$(OBJDIR)/PDB.o $(OBJDIR)/Select.o
+			$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
+			$(OBJDIR)/Misc.o
 		$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ \
 			$(OBJDIR)/manipPDB.o $(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
 			$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
-			$(OBJDIR)/PDB.o $(OBJDIR)/Select.o
+			$(OBJDIR)/PDB.o $(OBJDIR)/Select.o $(OBJDIR)/Misc.o
 
 $(OBJDIR)/manipPDB.o: manipPDB.cpp \
     	$(LIBDIR)/PDB.hpp
@@ -58,6 +59,9 @@ $(OBJDIR)/Vector.o: $(LIBDIR)/Vector.cpp $(LIBDIR)/Vector.hpp
 $(OBJDIR)/Select.o: $(LIBDIR)/Select.cpp $(LIBDIR)/Select.hpp \
 		$(LIBDIR)/Molecule.hpp
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c $(LIBDIR)/Select.cpp
+
+$(OBJDIR)/Misc.o: $(LIBDIR)/Misc.cpp $(LIBDIR)/Misc.hpp
+	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c $(LIBDIR)/Misc.cpp
 
 clean:
 	rm -rf $(BINDIR)/*

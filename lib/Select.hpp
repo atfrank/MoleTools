@@ -15,7 +15,7 @@ class Select {
 
   public:
     static void makeSel(Molecule* mol, std::string sel);
-    void parseSel(std::string sel);
+    static void parseSel(std::string sel);
 };
 
 #endif
