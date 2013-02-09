@@ -25,7 +25,9 @@ class Molecule {
     unsigned int getResVecSize();
     unsigned int getAtmVecSize();
     Residue* getResidue(int element);
-    void resetSel();
+    void selAll();
+    void deselAll();
+    void select(std::string sel);
 };
 
 #endif

@@ -56,7 +56,7 @@ bool& Chain::getSel(){
   return sel;
 }
 
-void Chain::resetSel(){
+void Chain::selAll(){
   sel=true;
   unsigned int i;
   for (i=0; i< this->getResVecSize(); i++){
@@ -65,4 +65,15 @@ void Chain::resetSel(){
   for (i=0; i< this->getAtmVecSize(); i++){
     this->getAtom(i)->setSel(true);
   }
+}
+
+void Chain::deselAll(){
+  sel=false;
+  unsigned int i;
+  for (i=0; i< this->getResVecSize(); i++){
+    this->getResidue(i)->setSel(false);
+  }
+  for (i=0; i< this->getAtmVecSize(); i++){
+    this->getAtom(i)->setSel(false);
+  }  
 }

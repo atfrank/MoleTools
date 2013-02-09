@@ -2,6 +2,7 @@
 
 #include "Molecule.hpp"
 #include "PDB.hpp"
+#include "Select.hpp"
 
 Molecule* Molecule::readPDB (std::string ifile, int model){
 
@@ -119,7 +120,7 @@ Residue* Molecule::getResidue(int element){
   return resVec.at(element);
 }
 
-void Molecule::resetSel(){
+void Molecule::selAll(){
   unsigned int i;
   for (i=0; i< this->getChnVecSize(); i++){
     this->getChain(i)->setSel(true);
@@ -130,4 +131,21 @@ void Molecule::resetSel(){
   for (i=0; i< this->getAtmVecSize(); i++){
     this->getAtom(i)->setSel(true);
   }
+}
+
+void Molecule::deselAll(){
+  unsigned int i;
+  for (i=0; i< this->getChnVecSize(); i++){
+    this->getChain(i)->setSel(false);
+  }
+  for (i=0; i< this->getResVecSize(); i++){
+    this->getResidue(i)->setSel(false);
+  }
+  for (i=0; i< this->getAtmVecSize(); i++){
+    this->getAtom(i)->setSel(false);
+  }
+}
+
+void Molecule::select(std::string sel){
+  Select::makeSel(this, sel);
 }

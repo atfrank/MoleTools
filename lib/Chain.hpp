@@ -30,7 +30,8 @@ class Chain {
     unsigned int getResVecSize();
     void setSel(bool selin);
     bool& getSel();
-    void resetSel();
+    void selAll();
+    void deselAll();
 };
 
 #endif

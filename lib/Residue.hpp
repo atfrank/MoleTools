@@ -33,7 +33,8 @@ class Residue {
     unsigned int getAtmVecSize();
     void setSel(bool selin);
     bool& getSel();
-    void resetSel();
+    void selAll();
+    void deselAll();
 };
 
 #endif
