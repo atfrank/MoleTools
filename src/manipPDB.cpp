@@ -51,9 +51,11 @@ int main (int argc, char **argv){
 
   Molecule *mol=Molecule::readPDB(pdb, model);
 
-  mol->clone();
+  Molecule *cmol=mol->clone();
+  cmol->resetSel();
 
   mol->writePDB();
+//  cmol->writePDB();
 
   /*
   cout << mol->getAtom(0).getCoor().x() ;

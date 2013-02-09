@@ -55,3 +55,14 @@ void Chain::setSel(bool selin){
 bool& Chain::getSel(){
   return sel;
 }
+
+void Chain::resetSel(){
+  sel=true;
+  unsigned int i;
+  for (i=0; i< this->getResVecSize(); i++){
+    this->getResidue(i)->setSel(true);
+  }
+  for (i=0; i< this->getAtmVecSize(); i++){
+    this->getAtom(i)->setSel(true);
+  }
+}

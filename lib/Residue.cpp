@@ -69,3 +69,10 @@ void Residue::setSel (bool selin){
 bool& Residue::getSel (){
   return sel;
 }
+
+void Residue::resetSel(){
+  sel=true;
+  for(unsigned int i=0; i< this->getAtmVecSize(); i++){
+    this->getAtom(i)->setSel(true);
+  }
+}

@@ -29,19 +29,57 @@ void Molecule::addAtom(Atom* atmEntry) {
 Molecule* Molecule::clone (){
   //Deep copy
   Molecule *mol=new Molecule;
+  Chain *chnEntry=new Chain;
+  Residue *resEntry=new Residue;
+  Atom *atmEntry;
   Atom *lastAtom;
 
+  atmEntry=NULL;
   lastAtom=NULL;
 
   //Create new Chains, Residues, Atoms
   for (unsigned int i=0; i< this->getAtmVecSize(); i++){
-    Atom *atmEntry=new Atom;
+    //if(!this->getAtom(i)->getSel()){continue;}
+    atmEntry=new Atom; //This is necessary!
     atmEntry->clone(this->getAtom(i)); //Clone Atom
+
+    /*****Same as PDB::readPDB*******/
     mol->addAtom(atmEntry);
 
-  }
+    //Residue/Chain
+    if (lastAtom == NULL){
+      resEntry->addAtom(atmEntry);
+      chnEntry->addAtom(atmEntry);
+    }
+    else if (atmEntry->getChainId() != lastAtom->getChainId()) {
+      //Store last
+      chnEntry->addResidue(resEntry);
+      mol->addResidue(resEntry);
+      mol->addChain(chnEntry);
+      //Create new
+      chnEntry=new Chain;
+      chnEntry->addAtom(atmEntry);
+      resEntry=new Residue;
+      resEntry->addAtom(atmEntry);
+    }
+    else if (lastAtom->getResId() != atmEntry->getResId()){
+      chnEntry->addResidue(resEntry);
+      mol->addResidue(resEntry);
+      resEntry=new Residue;
+      resEntry->addAtom(atmEntry);
+    }
+    else{
+      resEntry->addAtom(atmEntry);
+    }
 
-  //Adjust pointers
+    //Update for next atom
+    lastAtom=atmEntry;
+  }
+  chnEntry->addResidue(resEntry);
+  mol->addResidue(resEntry);
+  mol->addChain(chnEntry);
+  /**************************/
+
   return mol;
 }
 
@@ -79,4 +117,17 @@ unsigned int Molecule::getResVecSize(){
 
 Residue* Molecule::getResidue(int element){
   return resVec.at(element);
+}
+
+void Molecule::resetSel(){
+  unsigned int i;
+  for (i=0; i< this->getChnVecSize(); i++){
+    this->getChain(i)->setSel(true);
+  }
+  for (i=0; i< this->getResVecSize(); i++){
+    this->getResidue(i)->setSel(true);
+  }
+  for (i=0; i< this->getAtmVecSize(); i++){
+    this->getAtom(i)->setSel(true);
+  }
 }

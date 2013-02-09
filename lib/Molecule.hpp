@@ -25,6 +25,7 @@ class Molecule {
     unsigned int getResVecSize();
     unsigned int getAtmVecSize();
     Residue* getResidue(int element);
+    void resetSel();
 };
 
 #endif
