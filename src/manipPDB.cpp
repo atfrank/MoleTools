@@ -27,6 +27,7 @@ int main (int argc, char **argv){
   int model=0;
   string pdb;
   string currArg;
+  string sel;
 
   pdb.clear();
   
@@ -38,6 +39,10 @@ int main (int argc, char **argv){
     else if (currArg == "-model"){
       currArg=argv[++i];
       stringstream(currArg) >> model; //atoi
+    }
+    else if (currArg == "-nsel"){
+      currArg=argv[++i];
+      sel=currArg;
     }
     else{
       pdb=currArg;
@@ -55,7 +60,10 @@ int main (int argc, char **argv){
   cmol->deselAll();
   cmol->selAll();
 
-  cmol->select("A:_B:");
+  if (sel.length() >0){
+    cmol->select(sel);
+  }
+
 //  mol->writePDB();
   cmol->writePDB();
 

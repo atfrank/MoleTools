@@ -13,6 +13,10 @@ std::vector<std::string> Misc::split (const std::string &str, const std::string 
       std::string token=str.substr(p0, p1-p0);
       tokens.push_back(token);
     }
+    else{
+      //Nothing inbetween delimiters
+      tokens.push_back("");
+    }
     p0=str.find_first_not_of(delim, p1);
   }
 

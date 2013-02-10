@@ -3,20 +3,23 @@
 #define SELECT_H
 
 #include <Molecule.hpp>
-#include <map>
+#include <vector>
 
 class Select {
   private:
-    /*
-    std::map<std::string, int> chainIdMap;
-    std::map<std::string, int> segIdMap;
-    std::map<std::string, int> resNameMap;
-    std::map<std::string, int> resIdMap;
-    std::map<std::string, int> atmNameMap;
-*/
+    struct Selection {
+      std::vector<std::string> chainids;
+      std::vector<std::string> segids;
+      std::vector<std::string> resnames;
+      std::vector<int> resids;
+      std::vector<std::string> atmnames;
+      void clear();
+    };
+    std::vector<Selection> selVec;
+
   public:
-    static void makeSel(Molecule* mol, std::string sel);
-    static void parseSel(std::string sel);
+    static void makeSel(Molecule* mol, std::string selin);
+    static void parseSel(std::string selin);
 };
 
 #endif
