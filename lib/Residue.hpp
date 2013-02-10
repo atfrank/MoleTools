@@ -16,7 +16,7 @@ class Residue {
     Atom *end;
     std::string *segid;
     std::vector<Atom*> atmVec;
-    bool sel;
+//    bool sel;
 
   public:
     Residue();
@@ -31,8 +31,8 @@ class Residue {
     void addAtom(Atom* atmEntry);
     Atom* getAtom (int element);
     unsigned int getAtmVecSize();
-    void setSel(bool selin);
-    bool& getSel();
+//    void setSel(bool selin);
+//    bool& getSel();
     void selAll();
     void deselAll();
 };

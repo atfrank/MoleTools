@@ -122,12 +122,12 @@ Residue* Molecule::getResidue(int element){
 
 void Molecule::selAll(){
   unsigned int i;
-  for (i=0; i< this->getChnVecSize(); i++){
-    this->getChain(i)->setSel(true);
-  }
-  for (i=0; i< this->getResVecSize(); i++){
-    this->getResidue(i)->setSel(true);
-  }
+//  for (i=0; i< this->getChnVecSize(); i++){
+//    this->getChain(i)->setSel(true);
+//  }
+//  for (i=0; i< this->getResVecSize(); i++){
+//    this->getResidue(i)->setSel(true);
+//  }
   for (i=0; i< this->getAtmVecSize(); i++){
     this->getAtom(i)->setSel(true);
   }
@@ -135,12 +135,12 @@ void Molecule::selAll(){
 
 void Molecule::deselAll(){
   unsigned int i;
-  for (i=0; i< this->getChnVecSize(); i++){
-    this->getChain(i)->setSel(false);
-  }
-  for (i=0; i< this->getResVecSize(); i++){
-    this->getResidue(i)->setSel(false);
-  }
+//  for (i=0; i< this->getChnVecSize(); i++){
+//    this->getChain(i)->setSel(false);
+//  }
+//  for (i=0; i< this->getResVecSize(); i++){
+//    this->getResidue(i)->setSel(false);
+//  }
   for (i=0; i< this->getAtmVecSize(); i++){
     this->getAtom(i)->setSel(false);
   }

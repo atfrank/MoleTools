@@ -6,14 +6,14 @@ Chain::Chain (){
   id=NULL;
   resVec.clear();
   atmVec.clear();
-  sel=true;
+//  sel=true;
 }
 
 void Chain::reset(){
   id=NULL;
   resVec.clear();
   atmVec.clear();
-  sel=true;
+//  sel=true;
 }
 
 void Chain::addResidue(Residue* resEntry){
@@ -48,31 +48,31 @@ unsigned int Chain::getResVecSize(){
   return resVec.size();
 }
 
-void Chain::setSel(bool selin){
-  sel=selin;
-}
+//void Chain::setSel(bool selin){
+//  sel=selin;
+//}
 
-bool& Chain::getSel(){
-  return sel;
-}
+//bool& Chain::getSel(){
+//  return sel;
+//}
 
 void Chain::selAll(){
-  sel=true;
+//  sel=true;
   unsigned int i;
-  for (i=0; i< this->getResVecSize(); i++){
-    this->getResidue(i)->setSel(true);
-  }
+//  for (i=0; i< this->getResVecSize(); i++){
+//    this->getResidue(i)->setSel(true);
+//  }
   for (i=0; i< this->getAtmVecSize(); i++){
     this->getAtom(i)->setSel(true);
   }
 }
 
 void Chain::deselAll(){
-  sel=false;
+//  sel=false;
   unsigned int i;
-  for (i=0; i< this->getResVecSize(); i++){
-    this->getResidue(i)->setSel(false);
-  }
+//  for (i=0; i< this->getResVecSize(); i++){
+//    this->getResidue(i)->setSel(false);
+//  }
   for (i=0; i< this->getAtmVecSize(); i++){
     this->getAtom(i)->setSel(false);
   }  

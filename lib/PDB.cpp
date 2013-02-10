@@ -25,10 +25,10 @@ std::string PDB::writePDBFormat (Molecule* mol){
   for (unsigned int i=0; i< mol->getChnVecSize(); i++){
     chn=mol->getChain(i);
     catom=0;
-    if(!chn->getSel()){continue;}
+    //if(!chn->getSel()){continue;}
     for (unsigned int j=0; j< chn->getResVecSize(); j++){
       res=chn->getResidue(j);
-      if(!res->getSel()){continue;}
+      //if(!res->getSel()){continue;}
       for (unsigned int k=0; k< res->getAtmVecSize(); k++){
         atm=res->getAtom(k);
         if (!atm->getSel()){continue;}
