@@ -13,39 +13,67 @@ void Select::makeSel (Molecule* mol, std::string selin){
 
   sel->parseSel(selin);
 
+  mol->deselAll();
+
   for (i=0; i< sel->selVec.size(); i++){
     Select::Selection p=sel->selVec.at(i);
     for (j=0; j< mol->getAtmVecSize(); j++){
       Atom *atm=mol->getAtom(j);
+      if (atm->getSel() == true){
+        continue; //Already satisfied previous selection
+      }
      
-      //std::cerr << atm->getSummary() << std::endl;
       //Check chainid
       flag=false;
       for (k=0; k< p.chainids.size(); k++){
-        if (atm->getChainId().find(p.chainids.at(k))){
+        if (atm->getChainId().find(p.chainids.at(k)) != std::string::npos){
           flag=true;
           break;
         }
       }
-      atm->setSel(flag);
-      if (flag == false){
+      if (flag == false && p.chainids.size()){
         continue; //Next atom
       }
-      
-      //std::cerr << atm->getSummary() << std::endl;
+     
       //Check resname
       flag=false;
       for (k=0; k< p.resnames.size(); k++){
-        if (atm->getResName().find(p.resnames.at(k))){
+        if (atm->getResName().find(p.resnames.at(k)) != std::string::npos){
           flag=true;
           break;
         }
       }
-      atm->setSel(flag);
-      if (flag == false){
+      if (flag == false && p.resnames.size()){
+        continue; //Next atom
+      }
+
+      //Check resid
+      flag=false;
+      for (k=0; k< p.resids.size(); k++){
+        if (atm->getResId() == p.resids.at(k)){
+          flag=true;
+          break;
+        }
+      }
+      if (flag == false && p.resids.size()){
+        continue; //Next atom
+      }
+
+
+      //Check atmname
+      flag=false;
+      for (k=0; k< p.atmnames.size(); k++){
+        if (atm->getAtmName().find(p.atmnames.at(k)) != std::string::npos){
+          flag=true;
+          break;
+        }
+      }
+      if (flag == false && p.atmnames.size()){
         continue; //Next atom
       }
       
+      //Passed ALL checks
+      atm->setSel(true);
     }
   }
 }

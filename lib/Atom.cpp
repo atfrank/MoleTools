@@ -70,7 +70,7 @@ void Atom::clone(Atom* atmin){
   bfac=atmin->getBFac();
   segid=atmin->getSegId();
   sel=atmin->getSel();
-  sel=true;
+  summary=atmin->getSummary();
 }
 
 //Get atom info

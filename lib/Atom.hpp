@@ -27,7 +27,8 @@ class Atom {
     double bfac; //B-factor or Temperature factor
     std::string segid; //Segment identifier
     bool sel; //Selection flag
-    std::string summary;
+    std::string summary; //A:GLY1.CA style summary
+    //All additional fields must also be added to Atom::clone() function!!
 
   public:
     Atom(); //Constructor
