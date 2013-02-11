@@ -48,3 +48,23 @@ bool Misc::isalpha (const std::string &str){
 bool Misc::isrange (const std::string &str){
   return str.find_first_not_of("0123456789-") == std::string::npos;
 }
+
+std::string Misc::trim (const std::string &str, const std::string t){
+  std::string out=str;
+
+  size_t pos = out.find_last_not_of(t);
+  if (pos != std::string::npos){
+    if (out.length() != pos+1){
+      out.erase(pos+1);
+    }
+    pos=out.find_first_not_of(t);
+    if (pos != 0){
+      out.erase(0, pos);
+    }
+  }
+  else{
+    out="";
+  }
+
+  return out;
+}
