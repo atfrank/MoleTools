@@ -37,31 +37,14 @@ std::vector<std::string> Misc::split (const std::string &str, const std::string 
   return tokens;
 }
 
-std::vector<int> Misc::splitAtoI (const std::string &str, const std::string &delim){
-  std::vector<int> outTokens;
-  std::vector<std::string> inTokens;
-  int atoi;
-
-  inTokens=Misc::split(str,delim);
-  for (unsigned int i=0; i< inTokens.size(); i++){
-    std::stringstream(inTokens.at(i)) >> atoi;
-    outTokens.push_back(atoi);
-  }
-
-  return outTokens;
+bool Misc::isdigit (const std::string &str){
+  return str.find_first_not_of("0123456789") == std::string::npos;
 }
 
-std::vector<double> Misc::splitAtoF (const std::string &str, const std::string &delim){
-  std::vector<double> outTokens;
-  std::vector<std::string> inTokens;
-  int atof;
-
-  inTokens=Misc::split(str,delim);
-  for (unsigned int i=0; i< inTokens.size(); i++){
-    std::stringstream(inTokens.at(i)) >> atof;
-    outTokens.push_back(atof);
-  }
-
-  return outTokens;
+bool Misc::isalpha (const std::string &str){
+  return str.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz") == std::string::npos;
 }
 
+bool Misc::isrange (const std::string &str){
+  return str.find_first_not_of("0123456789-") == std::string::npos;
+}

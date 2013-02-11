@@ -13,8 +13,9 @@ class Misc {
 
   public:
     static std::vector<std::string> split (const std::string &str, const std::string &delim, const bool repeat=true);
-    static std::vector<int> splitAtoI (const std::string &str, const std::string &delim);
-    static std::vector<double> splitAtoF (const std::string &str, const std::string &delim);
+    static bool isdigit (const std::string &str);
+    static bool isalpha (const std::string &str);
+    static bool isrange (const std::string &str);
 };
 
 #endif

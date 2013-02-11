@@ -3,6 +3,7 @@
 #define SELECT_H
 
 #include <Molecule.hpp>
+
 #include <vector>
 
 class Select {
@@ -19,7 +20,8 @@ class Select {
 
   public:
     static void makeSel(Molecule* mol, std::string selin);
-    static void parseSel(std::string selin);
+    void parseSel(std::string selin);
+
 };
 
 #endif
