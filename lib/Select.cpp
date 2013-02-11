@@ -11,10 +11,8 @@ void Select::makeSel (Molecule* mol, std::string selin){
 
 void Select::parseSel (std::string selin){
   std::vector<std::string> nExpr;
-  std::vector<std::string> chnSeg_ResAtm;
-  std::vector<std::string> chnSeg;
-  std::vector<std::string> resAtm;
-  std::vector<std::string> res;
+  std::vector<std::string> all;
+  std::vector<std::string> tmp;
   Selection expr; //Declare a selection expression
   unsigned int i, j, k;
   int nColon, nPeriod;
@@ -35,48 +33,82 @@ void Select::parseSel (std::string selin){
         nPeriod++;
       }
     }
-    if (nColon > 1 || nPeriod > 1){
-      std::cerr << "Warning: Skipping invalid selection syntax in \"";
+    if (nColon != 1 || nPeriod != 1){
+      std::cerr << std::endl;
+      std::cerr << "Warning: Skipping invalid selection expression syntax in \"";
       std::cerr << nExpr.at(i) << "\"" << std::endl;
+      std::cerr << "Valid selection expression syntax:" << std::endl;
+      std::cerr << "[!][[^]segid|chainid[+|/...]]<:>[[^]resid|resname|range[+|/...]]<.>[[^]atmname|key[+|/...]]";
+      std::cerr << std::endl << std::endl;
       continue; //Evaluate next expression
     }
 
     //Split Chains/Segments from Residues/Atoms
-    if (nColon){
-      chnSeg_ResAtm=Misc::split(nExpr.at(i), ":");
+    all=Misc::split(nExpr.at(i), ":.");
 
-      chnSeg=Misc::split(chnSeg_ResAtm.at(0), "+");
+    for (j=0; j< all.size(); j++){
+//      std::cerr << all.at(j) << std::endl;
+    }
 
-      for (j=0; j< chnSeg.size(); j++){
-        if (chnSeg.at(j).length() == 4){
-          expr.segids.push_back(chnSeg.at(j));
-        }
-        else if (chnSeg.at(j).length() == 1){
-          expr.chainids.push_back(chnSeg.at(j));
-        }
-        else if (chnSeg.at(j) == ""){
-          continue; //Colon in front
-        }
-        else{
-          std::cerr << "Warning: Skipping invalid Chain/Segment \"";
-          std::cerr << chnSeg.at(j) << "\"" << std::endl;
-        }
+    /*
+    //Chains/Segments
+    tmp=Misc::split(all.at(0), "+");
+
+    for (j=0; j< tmp.size(); j++){
+      if (tmp.at(j).length() >= 4){
+        expr.segids.push_back(tmp.at(j));
       }
-
-      if (chnSeg_ResAtm.size() == 2){
-
-        resAtm=Misc::split(chnSeg_ResAtm.at(1), ".");
-
-        res=Misc::split(resAtm.at(0), "+");
-        for (k=0; k< resAtm.size(); k++){
-          
-        }
+      else if (tmp.at(j).length() >= 1){
+        expr.chainids.push_back(tmp.at(j));
+      }
+      else if (tmp.at(j) == ""){
+        continue; //Colon in front
+      }
+      else{
+        std::cerr << "Warning: Skipping unrecognized Chain/Segment format\"";
+        std::cerr << tmp.at(j) << "\"" << std::endl;
       }
     }
-    else if (nPeriod){
-      
-      //std::cerr <<
+
+    //Residues
+    tmp=Misc::split(all.at(1), "+");
+
+    for (j=0; j< tmp.size(); j++){
+      if (tmp.at(j).length() >= 4){
+//        expr.segids.push_back(tmp.at(j));
+      }
+      else if (tmp.at(j).length() >= 1){
+//        expr.chainids.push_back(tmp.at(j));
+      }
+      else if (tmp.at(j) == ""){
+        continue; //Colon in front
+      }
+      else{
+        std::cerr << "Warning: Skipping unrecognized Residue format\"";
+        std::cerr << tmp.at(j) << "\"" << std::endl;
+      }
     }
+
+/*    
+    //Atoms
+    tmp=Misc::split(all.at(2), "+");
+
+    for (j=0; j< tmp.size(); j++){
+      if (tmp.at(j).length() >= 4){
+        expr.segids.push_back(tmp.at(j));
+      }
+      else if (tmp.at(j).length() >= 1){
+        expr.chainids.push_back(tmp.at(j));
+      }
+      else if (tmp.at(j) == ""){
+        continue; //Colon in front
+      }
+      else{
+        std::cerr << "Warning: Skipping unrecognized Atom format\"";
+        std::cerr << tmp.at(j) << "\"" << std::endl;
+      }
+    }
+*/
     //push to selVec;
   }
   

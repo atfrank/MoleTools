@@ -2,22 +2,36 @@
 
 #include <Misc.hpp>
 
-std::vector<std::string> Misc::split (const std::string &str, const std::string &delim){
+std::vector<std::string> Misc::split (const std::string &str, const std::string &delim, const bool repeat){
   std::vector<std::string> tokens;
   size_t p0=0;
   size_t p1=std::string::npos;
 
-  while(p0 != std::string::npos){
-    p1=str.find_first_of(delim, p0);
-    if (p1 != 0){
-      std::string token=str.substr(p0, p1-p0);
-      tokens.push_back(token);
+  //"repeat" = true means that a blank string is added when there are
+  //back-to-back delimiters. Otherwise, repeat=false ignores back-to-back delimiters.
+
+  p1=str.find_first_of(delim,p0);
+
+  while (p1 != std::string::npos){
+    if (p1-p0 > 1){
+      tokens.push_back(str.substr(p0,p1-p0));
     }
     else{
-      //Nothing inbetween delimiters
-      tokens.push_back("");
+      if (repeat){
+        tokens.push_back(str.substr(p0,p1-p0));
+      }
     }
-    p0=str.find_first_not_of(delim, p1);
+    p0=p1+1;
+    p1=str.find_first_of(delim, p0);
+  }
+  //After last delimiter
+  if (p1-p0 > 1){
+   tokens.push_back(str.substr(p0,p1-p0));
+  }
+  else{
+    if (repeat){
+      tokens.push_back(str.substr(p0,p1-p0));
+    }
   }
 
   return tokens;
