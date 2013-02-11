@@ -1,6 +1,7 @@
 //Sean M. Law
 
 #include "PDB.hpp"
+#include "Misc.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -205,6 +206,9 @@ Atom* PDB::processAtomLine (std::string line, Atom* lastAtom){
     atmEntry->setSegId(segid);
   }
   atmEntry->setSel(true);
+  std::stringstream ss;
+  ss << resid;
+  atmEntry->setSummary(chainid+":"+atmEntry->getResName()+ss.str()+"."+Misc::trim(atmEntry->getAtmName()));
 
   return atmEntry;
 }

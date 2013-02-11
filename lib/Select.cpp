@@ -7,8 +7,47 @@
 #include <sstream>
 
 void Select::makeSel (Molecule* mol, std::string selin){
-  Select sel; 
-  sel.parseSel(selin);
+  Select *sel=new Select;
+  unsigned int i, j, k;
+  bool flag;
+
+  sel->parseSel(selin);
+
+  for (i=0; i< sel->selVec.size(); i++){
+    Select::Selection p=sel->selVec.at(i);
+    for (j=0; j< mol->getAtmVecSize(); j++){
+      Atom *atm=mol->getAtom(j);
+     
+      //std::cerr << atm->getSummary() << std::endl;
+      //Check chainid
+      flag=false;
+      for (k=0; k< p.chainids.size(); k++){
+        if (atm->getChainId().find(p.chainids.at(k))){
+          flag=true;
+          break;
+        }
+      }
+      atm->setSel(flag);
+      if (flag == false){
+        continue; //Next atom
+      }
+      
+      //std::cerr << atm->getSummary() << std::endl;
+      //Check resname
+      flag=false;
+      for (k=0; k< p.resnames.size(); k++){
+        if (atm->getResName().find(p.resnames.at(k))){
+          flag=true;
+          break;
+        }
+      }
+      atm->setSel(flag);
+      if (flag == false){
+        continue; //Next atom
+      }
+      
+    }
+  }
 }
 
 void Select::parseSel (std::string selin){

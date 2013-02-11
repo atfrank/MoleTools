@@ -27,6 +27,7 @@ class Atom {
     double bfac; //B-factor or Temperature factor
     std::string segid; //Segment identifier
     bool sel; //Selection flag
+    std::string summary;
 
   public:
     Atom(); //Constructor
@@ -53,6 +54,7 @@ class Atom {
     double& getBFac();
     std::string& getSegId();
     bool& getSel();
+    std::string& getSummary();
 
     //Set atom info
     void setRecName(const std::string& recnamein);
@@ -76,6 +78,7 @@ class Atom {
     void setSegId(const std::string& segidin);
     void setSegId(); //Clear
     void setSel(const bool selin);
+    void setSummary(const std::string& summaryin);
 };
 
 #endif
