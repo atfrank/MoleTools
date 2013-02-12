@@ -46,7 +46,19 @@ bool Misc::isalpha (const std::string &str){
 }
 
 bool Misc::isrange (const std::string &str){
-  return str.find_first_not_of("0123456789-") == std::string::npos;
+
+  if (str.find_first_not_of("0123456789-") != std::string::npos){
+    return false;
+  }
+  if (str.find("-") == std::string::npos){
+    return false;
+  }
+  if (str.find_first_not_of("-") != 0 || str.find_last_not_of("-") != std::string::npos){
+    return false;
+  }
+
+  std::cerr <<"HERE\n";
+  return true;
 }
 
 std::string Misc::trim (const std::string &str, const std::string t){

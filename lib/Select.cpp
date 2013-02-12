@@ -32,6 +32,9 @@ void Select::makeSel (Molecule* mol, std::string selin){
         }
       }
       if (flag == false && p.chainids.size()){
+        if(p.negAll == true){
+          atm->setSel(true);
+        }
         continue; //Next atom
       }
      
@@ -44,6 +47,9 @@ void Select::makeSel (Molecule* mol, std::string selin){
         }
       }
       if (flag == false && p.resnames.size()){
+        if(p.negAll == true){
+          atm->setSel(true);
+        }
         continue; //Next atom
       }
 
@@ -56,6 +62,9 @@ void Select::makeSel (Molecule* mol, std::string selin){
         }
       }
       if (flag == false && p.resids.size()){
+        if(p.negAll == true){
+          atm->setSel(true);
+        }
         continue; //Next atom
       }
 
@@ -69,11 +78,19 @@ void Select::makeSel (Molecule* mol, std::string selin){
         }
       }
       if (flag == false && p.atmnames.size()){
+        if(p.negAll == true){
+          atm->setSel(true);
+        }
         continue; //Next atom
       }
       
       //Passed ALL checks
-      atm->setSel(true);
+      if(p.negAll == false){
+          atm->setSel(true);
+      }
+      else{
+        atm->setSel(false);
+      }
     }
   }
 }
@@ -84,7 +101,7 @@ void Select::parseSel (std::string selin){
   std::vector<std::string> tmp;
   Selection expr; //Declare a selection expression
   unsigned int i, j;
-  int nColon, nPeriod;
+  int nExcl, nColon, nPeriod;
 
   //Split logical OR operator "_"
   nExpr=Misc::split(selin, "_");
@@ -92,9 +109,13 @@ void Select::parseSel (std::string selin){
     expr.clear();
 
     //Check syntax
+    nExcl=0;
     nColon=0;
     nPeriod=0;
     for (j=0; j< nExpr.at(i).length(); j++){ 
+      if (nExpr.at(i).substr(j,1) == "!"){
+        nExcl++;
+      }
       if (nExpr.at(i).substr(j,1) == ":"){
         nColon++;
       }
@@ -102,17 +123,35 @@ void Select::parseSel (std::string selin){
         nPeriod++;
       }
     }
-    if (nColon != 1 || nPeriod != 1){
+    if (nExcl > 1 || nColon != 1 || nPeriod != 1){
       std::cerr << std::endl;
-      std::cerr << "Warning: Skipping invalid selection expression syntax in \"";
-      std::cerr << nExpr.at(i) << "\"" << std::endl;
+      std::cerr << "Warning: Ignoring invalid selection expression syntax ";
+      if (nPeriod == 0){
+        std::cerr << "(missing period) ";
+      }
+      if (nColon == 0){
+        std::cerr << "(missing colon) ";
+      }
+      std::cerr << "in \"" << nExpr.at(i) << "\"" << std::endl;
       std::cerr << "Valid selection expression syntax:" << std::endl;
-      //std::cerr << "[!]"; //Negation
+      std::cerr << "[!]"; //Negation
       std::cerr << "[[^]segid|chainid[+|/...]]<:>"; //Chains/Segments
       std::cerr << "[[^]resid|resname|range[+|/...]]<.>"; //Residues
       std::cerr << "[[^]atmname|key[+|/...]]"; //Atoms
       std::cerr << std::endl << std::endl;
       continue; //Evaluate next expression
+    }
+
+    //Handle negation (!)
+    if (nExcl == 1){
+      if(nExpr.at(i).substr(0,1) == "!"){
+        expr.negAll=true;
+        nExpr.at(i)=nExpr.at(i).substr(1, std::string::npos);
+      }
+      else{
+        std::cerr << "Warning: Ignoring negation (!) in middle of selection \"";
+        std::cerr << nExpr.at(i) << std::endl;
+      }
     }
 
     //Split Chains/Segments, Residues, and Atoms
@@ -132,7 +171,7 @@ void Select::parseSel (std::string selin){
         expr.chainids.push_back(tmp.at(j));
       }
       else{
-        std::cerr << "Warning: Skipping unrecognized Chain/Segment format\"";
+        std::cerr << "Warning: Ignoring unrecognized Chain/Segment format \"";
         std::cerr << tmp.at(j) << "\"" << std::endl;
       }
     }
@@ -145,18 +184,11 @@ void Select::parseSel (std::string selin){
       if (tmp.at(j).length() == 0){
         continue;
       }
-      else if (tmp.at(j).length() == 3 || tmp.at(j).length() == 4){
-        expr.resnames.push_back(tmp.at(j));
-      }
-      else if (Misc::isdigit(tmp.at(j))){
-        std::stringstream(tmp.at(j)) >> resid;
-        expr.resids.push_back(resid);
-      }
       else if (Misc::isrange(tmp.at(j))){
         std::vector<std::string> range;
         range=Misc::split(tmp.at(j), "-");
         if (!Misc::isdigit(range.at(0)) || !Misc::isdigit(range.at(1)) || range.at(0).length() == 0 || range.at(1).length() == 0){
-          std::cerr << "Warning: Skipping unrecognized Residue range\"";
+          std::cerr << "Warning: Ignoring unrecognized Residue range \"";
           std::cerr << tmp.at(j) << "\"" << std::endl;
         }
         else{
@@ -172,8 +204,15 @@ void Select::parseSel (std::string selin){
           }
         }
       }
+      else if (Misc::isdigit(tmp.at(j))){
+        std::stringstream(tmp.at(j)) >> resid;
+        expr.resids.push_back(resid);
+      } 
+      else if (tmp.at(j).length() == 3){  //4 character resnames??
+        expr.resnames.push_back(tmp.at(j));
+      }
       else{
-        std::cerr << "Warning: Skipping unrecognized Residue format\"";
+        std::cerr << "Warning: Ignoring unrecognized Residue format \"";
         std::cerr << tmp.at(j) << "\"" << std::endl;
       }
     }
@@ -190,7 +229,7 @@ void Select::parseSel (std::string selin){
         expr.atmnames.push_back(tmp.at(j));
       }
       else{
-        std::cerr << "Warning: Skipping unrecognized Atom format\"";
+        std::cerr << "Warning: Skipping unrecognized Atom format \"";
         std::cerr << tmp.at(j) << "\"" << std::endl;
       }
     }
@@ -202,6 +241,7 @@ void Select::parseSel (std::string selin){
 
 void Select::Selection::clear() {
   //Clear struct
+  negAll=false;
   chainids.clear();
   segids.clear();
   resnames.clear();

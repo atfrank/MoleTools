@@ -9,6 +9,7 @@
 class Select {
   private:
     struct Selection {
+      bool negAll;
       std::vector<std::string> chainids;
       std::vector<std::string> segids;
       std::vector<std::string> resnames;
