@@ -164,10 +164,20 @@ void Select::parseSel (std::string selin){
       if (tmp.at(j).length() == 0){
         continue;
       }
-      else if (tmp.at(j).length() == 4 || tmp.at(j).length() == 5){
+      else if (tmp.at(j).length() == 5 && tmp.at(j).substr(0,1) == "^"){
+        expr.negSegIds.push_back(true);
+        expr.segids.push_back(tmp.at(j).substr(1,std::string::npos));
+      }
+      else if (tmp.at(j).length() == 4){
+        expr.negSegIds.push_back(false);
         expr.segids.push_back(tmp.at(j));
       }
-      else if (tmp.at(j).length() == 1 || tmp.at(j).length() == 2){
+      else if (tmp.at(j).length() == 2 && tmp.at(j).substr(0,1) == "^"){
+        expr.negChainIds.push_back(true);
+        expr.chainids.push_back(tmp.at(j).substr(1,std::string::npos));
+      }
+      else if (tmp.at(j).length() == 1){
+        expr.negChainIds.push_back(false);
         expr.chainids.push_back(tmp.at(j));
       }
       else{

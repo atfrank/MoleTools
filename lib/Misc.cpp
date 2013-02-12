@@ -57,7 +57,6 @@ bool Misc::isrange (const std::string &str){
     return false;
   }
 
-  std::cerr <<"HERE\n";
   return true;
 }
 
