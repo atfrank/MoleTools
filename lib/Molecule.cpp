@@ -27,7 +27,7 @@ void Molecule::addAtom(Atom* atmEntry) {
   }
 }
 
-Molecule* Molecule::clone (){
+Molecule* Molecule::clone (bool selFlag){
   //Deep copy
   Molecule *mol=new Molecule;
   Chain *chnEntry=new Chain;
@@ -40,7 +40,9 @@ Molecule* Molecule::clone (){
 
   //Create new Chains, Residues, Atoms
   for (unsigned int i=0; i< this->getAtmVecSize(); i++){
-    //if(!this->getAtom(i)->getSel()){continue;}
+    if(selFlag == true && this->getAtom(i)->getSel() == false){
+        continue;
+    }
     atmEntry=new Atom; //This is necessary!
     atmEntry->clone(this->getAtom(i)); //Clone Atom
 

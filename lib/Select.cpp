@@ -26,7 +26,7 @@ void Select::makeSel (Molecule* mol, std::string selin){
       //Check chainid
       flag=false;
       for (k=0; k< p.chainids.size(); k++){
-        if (atm->getChainId().find(p.chainids.at(k)) != std::string::npos){
+        if (Misc::trim(atm->getChainId()) == p.chainids.at(k)){
           flag=true;
           break;
         }
@@ -37,11 +37,26 @@ void Select::makeSel (Molecule* mol, std::string selin){
         }
         continue; //Next atom
       }
+
+      //Check segid
+      flag=false;
+      for (k=0; k< p.segids.size(); k++){
+        if (Misc::trim(atm->getSegId()) == p.segids.at(k)){
+          flag=true;
+          break;
+        }
+      }
+      if (flag == false && p.segids.size()){
+        if(p.negAll == true){
+          atm->setSel(true);
+        }
+        continue; //Next atom
+      }
      
       //Check resname
       flag=false;
       for (k=0; k< p.resnames.size(); k++){
-        if (atm->getResName().find(p.resnames.at(k)) != std::string::npos){
+        if (Misc::trim(atm->getResName()) == p.resnames.at(k)){
           flag=true;
           break;
         }
@@ -72,7 +87,8 @@ void Select::makeSel (Molecule* mol, std::string selin){
       //Check atmname
       flag=false;
       for (k=0; k< p.atmnames.size(); k++){
-        if (atm->getAtmName().find(p.atmnames.at(k)) != std::string::npos){
+        //if (atm->getAtmName().find(p.atmnames.at(k)) != std::string::npos){
+        if (Misc::trim(atm->getAtmName()) == p.atmnames.at(k)){
           flag=true;
           break;
         }
