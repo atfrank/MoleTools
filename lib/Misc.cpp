@@ -53,7 +53,7 @@ bool Misc::isrange (const std::string &str){
   if (str.find("-") == std::string::npos){
     return false;
   }
-  if (str.find_first_not_of("-") != 0 || str.find_last_not_of("-") != std::string::npos){
+  if (str.find_first_not_of("-") != 0 || str.find_last_not_of("-") < str.find("-")){
     return false;
   }
 

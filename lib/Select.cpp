@@ -27,8 +27,20 @@ void Select::makeSel (Molecule* mol, std::string selin){
       flag=false;
       for (k=0; k< p.chainids.size(); k++){
         if (Misc::trim(atm->getChainId()) == p.chainids.at(k)){
-          flag=true;
-          break;
+          //Chain matches
+          if (p.negChainIds.at(k) == false){
+            //No negation
+            flag=true;
+            break;
+          }
+        }
+        else{ 
+          //Chain does not match
+          if (p.negChainIds.at(k) == true){
+            //Apply negation
+            flag=true;
+            break;
+          }          
         }
       }
       if (flag == false && p.chainids.size()){
@@ -42,8 +54,20 @@ void Select::makeSel (Molecule* mol, std::string selin){
       flag=false;
       for (k=0; k< p.segids.size(); k++){
         if (Misc::trim(atm->getSegId()) == p.segids.at(k)){
-          flag=true;
-          break;
+          //Segment matches
+          if (p.negSegIds.at(k) == false){
+            //No negation
+            flag=true;
+            break;
+          }
+        }
+        else{
+          //Segment does not match
+          if (p.negSegIds.at(k) == true){
+            //Apply negation
+            flag=true;
+            break;
+          }
         }
       }
       if (flag == false && p.segids.size()){
@@ -57,8 +81,16 @@ void Select::makeSel (Molecule* mol, std::string selin){
       flag=false;
       for (k=0; k< p.resnames.size(); k++){
         if (Misc::trim(atm->getResName()) == p.resnames.at(k)){
-          flag=true;
-          break;
+          if (p.negResNames.at(k) == false){
+            flag=true;
+            break;
+          }
+        }
+        else{
+          if (p.negResNames.at(k) == true){
+            flag=true;
+            break;
+          }
         }
       }
       if (flag == false && p.resnames.size()){
@@ -72,8 +104,16 @@ void Select::makeSel (Molecule* mol, std::string selin){
       flag=false;
       for (k=0; k< p.resids.size(); k++){
         if (atm->getResId() == p.resids.at(k)){
-          flag=true;
-          break;
+          if (p.negResIds.at(k) == false){
+            flag=true;
+            break;
+          }
+        }
+        else{
+          if (p.negResIds.at(k) == true){
+            flag=true;
+            break;
+          }
         }
       }
       if (flag == false && p.resids.size()){
@@ -87,10 +127,17 @@ void Select::makeSel (Molecule* mol, std::string selin){
       //Check atmname
       flag=false;
       for (k=0; k< p.atmnames.size(); k++){
-        //if (atm->getAtmName().find(p.atmnames.at(k)) != std::string::npos){
         if (Misc::trim(atm->getAtmName()) == p.atmnames.at(k)){
-          flag=true;
-          break;
+          if (p.negAtmNames.at(k) == false){
+            flag=true;
+            break;
+          }
+        }
+        else{
+          if (p.negAtmNames.at(k) == true){
+            flag=true;
+            break;
+          }
         }
       }
       if (flag == false && p.atmnames.size()){
@@ -118,6 +165,7 @@ void Select::parseSel (std::string selin){
   Selection expr; //Declare a selection expression
   unsigned int i, j;
   int nExcl, nColon, nPeriod;
+  bool negtmp;
 
   //Split logical OR operator "_"
   nExpr=Misc::split(selin, "_");
@@ -177,23 +225,21 @@ void Select::parseSel (std::string selin){
     tmp=Misc::split(all.at(0), "+");
 
     for (j=0; j< tmp.size(); j++){
+      negtmp=false;
+      if (tmp.at(j).substr(0,1) == "^"){
+        negtmp=true;
+        tmp.at(j)=tmp.at(j).substr(1,std::string::npos);
+      }
+
       if (tmp.at(j).length() == 0){
         continue;
       }
-      else if (tmp.at(j).length() == 5 && tmp.at(j).substr(0,1) == "^"){
-        expr.negSegIds.push_back(true);
-        expr.segids.push_back(tmp.at(j).substr(1,std::string::npos));
-      }
       else if (tmp.at(j).length() == 4){
-        expr.negSegIds.push_back(false);
+        expr.negSegIds.push_back(negtmp);
         expr.segids.push_back(tmp.at(j));
       }
-      else if (tmp.at(j).length() == 2 && tmp.at(j).substr(0,1) == "^"){
-        expr.negChainIds.push_back(true);
-        expr.chainids.push_back(tmp.at(j).substr(1,std::string::npos));
-      }
       else if (tmp.at(j).length() == 1){
-        expr.negChainIds.push_back(false);
+        expr.negChainIds.push_back(negtmp);
         expr.chainids.push_back(tmp.at(j));
       }
       else{
@@ -207,6 +253,12 @@ void Select::parseSel (std::string selin){
     int resid, start, stop;
 
     for (j=0; j< tmp.size(); j++){
+      negtmp=false;
+      if (tmp.at(j).substr(0,1) == "^"){
+        negtmp=true;
+        tmp.at(j)=tmp.at(j).substr(1,std::string::npos);
+      }
+      
       if (tmp.at(j).length() == 0){
         continue;
       }
@@ -226,15 +278,18 @@ void Select::parseSel (std::string selin){
             stop=resid;
           }
           for (resid=start; resid<=stop; resid++){
+            expr.negResIds.push_back(negtmp);
             expr.resids.push_back(resid);
           }
         }
       }
       else if (Misc::isdigit(tmp.at(j))){
         std::stringstream(tmp.at(j)) >> resid;
+        expr.negResIds.push_back(negtmp);
         expr.resids.push_back(resid);
       } 
       else if (tmp.at(j).length() == 3){  //4 character resnames??
+        expr.negResIds.push_back(negtmp);
         expr.resnames.push_back(tmp.at(j));
       }
       else{
@@ -248,10 +303,16 @@ void Select::parseSel (std::string selin){
     tmp=Misc::split(all.at(2), "+");
 
     for (j=0; j< tmp.size(); j++){
+      negtmp=false;
+      if (tmp.at(j).substr(0,1) == "^"){
+        negtmp=true;
+        tmp.at(j)=tmp.at(j).substr(1,std::string::npos);
+      }
       if (tmp.at(j).length() ==0){
         continue;
       }
       else if (tmp.at(j).length() <= 4 && tmp.at(j).length() > 0){
+        expr.negAtmNames.push_back(negtmp);
         expr.atmnames.push_back(tmp.at(j));
       }
       else{
