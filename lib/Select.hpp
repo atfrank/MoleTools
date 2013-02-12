@@ -10,10 +10,15 @@ class Select {
   private:
     struct Selection {
       bool negAll;
+      std::vector<bool> negChainIds;
       std::vector<std::string> chainids;
+      std::vector<bool> negSegIds;
       std::vector<std::string> segids;
+      std::vector<bool> negResNames;
       std::vector<std::string> resnames;
+      std::vector<bool> negResIds;
       std::vector<int> resids;
+      std::vector<bool> negAtmNames;
       std::vector<std::string> atmnames;
       void clear();
     };

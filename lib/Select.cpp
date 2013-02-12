@@ -242,9 +242,14 @@ void Select::parseSel (std::string selin){
 void Select::Selection::clear() {
   //Clear struct
   negAll=false;
+  negChainIds.clear();
   chainids.clear();
+  negSegIds.clear();
   segids.clear();
+  negResNames.clear();
   resnames.clear();
+  negResIds.clear();
   resids.clear();
+  negAtmNames.clear();
   atmnames.clear();
 }
