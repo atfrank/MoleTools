@@ -24,6 +24,7 @@ class Molecule {
     unsigned int getChnVecSize();
     unsigned int getResVecSize();
     unsigned int getAtmVecSize();
+    std::vector<Atom*> getAtmVec();
     Residue* getResidue(int element);
     void selAll();
     void deselAll();

@@ -8,10 +8,126 @@
 
 void Select::makeSel (Molecule* mol, std::string selin){
   Select *sel=new Select;
+  unsigned int i, j;
+  std::vector<std::string> nExpr;
+  std::vector<std::string> all;
+  std::vector<std::string> tmp;
+  Selection expr; //Declare a selection expression
+  int nExcl, nColon, nPeriod;
+  bool negAll=false;
+
+  std::vector<Atom *> ref; //Reference atom set
+
+  ref=mol->getAtmVec();
+  //std::sort(ref.begin(), ref.end()); //Addresses are sorted already
+
+  //Split logical OR operator "_"
+  nExpr=Misc::split(selin, "_");
+  for (i=0; i< nExpr.size(); i++){
+
+    //Check syntax
+    nExcl=0;
+    nColon=0;
+    nPeriod=0;
+    for (j=0; j< nExpr.at(i).length(); j++){
+      if (nExpr.at(i).substr(j,1) == "!"){
+        nExcl++;
+      }
+      if (nExpr.at(i).substr(j,1) == ":"){
+        nColon++;
+      }
+      if (nExpr.at(i).substr(j,1) == "."){
+        nPeriod++;
+      }
+    }
+    if (nExcl > 1 || nColon != 1 || nPeriod != 1){
+      std::cerr << std::endl;
+      std::cerr << "Warning: Ignoring invalid selection expression syntax ";
+      if (nPeriod == 0){
+        std::cerr << "(missing period) ";
+      }
+      if (nColon == 0){
+        std::cerr << "(missing colon) ";
+      }
+      std::cerr << "in \"" << nExpr.at(i) << "\"" << std::endl;
+      std::cerr << "Valid selection expression syntax:" << std::endl;
+      std::cerr << "[!]"; //Negation
+      std::cerr << "[[^]segid|chainid[+|/...]]<:>"; //Chains/Segments
+      std::cerr << "[[^]resid|resname|range[+|/...]]<.>"; //Residues
+      std::cerr << "[[^]atmname|key[+|/...]]"; //Atoms
+      std::cerr << std::endl << std::endl;
+      continue; //Evaluate next expression
+    }
+
+    //Handle negation (!)
+    if (nExcl == 1){
+      if(nExpr.at(i).substr(0,1) == "!"){
+        negAll=true;
+        nExpr.at(i)=nExpr.at(i).substr(1, std::string::npos);
+      }
+      else{
+        std::cerr << "Warning: Ignoring negation (!) in middle of selection \"";
+        std::cerr << nExpr.at(i) << std::endl;
+      }
+    }
+
+    //Split Chains/Segments, Residues, and Atoms
+    all=Misc::split(nExpr.at(i), ":.");
+
+    //Chains
+    sel->chainRDP(all.at(0), ref);
+
+    //Residues
+    //all.at(1)
+
+    //Atoms
+    //all.at(2)
+
+    //Overall negation
+    if (negAll == true){
+
+    } 
+
+  }
+
+}
+
+std::vector<Atom *> Select::chainRDP (const std::string &str, const std::vector<Atom *> &ref){
+  std::vector<Atom *> cmp;
+  std::string curr, next;
+  size_t pos;
+  bool neg=false;
+
+  if (str.length() == 0){
+    return ref;
+  }
+  else if ((pos=str.find("+")) != std::string::npos){
+    curr=str.substr(0, pos);
+    next=str.substr(pos+1, std::string::npos);
+  }
+  else if ((pos=str.find("/")) != std::string::npos){
+    
+  }
+  else if ((pos=str.find("^")) == 0){
+    neg=true;
+  }
+  else{
+    
+  }
+
+  if (neg == true){
+
+  }
+
+  return cmp;
+}
+
+void Select::makeSelOld (Molecule* mol, std::string selin){
+  Select *sel=new Select;
   unsigned int i, j, k;
   bool flag;
 
-  sel->parseSel(selin);
+  sel->parseSelOld(selin); //Change this to parseSel if needed
 
   mol->deselAll();
 
@@ -158,7 +274,7 @@ void Select::makeSel (Molecule* mol, std::string selin){
   }
 }
 
-void Select::parseSel (std::string selin){
+void Select::parseSelOld (std::string selin){
   std::vector<std::string> nExpr;
   std::vector<std::string> all;
   std::vector<std::string> tmp;

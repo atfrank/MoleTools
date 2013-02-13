@@ -94,6 +94,10 @@ unsigned int Molecule::getAtmVecSize(){
   return atmVec.size();
 }
 
+std::vector<Atom*> Molecule::getAtmVec(){
+  return atmVec;
+}
+
 void Molecule::addChain(Chain* chnEntry){
   if(chnEntry->getChainId().size()){ //Check if empty string
     chnVec.push_back(chnEntry);
