@@ -6,10 +6,21 @@
 
 #include <sstream>
 #include <algorithm>
+//#include <cctype>
 
 void Select::makeSel (Molecule* mol, std::string selin){
 
   std::vector<Atom *> ref;
+  unsigned int i;
+
+/*
+  for(i=0; i< str.length(); i++){
+    if (Misc::isalpha(str.at(i))){
+      str.at(i)=std::to
+    }
+  }
+*/
+//  std::transform(selin.begin(), selin.end(), selin.begin(),[](char c) {return (std::toupper(c); ); });
 
   ref=mol->getAtmVec(); //Always make a copy of the pointers and sort it!
   std::sort(ref.begin(), ref.end());
@@ -18,7 +29,7 @@ void Select::makeSel (Molecule* mol, std::string selin){
   std::vector<Atom *> atmSel=Select::recursiveDescentParser(selin, ref);
 
   mol->deselAll();
-  for (unsigned int i=0; i< atmSel.size(); i++){
+  for (i=0; i< atmSel.size(); i++){
     atmSel.at(i)->setSel(true);
   }
 }
@@ -35,6 +46,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     return ref;
   }
   else if ((pos=str.find("&")) != std::string::npos){
+    //Logical AND between expressions: A:1-10.CA&A:5-15.CA = A:5-10.CA
     curr=str.substr(0, pos);
     cmpCurr=Select::recursiveDescentParser(curr, ref, group);
     std::sort(cmpCurr.begin(), cmpCurr.end());
@@ -45,6 +57,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     std::set_intersection(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), back_inserter(out));
   }
   else if ((pos=str.find("_")) != std::string::npos){
+    //Logical OR between expressions: A:1-5.CA_B:10-15.CA
     curr=str.substr(0, pos);
     cmpCurr=Select::recursiveDescentParser(curr, ref, group);
     std::sort(cmpCurr.begin(), cmpCurr.end());
@@ -58,6 +71,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     out.resize(std::distance(out.begin(),it));
   }
   else if ((pos=str.find("!")) == 0){
+    //Expression negation: !A:1-5.CA
     curr=str.substr(pos+1, std::string::npos);
     cmpCurr=Select::recursiveDescentParser(curr, ref, group);
     std::sort(cmpCurr.begin(), cmpCurr.end());
@@ -65,6 +79,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     std::set_difference(ref.begin(), ref.end(), cmpCurr.begin(), cmpCurr.end(), back_inserter(out));
   }
   else if ((pos=str.find(":")) != std::string::npos){
+    //Logical AND between Chains and Residues: A:GLY.
     if (pos > 0){
       curr=str.substr(0, pos);
       cmpCurr=Select::recursiveDescentParser(curr, ref, "chain");
@@ -80,6 +95,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     std::set_intersection(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), back_inserter(out));
   }
   else if ((pos=str.find(".")) != std::string::npos){
+    //Logical AND between Residues and Atoms: :GLY.CA
     if (pos > 0){
       curr=str.substr(0, pos);
       cmpCurr=Select::recursiveDescentParser(curr, ref, "residue");
@@ -95,6 +111,8 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     std::set_intersection(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), back_inserter(out));
   }
   else if ((pos=str.find("+")) != std::string::npos){
+    //Logical OR between Chains, or between Residues, or between Atoms: 
+    //A+B:., :GLY+ALA., :1+2+3., :.CA+CB+C+N
     curr=str.substr(0, pos);
     cmpCurr=Select::recursiveDescentParser(curr, ref, group);
     std::sort(cmpCurr.begin(), cmpCurr.end());
@@ -108,6 +126,8 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     out.resize(std::distance(out.begin(),it));
   }
   else if ((pos=str.find("/")) != std::string::npos){
+    //Logical AND between Chains, or between Residues, or between Atoms:
+    //A/B:., :GLY/ALA., :1/2/3., :.CA/CB/C/N
     curr=str.substr(0, pos);
     cmpCurr=Select::recursiveDescentParser(curr, ref, group);
     std::sort(cmpCurr.begin(), cmpCurr.end());
@@ -118,6 +138,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     std::set_intersection(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), back_inserter(out));
   }
   else if ((pos=str.find("-")) != std::string::npos){
+    //Residue identifier range: :1-10.
     start=str.substr(0, pos);
     end=str.substr(pos+1, std::string::npos);
     if (Misc::isdigit(start) && Misc::isdigit(end)){
@@ -128,6 +149,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     }
   }
   else if ((pos=str.find("^")) == 0){
+    //Chain, Residue, or Atom negation: ^A:., :^GLY., :^2., :.^CA
     curr=str.substr(pos+1, std::string::npos);
     cmpCurr=Select::recursiveDescentParser(curr, ref, group);
     std::sort(cmpCurr.begin(), cmpCurr.end());
