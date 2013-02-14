@@ -5,9 +5,10 @@
 #include <Molecule.hpp>
 
 #include <sstream>
+#include <algorithm>
 
 void Select::makeSel (Molecule* mol, std::string selin){
-  Select *sel=new Select;
+  //Select *sel=new Select;
   unsigned int i, j;
   std::vector<std::string> nExpr;
   std::vector<std::string> all;
@@ -15,11 +16,6 @@ void Select::makeSel (Molecule* mol, std::string selin){
   Selection expr; //Declare a selection expression
   int nExcl, nColon, nPeriod;
   bool negAll=false;
-
-  std::vector<Atom *> ref; //Reference atom set
-
-  ref=mol->getAtmVec();
-  //std::sort(ref.begin(), ref.end()); //Addresses are sorted already
 
   //Split logical OR operator "_"
   nExpr=Misc::split(selin, "_");
@@ -75,8 +71,11 @@ void Select::makeSel (Molecule* mol, std::string selin){
     all=Misc::split(nExpr.at(i), ":.");
 
     //Chains
-    sel->chainRDP(all.at(0), ref);
+    std::vector<Atom *> cmpChain=Select::chainRDP(all.at(0), mol->getAtmVec());
 
+    for (i=0; i< cmpChain.size(); i++){
+      std::cerr << cmpChain.at(i)->getSummary() << std::endl;
+    }
     //Residues
     //all.at(1)
 
@@ -93,33 +92,56 @@ void Select::makeSel (Molecule* mol, std::string selin){
 }
 
 std::vector<Atom *> Select::chainRDP (const std::string &str, const std::vector<Atom *> &ref){
-  std::vector<Atom *> cmp;
+  std::vector<Atom *> cmpCurr, cmpNext;
+  std::vector<Atom *> out(2*ref.size());
+  std::vector<Atom *>::iterator it;
   std::string curr, next;
   size_t pos;
-  bool neg=false;
+  unsigned int i;
 
   if (str.length() == 0){
     return ref;
   }
   else if ((pos=str.find("+")) != std::string::npos){
     curr=str.substr(0, pos);
+    cmpCurr=Select::chainRDP(curr, ref);
     next=str.substr(pos+1, std::string::npos);
+    cmpNext=Select::chainRDP(next, ref);
+    it=std::set_union(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), out.begin());
+    out.resize(it-out.begin());
+    it=std::unique(out.begin(), out.end());
+    out.resize(std::distance(out.begin(),it));
   }
   else if ((pos=str.find("/")) != std::string::npos){
-    
+    curr=str.substr(0, pos);
+    cmpCurr=Select::chainRDP(curr, ref);
+    next=str.substr(pos+1, std::string::npos);
+    cmpNext=Select::chainRDP(next, ref);
+    it=std::set_intersection(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), out.begin());
+    out.resize(it-out.begin());
   }
   else if ((pos=str.find("^")) == 0){
-    neg=true;
+    curr=str.substr(pos+1, std::string::npos);
+    cmpCurr=Select::chainRDP(curr, ref);
+    it=std::set_difference(ref.begin(), ref.end(), cmpCurr.begin(), cmpCurr.end(), out.begin());
+    out.resize(it-out.begin());
   }
   else{
-    
+    out.clear();
+    for (i=0; i< ref.size(); i++){
+      if (str == ref.at(i)->getChainId()){
+        out.push_back(ref.at(i));
+      }
+      else if (str == ref.at(i)->getSegId()){
+        out.push_back(ref.at(i));
+      }
+      else{
+        continue;
+      }
+    }
   }
 
-  if (neg == true){
-
-  }
-
-  return cmp;
+  return out;
 }
 
 void Select::makeSelOld (Molecule* mol, std::string selin){
