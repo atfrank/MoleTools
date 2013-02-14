@@ -34,6 +34,16 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
   if (str.length() == 0){
     return ref;
   }
+  else if ((pos=str.find("&")) != std::string::npos){
+    curr=str.substr(0, pos);
+    cmpCurr=Select::recursiveDescentParser(curr, ref, group);
+    std::sort(cmpCurr.begin(), cmpCurr.end());
+    next=str.substr(pos+1, std::string::npos);
+    cmpNext=Select::recursiveDescentParser(next, ref, group);
+    std::sort(cmpNext.begin(), cmpNext.end());
+    out.clear();
+    std::set_intersection(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), back_inserter(out));
+  }
   else if ((pos=str.find("_")) != std::string::npos){
     curr=str.substr(0, pos);
     cmpCurr=Select::recursiveDescentParser(curr, ref, group);
