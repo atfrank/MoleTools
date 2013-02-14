@@ -25,7 +25,7 @@ void Select::makeSel (Molecule* mol, std::string selin){
 
 std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, const std::vector<Atom *> &ref, const std::string &group){
   std::vector<Atom *> cmpCurr, cmpNext;
-  std::vector<Atom *> out(2*ref.size());
+  std::vector<Atom *> out;
   std::vector<Atom *>::iterator it;
   std::string curr, next, start, end;
   size_t pos;
@@ -41,6 +41,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     next=str.substr(pos+1, std::string::npos);
     cmpNext=Select::recursiveDescentParser(next, ref, group);
     std::sort(cmpNext.begin(), cmpNext.end());
+    out.resize(cmpCurr.size()+cmpNext.size());
     it=std::set_union(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), out.begin());
     out.resize(it-out.begin());
     it=std::unique(out.begin(), out.end());
@@ -90,6 +91,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     next=str.substr(pos+1, std::string::npos);
     cmpNext=Select::recursiveDescentParser(next, ref, group);
     std::sort(cmpNext.begin(), cmpNext.end());
+    out.resize(cmpCurr.size()+cmpNext.size());
     it=std::set_union(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), out.begin());
     out.resize(it-out.begin());
     it=std::unique(out.begin(), out.end());
@@ -153,9 +155,12 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
         if (str == Misc::trim(ref.at(i)->getAtmName())){
           out.push_back(ref.at(i));
         }
+        else{
+          continue;
+        }
       }
       else{
-        //Undefined group
+        continue;
       }
     }
   }
