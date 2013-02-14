@@ -18,6 +18,7 @@ class Misc {
     static bool isalpha (const std::string &str);
     static bool isrange (const std::string &str);
     static std::string trim (const std::string &str, const std::string t=" ");
+    static std::string processRange (const std::string &start, const std::string &end);
 };
 
 #endif

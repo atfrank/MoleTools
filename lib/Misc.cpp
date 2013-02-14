@@ -79,3 +79,20 @@ std::string Misc::trim (const std::string &str, const std::string t){
 
   return out;
 }
+
+std::string Misc::processRange (const std::string &start, const std::string &end){
+  std::stringstream ss;
+  int i, istart, iend;
+  
+  std::stringstream(start) >> istart;
+  std::stringstream(end) >> iend;
+
+  ss << istart;
+  istart++;
+
+  for (i=istart; i<=iend; i++){
+    ss << "+" << i;
+  }
+
+  return ss.str();
+}

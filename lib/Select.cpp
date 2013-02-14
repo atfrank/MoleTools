@@ -8,105 +8,88 @@
 #include <algorithm>
 
 void Select::makeSel (Molecule* mol, std::string selin){
-  //Select *sel=new Select;
-  unsigned int i, j;
-  std::vector<std::string> nExpr;
-  std::vector<std::string> all;
-  std::vector<std::string> tmp;
-  Selection expr; //Declare a selection expression
-  int nExcl, nColon, nPeriod;
-  bool negAll=false;
 
-  //Split logical OR operator "_"
-  nExpr=Misc::split(selin, "_");
-  for (i=0; i< nExpr.size(); i++){
+  std::vector<Atom *> ref;
 
-    //Check syntax
-    nExcl=0;
-    nColon=0;
-    nPeriod=0;
-    for (j=0; j< nExpr.at(i).length(); j++){
-      if (nExpr.at(i).substr(j,1) == "!"){
-        nExcl++;
-      }
-      if (nExpr.at(i).substr(j,1) == ":"){
-        nColon++;
-      }
-      if (nExpr.at(i).substr(j,1) == "."){
-        nPeriod++;
-      }
-    }
-    if (nExcl > 1 || nColon != 1 || nPeriod != 1){
-      std::cerr << std::endl;
-      std::cerr << "Warning: Ignoring invalid selection expression syntax ";
-      if (nPeriod == 0){
-        std::cerr << "(missing period) ";
-      }
-      if (nColon == 0){
-        std::cerr << "(missing colon) ";
-      }
-      std::cerr << "in \"" << nExpr.at(i) << "\"" << std::endl;
-      std::cerr << "Valid selection expression syntax:" << std::endl;
-      std::cerr << "[!]"; //Negation
-      std::cerr << "[[^]segid|chainid[+|/...]]<:>"; //Chains/Segments
-      std::cerr << "[[^]resid|resname|range[+|/...]]<.>"; //Residues
-      std::cerr << "[[^]atmname|key[+|/...]]"; //Atoms
-      std::cerr << std::endl << std::endl;
-      continue; //Evaluate next expression
-    }
+  ref=mol->getAtmVec(); //Always make a copy of the pointers and sort it!
+  std::sort(ref.begin(), ref.end());
 
-    //Handle negation (!)
-    if (nExcl == 1){
-      if(nExpr.at(i).substr(0,1) == "!"){
-        negAll=true;
-        nExpr.at(i)=nExpr.at(i).substr(1, std::string::npos);
-      }
-      else{
-        std::cerr << "Warning: Ignoring negation (!) in middle of selection \"";
-        std::cerr << nExpr.at(i) << std::endl;
-      }
-    }
+  //Passing mol->getAtmVec() directly won't work because it is not properly sorted!
+  std::vector<Atom *> atmSel=Select::recursiveDescentParser(selin, ref);
 
-    //Split Chains/Segments, Residues, and Atoms
-    all=Misc::split(nExpr.at(i), ":.");
-
-    //Chains
-    std::vector<Atom *> cmpChain=Select::chainRDP(all.at(0), mol->getAtmVec());
-
-    for (i=0; i< cmpChain.size(); i++){
-      std::cerr << cmpChain.at(i)->getSummary() << std::endl;
-    }
-    //Residues
-    //all.at(1)
-
-    //Atoms
-    //all.at(2)
-
-    //Overall negation
-    if (negAll == true){
-
-    } 
-
+  mol->deselAll();
+  for (unsigned int i=0; i< atmSel.size(); i++){
+    atmSel.at(i)->setSel(true);
   }
-
 }
 
-std::vector<Atom *> Select::chainRDP (const std::string &str, const std::vector<Atom *> &ref){
+std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, const std::vector<Atom *> &ref, const std::string &group){
   std::vector<Atom *> cmpCurr, cmpNext;
   std::vector<Atom *> out(2*ref.size());
   std::vector<Atom *>::iterator it;
-  std::string curr, next;
+  std::string curr, next, start, end;
   size_t pos;
   unsigned int i;
 
   if (str.length() == 0){
     return ref;
   }
+  else if ((pos=str.find("_")) != std::string::npos){
+    curr=str.substr(0, pos);
+    cmpCurr=Select::recursiveDescentParser(curr, ref, group);
+    std::sort(cmpCurr.begin(), cmpCurr.end());
+    next=str.substr(pos+1, std::string::npos);
+    cmpNext=Select::recursiveDescentParser(next, ref, group);
+    std::sort(cmpNext.begin(), cmpNext.end());
+    it=std::set_union(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), out.begin());
+    out.resize(it-out.begin());
+    it=std::unique(out.begin(), out.end());
+    out.resize(std::distance(out.begin(),it));
+  }
+  else if ((pos=str.find("!")) == 0){
+    curr=str.substr(pos+1, std::string::npos);
+    cmpCurr=Select::recursiveDescentParser(curr, ref, group);
+    std::sort(cmpCurr.begin(), cmpCurr.end());
+    out.clear();
+    std::set_difference(ref.begin(), ref.end(), cmpCurr.begin(), cmpCurr.end(), back_inserter(out));
+  }
+  else if ((pos=str.find(":")) != std::string::npos){
+    if (pos > 0){
+      curr=str.substr(0, pos);
+      cmpCurr=Select::recursiveDescentParser(curr, ref, "chain");
+    }
+    else{
+      cmpCurr=ref;
+    }
+    std::sort(cmpCurr.begin(), cmpCurr.end());
+    next=str.substr(pos+1, std::string::npos);
+    cmpNext=Select::recursiveDescentParser(next, ref, group);
+    std::sort(cmpNext.begin(), cmpNext.end());
+    out.clear();
+    std::set_intersection(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), back_inserter(out));
+  }
+  else if ((pos=str.find(".")) != std::string::npos){
+    if (pos > 0){
+      curr=str.substr(0, pos);
+      cmpCurr=Select::recursiveDescentParser(curr, ref, "residue");
+    }
+    else{
+      cmpCurr=ref;
+    }
+    std::sort(cmpCurr.begin(), cmpCurr.end());
+    next=str.substr(pos+1, std::string::npos);
+    cmpNext=Select::recursiveDescentParser(next, ref, "atom");
+    std::sort(cmpNext.begin(), cmpNext.end());
+    out.clear();
+    std::set_intersection(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), back_inserter(out));
+  }
   else if ((pos=str.find("+")) != std::string::npos){
     curr=str.substr(0, pos);
-    cmpCurr=Select::chainRDP(curr, ref);
+    cmpCurr=Select::recursiveDescentParser(curr, ref, group);
+    std::sort(cmpCurr.begin(), cmpCurr.end());
     next=str.substr(pos+1, std::string::npos);
-    cmpNext=Select::chainRDP(next, ref);
+    cmpNext=Select::recursiveDescentParser(next, ref, group);
+    std::sort(cmpNext.begin(), cmpNext.end());
     it=std::set_union(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), out.begin());
     out.resize(it-out.begin());
     it=std::unique(out.begin(), out.end());
@@ -114,29 +97,65 @@ std::vector<Atom *> Select::chainRDP (const std::string &str, const std::vector<
   }
   else if ((pos=str.find("/")) != std::string::npos){
     curr=str.substr(0, pos);
-    cmpCurr=Select::chainRDP(curr, ref);
+    cmpCurr=Select::recursiveDescentParser(curr, ref, group);
+    std::sort(cmpCurr.begin(), cmpCurr.end());
     next=str.substr(pos+1, std::string::npos);
-    cmpNext=Select::chainRDP(next, ref);
-    it=std::set_intersection(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), out.begin());
-    out.resize(it-out.begin());
+    cmpNext=Select::recursiveDescentParser(next, ref, group);
+    std::sort(cmpNext.begin(), cmpNext.end());
+    out.clear();
+    std::set_intersection(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), back_inserter(out));
+  }
+  else if ((pos=str.find("-")) != std::string::npos){
+    start=str.substr(0, pos);
+    end=str.substr(pos+1, std::string::npos);
+    if (Misc::isdigit(start) && Misc::isdigit(end)){
+      out=Select::recursiveDescentParser(Misc::processRange(start, end), ref, group);
+    }
+    else{
+      return ref;
+    }
   }
   else if ((pos=str.find("^")) == 0){
     curr=str.substr(pos+1, std::string::npos);
-    cmpCurr=Select::chainRDP(curr, ref);
-    it=std::set_difference(ref.begin(), ref.end(), cmpCurr.begin(), cmpCurr.end(), out.begin());
-    out.resize(it-out.begin());
+    cmpCurr=Select::recursiveDescentParser(curr, ref, group);
+    std::sort(cmpCurr.begin(), cmpCurr.end());
+    out.clear();
+    std::set_difference(ref.begin(), ref.end(), cmpCurr.begin(), cmpCurr.end(), back_inserter(out));
   }
   else{
     out.clear();
     for (i=0; i< ref.size(); i++){
-      if (str == ref.at(i)->getChainId()){
-        out.push_back(ref.at(i));
+      if (group == "chain"){
+        if (str == ref.at(i)->getChainId()){
+          out.push_back(ref.at(i));
+        }
+        else if (str == ref.at(i)->getSegId()){
+          out.push_back(ref.at(i));
+        }
+        else{
+          continue;
+        }
       }
-      else if (str == ref.at(i)->getSegId()){
-        out.push_back(ref.at(i));
+      else if (group == "residue"){
+        int resnum;
+        std::stringstream(str) >> resnum;
+        if (Misc::isdigit(str) && resnum == ref.at(i)->getResId()){
+          out.push_back(ref.at(i));
+        }
+        else if (str == ref.at(i)->getResName()){
+          out.push_back(ref.at(i));
+        }
+        else{
+          continue;
+        }
+      }
+      else if (group == "atom"){
+        if (str == Misc::trim(ref.at(i)->getAtmName())){
+          out.push_back(ref.at(i));
+        }
       }
       else{
-        continue;
+        //Undefined group
       }
     }
   }

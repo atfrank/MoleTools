@@ -29,7 +29,7 @@ class Select {
     void parseSel(std::string selin);
 
     //Recursive Descent Parser (RDP)
-    static std::vector<Atom*> chainRDP (const std::string &str, const std::vector<Atom *> &ref);
+    static std::vector<Atom*> recursiveDescentParser (const std::string &str, const std::vector<Atom *> &ref, const std::string &group="");
 
     static void makeSelOld(Molecule* mol, std::string selin);
     void parseSelOld(std::string selin);
