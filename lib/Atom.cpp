@@ -1,7 +1,5 @@
 //Sean M. Law
 
-#include <iomanip>
-
 #include "Atom.hpp"
 
 Atom::Atom(){

@@ -5,6 +5,9 @@
 #include "Molecule.hpp"
 
 #include <map>
+#include <iostream>
+#include <iomanip>
+#include <stdexcept>
 
 class PDB {
   private:

@@ -4,10 +4,6 @@
 #include <Select.hpp>
 #include <Molecule.hpp>
 
-#include <sstream>
-#include <algorithm>
-#include <cctype>
-
 void Select::makeSel (Molecule* mol, std::string selin){
 
   std::vector<Atom *> ref;
