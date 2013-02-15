@@ -6,26 +6,21 @@
 
 #include <sstream>
 #include <algorithm>
-//#include <cctype>
+#include <cctype>
 
 void Select::makeSel (Molecule* mol, std::string selin){
 
   std::vector<Atom *> ref;
   unsigned int i;
 
-/*
-  for(i=0; i< str.length(); i++){
-    if (Misc::isalpha(str.at(i))){
-      str.at(i)=std::to
-    }
-  }
-*/
-//  std::transform(selin.begin(), selin.end(), selin.begin(),[](char c) {return (std::toupper(c); ); });
+  //Convert selection to uppercase
+  std::transform(selin.begin(), selin.end(), selin.begin(), ::toupper);
 
   ref=mol->getAtmVec(); //Always make a copy of the pointers and sort it!
   std::sort(ref.begin(), ref.end());
 
-  //Passing mol->getAtmVec() directly won't work because it is not properly sorted!
+  //Passing mol->getAtmVec() directly won't work
+  //because it is not properly sorted!
   std::vector<Atom *> atmSel=Select::recursiveDescentParser(selin, ref);
 
   mol->deselAll();
