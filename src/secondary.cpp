@@ -1,6 +1,7 @@
 //Sean M. Law
 
 #include "Molecule.hpp"
+#include "SABA.hpp"
 
 #include <iostream>
 #include <fstream>

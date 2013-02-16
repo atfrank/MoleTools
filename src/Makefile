@@ -10,7 +10,7 @@ CFLAGS = -Wall -lm -I$(LIBDIR)
 #DEBUG = -g
 OPTFLAGS = -O2
 
-all: $(BINDIR) $(OBJDIR) manipPDB saba;
+all: $(BINDIR) $(OBJDIR) manipPDB secondary;
 
 $(BINDIR):
 	mkdir -p $(BINDIR)
@@ -18,16 +18,18 @@ $(BINDIR):
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
-saba: $(BINDIR)/saba;
-$(BINDIR)/saba: $(OBJDIR)/saba.o $(OBJDIR)/Molecule.o \
+secondary: $(BINDIR)/secondary;
+$(BINDIR)/secondary: $(OBJDIR)/secondary.o $(OBJDIR)/SABA.o \
+		$(OBJDIR)/Molecule.o \
 		$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
 		$(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
 		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
 		$(OBJDIR)/Misc.o
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ \
-		$(OBJDIR)/saba.o $(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
-		$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
-		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o $(OBJDIR)/Misc.o
+		$(OBJDIR)/secondary.o $(OBJDIR)/SABA.o $(OBJDIR)/Molecule.o \
+		$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o $(OBJDIR)/Atom.o \
+		$(OBJDIR)/Vector.o $(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
+		$(OBJDIR)/Misc.o
 
 
 manipPDB: $(BINDIR)/manipPDB;
@@ -41,9 +43,9 @@ $(BINDIR)/manipPDB: $(OBJDIR)/manipPDB.o $(OBJDIR)/Molecule.o \
 		$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
 		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o $(OBJDIR)/Misc.o
 
-$(OBJDIR)/saba.o: saba.cpp \
-		$(LIBDIR)/Molecule.hpp
-	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c saba.cpp
+$(OBJDIR)/secondary.o: secondary.cpp \
+		$(LIBDIR)/Molecule.hpp $(LIBDIR)/SABA.hpp
+	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c secondary.cpp
 
 $(OBJDIR)/manipPDB.o: manipPDB.cpp \
 		$(LIBDIR)/Molecule.hpp
@@ -78,6 +80,9 @@ $(OBJDIR)/Select.o: $(LIBDIR)/Select.cpp $(LIBDIR)/Select.hpp \
 
 $(OBJDIR)/Misc.o: $(LIBDIR)/Misc.cpp $(LIBDIR)/Misc.hpp
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c $(LIBDIR)/Misc.cpp
+
+$(OBJDIR)/SABA.o: $(LIBDIR)/SABA.cpp $(LIBDIR)/SABA.hpp
+	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c $(LIBDIR)/SABA.cpp
 
 clean:
 	rm -rf $(BINDIR)/*
