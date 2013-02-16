@@ -1,7 +1,6 @@
 //Sean M. Law
 
 #include "Molecule.hpp"
-#include "PDB.hpp"
 
 #include <iostream>
 #include <fstream>

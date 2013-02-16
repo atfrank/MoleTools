@@ -20,7 +20,6 @@ int main (int argc, char **argv){
   int i;
   string pdb;
   string currArg;
-  string sel;
 
   pdb.clear();
 
@@ -28,10 +27,6 @@ int main (int argc, char **argv){
     currArg=argv[i];
     if (currArg == "-h" || currArg == "-help"){
       usage();
-    }
-    else if (currArg == "-nsel"){
-      currArg=argv[++i];
-      sel=currArg;
     }
     else{
       pdb=currArg;
@@ -43,14 +38,11 @@ int main (int argc, char **argv){
     usage();
   }
 
-  Molecule *mol=Molecule::readPDB(pdb, model);
+  Molecule *mol=Molecule::readPDB(pdb);
 
-  if (sel.length() >0){
-    mol->select(sel);
-  }
-
-  Molecule *cmol=mol->clone();
-  
+  mol->select(":.CA");
+  mol=mol->clone();
+  mol->writePDB(); 
 
   return 0;
 }

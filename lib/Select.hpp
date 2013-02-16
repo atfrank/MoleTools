@@ -7,7 +7,6 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
-#include <cctype>
 
 class Select {
   private:

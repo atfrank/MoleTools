@@ -41,7 +41,7 @@ Molecule* Molecule::clone (bool selFlag){
   //Create new Chains, Residues, Atoms
   for (unsigned int i=0; i< this->getAtmVecSize(); i++){
     if(selFlag == true && this->getAtom(i)->getSel() == false){
-        continue;
+      continue;
     }
     atmEntry=new Atom; //This is necessary!
     atmEntry->clone(this->getAtom(i)); //Clone Atom

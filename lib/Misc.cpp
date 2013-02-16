@@ -96,3 +96,7 @@ std::string Misc::processRange (const std::string &start, const std::string &end
 
   return ss.str();
 }
+
+void Misc::toupper (std::string &str){
+  std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+}

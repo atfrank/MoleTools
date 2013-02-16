@@ -10,7 +10,7 @@ void Select::makeSel (Molecule* mol, std::string selin){
   unsigned int i;
 
   //Convert selection to uppercase
-  std::transform(selin.begin(), selin.end(), selin.begin(), ::toupper);
+  Misc::toupper(selin);
 
   ref=mol->getAtmVec(); //Always make a copy of the pointers and sort it!
   std::sort(ref.begin(), ref.end());
