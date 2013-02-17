@@ -39,15 +39,21 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
   }
   else if ((pos=str.find("&")) != std::string::npos){
     //Logical AND between expressions: A:1-10.CA&A:5-15.CA = A:5-10.CA
+    out.clear();
     next=str.substr(pos+1, std::string::npos);
     cmpNext=Select::recursiveDescentParser(next, ref, group);
+    if (cmpNext.size() == 0){
+      return out;
+    }
     std::sort(cmpNext.begin(), cmpNext.end());    
 
     curr=str.substr(0, pos);
     cmpCurr=Select::recursiveDescentParser(curr, ref, group);
+    if (cmpCurr.size() == 0){
+      return out;
+    }
     std::sort(cmpCurr.begin(), cmpCurr.end());
 
-    out.clear();
     std::set_intersection(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), back_inserter(out));
   }
   else if ((pos=str.find("_")) != std::string::npos){
@@ -96,20 +102,26 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
   }
   else if ((pos=str.find(".")) != std::string::npos){
     //Logical AND between Residues and Atoms: :GLY.CA
+    out.clear();
     next=str.substr(pos+1, std::string::npos);
     cmpNext=Select::recursiveDescentParser(next, ref, "atom");
+    if (cmpNext.size() == 0){
+      return out;
+    }
     std::sort(cmpNext.begin(), cmpNext.end());
 
     if (pos > 0){
       curr=str.substr(0, pos);
       cmpCurr=Select::recursiveDescentParser(curr, ref, "residue");
+      if (cmpCurr.size() == 0){
+        return out;
+      }
     }
     else{
       cmpCurr=ref;
     }
     std::sort(cmpCurr.begin(), cmpCurr.end());
 
-    out.clear();
     std::set_intersection(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), back_inserter(out));
   }
   else if ((pos=str.find("+")) != std::string::npos){
@@ -133,15 +145,21 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
   else if ((pos=str.find("/")) != std::string::npos){
     //Logical AND between Chains, or between Residues, or between Atoms:
     //A/B:., :GLY/ALA., :1/2/3., :.CA/CB/C/N
+    out.clear();
     next=str.substr(pos+1, std::string::npos);
     cmpNext=Select::recursiveDescentParser(next, ref, group);
+    if (cmpNext.size() == 0){
+      return out;
+    }
     std::sort(cmpNext.begin(), cmpNext.end());
 
     curr=str.substr(0, pos);
     cmpCurr=Select::recursiveDescentParser(curr, ref, group);
+    if (cmpCurr.size() == 0){
+      return out;
+    }
     std::sort(cmpCurr.begin(), cmpCurr.end());
 
-    out.clear();
     std::set_intersection(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), back_inserter(out));
   }
   else if ((pos=str.find("-")) != std::string::npos){
