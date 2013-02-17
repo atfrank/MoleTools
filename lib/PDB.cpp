@@ -139,12 +139,21 @@ Molecule* PDB::readPDB(std::string ifile, int model){
       continue;
     }
   }
-  chnEntry->addResidue(resEntry);
-  mol->addResidue(resEntry);
-  mol->addChain(chnEntry);
-
+  //Add remaining residues and chains
+  if (resEntry->getAtmVecSize() > 0){
+    chnEntry->addResidue(resEntry);
+    mol->addResidue(resEntry);
+    mol->addChain(chnEntry);
+  }
+  
   if (ifile != "-"){
     pdbFile.close();
+  }
+
+  if (mol->getAtmVecSize() == 0){
+    std::cerr << std::endl << "Error: The PDB file \"" << ifile << "\" ";
+    std::cerr << "did not contain any valid atoms" << std::endl << std::endl;
+    exit(1);
   }
 
   return mol;

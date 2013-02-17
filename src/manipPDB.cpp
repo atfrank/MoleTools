@@ -16,6 +16,7 @@ void usage (){
   cerr << endl;
   cerr << "Usage:  manipPDB [options] <PDBfile>" << endl;
   cerr << "Options: [-model num]" << endl;
+  cerr << "         [-sel selection]" << endl;
   cerr << endl << endl;
   exit(0);
 }
@@ -39,7 +40,7 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       stringstream(currArg) >> model; //atoi
     }
-    else if (currArg == "-nsel"){
+    else if (currArg == "-sel" || currArg == "-nsel"){
       currArg=argv[++i];
       sel=currArg;
     }
