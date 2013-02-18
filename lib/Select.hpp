@@ -7,6 +7,9 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <map>
+
+extern std::map<std::string, std::string> selKeys;
 
 class Select {
   private:
@@ -17,7 +20,8 @@ class Select {
 
     //Recursive Descent Parser (RDP)
     static std::vector<Atom*> recursiveDescentParser (const std::string &str, const std::vector<Atom *> &ref, const std::string &group="");
-
+		static std::string getSelValue(const std::string &key);
+		static void initKeys();
 };
 
 #endif
