@@ -54,7 +54,7 @@ int main (int argc, char **argv){
     usage();
   }
   else{
-    Molecule *mol=Molecule::readPDB(pdb, model);
+    Molecule *mol=Molecule::readPDB(pdb);
     mol->select(sel); //Don't need to clone, just write selected
   } 
 

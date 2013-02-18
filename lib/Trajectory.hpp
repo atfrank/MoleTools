@@ -4,7 +4,7 @@
 #define TRAJECTORY_H
 
 #include <fstream>
-#include <strings>
+#include <string>
 #include <climits>
 
 class Trajectory {
@@ -12,7 +12,7 @@ class Trajectory {
 
   public:
 
-}
+};
 
 
 #endif

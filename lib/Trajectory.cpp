@@ -1,3 +1,3 @@
 #include "Trajectory.hpp"
 
-#Deal with Endianess
+//Deal with Endianess
