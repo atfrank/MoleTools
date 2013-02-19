@@ -9,19 +9,21 @@
 #include <algorithm>
 #include <map>
 
-extern std::map<std::string, std::string> selKeys;
-
 class Select {
   private:
+		std::map<std::string, std::string> selKeysAtm;
+		std::map<std::string, std::string> selKeysRes;
 
   public:
     static void makeSel(Molecule* mol, std::string selin);
     void parseSel(std::string selin);
 
     //Recursive Descent Parser (RDP)
-    static std::vector<Atom*> recursiveDescentParser (const std::string &str, const std::vector<Atom *> &ref, const std::string &group="");
+    std::vector<Atom*> recursiveDescentParser (const std::string &str, const std::vector<Atom *> &ref, const std::string &group="");
 		static std::string getSelValue(const std::string &key);
-		static void initKeys();
+		void initKeys(Molecule *mol);
+		bool heavy(const std::string &str, const std::vector<std::string> &heavyVec);
+		bool atom(const std::string &str, std::string typein, const std::vector<std::string> &AtomVec);
 };
 
 #endif
