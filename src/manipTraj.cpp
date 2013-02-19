@@ -19,7 +19,7 @@ int main (int argc, char **argv){
 
 
   int i;
-  vector<string> dcds;
+  vector<string> trajs;
   string pdb;
   string currArg;
   string sel;
@@ -40,11 +40,11 @@ int main (int argc, char **argv){
       pdb=currArg;
     }
     else{
-      dcds.push_back(currArg);
+      trajs.push_back(currArg);
     }
   }
 
-  if (dcds.size() == 0){
+  if (trajs.size() == 0){
     cerr << endl << "Error: Please provide an input trajectory file" << endl << endl;
     usage();
   }
