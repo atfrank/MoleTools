@@ -50,30 +50,26 @@ Molecule* Molecule::clone (bool selFlag){
     mol->addAtom(atmEntry);
 
     //Residue/Chain
-    if (lastAtom == NULL){
-      resEntry->addAtom(atmEntry);
-      chnEntry->addAtom(atmEntry);
-    }
-    else if (atmEntry->getChainId() != lastAtom->getChainId()) {
+    if (lastAtom != NULL && atmEntry->getChainId() != lastAtom->getChainId()) {
       //Store last
       chnEntry->addResidue(resEntry);
       mol->addResidue(resEntry);
       mol->addChain(chnEntry);
       //Create new
       chnEntry=new Chain;
-      chnEntry->addAtom(atmEntry);
       resEntry=new Residue;
-      resEntry->addAtom(atmEntry);
     }
-    else if (lastAtom->getResId() != atmEntry->getResId()){
+    else if (lastAtom != NULL && lastAtom->getResId() != atmEntry->getResId()){
       chnEntry->addResidue(resEntry);
       mol->addResidue(resEntry);
       resEntry=new Residue;
-      resEntry->addAtom(atmEntry);
     }
     else{
-      resEntry->addAtom(atmEntry);
+			//Do nothing
     }
+
+		chnEntry->addAtom(atmEntry);
+		resEntry->addAtom(atmEntry);
 
     //Update for next atom
     lastAtom=atmEntry;
@@ -82,6 +78,12 @@ Molecule* Molecule::clone (bool selFlag){
   mol->addResidue(resEntry);
   mol->addChain(chnEntry);
   /**************************/
+
+	for (unsigned int j=0; j< mol->getChnVecSize(); j++){
+		for(unsigned int k=0; k< mol->getChain(j)->getAtmVecSize(); k++){
+//			std::cerr << mol->getChain(j)->getAtom(k)->getSummary() << std::endl;
+		}
+	}
 
   return mol;
 }

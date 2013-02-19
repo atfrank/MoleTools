@@ -43,7 +43,12 @@ int main (int argc, char **argv){
 
   mol->select(":.CA");
   mol=mol->clone();
-  mol->writePDB(); 
+
+	//mol->writePDB();
+
+	Molecule *ssmol=SABA::getPseudoCenter(mol);
+
+  ssmol->writePDB(); 
 
   return 0;
 }

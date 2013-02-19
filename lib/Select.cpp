@@ -1,8 +1,6 @@
 //Sean M. Law
 
-#include <Misc.hpp>
 #include <Select.hpp>
-#include <Molecule.hpp>
 
 void Select::makeSel (Molecule* mol, std::string selin){
 

@@ -3,6 +3,7 @@
 #define SELECT_H
 
 #include <Molecule.hpp>
+#include <Misc.hpp>
 
 #include <vector>
 #include <sstream>
