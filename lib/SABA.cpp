@@ -13,20 +13,18 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
 	lastAtom=NULL;
 
 	for (unsigned int i=0; i< mol->getChnVecSize(); i++){
-		std::cerr << mol->getChain(i)->getAtmVecSize() << std::endl;
 		for (unsigned int j=0; j< mol->getChain(i)->getAtmVecSize(); j++){
 
 			atmEntry=new Atom;
 			atmEntry->clone(mol->getAtom(j));
 
-			std::cerr << atmEntry->getSummary() << std::endl;	
 			/*****Same as PDB::readPDB*******/
-			if (j < mol->getAtmVecSize() - 1){
+			//if (j < mol->getAtmVecSize() - 1){
     		ssmol->addAtom(atmEntry);
-			}
-			else{
+			//}
+			//else{
 				//Clean up last
-			}
+			//}
 
     	//Residue/Chain
     	if (lastAtom != NULL && atmEntry->getChainId() != lastAtom->getChainId()) {
