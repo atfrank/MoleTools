@@ -43,7 +43,7 @@ int main (int argc, char **argv){
     usage();
   }
 
-  Molecule *mol=Molecule::readPDB(pdb, model);
+  Molecule *mol=Molecule::readPDB(pdb);
 
   if (sel.length() >0){
     mol->select(sel);
