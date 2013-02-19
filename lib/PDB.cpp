@@ -33,17 +33,42 @@ std::string PDB::writePDBFormat (Molecule* mol){
       for (unsigned int k=0; k< res->getAtmVecSize(); k++){
         atm=res->getAtom(k);
         if (!atm->getSel()){continue;}
-        out << std::setw(6) << std::left << atm->getRecName(); 
-        out << std::setw(5) << std::right << atm->getAtmNum();
-        out << " ";
+				if (atm->getAtmNum() <= 99999){
+					out << std::setw(6) << std::left << atm->getRecName();
+        	out << std::setw(5) << std::right << atm->getAtmNum(); //PDB format
+        	out << " "; //PDB format
+				}
+				else{
+					out << std::setw(5) << std::left << atm->getRecName();
+					out << std::setw(6) << std::right << atm->getAtmNum();
+					out << " ";
+				}
         out << std::setw(4) << std::left << atm->getAtmName();
         out << std::setw(1) << std::left << atm->getAlt();
-        out << std::setw(3) << std::left << atm->getResName();
-        out << " ";
+				if (atm->getResName().length() < 4){
+        	out << std::setw(3) << std::left << atm->getResName(); //PDB format
+        	out << " "; //PDB format
+				}
+				else{
+					out << std::setw(4) << std::left << atm->getResName();
+				}
         out << std::setw(1) << std::left << atm->getChainId();
-        out << std::setw(4) << std::right << atm->getResId();
-        out << std::setw(1) << std::left << atm->getICode();
-        out << "   ";
+				if (atm->getResId() <= 999){
+        	out << std::setw(4) << std::right << atm->getResId(); //PDB format
+        	out << std::setw(1) << std::left << atm->getICode(); //PDB format
+        	out << "   "; //PDB format
+				}
+//				else if (atm->getResId() <= 9999){
+//					out << std::setw(5) << std::right << atm->getResId();
+//          out << "   ";
+//				}
+				else if (atm->getResId() <= 99999){
+					out << std::setw(5) << std::right << atm->getResId();
+					out << "   ";
+				}
+				else{
+					out << std::setw(6) << std::left << atm->getResId();
+				}
         out << std::fixed; //For setting precision
         out << std::setw(8) << std::right << std::setprecision(3) << atm->getX();
         out << std::setw(8) << std::right << std::setprecision(3) << atm->getY();
@@ -171,12 +196,20 @@ Atom* PDB::processAtomLine (std::string line, Atom* lastAtom){
   Atom *atmEntry=new Atom;
 
   //substr: first character is denoted by a value of 0 (not 1)
-  atmEntry->setRecName(line.substr(0,6));
-  std::stringstream(line.substr(6,5)) >> atmnum;
-  atmEntry->setAtmNum(atmnum);
+	if (Misc::isdigit(Misc::trim(line.substr(4,7)))){
+		atmEntry->setRecName(line.substr(0,4));
+		std::stringstream(line.substr(4,7)) >> atmnum;
+	  atmEntry->setAtmNum(atmnum);
+	}
+	else{
+  	atmEntry->setRecName(line.substr(0,6)); //PDB format
+  	std::stringstream(line.substr(6,5)) >> atmnum; //PDB format
+  	atmEntry->setAtmNum(atmnum); //PDB format
+	}
   atmEntry->setAtmName(line.substr(12,4));
   atmEntry->setAlt(line.substr(16,1));
-  atmEntry->setResName(line.substr(17,3));
+  //atmEntry->setResName(line.substr(17,3)); //PDB format
+	atmEntry->setResName(line.substr(17,4));
   chainid=line.substr(21,1);
   if(lastAtom == NULL || lastAtom->getChainId() != chainid){
     //New chain, check if duplicate
@@ -195,7 +228,8 @@ Atom* PDB::processAtomLine (std::string line, Atom* lastAtom){
   }
   atmEntry->setChainId(chainid);
   atmEntry->setRealId(line.substr(21,1)); 
-  std::stringstream(line.substr(22,4)) >> resid;
+  //std::stringstream(line.substr(22,4)) >> resid; //PDB format
+	std::stringstream(line.substr(22,6)) >> resid;
   atmEntry->setResId(resid);
   atmEntry->setICode(line.substr(26,1));
   std::stringstream(line.substr(30,8)) >> x;

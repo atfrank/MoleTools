@@ -335,7 +335,7 @@ void Select::initKeys(Molecule *mol){
 
   //std::cerr << selKeysAtm["HYDROGEN"] << std::endl;
 
-  selKeysRes["HETERO"]="HETATM";
+  selKeysRes["HETERO"]="HETATM HETAT HETA";
 	selKeysRes["PEPTIDE"]="ALA CYS VAL LEU ILE ASP GLU GLY GLN ASN HSD HSE HSP HIE HID HIS PRO TRP MET SER THR PHE TYR LYS ARG";
 	selKeysRes["PROTEIN"]=selKeysRes["PEPTIDE"];
 	//At physiological pH
