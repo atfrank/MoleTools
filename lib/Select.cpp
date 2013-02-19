@@ -186,6 +186,14 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     out.clear();
     std::set_difference(ref.begin(), ref.end(), cmpCurr.begin(), cmpCurr.end(), back_inserter(out));
   }
+	else if (selKeysRes.find(str) != selKeysRes.end() && group == "residue"){
+	  out.clear();
+		out=Select::recursiveDescentParser(selKeysRes[str], ref, group);
+	}
+	else if (selKeysAtm.find(str) != selKeysAtm.end() && group == "atom"){
+		out.clear();
+		out=Select::recursiveDescentParser(selKeysAtm[str], ref, group);
+	}
   else{
     out.clear();
     for (i=0; i< ref.size(); i++){
@@ -207,6 +215,9 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
           out.push_back(ref.at(i));
         }
         else if (str == ref.at(i)->getResName()){
+          out.push_back(ref.at(i));
+        }
+				else if (str == Misc::trim(ref.at(i)->getRecName())){
           out.push_back(ref.at(i));
         }
         else{
@@ -324,7 +335,7 @@ void Select::initKeys(Molecule *mol){
 
   //std::cerr << selKeysAtm["HYDROGEN"] << std::endl;
 
-	//
+  selKeysRes["HETERO"]="HETATM";
 	selKeysRes["PEPTIDE"]="ALA CYS VAL LEU ILE ASP GLU GLY GLN ASN HSD HSE HSP HIE HID HIS PRO TRP MET SER THR PHE TYR LYS ARG";
 	selKeysRes["PROTEIN"]=selKeysRes["PEPTIDE"];
 	//At physiological pH
