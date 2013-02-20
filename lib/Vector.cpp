@@ -175,3 +175,19 @@ Vector Vector::cross (const Vector& vec) const { //Cross Product
 double Vector::norm () const { //Normal
   return sqrt(xcoor*xcoor+ycoor*ycoor+zcoor*zcoor);
 }
+
+double Vector::distance () const {
+  return sqrt(xcoor*xcoor+ycoor*ycoor+zcoor*zcoor);
+}
+
+double Vector::angle () const {
+  double angle;
+
+  return angle;
+}
+
+double Vector::dihedral () const {
+  double angle;
+
+  return angle;
+}

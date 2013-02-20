@@ -49,6 +49,9 @@ class Vector {
     double operator* (const Vector& vec) const; //Dot Product
     Vector cross (const Vector& vec) const; //Cross Product
     double norm () const;
+    double distance () const;
+    double angle () const;
+    double dihedral () const;
 };
 
 #endif
