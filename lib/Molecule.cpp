@@ -79,12 +79,6 @@ Molecule* Molecule::clone (bool selFlag){
   mol->addChain(chnEntry);
   /**************************/
 
-	for (unsigned int j=0; j< mol->getChnVecSize(); j++){
-		for(unsigned int k=0; k< mol->getChain(j)->getAtmVecSize(); k++){
-//			std::cerr << mol->getChain(j)->getAtom(k)->getSummary() << std::endl;
-		}
-	}
-
   return mol;
 }
 

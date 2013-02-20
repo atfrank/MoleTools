@@ -8,6 +8,7 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
 	Residue *resEntry=new Residue;
 	Atom *atmEntry;
 	Atom *lastAtom;
+  Vector xyz;
 
 	atmEntry=NULL;
 	lastAtom=NULL;
@@ -16,15 +17,23 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
 		for (unsigned int j=0; j< mol->getChain(i)->getAtmVecSize(); j++){
 
 			atmEntry=new Atom;
-			atmEntry->clone(mol->getAtom(j));
+			atmEntry->clone(mol->getChain(i)->getAtom(j));
 
 			/*****Same as PDB::readPDB*******/
-			//if (j < mol->getAtmVecSize() - 1){
+			if (j < mol->getAtmVecSize() - 1){
     		ssmol->addAtom(atmEntry);
-			//}
-			//else{
-				//Clean up last
-			//}
+        if (lastAtom != NULL){
+          //Pseudo center
+          //xyz=(lastAtom->getCoor() + atmEntry->getCoor())/2.0;
+          //lastAtom->setCoor(xyz);
+        }
+			}
+			else{
+				//Clean up last by getting pseudo center
+        //xyz=(lastAtom->getCoor() + atmEntry->getCoor())/2.0;
+        //lastAtom->setCoor(xyz);
+        continue;
+			}
 
     	//Residue/Chain
     	if (lastAtom != NULL && atmEntry->getChainId() != lastAtom->getChainId()) {
@@ -45,8 +54,10 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
 				//Do nothing
     	}
 
-			chnEntry->addAtom(atmEntry);
-    	resEntry->addAtom(atmEntry);
+      if (j < mol->getAtmVecSize() - 1){
+			  chnEntry->addAtom(atmEntry);
+    	  resEntry->addAtom(atmEntry);
+      }
 			
     	//Update for next atom
     	lastAtom=atmEntry;		

@@ -46,8 +46,10 @@ int main (int argc, char **argv){
 
 	//mol->writePDB();
 
-	Molecule *ssmol=SABA::getPseudoCenter(mol);
+  SABA *ss;
 
+	Molecule *ssmol=ss->getPseudoCenter(mol);
+  
   ssmol->writePDB(); 
 
   return 0;

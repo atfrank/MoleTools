@@ -7,6 +7,7 @@
 
 class SABA {
   private:
+    std::vector<std::string> ss;
 
   public:
 		static Molecule* getPseudoCenter(Molecule *mol);
