@@ -21,6 +21,13 @@ void Select::makeSel (Molecule* mol, std::string selin){
   //because it is not properly sorted!
   std::vector<Atom *> atmSel=sel->recursiveDescentParser(selin, ref);
 
+	if (atmSel.size() == 0){
+		std::cerr << std::endl << "Error: Selection \"";
+		std::cerr << selin << "\" did not match any atoms";
+		std::cerr << std::endl << std::endl;
+		exit(1);
+	}
+
   mol->deselAll();
   for (i=0; i< atmSel.size(); i++){
     atmSel.at(i)->setSel(true);
@@ -45,6 +52,9 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     next=str.substr(pos+1, std::string::npos);
     cmpNext=Select::recursiveDescentParser(next, ref, group);
     if (cmpNext.size() == 0){
+			std::cerr << std::endl << "Warning: Selection \"";
+	    std::cerr << next << "\" did not match any atoms";
+	    std::cerr << std::endl << std::endl;
       return out;
     }
     std::sort(cmpNext.begin(), cmpNext.end());    
@@ -62,6 +72,11 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     //Logical OR between expressions: A:1-5.CA_B:10-15.CA
     next=str.substr(pos+1, std::string::npos);
     cmpNext=Select::recursiveDescentParser(next, ref, group);
+		if (cmpNext.size() == 0){
+      std::cerr << std::endl << "Warning: Selection \"";
+      std::cerr << next << "\" did not match any atoms";
+      std::cerr << std::endl << std::endl;
+    }
     std::sort(cmpNext.begin(), cmpNext.end());
 
     curr=str.substr(0, pos);

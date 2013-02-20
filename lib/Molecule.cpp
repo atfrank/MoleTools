@@ -46,7 +46,7 @@ Molecule* Molecule::clone (bool selFlag){
     atmEntry=new Atom; //This is necessary!
     atmEntry->clone(this->getAtom(i)); //Clone Atom
 
-    /*****Same as PDB::readPDB*******/
+    //--------Same as PDB::readPDB-------
     mol->addAtom(atmEntry);
 
     //Residue/Chain
@@ -77,7 +77,7 @@ Molecule* Molecule::clone (bool selFlag){
   chnEntry->addResidue(resEntry);
   mol->addResidue(resEntry);
   mol->addChain(chnEntry);
-  /**************************/
+  //---------------------------
 
   return mol;
 }
