@@ -7,7 +7,7 @@ OBJDIR = obj
 
 CC = g++
 CFLAGS = -Wall -lm -I$(LIBDIR)
-#DEBUG = -g
+DEBUG = -g
 OPTFLAGS = -O2
 
 all: $(BINDIR) $(OBJDIR) manipPDB manipTraj secondary;

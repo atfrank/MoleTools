@@ -46,5 +46,7 @@ int main (int argc, char **argv){
 
 	mol->writePDB();
 
+	delete mol;
+
   return 0;
 }

@@ -55,6 +55,7 @@ int main (int argc, char **argv){
   }
 
   Molecule *mol=Molecule::readPDB(pdb, model);
+
   Molecule *cmol=mol->clone();
 	
   cmol->deselAll();
@@ -67,12 +68,8 @@ int main (int argc, char **argv){
 //  mol->writePDB();
   cmol->writePDB();
 
-  /*
-  cout << mol->getAtom(0).getCoor().x() ;
-  Atom t=mol->getAtom(0);
-  cout << t.getCoor().x() << endl;
-  cout << t.getX() << endl;
-  cout << t.getAtmnum() << endl;
-  */
+	delete cmol;
+	delete mol;
+
   return 0;
 }

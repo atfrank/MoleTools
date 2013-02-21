@@ -13,6 +13,7 @@ class Molecule {
     std::vector<Atom*> atmVec;
 
   public:
+		~Molecule();
     static Molecule* readPDB (std::string ifile, int model=0);
     int writePDB ();
     Molecule* clone(bool selFlag=true);

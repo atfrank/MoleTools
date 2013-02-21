@@ -4,6 +4,25 @@
 #include "PDB.hpp"
 #include "Select.hpp"
 
+Molecule::~Molecule (){
+	Chain *c;
+	Residue *r;
+	Atom *a;
+
+	for (unsigned int i=0; i< this->getChnVecSize(); i++){
+		c=this->getChain(i);
+		for (unsigned int j=0; j< c->getResVecSize(); j++){
+			r=c->getResidue(j);
+			for (unsigned int k=0; k< r->getAtmVecSize(); k++){
+				a=r->getAtom(k);
+				delete a;
+			}
+			delete r;
+		}
+		delete c;
+	}
+}
+
 Molecule* Molecule::readPDB (std::string ifile, int model){
 
   return PDB::readPDB(ifile, model);
