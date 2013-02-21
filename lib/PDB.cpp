@@ -205,7 +205,7 @@ Atom* PDB::processAtomLine (std::string line, Atom* lastAtom){
   atmEntry->setAtmName(line.substr(12,4));
   atmEntry->setAlt(line.substr(16,1));
   //atmEntry->setResName(line.substr(17,3)); //PDB format
-	atmEntry->setResName(line.substr(17,4));
+	atmEntry->setResName(Misc::trim(line.substr(17,4)));
   chainid=line.substr(21,1);
   if(lastAtom == NULL || lastAtom->getChainId() != chainid){
     //New chain, check if duplicate

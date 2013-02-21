@@ -8,7 +8,7 @@ OBJDIR = obj
 CC = g++
 CFLAGS = -Wall -lm -I$(LIBDIR)
 DEBUG = -g
-OPTFLAGS = -O2
+OPTFLAGS = -O3
 
 all: $(BINDIR) $(OBJDIR) manipPDB manipTraj secondary;
 
@@ -23,24 +23,29 @@ $(BINDIR)/secondary: $(OBJDIR)/secondary.o $(OBJDIR)/SABA.o \
 		$(OBJDIR)/Molecule.o \
 		$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
 		$(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
-		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
-		$(OBJDIR)/Misc.o
+		$(OBJDIR)/Constants.o $(OBJDIR)/PDB.o \
+		$(OBJDIR)/Select.o $(OBJDIR)/Misc.o
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ \
-		$(OBJDIR)/secondary.o $(OBJDIR)/SABA.o $(OBJDIR)/Molecule.o \
-		$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o $(OBJDIR)/Atom.o \
-		$(OBJDIR)/Vector.o $(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
+		$(OBJDIR)/secondary.o $(OBJDIR)/SABA.o \
+		$(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
+		$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o \
+		$(OBJDIR)/Vector.o $(OBJDIR)/Constants.o \
+		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
 		$(OBJDIR)/Misc.o
 
 manipTraj: $(BINDIR)/manipTraj;
 $(BINDIR)/manipTraj: $(OBJDIR)/manipTraj.o $(OBJDIR)/Trajectory.o \
 		$(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
 		$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o \
-		$(OBJDIR)/Vector.o $(OBJDIR)/PDB.o \
-		$(OBJDIR)/Select.o $(OBJDIR)/Misc.o
+		$(OBJDIR)/Vector.o $(OBJDIR)/Constants.o \
+		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
+		$(OBJDIR)/Misc.o
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ \
-		$(OBJDIR)/manipTraj.o $(OBJDIR)/Trajectory.o $(OBJDIR)/Molecule.o \
-		$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o $(OBJDIR)/Atom.o \
-		$(OBJDIR)/Vector.o $(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
+		$(OBJDIR)/manipTraj.o $(OBJDIR)/Trajectory.o \
+		$(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
+		$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o \
+		$(OBJDIR)/Vector.o $(OBJDIR)/Constants.o \
+		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
 		$(OBJDIR)/Misc.o
 
 
@@ -48,12 +53,14 @@ manipPDB: $(BINDIR)/manipPDB;
 $(BINDIR)/manipPDB: $(OBJDIR)/manipPDB.o $(OBJDIR)/Molecule.o \
 		$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
 		$(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
-		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
-		$(OBJDIR)/Misc.o
+		$(OBJDIR)/Constants.o $(OBJDIR)/PDB.o \
+		$(OBJDIR)/Select.o $(OBJDIR)/Misc.o
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ \
-		$(OBJDIR)/manipPDB.o $(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
-		$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
-		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o $(OBJDIR)/Misc.o
+		$(OBJDIR)/manipPDB.o $(OBJDIR)/Molecule.o \
+		$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
+		$(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
+		$(OBJDIR)/Constants.o $(OBJDIR)/PDB.o \
+		$(OBJDIR)/Select.o $(OBJDIR)/Misc.o
 
 $(OBJDIR)/secondary.o: secondary.cpp \
 		$(LIBDIR)/Molecule.hpp $(LIBDIR)/SABA.hpp
@@ -91,8 +98,12 @@ $(OBJDIR)/Atom.o: $(LIBDIR)/Atom.cpp $(LIBDIR)/Atom.hpp \
 		$(LIBDIR)/Vector.hpp 
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c $(LIBDIR)/Atom.cpp
 
-$(OBJDIR)/Vector.o: $(LIBDIR)/Vector.cpp $(LIBDIR)/Vector.hpp
+$(OBJDIR)/Vector.o: $(LIBDIR)/Vector.cpp $(LIBDIR)/Vector.hpp \
+		$(LIBDIR)/Constants.hpp
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c $(LIBDIR)/Vector.cpp
+
+$(OBJDIR)/Constants.o: $(LIBDIR)/Constants.cpp $(LIBDIR)/Constants.hpp
+	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c $(LIBDIR)/Constants.cpp
 
 $(OBJDIR)/Select.o: $(LIBDIR)/Select.cpp $(LIBDIR)/Select.hpp \
 		$(LIBDIR)/Molecule.hpp

@@ -3,11 +3,11 @@
 #ifndef SABA_H
 #define SABA_H
 
-#include <Molecule.hpp>
+#include "Molecule.hpp"
+#include "Residue.hpp"
 
 class SABA {
   private:
-    std::vector<std::string> ss;
 		std::vector<double> helixDist; //Alpha/310 - i', i'+3
 		std::vector<double> helixDihe; //Alpha/310 - i', i'+1, i'+2, i'+3
 		std::vector<double> threeDist1; //310 - i'+1, i'+2

@@ -3,6 +3,8 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include "Constants.hpp"
+
 #include <cmath>
 
 class Vector {
@@ -46,12 +48,12 @@ class Vector {
     Vector operator- () const;
     Vector operator- (const Vector& vec) const;
     Vector operator+ (const Vector& vec) const;
-    double operator* (const Vector& vec) const; //Dot Product
+    double dot (const Vector& vec) const; //Dot Product
     Vector cross (const Vector& vec) const; //Cross Product
     double norm () const;
-    double distance () const;
-    double angle () const;
-    double dihedral () const;
+    static double distance (const Vector& u, const Vector& v);
+    static double angle (const Vector& u, const Vector& v, const Vector& w);
+    static double dihedral (const Vector& t, const Vector& u, const Vector& v, const Vector& w);
 };
 
 #endif

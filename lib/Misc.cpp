@@ -2,6 +2,14 @@
 
 #include <Misc.hpp>
 
+std::string Misc::single (const std::string &resnamein){
+	if (resnamein == "T"){
+
+	}
+	
+	return "";
+}
+
 std::vector<std::string> Misc::split (const std::string &str, const std::string &delim, const bool repeat){
   std::vector<std::string> tokens;
   size_t p0=0;

@@ -29,6 +29,7 @@ class Atom {
     std::string segid; //Segment identifier
     bool sel; //Selection flag
     std::string summary; //A:GLY1.CA style summary
+		std::string ss; //Secondary structure
     //All additional fields must also be added to Atom::clone() function!!
 
   public:
@@ -57,7 +58,8 @@ class Atom {
     std::string& getSegId();
     bool& getSel();
     std::string& getSummary();
-
+		std::string& getSS();
+	
     //Set atom info
     void setRecName(const std::string& recnamein);
     void setAtmNum(const int& atmnumin);
@@ -81,6 +83,7 @@ class Atom {
     void setSegId(); //Clear
     void setSel(const bool selin);
     void setSummary(const std::string& summaryin);
+		void setSS(const std::string& ssin);
 };
 
 #endif

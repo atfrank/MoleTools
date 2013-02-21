@@ -35,6 +35,9 @@ class Residue {
 //    bool& getSel();
     void selAll();
     void deselAll();
+
+		static std::string aa321(const std::string &aa);
+		static std::string aa123(const std::string &aa);
 };
 
 #endif

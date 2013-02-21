@@ -17,6 +17,7 @@ Atom::Atom(){
   segid="   ";
   sel=true;
   summary="";
+	ss="";
 }
 
 Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int residin, Vector coorin, std::string segidin){
@@ -35,6 +36,7 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
   segid=segidin;
   sel=true;
   summary="";
+	ss="";
 }
 
 void Atom::reset(){
@@ -52,6 +54,7 @@ void Atom::reset(){
   segid="    ";
   sel=true;
   summary="";
+	ss="";
 }
 
 void Atom::clone(Atom* atmin){
@@ -69,6 +72,7 @@ void Atom::clone(Atom* atmin){
   segid=atmin->getSegId();
   sel=atmin->getSel();
   summary=atmin->getSummary();
+	ss=atmin->getSS();
 }
 
 //Get atom info
@@ -142,6 +146,10 @@ bool& Atom::getSel(){
 
 std::string& Atom::getSummary(){
   return summary;
+}
+
+std::string& Atom::getSS(){
+	return ss;
 }
 
 //Set atom info
@@ -233,4 +241,8 @@ void Atom::setSel(const bool selin){
 
 void Atom::setSummary(const std::string& summaryin){
   summary=summaryin;
+}
+
+void Atom::setSS(const std::string& ssin){
+	ss=ssin;
 }

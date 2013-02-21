@@ -40,11 +40,11 @@ int main (int argc, char **argv){
   }
 
   Molecule *mol=Molecule::readPDB(pdb);
-	SABA *ss;
+	//SABA *ss=new SABA;
 
-	mol=ss->getPseudoCenter(mol);
+	mol=SABA::getPseudoCenter(mol);
 
-	mol->writePDB();
+	//mol->writePDB();
 
 	delete mol;
 
