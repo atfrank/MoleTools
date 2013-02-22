@@ -5,12 +5,31 @@
 
 #include <fstream>
 #include <string>
+#include <vector>
 #include <climits>
 
 class Trajectory {
   private:
+		unsigned int natom;
+		unsigned int nframe;
+		double tstart;
+		double tend;
+		double tstep;
+		double dof;
+		bool periodic;
+		double pbx;
+		double pby;
+		double pbc;
+		bool fixed;
+		unsigned int version;
+		std::string endian;
+		std::string title;
+		std::vector<double> x;
+		std::vector<double> y;
+		std::vector<double> z;
 
   public:
+		std::string readFortran();
 
 };
 
