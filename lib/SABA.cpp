@@ -75,8 +75,8 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
 			dist2=999.0;
 			dihe=999.0;
 			if (atm1 != NULL && atm2 != NULL && atm3 != NULL && atm4 != NULL){
-				dist1=Vector::distance(atm1->getCoor(), atm4->getCoor());
-				dist2=Vector::distance(atm1->getCoor(), atm3->getCoor());
+				dist1=Vector::distance(atm1->getCoor(), atm4->getCoor());//i',i'+3
+				dist2=Vector::distance(atm1->getCoor(), atm3->getCoor());//i',i'+2
 				
 				if (atm1->getResName() == "PRO"){
 					//Do nothing
@@ -85,14 +85,22 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
 					dihe=Vector::dihedral(atm1->getCoor(), atm2->getCoor(),atm3->getCoor(),atm4->getCoor());
 					if (dihe > 43.5 && dihe < 78.3){
 						//Alpha Helix
-						atm1->setSS("H");
+						ssmol->getAtom(j)->setSS("H");
+						ssmol->getAtom(j+1)->setSS("H");
+						ssmol->getAtom(j+2)->setSS("H");
+						ssmol->getAtom(j+3)->setSS("H");
 					}
 				}
-				else if (dist1 < 4.82 && dist2 < 5.24){
-					dihe=Vector::dihedral(atm1->getCoor(), atm2->getCoor(),atm3->getCoor(),atm4->getCoor());
-					if (dihe > 42.1 && dihe < 119.5){
-            //310 Helix
-						atm1->setSS("G");
+				else if (dist2 < 4.82 && dist1 > 5.14 && dist1 < 9.12){
+					dist1=Vector::distance(atm2->getCoor(), atm4->getCoor());//i'+1, i'+3
+					if (dist1 < 5.24){
+						dihe=Vector::dihedral(atm1->getCoor(), atm2->getCoor(),atm3->getCoor(),atm4->getCoor());
+						if (dihe > 42.1 && dihe < 119.5){
+            	//310 Helix
+							ssmol->getAtom(j)->setSS("G");
+							ssmol->getAtom(j+1)->setSS("G");
+							ssmol->getAtom(j+2)->setSS("G");
+						}
 					}
 				}
 				else{
@@ -108,7 +116,7 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
     atm2=ssmol->getAtom(i-1);
     if (atm1->getChainId() == atm2->getChainId() && atm1->getResId()-1 == atm2->getResId()){
       //Got i' and i'-1
-      for (j=1; j< size-4; j++){ //j can't be zero, no j-1
+      for (j=1; j< size; j++){ //j can't be zero, no j-1
         atm3=ssmol->getAtom(j);
         if (atm1->getChainId() == atm3->getChainId() && atm1->getResId() < atm3->getResId()+4 && atm1->getResId() > atm3->getResId()-4){
           continue;
@@ -117,9 +125,9 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
         if (atm3->getChainId() == atm4->getChainId() && atm3->getResId()-1 == atm4->getResId()){
           //Got j' and j'-1
           //Calculate i' and j' distance
-          dist1=Vector::distance(atm1->getCoor(), atm3->getCoor());
-          if (dist1 > 2.58 && dist1 <5.18){
-            dist2=Vector::distance(atm2->getCoor(),atm4->getCoor());
+          dist1=Vector::distance(atm1->getCoor(), atm3->getCoor());//i',j'
+          if (dist1 > 2.58 && dist1 < 5.18){
+            dist2=Vector::distance(atm2->getCoor(),atm4->getCoor());//i'-1,j'-1
             if (dist2 > 4.34 && dist2 < 5.03){
               ssmol->getAtom(i)->setSS("E");
               ssmol->getAtom(j)->setSS("E");
