@@ -10,7 +10,7 @@ CFLAGS = -Wall -lm -I$(LIBDIR)
 DEBUG = -g
 OPTFLAGS = -O3
 
-all: $(BINDIR) $(OBJDIR) manipPDB manipTraj secondary;
+all: $(BINDIR) $(OBJDIR) modPDB modTraj secondary;
 
 $(BINDIR):
 	mkdir -p $(BINDIR)
@@ -33,15 +33,15 @@ $(BINDIR)/secondary: $(OBJDIR)/secondary.o $(OBJDIR)/SABA.o \
 		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
 		$(OBJDIR)/Misc.o
 
-manipTraj: $(BINDIR)/manipTraj;
-$(BINDIR)/manipTraj: $(OBJDIR)/manipTraj.o $(OBJDIR)/Trajectory.o \
+modTraj: $(BINDIR)/modTraj;
+$(BINDIR)/modTraj: $(OBJDIR)/modTraj.o $(OBJDIR)/Trajectory.o \
 		$(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
 		$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o \
 		$(OBJDIR)/Vector.o $(OBJDIR)/Constants.o \
 		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
 		$(OBJDIR)/Misc.o
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ \
-		$(OBJDIR)/manipTraj.o $(OBJDIR)/Trajectory.o \
+		$(OBJDIR)/modTraj.o $(OBJDIR)/Trajectory.o \
 		$(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
 		$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o \
 		$(OBJDIR)/Vector.o $(OBJDIR)/Constants.o \
@@ -49,14 +49,14 @@ $(BINDIR)/manipTraj: $(OBJDIR)/manipTraj.o $(OBJDIR)/Trajectory.o \
 		$(OBJDIR)/Misc.o
 
 
-manipPDB: $(BINDIR)/manipPDB;
-$(BINDIR)/manipPDB: $(OBJDIR)/manipPDB.o $(OBJDIR)/Molecule.o \
+modPDB: $(BINDIR)/modPDB;
+$(BINDIR)/modPDB: $(OBJDIR)/modPDB.o $(OBJDIR)/Molecule.o \
 		$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
 		$(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
 		$(OBJDIR)/Constants.o $(OBJDIR)/PDB.o \
 		$(OBJDIR)/Select.o $(OBJDIR)/Misc.o
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ \
-		$(OBJDIR)/manipPDB.o $(OBJDIR)/Molecule.o \
+		$(OBJDIR)/modPDB.o $(OBJDIR)/Molecule.o \
 		$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
 		$(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
 		$(OBJDIR)/Constants.o $(OBJDIR)/PDB.o \
@@ -66,13 +66,13 @@ $(OBJDIR)/secondary.o: secondary.cpp \
 		$(LIBDIR)/Molecule.hpp $(LIBDIR)/SABA.hpp
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c secondary.cpp
 
-$(OBJDIR)/manipTraj.o: manipTraj.cpp \
+$(OBJDIR)/modTraj.o: modTraj.cpp \
 		$(LIBDIR)/Molecule.hpp $(LIBDIR)/Trajectory.hpp
-	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c manipTraj.cpp
+	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c modTraj.cpp
 
-$(OBJDIR)/manipPDB.o: manipPDB.cpp \
+$(OBJDIR)/modPDB.o: modPDB.cpp \
 		$(LIBDIR)/Molecule.hpp
-	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c manipPDB.cpp
+	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c modPDB.cpp
 
 $(OBJDIR)/Trajectory.o: $(LIBDIR)/Trajectory.cpp $(LIBDIR)/Trajectory.hpp \
 		$(LIBDIR)/Molecule.hpp

@@ -1,5 +1,6 @@
 //Sean M. Law
 
+#include "Trajectory.hpp"
 #include "Molecule.hpp"
 
 #include <iostream>
@@ -19,10 +20,13 @@ int main (int argc, char **argv){
 
 
   int i;
+	unsigned int j;
   vector<string> trajs;
   string pdb;
   string currArg;
   string sel;
+	ifstream trjin;
+	ofstream trjout;
 
   pdb.clear();
 
@@ -57,6 +61,16 @@ int main (int argc, char **argv){
     Molecule *mol=Molecule::readPDB(pdb);
     mol->select(sel); //Don't need to clone, just write selected
   } 
+
+	for (j=0; j< trajs.size(); j++){
+		trjin.open(trajs.at(j).c_str(), ios::binary);
+
+		if (trjin.is_open()){
+			
+		}
+	
+		trjin.close();
+	}
 
   return 0;
 }

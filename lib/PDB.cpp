@@ -1,12 +1,6 @@
 //Sean M. Law
 
 #include "PDB.hpp"
-#include "Misc.hpp"
-
-#include <iostream>
-#include <iomanip>
-#include <map>
-#include <stdexcept>
 
 PDB::PDB(){
   chnMap.clear();

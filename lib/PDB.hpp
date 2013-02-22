@@ -3,11 +3,13 @@
 #define PDB_H
 
 #include "Molecule.hpp"
+#include "Misc.hpp"
 
-#include <map>
 #include <iostream>
 #include <iomanip>
+#include <map>
 #include <stdexcept>
+#include <iostream>
 
 class PDB {
   private:
