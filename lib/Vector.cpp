@@ -189,8 +189,20 @@ double Vector::distance (const Vector& u, const Vector& v) {
 
 double Vector::angle (const Vector& u, const Vector& v, const Vector& w){
   double angle;
+	Vector dx, dy;
+	double dp, nx, ny;
 
-  return angle;
+	dx=u-v;
+	dy=w-v;
+
+	nx=dx.norm();
+	ny=dy.norm();
+
+	dp=dx.dot(dy);
+
+	angle=acos(dp/(nx*ny));
+
+  return angle/PI*180.0;
 }
 
 double Vector::dihedral (const Vector& t, const Vector& u, const Vector& v, const Vector& w) {
