@@ -121,10 +121,10 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
           if (dist1 > 2.58 && dist1 <5.18){
             dist2=Vector::distance(atm2->getCoor(),atm4->getCoor());
             if (dist2 > 4.34 && dist2 < 5.03){
-              atm1->setSS("E");
-              atm2->setSS("E");
-              atm3->setSS("E");
-              atm4->setSS("E");
+              ssmol->getAtom(i)->setSS("E");
+              ssmol->getAtom(j)->setSS("E");
+              ssmol->getAtom(i-1)->setSS("E");
+              ssmol->getAtom(j-1)->setSS("E");
             }
           }
         }
@@ -152,8 +152,11 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
                 atm3=mol->getAtom(j); //C-alpha
                 dist1=Vector::distance(atm1->getCoor(), atm2->getCoor());
                 if (dist1 > 1.42 && dist1 < 5.99){
-                  //Check exceptions
-                  atm1->setSS("E");
+                  //Record i'-j' pairs and check exceptions later
+                  ssmol->getAtom(i)->setSS("A");
+                  ssmol->getAtom(i+1)->setSS("A");
+                  ssmol->getAtom(j)->setSS("A");
+                  ssmol->getAtom(j-1)->setSS("A");
                 }
               }
             }
@@ -161,6 +164,10 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
         }
       }
     }
+  }
+  //Check exceptions for Anti-Parallel
+  for (i=0; i< ssmol->getAtmVecSize(); i++){
+    
   }
 
 	for (i=0; i< ssmol->getAtmVecSize(); i++){
