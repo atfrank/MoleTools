@@ -7,7 +7,7 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
 	Atom *atmEntry;
 	Atom *lastAtom;
 	Vector xyz;
-	unsigned int i, j, k;
+	unsigned int i, j;
 
 	//Leave original molecule untouched
 	ssmol=mol->clone();
@@ -46,18 +46,9 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
 	Atom *atm1, *atm2, *atm3, *atm4;
 	Chain *chn1;
 	unsigned int size;
-	double dist1, dist2, angl, dihe;
+	double dist1, dist2, dihe;
 
-  std::vector<double> helixDist; //Alpha/310 - i', i'+3
-  std::vector<double> helixDihe; //Alpha/310 - i', i'+1, i'+2, i'+3
-  std::vector<double> threeDist1; //310 - i'+1, i'+2
-  std::vector<double> threeDist2; //310 - i'+1, i'+3
-  std::vector<double> betaDist; //Parallel/Anti - i', j'
-  std::vector<double> paraDist; //Parallel - i'-1, j'-1
-  std::vector<double> antiDist1; //Anti - i'+1, j'-1
-  std::vector<double> antiDist2; //Anti - i+1, j (C-alpha)
-
-	//Calculate distances and dihedral angles
+	//Alpha and 310 Helices
 	for (i=0; i< ssmol->getChnVecSize(); i++){
 		chn1=ssmol->getChain(i);
 		size=chn1->getAtmVecSize();
@@ -79,7 +70,6 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
 			//Perform calculations
 			dist1=999.0;
 			dist2=999.0;
-			angl=999.0;
 			dihe=999.0;
 			if (atm1 != NULL && atm2 != NULL && atm3 != NULL && atm4 != NULL){
 				dist1=Vector::distance(atm1->getCoor(), atm4->getCoor());
@@ -98,6 +88,7 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
 				else if (dist1 < 4.82 && dist2 < 5.24){
 					dihe=Vector::dihedral(atm1->getCoor(), atm2->getCoor(),atm3->getCoor(),atm4->getCoor());
 					if (dihe > 42.1 && dihe < 119.5){
+            //310 Helix
 						atm1->setSS("G");
 					}
 				}
@@ -107,6 +98,56 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
 			}
 		}
 	}
+
+  size=ssmol->getAtmVecSize();
+  for (i=1; i< size; i++){ //i can't be zero, no i-1
+    atm1=ssmol->getAtom(i);
+    atm2=ssmol->getAtom(i-1);
+    if (atm1->getChainId() == atm2->getChainId() && atm1->getResId()-1 == atm2->getResId()){
+      //Got i' and i'-1
+      for (j=i+4; j< size; j++){
+        atm3=ssmol->getAtom(j);
+        atm4=ssmol->getAtom(j-1);
+        if (atm3->getChainId() == atm4->getChainId() && atm3->getResId()-1 == atm4->getResId()){
+          //Got j' and j'-1
+          //Calculate i' and j' distance
+          dist1=Vector::distance(atm1->getCoor(), atm3->getCoor());
+          if (dist1 > 2.58 && dist1 <5.18){
+            dist2=Vector::distance(atm2->getCoor(),atm4->getCoor());
+            if (dist2 > 4.34 && dist2 < 5.03){
+              atm1->setSS("E");
+            }
+          }
+        }
+      }
+    }
+    else if (i < size-1){
+      //Anti-parallel
+      //atm1 = i above
+      atm2=ssmol->getAtom(i+1);
+      if (atm1->getChainId() == atm2->getChainId() && atm1->getResId()+1 == atm2->getResId()){
+        //Got i' and i'+1
+        for (j=i+4; j< size; j++){
+          atm3=ssmol->getAtom(j);
+          atm4=ssmol->getAtom(j-1);
+          if (atm3->getChainId() == atm4->getChainId() && atm3->getResId()-1 == atm4->getResId()){
+            dist1=Vector::distance(atm1->getCoor(), atm3->getCoor());
+            if (dist1 > 4.36 && dist1 < 5.19){
+              dist2=Vector::distance(atm2->getCoor(), atm4->getCoor());
+              if (dist2 > 4.16 && dist2 < 5.27){
+                atm1=mol->getAtom(i+1);//C-alpha
+                atm3=mol->getAtom(j); //C-alpha
+                dist1=Vector::distance(atm1->getCoor(), atm2->getCoor());
+                if (dist1 > 1.42 && dist1 < 5.99){
+                  atm1->setSS("E");
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
 	for (i=0; i< ssmol->getAtmVecSize(); i++){
 		std::cerr << Residue::aa321(ssmol->getAtom(i)->getResName()) << ssmol->getAtom(i)->getResId() << ":";
