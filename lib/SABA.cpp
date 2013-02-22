@@ -138,9 +138,10 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
         //Got i' and i'+1
         for (j=1; j< size-4; j++){ //j can't be zero, no j-1
           atm3=ssmol->getAtom(j);
-          if (atm1->getChainId() == atm3->getChainId() && atm1->getResId() < atm3->getResId()+4 && atm1->getResId() > atm3->getResId()-4){
-            continue;
-          }
+					//Anti has no restrictions on i and j separation!
+          //if (atm1->getChainId() == atm3->getChainId() && atm1->getResId() < atm3->getResId()+4 && atm1->getResId() > atm3->getResId()-4){
+          //  continue;
+          //}
           atm4=ssmol->getAtom(j-1);
           if (atm3->getChainId() == atm4->getChainId() && atm3->getResId()-1 == atm4->getResId()){
             //Got j' and j'-1
