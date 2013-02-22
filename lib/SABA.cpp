@@ -8,10 +8,13 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
 	Atom *lastAtom;
 	Vector xyz;
 	unsigned int i, j;
+  std::string sel;
 
 	//Leave original molecule untouched
+  sel=mol->getChain(0)->getChainId();
+  sel+=":.CA";
 	ssmol=mol->clone();
-	ssmol->select(":.CA");
+	ssmol->select(sel);
 	ssmol=ssmol->clone();
 
 	//Convert C-alpha to pseudo centers, calculate C-alpha distances
@@ -105,8 +108,11 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
     atm2=ssmol->getAtom(i-1);
     if (atm1->getChainId() == atm2->getChainId() && atm1->getResId()-1 == atm2->getResId()){
       //Got i' and i'-1
-      for (j=i+4; j< size; j++){
+      for (j=1; j< size-4; j++){ //j can't be zero, no j-1
         atm3=ssmol->getAtom(j);
+        if (atm1->getChainId() == atm3->getChainId() && atm1->getResId() < atm3->getResId()+4 && atm1->getResId() > atm3->getResId()-4){
+          continue;
+        }
         atm4=ssmol->getAtom(j-1);
         if (atm3->getChainId() == atm4->getChainId() && atm3->getResId()-1 == atm4->getResId()){
           //Got j' and j'-1
@@ -116,6 +122,9 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
             dist2=Vector::distance(atm2->getCoor(),atm4->getCoor());
             if (dist2 > 4.34 && dist2 < 5.03){
               atm1->setSS("E");
+              atm2->setSS("E");
+              atm3->setSS("E");
+              atm4->setSS("E");
             }
           }
         }
@@ -127,10 +136,14 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
       atm2=ssmol->getAtom(i+1);
       if (atm1->getChainId() == atm2->getChainId() && atm1->getResId()+1 == atm2->getResId()){
         //Got i' and i'+1
-        for (j=i+4; j< size; j++){
+        for (j=1; j< size-4; j++){ //j can't be zero, no j-1
           atm3=ssmol->getAtom(j);
+          if (atm1->getChainId() == atm3->getChainId() && atm1->getResId() < atm3->getResId()+4 && atm1->getResId() > atm3->getResId()-4){
+            continue;
+          }
           atm4=ssmol->getAtom(j-1);
           if (atm3->getChainId() == atm4->getChainId() && atm3->getResId()-1 == atm4->getResId()){
+            //Got j' and j'-1
             dist1=Vector::distance(atm1->getCoor(), atm3->getCoor());
             if (dist1 > 4.36 && dist1 < 5.19){
               dist2=Vector::distance(atm2->getCoor(), atm4->getCoor());
@@ -139,6 +152,7 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
                 atm3=mol->getAtom(j); //C-alpha
                 dist1=Vector::distance(atm1->getCoor(), atm2->getCoor());
                 if (dist1 > 1.42 && dist1 < 5.99){
+                  //Check exceptions
                   atm1->setSS("E");
                 }
               }
@@ -150,8 +164,8 @@ Molecule* SABA::getPseudoCenter(Molecule *mol){
   }
 
 	for (i=0; i< ssmol->getAtmVecSize(); i++){
-		std::cerr << Residue::aa321(ssmol->getAtom(i)->getResName()) << ssmol->getAtom(i)->getResId() << ":";
-		std::cout << i+1 << ":";
+		std::cout << ssmol->getAtom(i)->getChainId() << ":" <<  Residue::aa321(ssmol->getAtom(i)->getResName()) << ssmol->getAtom(i)->getResId(); 
+		std::cout << "(" << i+1 << ")";
 		if (ssmol->getAtom(i)->getSS().length() == 1){
 			std::cout << ssmol->getAtom(i)->getSS() << std::endl;
 		}
