@@ -22,6 +22,7 @@ int main (int argc, char **argv){
   int i;
 	unsigned int j;
   vector<string> trajs;
+  string out;
   string pdb;
   string currArg;
   string sel;
@@ -43,6 +44,10 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       pdb=currArg;
     }
+    else if (currArg == "-out"){
+      currArg=argv[++i];
+      out=currArg;
+    }
     else{
       trajs.push_back(currArg);
     }
@@ -62,6 +67,10 @@ int main (int argc, char **argv){
     mol->select(sel); //Don't need to clone, just write selected
   } 
 
+  if (out.length() > 0){
+    trjout.open(out.c_str(), ios::binary);
+  }
+
 	for (j=0; j< trajs.size(); j++){
 		trjin.open(trajs.at(j).c_str(), ios::binary);
 
@@ -71,6 +80,10 @@ int main (int argc, char **argv){
 	
 		trjin.close();
 	}
+
+  if (out.length() > 0){
+    trjout.close();
+  }
 
   return 0;
 }
