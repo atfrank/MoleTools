@@ -49,61 +49,62 @@ void Molecule::addAtom(Atom* atmEntry) {
 Molecule* Molecule::clone (bool selFlag){
   //Deep copy
   Molecule *mol=new Molecule;
-  Chain *chnEntry=new Chain;
-  Residue *resEntry=new Residue;
-  Atom *atmEntry;
-  Atom *lastAtom;
+  Chain *c, *chnEntry;
+  Residue *r, *resEntry;
+  Atom *a, *atmEntry;
 
+	c=NULL;
+	r=NULL;
+	a=NULL;
+	chnEntry=NULL;
+	resEntry=NULL;
   atmEntry=NULL;
-  lastAtom=NULL;
+	
+  for (unsigned int i=0; i< this->getChnVecSize(); i++){
+    c=this->getChain(i);
+    chnEntry=new Chain; //Deleted later if no residues/atoms
 
-  //Create new Chains, Residues, Atoms
-  for (unsigned int i=0; i< this->getAtmVecSize(); i++){
-    if(selFlag == true && this->getAtom(i)->getSel() == false){
-      continue;
+    for (unsigned int j=0; j< c->getResVecSize(); j++){
+      r=c->getResidue(j);
+      resEntry=new Residue; //Deleted later if no atoms
+
+      for (unsigned int k=0; k< r->getAtmVecSize(); k++){
+        a=r->getAtom(k);
+        if(selFlag == true && a->getSel() == false){
+          continue;
+        }
+        //Add each selected atom
+				atmEntry=new Atom; //This is necessary!
+				atmEntry->clone(a); //Clone Atom
+        mol->addAtom(atmEntry);
+        resEntry->addAtom(atmEntry);
+        chnEntry->addAtom(atmEntry);
+      }
+      if (resEntry->getAtmVecSize() > 0){
+        //Add each residue with selected atoms
+        mol->addResidue(resEntry);
+        chnEntry->addResidue(resEntry);
+      }
+      else{
+        delete resEntry;
+      }
     }
-    atmEntry=new Atom; //This is necessary!
-    atmEntry->clone(this->getAtom(i)); //Clone Atom
-
-    //--------Same as PDB::readPDB-------
-    mol->addAtom(atmEntry);
-
-    //Residue/Chain
-    if (lastAtom != NULL && atmEntry->getChainId() != lastAtom->getChainId()) {
-      //Store last
-      chnEntry->addResidue(resEntry);
-      mol->addResidue(resEntry);
+    if (chnEntry->getResVecSize() > 0){
+      //Add each chain with selected atoms
       mol->addChain(chnEntry);
-      //Create new
-      chnEntry=new Chain;
-      resEntry=new Residue;
-    }
-    else if (lastAtom != NULL && lastAtom->getResId() != atmEntry->getResId()){
-      chnEntry->addResidue(resEntry);
-      mol->addResidue(resEntry);
-      resEntry=new Residue;
     }
     else{
-			//Do nothing
+      delete chnEntry;
     }
-
-		chnEntry->addAtom(atmEntry);
-		resEntry->addAtom(atmEntry);
-
-    //Update for next atom
-    lastAtom=atmEntry;
   }
-  chnEntry->addResidue(resEntry);
-  mol->addResidue(resEntry);
-  mol->addChain(chnEntry);
-  //---------------------------
 
   return mol;
 }
 
 Molecule* Molecule::copy (bool selFlag){
-  //Shallow copy of selected atom pointers
-	//Chains and Residues are created new
+  //Shallow copy of selected atom pointers.
+	//Chains and Residues are required to be created new.
+	//Useful when you need to make multiple selections
   Molecule *mol=new Molecule;
   Chain *c, *chnEntry;
   Residue *r, *resEntry;
@@ -129,7 +130,7 @@ Molecule* Molecule::copy (bool selFlag){
      	 		continue;
     		}
 				//Add each selected atom
-				mol->addAtom(a);
+				mol->addAtom(a); //Copy atom pointer, not clone
 				resEntry->addAtom(a);
 				chnEntry->addAtom(a);
 			}
