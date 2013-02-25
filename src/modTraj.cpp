@@ -89,7 +89,7 @@ int main (int argc, char **argv){
   }
   else if (outsel.length() > 0 && out.length() == 0){
     cerr << endl << "Error: Please specify an output trajectory via \"-out\" ";
-    cerr << endl << "when using option \"-outsel\"
+    cerr << endl << "when using option \"-outsel\"" << endl;
   }
 
   if (sel.length() > 0 && pdb.length()){
