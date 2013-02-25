@@ -101,6 +101,59 @@ Molecule* Molecule::clone (bool selFlag){
   return mol;
 }
 
+Molecule* Molecule::copy (bool selFlag){
+  //Shallow copy of selected atom pointers
+	//Chains and Residues are created new
+  Molecule *mol=new Molecule;
+  Chain *c, *chnEntry;
+  Residue *r, *resEntry;
+  Atom *a;
+
+	c=NULL;
+	r=NULL;
+  a=NULL;
+	chnEntry=NULL;
+	resEntry=NULL;
+
+	for (unsigned int i=0; i< this->getChnVecSize(); i++){
+		c=this->getChain(i);
+		chnEntry=new Chain;
+
+		for (unsigned int j=0; j< c->getResVecSize(); j++){
+			r=c->getResidue(j);
+			resEntry=new Residue;
+
+			for (unsigned int k=0; k< r->getAtmVecSize(); k++){
+				a=r->getAtom(k);
+				if(selFlag == true && a->getSel() == false){
+     	 		continue;
+    		}
+				//Add each selected atom
+				mol->addAtom(a);
+				resEntry->addAtom(a);
+				chnEntry->addAtom(a);
+			}
+			if (resEntry->getAtmVecSize() > 0){
+				//Add each residue with selected atoms
+				mol->addResidue(resEntry);
+				chnEntry->addResidue(resEntry);
+			}
+			else{
+				delete resEntry;
+			}
+		}
+		if (chnEntry->getResVecSize() > 0){
+			//Add each chain with selected atoms
+			mol->addChain(chnEntry);
+		}
+		else{
+			delete chnEntry;
+		}			
+	}	
+
+  return mol;
+}
+
 Atom* Molecule::getAtom(int element){
   return atmVec.at(element);
 }
