@@ -12,7 +12,12 @@ using namespace std;
 #define MAXLINESIZE 4096
 
 void usage(){
-  
+  cerr << endl << endl;
+  cerr << "Usage:   modTraj [-options] <TRAJfile(s)>" << endl;
+  cerr << "Options: [-pdb PDBfile] [-sel selection]" << endl;
+  cerr << "         [-fit] [-fitsel selection]" << endl;
+  cerr << "         [-recenter] [-recsel selection]" << endl;
+  cerr << "         [-out TRAJname] [-outsel selection]" << endl;
   exit(0);
 }
 
@@ -26,6 +31,11 @@ int main (int argc, char **argv){
   string pdb;
   string currArg;
   string sel;
+  bool fit=false;
+  string fitsel=":.CA+P";
+  bool recenter=false;
+  string recsel=":.CA+P";
+  string outsel="";
 	ifstream trjin;
 	ofstream trjout;
 
@@ -36,17 +46,37 @@ int main (int argc, char **argv){
     if (currArg == "-h" || currArg == "-help"){
       usage();
     }
-    else if (currArg == "-nsel"){
-      currArg=argv[++i];
-      sel=currArg;
-    }
     else if (currArg == "-pdb"){
       currArg=argv[++i];
       pdb=currArg;
     }
+    else if (currArg == "-sel" || currArg == "-nsel"){
+      currArg=argv[++i];
+      sel=currArg;
+    }
+    else if (currArg == "-fit"){
+      fit=true;
+    }
+    else if (currArg == "-fitsel"){
+      currArg=argv[++i];
+      fitsel=currArg;
+      fit=true;
+    }
+    else if (currArg == "-recenter"){
+      recenter=true;
+    }
+    else if (currArg == "recsel"){
+      currArg=argv[++i];
+      recsel=currArg;
+      recenter=true;
+    }
     else if (currArg == "-out"){
       currArg=argv[++i];
       out=currArg;
+    }
+    else if (currArg == "-outsel"){
+      currArg=argv[++i];
+      outsel=currArg;
     }
     else{
       trajs.push_back(currArg);
@@ -57,6 +87,11 @@ int main (int argc, char **argv){
     cerr << endl << "Error: Please provide an input trajectory file" << endl << endl;
     usage();
   }
+  else if (outsel.length() > 0 && out.length() == 0){
+    cerr << endl << "Error: Please specify an output trajectory via \"-out\" ";
+    cerr << endl << "when using option \"-outsel\"
+  }
+
   if (sel.length() > 0 && pdb.length()){
     cerr << endl << "Error: Please provide a PDB file via \"-pdb\"";
     cerr << "in order to make a selection" << endl;

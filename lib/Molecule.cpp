@@ -224,3 +224,7 @@ void Molecule::deselAll(){
 void Molecule::select(std::string sel){
   Select::makeSel(this, sel);
 }
+
+unsigned int Molecule::getNatom(){
+  return atmVec.size();
+}

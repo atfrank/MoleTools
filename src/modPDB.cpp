@@ -14,7 +14,7 @@ using namespace std;
 
 void usage (){
   cerr << endl;
-  cerr << "Usage:  manipPDB [options] <PDBfile>" << endl;
+  cerr << "Usage:   manipPDB [options] <PDBfile>" << endl;
   cerr << "Options: [-model num]" << endl;
   cerr << "         [-sel selection]" << endl;
   cerr << endl << endl;
