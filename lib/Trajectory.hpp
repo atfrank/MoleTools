@@ -3,33 +3,41 @@
 #ifndef TRAJECTORY_H
 #define TRAJECTORY_H
 
+#include "Constants.hpp"
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 #include <climits>
+#include <cstdlib>
 
 class Trajectory {
   private:
     std::string format;
 		char hdr[4];
-		int nframe; //ICNTRL[0], NFILE
-		double tstart; //ICNTRL[1], NPRIV
-		unsigned int natom;
-		double tstep;
-		double dof;
-		bool periodic;
+		int nframe; //ICNTRL[1], NFILE
+		int tstart; //ICNTRL[2], NPRIV
+		int first;
+		int delta; //ICNTRL[3], NSAVC
+		double deltat;
+		int dof;
+		float tstep; //ICNTRL[10], DELTA
+		bool crystal;
 		double pbx;
 		double pby;
 		double pbz;
 		bool fixed;
 		unsigned int version;
+		int natom;
 		std::string endian;
 		std::string title;
 		std::vector<double> x;
 		std::vector<double> y;
 		std::vector<double> z;
+		std::vector<int> fixinx;
+
 		typedef union {
 			unsigned int ui;
 			int i;
@@ -40,7 +48,7 @@ class Trajectory {
 
   public:
     bool findFormat(std::ifstream &trajin);
-		Trajectory::binbuf* readFortran(std::ifstream &trajin);
+		Trajectory::binbuf* readFortran(std::ifstream &trajin, int &length);
 		void readHeader(std::ifstream &trajin);
 };
 
