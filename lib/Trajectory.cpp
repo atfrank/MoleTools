@@ -158,7 +158,12 @@ void Trajectory::readFrame(std::ifstream &trjin){
 			x.push_back(xbuffer[i].f);
 			y.push_back(ybuffer[i].f);
 			z.push_back(zbuffer[i].f);
-			//std::cout << xbuffer[i].f << "  " << ybuffer[i].f << "  " << zbuffer[i].f << std::endl;
+			/*
+			std::cout << std::fixed;
+			std::cout << xbuffer[i].f << "  ";
+			std::cout << ybuffer[i].f << "  ";
+			std::cout << zbuffer[i].f << std::endl;
+			*/
 		}
 	}
 
