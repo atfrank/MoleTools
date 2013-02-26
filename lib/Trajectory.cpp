@@ -58,6 +58,8 @@ void Trajectory::readHeader(std::ifstream &trjin){
 	int length;
 	unsigned int i;
 
+	buffer=NULL;
+
 	trjin.seekg(0, std::ios::beg);
 
 	if (format.compare("CHARMM") == 0){
@@ -75,23 +77,20 @@ void Trajectory::readHeader(std::ifstream &trjin){
 		if (buffer[9].i > 0){
 			fixed=true;
 		}
+		else{
+			fixed=false;
+		}
 		tstep=AKMATPS*buffer[10].f;
 		
 		if (buffer[11].i > 0){
 			crystal=true;
 		}
+		else{
+			crystal=false;
+		}	
 		
 		//first=tstart/delta; //Divided by zero!!
 		deltat=delta*tstep;
-
-		//FIXED
-		if (fixed == true){
-			buffer=readFortran(trjin, length);
-			std::cerr << "Warning: Fixed atoms has yet to be implemented"<< std::endl;
-			//for (i=0; i< length; i++){
-			//	fixinx.push_back(buffer[i].i);
-			//}
-		}	
 
 		//Title
 		buffer=readFortran(trjin, length);
@@ -99,7 +98,16 @@ void Trajectory::readHeader(std::ifstream &trjin){
 		//NATOM
 		buffer=readFortran(trjin, length);
 		natom=buffer[0].i;
-		
+
+    //FIXED
+    if (fixed == true){
+      buffer=readFortran(trjin, length);
+      std::cerr << "Warning: Fixed atoms has yet to be implemented"<< std::endl;
+      //for (i=0; i< length; i++){
+      //  fixinx.push_back(buffer[i].i);
+      //}
+    }
+	
 	}
 	else if (format.compare("AMBER") == 0){
 		
@@ -107,8 +115,53 @@ void Trajectory::readHeader(std::ifstream &trjin){
 	else{
 		//Do nothing
 	}
+
+	if (buffer != NULL){
+		delete buffer;
+	}
 }
 
-//void Trajectory::readFrame(std::ifstream &trjin){
-	
-//}
+void Trajectory::readFrame(std::ifstream &trjin){
+	binbuf *buffer;
+	binbuf *xbuffer;
+	binbuf *ybuffer;
+	binbuf *zbuffer;
+  int length;
+	int i;
+
+	if (crystal == true){
+		buffer=readFortran(trjin, length);
+		if (buffer != NULL){
+			delete buffer;
+		}
+	}
+
+	//Coordinates
+	xbuffer=readFortran(trjin, length);
+	ybuffer=readFortran(trjin, length);
+	zbuffer=readFortran(trjin, length);
+
+	x.clear();
+	y.clear();
+	z.clear();
+
+	if (fixed == true){
+		std::cerr << "Warning: Fixed atoms has yet to be implemented"<< std::endl;
+	}
+	else{
+		for (i=0; i< natom; i++){
+			x.push_back(xbuffer[i].f);
+			y.push_back(ybuffer[i].f);
+			z.push_back(zbuffer[i].f);
+			//std::cout << xbuffer[i].f << "  " << ybuffer[i].f << "  " << zbuffer[i].f << std::endl;
+		}
+	}
+
+	delete xbuffer;
+	delete ybuffer;
+	delete zbuffer;
+}
+
+int Trajectory::getNFrame(){
+	return nframe;
+}

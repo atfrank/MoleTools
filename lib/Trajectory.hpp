@@ -33,9 +33,9 @@ class Trajectory {
 		int natom;
 		std::string endian;
 		std::string title;
-		std::vector<double> x;
-		std::vector<double> y;
-		std::vector<double> z;
+		std::vector<float> x;
+		std::vector<float> y;
+		std::vector<float> z;
 		std::vector<int> fixinx;
 
 		typedef union {
@@ -43,13 +43,14 @@ class Trajectory {
 			int i;
 			char c[4];
 			float f;
-			double d;
 		} binbuf;
 
   public:
     bool findFormat(std::ifstream &trajin);
 		Trajectory::binbuf* readFortran(std::ifstream &trajin, int &length);
 		void readHeader(std::ifstream &trajin);
+		void readFrame(std::ifstream &trjin);
+		int getNFrame();
 };
 
 

@@ -116,6 +116,15 @@ int main (int argc, char **argv){
 			Trajectory *ftraj=new Trajectory;
       if (ftraj->findFormat(trjin) == true){
 				ftraj->readHeader(trjin);
+				for (i=0; i< ftraj->getNFrame(); i++){
+					ftraj->readFrame(trjin);
+					if (fit == true){
+
+					}
+					if (recenter == true){
+
+					}
+				}
 			}
 			else{
 				cerr << "Warning: Skipping unknown trajectory format \"";
