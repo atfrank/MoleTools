@@ -129,6 +129,11 @@ void Trajectory::readFrame(std::ifstream &trjin){
   int length;
 	int i;
 
+	buffer=NULL;
+	xbuffer=NULL;
+	ybuffer=NULL;
+	zbuffer=NULL;
+
 	if (crystal == true){
 		buffer=readFortran(trjin, length);
 		if (buffer != NULL){
@@ -157,9 +162,15 @@ void Trajectory::readFrame(std::ifstream &trjin){
 		}
 	}
 
-	delete xbuffer;
-	delete ybuffer;
-	delete zbuffer;
+	if (xbuffer != NULL){
+		delete xbuffer;
+	}
+	if (ybuffer != NULL){
+		delete ybuffer;
+	}
+	if (zbuffer != NULL){
+		delete zbuffer;
+	}
 }
 
 int Trajectory::getNFrame(){
