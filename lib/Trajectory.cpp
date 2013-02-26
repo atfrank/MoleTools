@@ -4,21 +4,63 @@
 
 //Deal with Endianess
 
-void Trajectory::getFormat(std::ifstream &traj){
-  char *buffer;
-  int size;
+bool Trajectory::findFormat(std::ifstream &trjin){
+	int record;
+	char header[4];
 
-  traj.seekg(0, std::ios::beg);
-  
-  size=1;
-  buffer=new char [size];
-  traj.read(buffer, size);
+  trjin.seekg(0, std::ios::beg);
+ 
+  trjin.read(reinterpret_cast<char*>(&record), sizeof(int));
+	trjin.read(reinterpret_cast<char*>(&header), sizeof(char)*4);
 
+	std::string hdr(header);
 
+	if (record == 84 && hdr.compare("CORD") == 0){
+		format="CHARMM";
+	}
 
-  traj.seekg(0, std::ios::beg);
+  trjin.seekg(0, std::ios::beg);
+
+	if (format.length() > 0){
+		return true;
+	}
+	else{
+		return false;
+	}
 }
 
-std::string Trajectory::readFortran(){
+Trajectory::binbuf* Trajectory::readFortran(std::ifstream &trjin){
+	int recStart;
+  int recEnd;
+	binbuf *buffer;
 
+	trjin.read(reinterpret_cast<char*>(&recStart), sizeof(int));
+	buffer = new binbuf [recStart];
+//	trjin.read((char*)(buffer), recStart);
+	trjin.read(reinterpret_cast<char*>(buffer), recStart);
+	trjin.read(reinterpret_cast<char*>(&recEnd), sizeof(int));
+
+	return buffer;
 }
+
+void Trajectory::readHeader(std::ifstream &trjin){
+	binbuf *bufout;
+	unsigned int i;
+
+	trjin.seekg(0, std::ios::beg);
+
+	if (format.compare("CHARMM") == 0){
+		bufout=readFortran(trjin);
+		for (i=0; i< 4; i++){
+			hdr[i]=bufout[0].c[i];
+		}
+		std::cerr << hdr << std::endl;
+	}
+	else if (format.compare("AMBER") == 0){
+		
+	}
+	else{
+		//Do nothing
+	}
+}
+

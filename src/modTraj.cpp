@@ -114,7 +114,13 @@ int main (int argc, char **argv){
 
 		if (trjin.is_open()){
 			Trajectory *ftraj=new Trajectory;
-      ftraj->getFormat(trjin);
+      if (ftraj->findFormat(trjin) == true){
+				ftraj->readHeader(trjin);
+			}
+			else{
+				cerr << "Warning: Skipping unknown trajectory format \"";
+				cerr << trajs.at(j) << "\"" << endl;
+			}
 		}
 	
 		trjin.close();
