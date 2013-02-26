@@ -19,6 +19,7 @@ void usage(){
   cerr << "         [-recenter] [-recsel selection]" << endl;
   cerr << "         [-out TRAJname] [-outsel selection]" << endl;
   cerr << "         [-skip frames]" << endl;
+	cerr << "         [-verbose] [-show]" << endl;
   exit(0);
 }
 
