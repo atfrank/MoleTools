@@ -24,9 +24,13 @@ Molecule::~Molecule (){
 }
 
 Molecule* Molecule::readPDB (std::string ifile, int model){
-
-  return PDB::readPDB(ifile, model);
-
+  if (ifile.length() == 0){
+    std::cerr << "Error: PDB file \"" << ifile << "\" cannot be found" << std::endl;
+    return new Molecule;
+  }
+  else{
+    return PDB::readPDB(ifile, model);
+  }
 }
 
 int Molecule::writePDB(){

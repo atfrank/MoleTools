@@ -10,6 +10,7 @@
 
 class Trajectory {
   private:
+    std::string format;
 		unsigned int natom;
 		unsigned int nframe;
 		double tstart;
@@ -29,6 +30,7 @@ class Trajectory {
 		std::vector<double> z;
 
   public:
+    void getFormat(std::ifstream &trj);
 		std::string readFortran();
 
 };

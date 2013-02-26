@@ -18,6 +18,7 @@ void usage(){
   cerr << "         [-fit] [-fitsel selection]" << endl;
   cerr << "         [-recenter] [-recsel selection]" << endl;
   cerr << "         [-out TRAJname] [-outsel selection]" << endl;
+  cerr << "         [-skip frames]" << endl;
   exit(0);
 }
 
@@ -92,14 +93,16 @@ int main (int argc, char **argv){
     cerr << endl << "when using option \"-outsel\"" << endl;
   }
 
-  if (sel.length() > 0 && pdb.length()){
+  if (sel.length() > 0 && pdb.length() == 0){
     cerr << endl << "Error: Please provide a PDB file via \"-pdb\"";
     cerr << "in order to make a selection" << endl;
     usage();
   }
-  else{
+  else if (pdb.length() > 0){
     Molecule *mol=Molecule::readPDB(pdb);
-    mol->select(sel); //Don't need to clone, just write selected
+    if (sel.length() > 0){
+      mol->select(sel); //Don't need to clone, just write selected
+    }
   } 
 
   if (out.length() > 0){
@@ -110,7 +113,8 @@ int main (int argc, char **argv){
 		trjin.open(trajs.at(j).c_str(), ios::binary);
 
 		if (trjin.is_open()){
-			
+			Trajectory *ftraj=new Trajectory;
+      ftraj->getFormat(trjin);
 		}
 	
 		trjin.close();
