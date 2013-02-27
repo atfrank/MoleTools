@@ -13,10 +13,11 @@ bool Trajectory::findFormat(std::ifstream &trjin){
   trjin.read(reinterpret_cast<char*>(&record), sizeof(int));
 	trjin.read(reinterpret_cast<char*>(&header), sizeof(char)*4);
 
-	std::string hdr(header);
+	std::string hdr(header,4);
 
 	if (record == 84 && hdr.compare("CORD") == 0){
 		format="CHARMM";
+    swab=false;
 	}
 
   trjin.seekg(0, std::ios::beg);
@@ -64,11 +65,12 @@ void Trajectory::readHeader(std::ifstream &trjin){
 
 	if (format.compare("CHARMM") == 0){
 		buffer=readFortran(trjin, length);
-		//HDR
 
+		//HDR
 		for (i=0; i< 4; i++){
 			hdr[i]=buffer[0].c[i];
 		}
+
 		//ICNTRL 1-20
 		nframe=buffer[1].i;
 		tstart=buffer[2].i;
@@ -183,3 +185,5 @@ void Trajectory::readFrame(std::ifstream &trjin){
 int Trajectory::getNFrame(){
 	return nframe;
 }
+
+

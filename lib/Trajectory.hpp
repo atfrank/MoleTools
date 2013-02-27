@@ -17,6 +17,7 @@
 class Trajectory {
   private:
     std::string format;
+    bool swab; //Swap bytes
 		char hdr[4];
 		int nframe; //ICNTRL[1], NFILE
 		int tstart; //ICNTRL[2], NPRIV
@@ -45,7 +46,7 @@ class Trajectory {
 			char c[4];
 			float f;
 		} binbuf;
-
+    
   public:
     bool findFormat(std::ifstream &trajin);
 		Trajectory::binbuf* readFortran(std::ifstream &trajin, int &length);
