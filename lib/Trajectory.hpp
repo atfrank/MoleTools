@@ -4,6 +4,7 @@
 #define TRAJECTORY_H
 
 #include "Constants.hpp"
+#include "Molecule.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -18,6 +19,7 @@ class Trajectory {
   private:
     std::string format;
     bool swab; //Swap bytes
+    Molecule *mol;
 		char hdr[4];
 		int nframe; //ICNTRL[1], NFILE
 		int tstart; //ICNTRL[2], NPRIV
@@ -48,11 +50,13 @@ class Trajectory {
 		} binbuf;
     
   public:
+    Trajectory ();
     bool findFormat(std::ifstream &trajin);
 		Trajectory::binbuf* readFortran(std::ifstream &trajin, int &length);
 		void readHeader(std::ifstream &trajin);
 		void readFrame(std::ifstream &trjin);
 		int getNFrame();
+    void setMolecule(Molecule *molin);
 };
 
 

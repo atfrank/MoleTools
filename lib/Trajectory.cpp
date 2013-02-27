@@ -4,6 +4,13 @@
 
 //Deal with Endianess
 
+Trajectory::Trajectory (){
+  swab=false;
+  mol=NULL;
+  crystal=false;
+  fixed=false;
+}
+
 bool Trajectory::findFormat(std::ifstream &trjin){
 	int record;
 	char header[4];
@@ -78,17 +85,12 @@ void Trajectory::readHeader(std::ifstream &trjin){
 		if (buffer[9].i > 0){
 			fixed=true;
 		}
-		else{
-			fixed=false;
-		}
+	
 		tstep=AKMATPS*buffer[10].f;
 		
 		if (buffer[11].i > 0){
 			crystal=true;
 		}
-		else{
-			crystal=false;
-		}	
 		
 		//first=tstart/delta; //Divided by zero!!
 		deltat=delta*tstep;
@@ -155,18 +157,25 @@ void Trajectory::readFrame(std::ifstream &trjin){
 		std::cerr << "Warning: Fixed atoms has yet to be implemented"<< std::endl;
 	}
 	else{
-		for (i=0; i< natom; i++){
-			x.push_back(xbuffer[i].f);
-			y.push_back(ybuffer[i].f);
-			z.push_back(zbuffer[i].f);
+    if (mol != NULL){
+      for (i=0; i< natom; i++){
+        mol->getAtom(i)->setCoor(Vector(xbuffer[i].f, ybuffer[i].f, zbuffer[i].f));
+      }
+    }
+    else{
+		  for (i=0; i< natom; i++){
+			  x.push_back(xbuffer[i].f);
+			  y.push_back(ybuffer[i].f);
+			  z.push_back(zbuffer[i].f);
 		
-		/*
-			std::cout << std::fixed;
-			std::cout << "coor" << std::setw(7) << i+1;
-			std::cout << std::setw(14) << xbuffer[i].f << " ";
-			std::cout << std::setw(14) << ybuffer[i].f << " ";
-			std::cout << std::setw(14) << zbuffer[i].f << std::endl;
-		*/
+		  /*
+			  std::cout << std::fixed;
+			  std::cout << "coor" << std::setw(7) << i+1;
+			  std::cout << std::setw(14) << xbuffer[i].f << " ";
+			  std::cout << std::setw(14) << ybuffer[i].f << " ";
+			  std::cout << std::setw(14) << zbuffer[i].f << std::endl;
+		  */
+      }
 		}
 	}
 
@@ -185,4 +194,6 @@ int Trajectory::getNFrame(){
 	return nframe;
 }
 
-
+void Trajectory::setMolecule(Molecule *molin){
+  mol=molin;
+}

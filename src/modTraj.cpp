@@ -30,6 +30,7 @@ int main (int argc, char **argv){
 	unsigned int j;
   vector<string> trajs;
   string out;
+  Molecule *mol;
   string pdb;
   string currArg;
   string sel;
@@ -42,6 +43,7 @@ int main (int argc, char **argv){
 	ofstream trjout;
 
   pdb.clear();
+  mol=NULL;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -100,7 +102,7 @@ int main (int argc, char **argv){
     usage();
   }
   else if (pdb.length() > 0){
-    Molecule *mol=Molecule::readPDB(pdb);
+    mol=Molecule::readPDB(pdb);
     if (sel.length() > 0){
       mol->select(sel); //Don't need to clone, just write selected
     }
@@ -115,6 +117,11 @@ int main (int argc, char **argv){
 
 		if (trjin.is_open()){
 			Trajectory *ftraj=new Trajectory;
+
+      if (pdb.length() > 0){
+        ftraj->setMolecule(mol);
+      }
+
       if (ftraj->findFormat(trjin) == true){
 				ftraj->readHeader(trjin);
 				for (i=0; i< ftraj->getNFrame(); i++){
