@@ -19,10 +19,9 @@ int main (int argc, char **argv){
 
 
   int i;
-  string pdb;
+	unsigned int j;
+	vector<string> pdbs;
   string currArg;
-
-  pdb.clear();
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -30,23 +29,20 @@ int main (int argc, char **argv){
       usage();
     }
     else{
-      pdb=currArg;
+      pdbs.push_back(currArg);
     }
   }
 
-  if (pdb.length() == 0){
+  if (pdbs.size() == 0){
     cerr << endl << "Error: Please provide an input file" << endl << endl;
     usage();
   }
 
-  Molecule *mol=Molecule::readPDB(pdb);
-	//SABA *ss=new SABA;
-
-	mol=SABA::getPseudoCenter(mol);
-
-	//mol->writePDB();
-
-	delete mol;
+	for (j=0; j< pdbs.size(); j++){
+  	Molecule *mol=Molecule::readPDB(pdbs.at(j));
+		mol=SABA::getPseudoCenter(mol);
+		delete mol;
+	}
 
   return 0;
 }

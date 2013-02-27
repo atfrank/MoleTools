@@ -111,7 +111,7 @@ Molecule* PDB::readPDB(std::string ifile, int model){
     inp=&pdbFile;
   }
 
-  while (!(inp->eof())){
+  while (inp->good() && !(inp->eof())){
 
     getline(*inp,line);
     if (line.size() > 6 && line.compare(0,6,"MODEL ")==0){
