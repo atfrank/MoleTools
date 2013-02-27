@@ -15,8 +15,7 @@ void usage(){
   cerr << endl << endl;
   cerr << "Usage:   modTraj [-options] <TRAJfile(s)>" << endl;
   cerr << "Options: [-pdb PDBfile] [-sel selection]" << endl;
-  cerr << "         [-fit] [-fitsel selection]" << endl;
-  cerr << "         [-recenter] [-recsel selection]" << endl;
+  cerr << "         [-fit | -recenter] [-fitsel selection] [-recsel selection]" << endl;
   cerr << "         [-out TRAJname] [-outsel selection]" << endl;
   cerr << "         [-skip frames]" << endl;
 	cerr << "         [-verbose] [-show]" << endl;
@@ -96,6 +95,12 @@ int main (int argc, char **argv){
     cerr << endl << "when using option \"-outsel\"" << endl;
   }
 
+  if (fit == true && recenter == true){
+    cerr << endl << "Error: Options \"-fit\" and \"-recenter\" cannot be used simultaneously";
+    cerr << endl;
+    usage();
+  }
+
   if (sel.length() > 0 && pdb.length() == 0){
     cerr << endl << "Error: Please provide a PDB file via \"-pdb\"";
     cerr << "in order to make a selection" << endl;
@@ -126,11 +131,16 @@ int main (int argc, char **argv){
 				ftraj->readHeader(trjin);
 				for (i=0; i< ftraj->getNFrame(); i++){
 					ftraj->readFrame(trjin);
-					if (fit == true){
+          if (pdb.length() >0){
+            if (fit == true){
 
-					}
-					if (recenter == true){
+					  }
+					  else if (recenter == true){
 
+            }
+            else{
+              //Do nothing
+            }
 					}
 				}
 			}
