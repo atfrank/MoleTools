@@ -40,7 +40,6 @@ Trajectory::binbuf* Trajectory::readFortran(std::ifstream &trjin, int &length){
 	buffer = new binbuf [recStart];
 	trjin.read(reinterpret_cast<char*>(buffer), recStart);
 	trjin.read(reinterpret_cast<char*>(&recEnd), sizeof(int));
-
 	
 	//Check Fortran record length mismatch
 	if (recStart == recEnd){
