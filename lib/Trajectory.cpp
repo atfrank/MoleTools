@@ -161,7 +161,7 @@ void Trajectory::readFrame(std::ifstream &trjin){
 			}
 			else{
       	for (i=0; i< natom; i++){
-        	mol->getAtom(i)->setCoor(Vector(xbuffer[i], ybuffer[i], zbuffer[i]));
+        	mol->getAtom(i)->setCoor(Vector(static_cast<double>(xbuffer[i]), static_cast<double>(ybuffer[i]), static_cast<double>(zbuffer[i])));
       	}
 			}
     }
