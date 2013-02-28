@@ -132,7 +132,7 @@ void Trajectory::readHeader(std::ifstream &trjin){
 		dof=buffer[8].i;
 		nfixed=buffer[9].i;
 	
-		tstep=AKMATPS*static_cast<double>(buffer[10].f);
+		tstep=static_cast<double>(buffer[10].f);
 		
 		if (buffer[11].i > 0){
 			qcrystal=true;
@@ -204,16 +204,11 @@ void Trajectory::showHeader(){
 	std::cerr << std::setw(25) << std::left << "Atoms" << ": " << natom << std::endl;
 	std::cerr << std::setw(25) << std::left << "Frames" << ": " << nframe << std::endl;
 	std::cerr << std::setw(25) << std::left << "Fixed" << ": " << nfixed << std::endl;
-/*
-  std::cerr << std::setw(25) << std::left << "Start Time" << ": " << tstart << std::endl;
-//  first
-//  delta
-  std::cerr << std::setw(25) << std::left << "Time Step" << ": " << deltat << std::endl;
 	std::cerr << std::setw(25) << std::left << "Degrees of Freedom" << ": " << dof << std::endl;
-	std::cerr << std::setw(25) << std::left << "Time Step" << ": " << tstep << std::endl;
-  std::cerr << std::setw(25) << std::left << "Periodic Boundaries" << ": " << crystal << std::endl;
+	std::cerr << std::setw(25) << std::left << "Time Step" << ": " << AKMATPS*tstep << std::endl;
+	std::cerr << std::setw(25) << std::left << "Start Time" << ": " << (npriv/nsavc)*tstep*AKMATPS << std::endl;
+  std::cerr << std::setw(25) << std::left << "Periodic Boundaries" << ": " << qcrystal << std::endl;
   std:: cerr << std::setw(25) << std::left << "Version" << ": " << version << std::endl;
-*/
 }
 
 
