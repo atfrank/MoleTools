@@ -70,10 +70,34 @@ class Trajectory {
 		void clearHeader();
 		void readHeader(std::ifstream &trjin);
 		void showHeader();
+		void cloneHeader(Trajectory *ftrjin);
 		void readFrame(std::ifstream &trjin, unsigned int frame);
 		std::string getHeader(){return hdr;};
-		int getNFrame();
     void setMolecule(Molecule *molin);
+
+		//Get
+		std::string getHdr();
+    int getNFrame();
+    int getNPriv(); 
+    int getNSavc();
+    int getNStep();
+    bool getQVelocity();
+
+    int getDOF(); 
+    int getNFixed(); 
+    double getTStep();  
+    bool getQCrystal(); 
+    bool getQ4D(); 
+    bool getQCharge(); 
+    bool getQCheck(); 
+
+    int getVersion(); 
+
+    std::string getTitle();
+    int getNAtom();
+		unsigned int getFixInxVecSize();
+		int getFixInx(int element);		
+		//Set
 };
 
 

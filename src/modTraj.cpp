@@ -40,9 +40,13 @@ int main (int argc, char **argv){
   string outsel="";
 	ifstream trjin;
 	ofstream trjout;
+	Trajectory *ftrjin;
+	Trajectory *ftrjout;
 
   pdb.clear();
   mol=NULL;
+	ftrjin=NULL;
+	ftrjout=NULL;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -115,23 +119,27 @@ int main (int argc, char **argv){
 
   if (out.length() > 0){
     trjout.open(out.c_str(), ios::binary);
+		ftrjout=new Trajectory;
   }
 
 	for (j=0; j< trajs.size(); j++){
 		trjin.open(trajs.at(j).c_str(), ios::binary);
 
 		if (trjin.is_open()){
-			Trajectory *ftraj=new Trajectory;
+			ftrjin=new Trajectory;
 
       if (pdb.length() > 0){
-        ftraj->setMolecule(mol);
+        ftrjin->setMolecule(mol);
       }
 
-      if (ftraj->findFormat(trjin) == true){
-				ftraj->readHeader(trjin);
-				ftraj->showHeader();
-				for (i=0; i< ftraj->getNFrame(); i++){
-					ftraj->readFrame(trjin, i);
+      if (ftrjin->findFormat(trjin) == true){
+				ftrjin->readHeader(trjin);
+				//ftraj->showHeader();
+				if (j == 0 && out.length() > 0 && trjout.is_open()){
+					ftrjout->cloneHeader(ftrjin);
+				}
+				for (i=0; i< ftrjin->getNFrame(); i++){
+					ftrjin->readFrame(trjin, i);
           if (pdb.length() >0){
             if (fit == true){
 
@@ -143,11 +151,15 @@ int main (int argc, char **argv){
               //Do nothing
             }
 					}
+
 				}
 			}
 			else{
 				cerr << "Warning: Skipping unknown trajectory format \"";
 				cerr << trajs.at(j) << "\"" << endl;
+			}
+			if (ftrjin != NULL){
+				delete ftrjin;
 			}
 		}
 	
@@ -156,6 +168,9 @@ int main (int argc, char **argv){
 
   if (out.length() > 0){
     trjout.close();
+		if (ftrjout != NULL){
+			delete ftrjout;
+		}
   }
 
   return 0;

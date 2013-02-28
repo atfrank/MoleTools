@@ -31,7 +31,7 @@ class Molecule {
     void selAll();
     void deselAll();
     void select(std::string sel);
-    unsigned int getNatom();
+    unsigned int getNAtom();
 };
 
 #endif

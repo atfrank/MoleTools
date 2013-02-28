@@ -229,6 +229,6 @@ void Molecule::select(std::string sel){
   Select::makeSel(this, sel);
 }
 
-unsigned int Molecule::getNatom(){
+unsigned int Molecule::getNAtom(){
   return atmVec.size();
 }

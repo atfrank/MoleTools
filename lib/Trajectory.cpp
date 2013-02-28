@@ -217,6 +217,31 @@ void Trajectory::showHeader(){
   std:: cerr << std::setw(25) << std::left << "Version" << ": " << version << std::endl;
 }
 
+void Trajectory::cloneHeader(Trajectory *ftrjin){
+	hdr=ftrjin->getHdr();
+  nframe=ftrjin->getNFrame();
+  npriv=ftrjin->getNPriv();
+  nsavc=ftrjin->getNSavc();
+  nstep=ftrjin->getNStep();
+  qvelocity=ftrjin->getQVelocity();
+
+  dof=ftrjin->getDOF();
+  nfixed=ftrjin->getNFixed();
+  tstep=ftrjin->getTStep();
+  qcrystal=ftrjin->getQCrystal();
+  q4d=ftrjin->getQ4D();
+  qcharge=ftrjin->getQCharge();
+  qcheck=ftrjin->getQCheck();
+
+  version=ftrjin->getVersion();
+
+  title=ftrjin->getTitle();
+  natom=ftrjin->getNAtom();
+	for (unsigned int i=0; i< ftrjin->getFixInxVecSize(); i++){
+   	fixinx.push_back(ftrjin->getFixInx(i));
+	}
+}
+
 void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 	double *dbuffer; //Needed for crystal!
 	float *xbuffer;
@@ -262,7 +287,7 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 	}
 	else{
     if (mol != NULL){
-			if (length/sizeof(float) != mol->getNatom()){
+			if (length/sizeof(float) != mol->getNAtom()){
 				std::cerr << "Error: The natom mismatch!" << std::endl;
 			}
 			else{
@@ -299,10 +324,77 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 	}
 }
 
+void Trajectory::setMolecule(Molecule *molin){
+  mol=molin;
+}
+
+std::string Trajectory::getHdr(){
+	return hdr;
+}
+
 int Trajectory::getNFrame(){
 	return nframe;
 }
 
-void Trajectory::setMolecule(Molecule *molin){
-  mol=molin;
+int Trajectory::getNPriv(){
+	return npriv;
+}
+
+int Trajectory::getNSavc(){
+	return nsavc;
+}
+
+int Trajectory::getNStep(){
+	return nstep;
+}
+
+bool Trajectory::getQVelocity(){
+	return qvelocity;
+}
+
+int Trajectory::getDOF(){
+	return dof;
+}
+int Trajectory::getNFixed(){
+	return nfixed;
+}
+
+double Trajectory::getTStep(){
+	return tstep;
+}
+
+bool Trajectory::getQCrystal(){
+	return qcrystal;
+}
+
+bool Trajectory::getQ4D(){
+	return q4d;
+}
+
+bool Trajectory::getQCharge(){
+	return qcharge;
+}
+
+bool Trajectory::getQCheck(){
+	return qcheck;
+}
+
+int Trajectory::getVersion(){
+	return version;
+}
+
+std::string Trajectory::getTitle(){
+	return title;
+}
+
+int Trajectory::getNAtom(){
+	return natom;
+}
+
+unsigned int Trajectory::getFixInxVecSize(){
+	return fixinx.size();
+}
+
+int Trajectory::getFixInx(int element){
+	return fixinx.at(element);
 }
