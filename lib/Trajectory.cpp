@@ -398,3 +398,73 @@ unsigned int Trajectory::getFixInxVecSize(){
 int Trajectory::getFixInx(int element){
 	return fixinx.at(element);
 }
+
+void Trajectory::setHdr(const std::string &hdrin){
+	hdr=hdrin;
+}
+void Trajectory::setNFrame(const int &nframein){
+	nframe=nframein;
+}
+
+void Trajectory::setNPriv(const int &nprivin){
+	npriv=nprivin;
+}
+
+void Trajectory::setNSavc(const int &nsavcin){
+	nsavc=nsavcin;
+}
+
+void Trajectory::setNStep(const int &nstepin){
+	nstep=nstepin;
+}
+
+void Trajectory::setQVelocity(const bool &qvelocityin){
+	qvelocity=qvelocityin;
+}
+
+void Trajectory::setDOF(const int &dofin){
+	dof=dofin;
+}
+
+void Trajectory::setNFixed(const int &nfixedin){
+	nfixed=nfixedin;
+}
+
+void Trajectory::setTStep(const double &tstepin){
+	tstep=tstepin;
+}
+
+void Trajectory::setQCrystal(const bool &qcrystalin){
+	qcrystal=qcrystalin;
+}
+
+void Trajectory::setQ4D(const bool &q4din){
+	q4d=q4din;
+}
+
+void Trajectory::setQCharge(const bool &qchargein){
+	qcharge=qchargein;
+}
+
+void Trajectory::setQCheck(const bool &qcheckin){
+	qcheck=qcheckin;
+}
+
+void Trajectory::setVersion(const int &versionin){
+	version=versionin;
+}
+
+void Trajectory::setTitle(const std::string &titlein){
+	title=titlein;
+}
+
+void Trajectory::setNAtom(const int &natomin){
+	natom=natomin;
+}
+void Trajectory::addFixInx(const int &elementin){
+	fixinx.push_back(elementin);
+}
+
+void Trajectory::clearFixInx(){
+	fixinx.clear();
+}

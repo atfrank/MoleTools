@@ -96,8 +96,30 @@ class Trajectory {
     std::string getTitle();
     int getNAtom();
 		unsigned int getFixInxVecSize();
-		int getFixInx(int element);		
+		int getFixInx(int element);	
+
 		//Set
+    void setHdr(const std::string &hdrin);
+    void setNFrame(const int &nframein);
+    void setNPriv(const int &nprivin);
+    void setNSavc(const int &nsavcin);
+    void setNStep(const int &nstepin);
+    void setQVelocity(const bool &qvelocityin);
+
+    void setDOF(const int &dofin);
+    void setNFixed(const int &nfixedin);
+    void setTStep(const double &tstepin);
+    void setQCrystal(const bool &qcrystalin);
+    void setQ4D(const bool &q4din);
+    void setQCharge(const bool &qchargein);
+    void setQCheck(const bool &qcheckin);
+
+    void setVersion(const int &versionin);
+
+    void setTitle(const std::string &titlein);
+    void setNAtom(const int &natomin);
+		void addFixInx(const int &elementin);
+		void clearFixInx();
 };
 
 
