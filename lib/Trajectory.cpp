@@ -217,7 +217,6 @@ void Trajectory::showHeader(){
   std:: cerr << std::setw(25) << std::left << "Version" << ": " << version << std::endl;
 }
 
-
 void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 	double *dbuffer; //Needed for crystal!
 	float *xbuffer;
