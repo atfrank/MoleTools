@@ -48,11 +48,12 @@ class Trajectory {
 			char c[4];
 			float f;
 		} binbuf;
-    
+   
   public:
     Trajectory ();
     bool findFormat(std::ifstream &trajin);
-		Trajectory::binbuf* readFortran(std::ifstream &trajin, int &length);
+		template <class BinBuf> 
+			BinBuf* readFortran(std::ifstream &trajin, BinBuf *buffer, int &length);
 		void readHeader(std::ifstream &trajin);
 		void readFrame(std::ifstream &trjin);
 		int getNFrame();

@@ -37,28 +37,30 @@ bool Trajectory::findFormat(std::ifstream &trjin){
 	}
 }
 
-Trajectory::binbuf* Trajectory::readFortran(std::ifstream &trjin, int &length){
-	int recStart;
+template <class BinBuf> 
+BinBuf* Trajectory::readFortran(std::ifstream &trjin, BinBuf *buffer, int &length){
+  int recStart;
   int recEnd;
-	binbuf *buffer;
+	BinBuf *binOut;
 
-	//Read Fortran record lengths and buffer
-	trjin.read(reinterpret_cast<char*>(&recStart), sizeof(int));
-	buffer = new binbuf [recStart];
-	trjin.read(reinterpret_cast<char*>(buffer), recStart);
-	trjin.read(reinterpret_cast<char*>(&recEnd), sizeof(int));
-	
-	//Check Fortran record length mismatch
-	if (recStart == recEnd){
-		length=recStart;
-	}
-	else{
-		std::cerr << "Error: Fortran record length marker mismatch" << std::endl;
-		std::exit(0);
-	}
+  //Read Fortran record lengths and buffer
+  trjin.read(reinterpret_cast<char*>(&recStart), sizeof(int));
+  binOut = new BinBuf [recStart];
+  trjin.read(reinterpret_cast<char*>(binOut), recStart);
+  trjin.read(reinterpret_cast<char*>(&recEnd), sizeof(int));
 
-	return buffer;
+  //Check Fortran record length mismatch
+  if (recStart == recEnd){
+    length=recStart;
+  }
+  else{
+    std::cerr << "Error: Fortran record length marker mismatch" << std::endl;
+    std::exit(0);
+  }
+
+	return binOut;
 }
+
 
 void Trajectory::readHeader(std::ifstream &trjin){
 	binbuf *buffer;
@@ -70,7 +72,7 @@ void Trajectory::readHeader(std::ifstream &trjin){
 	trjin.seekg(0, std::ios::beg);
 
 	if (format.compare("CHARMM") == 0){
-		buffer=readFortran(trjin, length);
+		buffer=readFortran(trjin, buffer, length);
 
 		//HDR
 		for (i=0; i< 4; i++){
@@ -96,15 +98,15 @@ void Trajectory::readHeader(std::ifstream &trjin){
 		deltat=delta*tstep;
 
 		//Title
-		buffer=readFortran(trjin, length);
+		buffer=readFortran(trjin, buffer, length);
 
 		//NATOM
-		buffer=readFortran(trjin, length);
+		buffer=readFortran(trjin, buffer, length);
 		natom=buffer[0].i;
 
     //FIXED
     if (fixed == true){
-      buffer=readFortran(trjin, length);
+      buffer=readFortran(trjin, buffer, length);
       std::cerr << "Warning: Fixed atoms has yet to be implemented"<< std::endl;
       //for (i=0; i< length; i++){
       //  fixinx.push_back(buffer[i].i);
@@ -125,10 +127,10 @@ void Trajectory::readHeader(std::ifstream &trjin){
 }
 
 void Trajectory::readFrame(std::ifstream &trjin){
-	binbuf *buffer;
-	binbuf *xbuffer;
-	binbuf *ybuffer;
-	binbuf *zbuffer;
+	binbuf *buffer; //Needed for crystal!
+	float *xbuffer;
+	float *ybuffer;
+	float *zbuffer;
   int length;
 	int i;
 
@@ -138,20 +140,16 @@ void Trajectory::readFrame(std::ifstream &trjin){
 	zbuffer=NULL;
 
 	if (crystal == true){
-		buffer=readFortran(trjin, length);
+		buffer=readFortran(trjin, buffer, length);
 		if (buffer != NULL){
 			delete buffer;
 		}
 	}
 
 	//Coordinates
-	xbuffer=readFortran(trjin, length);
-	ybuffer=readFortran(trjin, length);
-	zbuffer=readFortran(trjin, length);
-
-	x.clear();
-	y.clear();
-	z.clear();
+	xbuffer=readFortran(trjin, xbuffer, length);
+	ybuffer=readFortran(trjin, ybuffer, length);
+	zbuffer=readFortran(trjin, zbuffer, length);
 
 	if (fixed == true){
 		std::cerr << "Warning: Fixed atoms has yet to be implemented"<< std::endl;
@@ -159,22 +157,20 @@ void Trajectory::readFrame(std::ifstream &trjin){
 	else{
     if (mol != NULL){
       for (i=0; i< natom; i++){
-        mol->getAtom(i)->setCoor(Vector(xbuffer[i].f, ybuffer[i].f, zbuffer[i].f));
+        mol->getAtom(i)->setCoor(Vector(xbuffer[i], ybuffer[i], zbuffer[i]));
       }
     }
     else{
 		  for (i=0; i< natom; i++){
-			  x.push_back(xbuffer[i].f);
-			  y.push_back(ybuffer[i].f);
-			  z.push_back(zbuffer[i].f);
+				x.push_back(xbuffer[i]);
+			  y.push_back(ybuffer[i]);
+			  z.push_back(zbuffer[i]);
 		
-		  /*
 			  std::cout << std::fixed;
 			  std::cout << "coor" << std::setw(7) << i+1;
-			  std::cout << std::setw(14) << xbuffer[i].f << " ";
-			  std::cout << std::setw(14) << ybuffer[i].f << " ";
-			  std::cout << std::setw(14) << zbuffer[i].f << std::endl;
-		  */
+			  std::cout << std::setw(14) << xbuffer[i] << " ";
+			  std::cout << std::setw(14) << ybuffer[i] << " ";
+			  std::cout << std::setw(14) << zbuffer[i] << std::endl;
       }
 		}
 	}
