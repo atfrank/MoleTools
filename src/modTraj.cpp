@@ -129,6 +129,7 @@ int main (int argc, char **argv){
 
       if (ftraj->findFormat(trjin) == true){
 				ftraj->readHeader(trjin);
+				ftraj->showHeader();
 				for (i=0; i< ftraj->getNFrame(); i++){
 					ftraj->readFrame(trjin, i);
           if (pdb.length() >0){

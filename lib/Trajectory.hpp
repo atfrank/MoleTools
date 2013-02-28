@@ -20,27 +20,40 @@ class Trajectory {
     std::string format;
     bool swab; //Swap bytes
     Molecule *mol;
+
 		std::string hdr;
-		int nframe; //ICNTRL[1], NFILE
-		int tstart; //ICNTRL[2], NPRIV
-		int first;
-		int delta; //ICNTRL[3], NSAVC
-		double deltat;
-		int dof;
-		float tstep; //ICNTRL[10], DELTA
-		bool crystal;
+		int nframe; //ICNTRL[1], Number of frames
+		int npriv; //ICNTRL[2], Number of previous integration steps
+		int nsavc; //ICNTRL[3], Frequency for saving of frames
+		int nstep; //ICNTRL[4],Number of steps in the run that created this file
+		bool qvelocity; //ICNTRL[5], Velocity flag
+		
+		int dof; //ICNTRL[8], Degrees of freedom
+		int nfixed; //ICNTRL[9], Number of fixed atoms
+		double tstep; //ICNTRL[10], AKMA units 
+		bool qcrystal; //ICNTRL[11], Crystal lattice/Periodic boundaries flag
+		bool q4d; //ICNTRL[12], 4D trajectory flag
+		bool qcharge; //ICNTRL[13], Fluctuating charges flag
+		bool qcheck; //ICNTRL[14], Consistency check flag, See "NOCHeck" keyword
+
+		int version; //ICNTRL[20], CHARMM version
+	
+		std::string title;
+		int natom;
+		std::vector<int> fixinx;
+
 		double pbx;
 		double pby;
 		double pbz;
-		bool fixed;
-		unsigned int version;
-		int natom;
-		std::string endian;
-		std::string title;
+		double pbalpha;
+		double pbbeta;
+		double pbgamma;
+		
 		std::vector<float> x;
 		std::vector<float> y;
 		std::vector<float> z;
-		std::vector<int> fixinx;
+
+		std::string endian;
 
 		typedef union {
 			unsigned int ui;
@@ -56,6 +69,7 @@ class Trajectory {
 			BinBuf* readFortran(std::ifstream &trjin, BinBuf *buffer, int &length);
 		void clearHeader();
 		void readHeader(std::ifstream &trjin);
+		void showHeader();
 		void readFrame(std::ifstream &trjin, unsigned int frame);
 		std::string getHeader(){return hdr;};
 		int getNFrame();

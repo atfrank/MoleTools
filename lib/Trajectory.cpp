@@ -7,8 +7,23 @@
 Trajectory::Trajectory (){
   swab=false;
   mol=NULL;
-  crystal=false;
-  fixed=false;
+  hdr.clear();
+  nframe=0;
+  npriv=0;
+  nsavc=0;
+  nstep=0;
+  qvelocity=false;
+  dof=0;
+  nfixed=0;
+  tstep=0.0;
+  qcrystal=false;
+  q4d=false;
+  qcharge=false;
+  qcheck=false;
+  version=0;
+  title.clear();
+  natom=0;
+  fixinx.clear();
 }
 
 bool Trajectory::findFormat(std::ifstream &trjin){
@@ -67,30 +82,31 @@ BinBuf* Trajectory::readFortran(std::ifstream &trjin, BinBuf *buffer, int &lengt
 void Trajectory::clearHeader(){
 	hdr.clear();
 	nframe=0;
-	tstart=0;
-	first=0;
-	delta=0;
-	deltat=0.0;
+	npriv=0;
+	nsavc=0;
+	nstep=0;
+	qvelocity=false;
 	dof=0;
+	nfixed=0;
 	tstep=0.0;
-	crystal=false;
-	pbx=0.0;
-	pby=0.0;
-	pbz=0.0;
-	fixed=false;
+	qcrystal=false;
+	q4d=false;
+	qcharge=false;
+	qcheck=false;
 	version=0;
-	natom=0;
-	endian.clear();
 	title.clear();
+	natom=0;
 	fixinx.clear();
 }
 
 void Trajectory::readHeader(std::ifstream &trjin){
 	binbuf *buffer;
+	char *cbuffer;
 	int length;
-	unsigned int i;
+	//int i;
 
 	buffer=NULL;
+	cbuffer=NULL;
 
 	trjin.seekg(0, std::ios::beg);
 
@@ -102,37 +118,66 @@ void Trajectory::readHeader(std::ifstream &trjin){
 
 		//ICNTRL 1-20
 		nframe=buffer[1].i;
-		tstart=buffer[2].i;
-		delta=buffer[3].i;
-		dof=buffer[8].i;
-		if (buffer[9].i > 0){
-			fixed=true;
+		npriv=buffer[2].i;
+		nsavc=buffer[3].i;
+		nstep=buffer[4].i;
+		if (buffer[5].i > 0){
+			qvelocity=true;
+			std::cerr << "Error: Velocity reading has yet to be implemented" << std::endl;
+		}
+		else{
+			qvelocity=false;
 		}
 	
-		tstep=AKMATPS*buffer[10].f;
+		dof=buffer[8].i;
+		nfixed=buffer[9].i;
+	
+		tstep=AKMATPS*static_cast<double>(buffer[10].f);
 		
 		if (buffer[11].i > 0){
-			crystal=true;
+			qcrystal=true;
+		}
+		else{
+			qcrystal=false;
+		}
+		if (buffer[12].i > 0){
+			q4d=true;
+		}
+		else{
+			q4d=false;
+		}
+		if (buffer[13].i > 0){
+			qcharge=true;
+		}
+		else{
+			qcharge=false;
+		}
+		if (buffer[14].i > 0){
+			qcheck=true;
+		}
+		else{
+			qcheck=false;
 		}
 		
-		//first=tstart/delta; //Divided by zero!!
-		deltat=delta*tstep;
-
+		version=buffer[20].i;
+		
 		//Title
-		buffer=readFortran(trjin, buffer, length);
-		for (i=0; i< static_cast<unsigned int>(length); i++){
-			
-		}
+		cbuffer=readFortran(trjin, cbuffer, length);
+		title.assign(cbuffer,80);
+		title.append("\n");
+		title.append(cbuffer+84,80);
+		
 
 		//NATOM
 		buffer=readFortran(trjin, buffer, length);
 		natom=buffer[0].i;
 
     //FIXED
-    if (fixed == true){
+    if (nfixed > 0){
       buffer=readFortran(trjin, buffer, length);
-      std::cerr << "Warning: Fixed atoms has yet to be implemented"<< std::endl;
+      std::cerr << "Warning: Fixed atoms has yet to be implemented" << std::endl;
       //for (i=0; i< length; i++){
+			//	std::cerr << buffer[i].i << ":";
       //  fixinx.push_back(buffer[i].i);
       //}
     }
@@ -148,26 +193,63 @@ void Trajectory::readHeader(std::ifstream &trjin){
 	if (buffer != NULL){
 		delete buffer;
 	}
+	if (cbuffer != NULL){
+		delete cbuffer;
+	}
 }
 
+void Trajectory::showHeader(){
+	std::cerr << title << std::endl;
+	std::cerr << std::fixed;
+	std::cerr << std::setw(25) << std::left << "Atoms" << ": " << natom << std::endl;
+	std::cerr << std::setw(25) << std::left << "Frames" << ": " << nframe << std::endl;
+	std::cerr << std::setw(25) << std::left << "Fixed" << ": " << nfixed << std::endl;
+/*
+  std::cerr << std::setw(25) << std::left << "Start Time" << ": " << tstart << std::endl;
+//  first
+//  delta
+  std::cerr << std::setw(25) << std::left << "Time Step" << ": " << deltat << std::endl;
+	std::cerr << std::setw(25) << std::left << "Degrees of Freedom" << ": " << dof << std::endl;
+	std::cerr << std::setw(25) << std::left << "Time Step" << ": " << tstep << std::endl;
+  std::cerr << std::setw(25) << std::left << "Periodic Boundaries" << ": " << crystal << std::endl;
+  std:: cerr << std::setw(25) << std::left << "Version" << ": " << version << std::endl;
+*/
+}
+
+
 void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
-	binbuf *buffer; //Needed for crystal!
+	double *dbuffer; //Needed for crystal!
 	float *xbuffer;
 	float *ybuffer;
 	float *zbuffer;
   int length;
 	int i;
 
-	buffer=NULL;
+	dbuffer=NULL;
 	xbuffer=NULL;
 	ybuffer=NULL;
 	zbuffer=NULL;
 
-	if (crystal == true){
-		buffer=readFortran(trjin, buffer, length);
-		if (buffer != NULL){
-			delete buffer;
-		}
+	if (qcrystal == true){
+		dbuffer=readFortran(trjin, dbuffer, length);
+
+		//Box dimensions
+		pbx=sqrt(dbuffer[0]*dbuffer[0]+dbuffer[1]*dbuffer[1]+dbuffer[3]*dbuffer[3]);
+    pby=sqrt(dbuffer[1]*dbuffer[1]+dbuffer[2]*dbuffer[2]+dbuffer[4]*dbuffer[4]);
+    pbz=sqrt(dbuffer[3]*dbuffer[3]+dbuffer[4]*dbuffer[4]+dbuffer[5]*dbuffer[5]);
+
+		//Box angles
+    pbalpha=acos(dbuffer[4]*(dbuffer[2]+dbuffer[5])+dbuffer[1]*dbuffer[3]/(pby*pbz))*180.0/PI;
+    pbbeta=acos(dbuffer[3]*(dbuffer[0]+dbuffer[5])+dbuffer[1]*dbuffer[4]/(pbz*pbx))*180.0/PI;
+    pbgamma=acos(dbuffer[1]*(dbuffer[0]+dbuffer[2])+dbuffer[3]*dbuffer[4]/(pbx*pby))*180.0/PI;
+		
+		/*
+		std::cerr << "Periodic Box :";
+		std::cerr << pbx << " x " << pby << " x " << pbz << " ";
+		std::cerr << "( " << pbalpha << " x " << pbbeta << " x " << pbgamma << " )" << std::endl;
+		*/
+		
+		delete dbuffer;
 	}
 
 	//Coordinates
@@ -175,7 +257,7 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 	ybuffer=readFortran(trjin, ybuffer, length);
 	zbuffer=readFortran(trjin, zbuffer, length);
 
-	if (fixed == true){
+	if (nfixed > 0){
 		std::cerr << "Warning: Fixed atoms has yet to be implemented"<< std::endl;
 	}
 	else{
