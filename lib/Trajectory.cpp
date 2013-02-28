@@ -12,22 +12,25 @@ Trajectory::Trajectory (){
 }
 
 bool Trajectory::findFormat(std::ifstream &trjin){
-	int record;
-	char header[4];
+ 	binbuf *buffer;
+  int length;
+
+  buffer=NULL;
 
   trjin.seekg(0, std::ios::beg);
- 
-  trjin.read(reinterpret_cast<char*>(&record), sizeof(int));
-	trjin.read(reinterpret_cast<char*>(&header), sizeof(char)*4);
 
-	std::string hdr(header,4);
+  buffer=readFortran(trjin, buffer, length);
 
-	if (record == 84 && hdr.compare("CORD") == 0){
+	hdr.assign(buffer[0].c,4);
+
+	if (length == 84 && hdr.compare("CORD") == 0){
 		format="CHARMM";
     swab=false;
 	}
 
   trjin.seekg(0, std::ios::beg);
+
+	clearHeader();
 
 	if (format.length() > 0){
 		return true;
@@ -61,6 +64,26 @@ BinBuf* Trajectory::readFortran(std::ifstream &trjin, BinBuf *buffer, int &lengt
 	return binOut;
 }
 
+void Trajectory::clearHeader(){
+	hdr.clear();
+	nframe=0;
+	tstart=0;
+	first=0;
+	delta=0;
+	deltat=0.0;
+	dof=0;
+	tstep=0.0;
+	crystal=false;
+	pbx=0.0;
+	pby=0.0;
+	pbz=0.0;
+	fixed=false;
+	version=0;
+	natom=0;
+	endian.clear();
+	title.clear();
+	fixinx.clear();
+}
 
 void Trajectory::readHeader(std::ifstream &trjin){
 	binbuf *buffer;
@@ -75,9 +98,7 @@ void Trajectory::readHeader(std::ifstream &trjin){
 		buffer=readFortran(trjin, buffer, length);
 
 		//HDR
-		for (i=0; i< 4; i++){
-			hdr[i]=buffer[0].c[i];
-		}
+		hdr.assign(buffer[0].c,4);
 
 		//ICNTRL 1-20
 		nframe=buffer[1].i;
@@ -99,6 +120,9 @@ void Trajectory::readHeader(std::ifstream &trjin){
 
 		//Title
 		buffer=readFortran(trjin, buffer, length);
+		for (i=0; i< static_cast<unsigned int>(length); i++){
+			
+		}
 
 		//NATOM
 		buffer=readFortran(trjin, buffer, length);
@@ -126,7 +150,7 @@ void Trajectory::readHeader(std::ifstream &trjin){
 	}
 }
 
-void Trajectory::readFrame(std::ifstream &trjin){
+void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 	binbuf *buffer; //Needed for crystal!
 	float *xbuffer;
 	float *ybuffer;

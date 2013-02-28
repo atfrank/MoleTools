@@ -20,7 +20,7 @@ class Trajectory {
     std::string format;
     bool swab; //Swap bytes
     Molecule *mol;
-		char hdr[4];
+		std::string hdr;
 		int nframe; //ICNTRL[1], NFILE
 		int tstart; //ICNTRL[2], NPRIV
 		int first;
@@ -51,11 +51,13 @@ class Trajectory {
    
   public:
     Trajectory ();
-    bool findFormat(std::ifstream &trajin);
+    bool findFormat(std::ifstream &trjin);
 		template <class BinBuf> 
-			BinBuf* readFortran(std::ifstream &trajin, BinBuf *buffer, int &length);
-		void readHeader(std::ifstream &trajin);
-		void readFrame(std::ifstream &trjin);
+			BinBuf* readFortran(std::ifstream &trjin, BinBuf *buffer, int &length);
+		void clearHeader();
+		void readHeader(std::ifstream &trjin);
+		void readFrame(std::ifstream &trjin, unsigned int frame);
+		std::string getHeader(){return hdr;};
 		int getNFrame();
     void setMolecule(Molecule *molin);
 };
