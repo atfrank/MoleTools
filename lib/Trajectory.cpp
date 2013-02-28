@@ -203,11 +203,14 @@ void Trajectory::showHeader(){
 	std::cerr << std::fixed;
 	std::cerr << std::setw(25) << std::left << "Atoms" << ": " << natom << std::endl;
 	std::cerr << std::setw(25) << std::left << "Frames" << ": " << nframe << std::endl;
+  std::cerr << std::setw(25) << std::left << "Degrees of Freedom" << ": " << dof << std::endl;
 	std::cerr << std::setw(25) << std::left << "Fixed" << ": " << nfixed << std::endl;
-	std::cerr << std::setw(25) << std::left << "Degrees of Freedom" << ": " << dof << std::endl;
-	std::cerr << std::setw(25) << std::left << "Time Step" << ": " << AKMATPS*tstep << std::endl;
-	std::cerr << std::setw(25) << std::left << "Start Time" << ": " << (npriv/nsavc)*tstep*AKMATPS << std::endl;
+  std::cerr << std::setw(25) << std::left << "Time Step" << ": " << static_cast<double>(static_cast<int>(tstep*AKMATPS*nsavc*100000.0+0.5))/100000.0 << std::endl;
+	std::cerr << std::setw(25) << std::left << "Start Time" << ": " << (npriv/nsavc)*(static_cast<double>(static_cast<int>(tstep*AKMATPS*nsavc*100000.0+0.5))/100000.0) << std::endl;
   std::cerr << std::setw(25) << std::left << "Periodic Boundaries" << ": " << qcrystal << std::endl;
+  std::cerr << std::setw(25) << std::left << "4D Trajectory" << ": " << q4d << std::endl;
+  std::cerr << std::setw(25) << std::left << "Fluctuating Charges" << ": " << qcharge << std::endl;
+  std::cerr << std::setw(25) << std::left << "Consistency Check" << ": " << qcheck << std::endl;
   std:: cerr << std::setw(25) << std::left << "Version" << ": " << version << std::endl;
 }
 
