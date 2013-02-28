@@ -156,21 +156,28 @@ void Trajectory::readFrame(std::ifstream &trjin){
 	}
 	else{
     if (mol != NULL){
-      for (i=0; i< natom; i++){
-        mol->getAtom(i)->setCoor(Vector(xbuffer[i], ybuffer[i], zbuffer[i]));
-      }
+			if (length/sizeof(float) != mol->getNatom()){
+				std::cerr << "Error: The natom mismatch!" << std::endl;
+			}
+			else{
+      	for (i=0; i< natom; i++){
+        	mol->getAtom(i)->setCoor(Vector(xbuffer[i], ybuffer[i], zbuffer[i]));
+      	}
+			}
     }
     else{
 		  for (i=0; i< natom; i++){
 				x.push_back(xbuffer[i]);
 			  y.push_back(ybuffer[i]);
 			  z.push_back(zbuffer[i]);
-		
+			
+			/*	
 			  std::cout << std::fixed;
 			  std::cout << "coor" << std::setw(7) << i+1;
 			  std::cout << std::setw(14) << xbuffer[i] << " ";
 			  std::cout << std::setw(14) << ybuffer[i] << " ";
 			  std::cout << std::setw(14) << zbuffer[i] << std::endl;
+			*/
       }
 		}
 	}
