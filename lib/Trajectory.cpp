@@ -21,7 +21,8 @@ Trajectory::Trajectory (){
   qcharge=false;
   qcheck=false;
   version=0;
-  title.clear();
+  title1.clear();
+  title2.clear();
   natom=0;
   fixinx.clear();
 }
@@ -94,7 +95,8 @@ void Trajectory::clearHeader(){
 	qcharge=0;
 	qcheck=0;
 	version=0;
-	title.clear();
+	title1.clear();
+  title2.clear();
 	natom=0;
 	fixinx.clear();
 }
@@ -140,9 +142,9 @@ void Trajectory::readHeader(std::ifstream &trjin){
 		
 		//Title
 		cbuffer=readFortran(trjin, cbuffer, length);
-		title.assign(cbuffer,80);
-		title.append("\n");
-		title.append(cbuffer+84,80);
+		title1.assign(cbuffer,80);
+    //81-84 are blank spaces, NOT null characters (\0)
+		title2.assign(cbuffer+84,80);
 		
 
 		//NATOM
@@ -176,7 +178,8 @@ void Trajectory::readHeader(std::ifstream &trjin){
 }
 
 void Trajectory::showHeader(){
-	std::cerr << title << std::endl;
+	std::cerr << title1 << std::endl;
+  std::cerr << title2 << std::endl;
 	std::cerr << std::fixed;
 	std::cerr << std::setw(25) << std::left << "Atoms" << ": " << natom << std::endl;
 	std::cerr << std::setw(25) << std::left << "Frames" << ": " << nframe << std::endl;
@@ -212,7 +215,8 @@ void Trajectory::cloneHeader(Trajectory *ftrjin){
 
   version=ftrjin->getVersion();
 
-  title=ftrjin->getTitle();
+  title1=ftrjin->getTitle1();
+  title2=ftrjin->getTitle2();
   natom=ftrjin->getNAtom();
 	for (unsigned int i=0; i< ftrjin->getFixInxVecSize(); i++){
    	fixinx.push_back(ftrjin->getFixInx(i));
@@ -364,8 +368,20 @@ int Trajectory::getVersion(){
 	return version;
 }
 
-std::string Trajectory::getTitle(){
-	return title;
+std::string Trajectory::getTitle1(){
+  if (title1.find_first_of("*") != 0){
+    title1.insert(0,"*");
+  }
+  title1.resize(80, ' ');
+	return title1;
+}
+
+std::string Trajectory::getTitle2(){
+  if (title2.find_first_of("*") != 0){
+    title2.insert(0,"*");
+  }
+  title2.resize(80, ' ');
+  return title2;
 }
 
 int Trajectory::getNAtom(){
@@ -441,8 +457,20 @@ void Trajectory::setVersion(const int &versionin){
 	version=versionin;
 }
 
-void Trajectory::setTitle(const std::string &titlein){
-	title=titlein;
+void Trajectory::setTitle1(const std::string &title1in){
+	title1=title1in;
+  if (title1.find_first_of("*") != 0){
+    title1.insert(0,"*");
+  }
+  title1.resize(80, ' ');
+}
+
+void Trajectory::setTitle2(const std::string &title2in){
+  title2=title2in;
+  if(title2.find_first_of("*") != 0){
+    title2.insert(0,"*");
+  }
+  title2.resize(80, ' ');
 }
 
 void Trajectory::setNAtom(const int &natomin){

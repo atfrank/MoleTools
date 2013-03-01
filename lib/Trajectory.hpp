@@ -38,7 +38,8 @@ class Trajectory {
 
 		int version; //ICNTRL[20], CHARMM version
 	
-		std::string title;
+		std::string title1;
+    std::string title2;
 		int natom;
 		std::vector<int> fixinx;
 
@@ -94,7 +95,8 @@ class Trajectory {
 
     int getVersion(); 
 
-    std::string getTitle();
+    std::string getTitle1();
+    std::string getTitle2();
     int getNAtom();
 		unsigned int getFixInxVecSize();
 		int getFixInx(int element);	
@@ -118,7 +120,8 @@ class Trajectory {
 
     void setVersion(const int &versionin);
 
-    void setTitle(const std::string &titlein);
+    void setTitle1(const std::string &title1in);
+    void setTitle2(const std::string &title2in);
     void setNAtom(const int &natomin);
 		void addFixInx(const int &elementin);
 		void clearFixInx();
