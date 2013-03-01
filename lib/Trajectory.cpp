@@ -80,6 +80,10 @@ BinBuf* Trajectory::readFortran(std::ifstream &trjin, BinBuf *buffer, int &lengt
 	return binOut;
 }
 
+void Trajectory::writeFortran(std::ofstream &trjout){
+
+}
+
 void Trajectory::clearHeader(){
 	hdr.clear();
 	nframe=0;
@@ -175,6 +179,10 @@ void Trajectory::readHeader(std::ifstream &trjin){
 	if (cbuffer != NULL){
 		delete cbuffer;
 	}
+}
+
+void Trajectory::writeHeader(std::ofstream &trjout){
+  writeFortran(trjout);
 }
 
 void Trajectory::showHeader(){

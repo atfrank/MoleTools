@@ -68,8 +68,10 @@ class Trajectory {
     bool findFormat(std::ifstream &trjin);
 		template <class BinBuf> 
 			BinBuf* readFortran(std::ifstream &trjin, BinBuf *buffer, int &length);
+    void writeFortran(std::ofstream &trjout);
 		void clearHeader();
 		void readHeader(std::ifstream &trjin);
+    void writeHeader(std::ofstream &trjout);
 		void showHeader();
 		void cloneHeader(Trajectory *ftrjin);
 		void readFrame(std::ifstream &trjin, unsigned int frame);
