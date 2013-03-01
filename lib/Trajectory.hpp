@@ -26,15 +26,15 @@ class Trajectory {
 		int npriv; //ICNTRL[2], Number of previous integration steps
 		int nsavc; //ICNTRL[3], Frequency for saving of frames
 		int nstep; //ICNTRL[4],Number of steps in the run that created this file
-		bool qvelocity; //ICNTRL[5], Velocity flag
+		int qvelocity; //ICNTRL[5], Velocity flag
 		
 		int dof; //ICNTRL[8], Degrees of freedom
 		int nfixed; //ICNTRL[9], Number of fixed atoms
-		double tstep; //ICNTRL[10], AKMA units 
-		bool qcrystal; //ICNTRL[11], Crystal lattice/Periodic boundaries flag
-		bool q4d; //ICNTRL[12], 4D trajectory flag
-		bool qcharge; //ICNTRL[13], Fluctuating charges flag
-		bool qcheck; //ICNTRL[14], Consistency check flag, See "NOCHeck" keyword
+    float tstep; //ICNTRL[10], AKMA units
+		int qcrystal; //ICNTRL[11], Crystal lattice/Periodic boundaries flag
+		int q4d; //ICNTRL[12], 4D trajectory flag
+		int qcharge; //ICNTRL[13], Fluctuating charges flag
+		int qcheck; //ICNTRL[14], Consistency check flag, See "NOCHeck" keyword
 
 		int version; //ICNTRL[20], CHARMM version
 	
@@ -81,15 +81,16 @@ class Trajectory {
     int getNPriv(); 
     int getNSavc();
     int getNStep();
-    bool getQVelocity();
+    int getQVelocity();
 
     int getDOF(); 
     int getNFixed(); 
-    double getTStep();  
-    bool getQCrystal(); 
-    bool getQ4D(); 
-    bool getQCharge(); 
-    bool getQCheck(); 
+    float getTStepAKMA();
+    double getTStepPS();
+    int getQCrystal(); 
+    int getQ4D(); 
+    int getQCharge(); 
+    int getQCheck(); 
 
     int getVersion(); 
 
@@ -104,15 +105,16 @@ class Trajectory {
     void setNPriv(const int &nprivin);
     void setNSavc(const int &nsavcin);
     void setNStep(const int &nstepin);
-    void setQVelocity(const bool &qvelocityin);
+    void setQVelocity(const int &qvelocityin);
 
     void setDOF(const int &dofin);
     void setNFixed(const int &nfixedin);
-    void setTStep(const double &tstepin);
-    void setQCrystal(const bool &qcrystalin);
-    void setQ4D(const bool &q4din);
-    void setQCharge(const bool &qchargein);
-    void setQCheck(const bool &qcheckin);
+    void setTStep(const double &tstepin); //Picosecond input units
+    void setTStep(const float &tstepin); //AKMA input units
+    void setQCrystal(const int &qcrystalin);
+    void setQ4D(const int &q4din);
+    void setQCharge(const int &qchargein);
+    void setQCheck(const int &qcheckin);
 
     void setVersion(const int &versionin);
 

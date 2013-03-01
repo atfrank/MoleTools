@@ -85,14 +85,14 @@ void Trajectory::clearHeader(){
 	npriv=0;
 	nsavc=0;
 	nstep=0;
-	qvelocity=false;
+	qvelocity=0;
 	dof=0;
 	nfixed=0;
 	tstep=0.0;
-	qcrystal=false;
-	q4d=false;
-	qcharge=false;
-	qcheck=false;
+	qcrystal=0;
+	q4d=0;
+	qcharge=0;
+	qcheck=0;
 	version=0;
 	title.clear();
 	natom=0;
@@ -121,43 +121,20 @@ void Trajectory::readHeader(std::ifstream &trjin){
 		npriv=buffer[2].i;
 		nsavc=buffer[3].i;
 		nstep=buffer[4].i;
-		if (buffer[5].i > 0){
-			qvelocity=true;
+		qvelocity=buffer[5].i;
+    if (qvelocity > 0){
 			std::cerr << "Error: Velocity reading has yet to be implemented" << std::endl;
-		}
-		else{
-			qvelocity=false;
 		}
 	
 		dof=buffer[8].i;
 		nfixed=buffer[9].i;
 	
-		tstep=static_cast<double>(buffer[10].f);
+		tstep=buffer[10].f;
 		
-		if (buffer[11].i > 0){
-			qcrystal=true;
-		}
-		else{
-			qcrystal=false;
-		}
-		if (buffer[12].i > 0){
-			q4d=true;
-		}
-		else{
-			q4d=false;
-		}
-		if (buffer[13].i > 0){
-			qcharge=true;
-		}
-		else{
-			qcharge=false;
-		}
-		if (buffer[14].i > 0){
-			qcheck=true;
-		}
-		else{
-			qcheck=false;
-		}
+		qcrystal=buffer[11].i;
+		q4d=buffer[12].i;
+		qcharge=buffer[13].i;
+		qcheck=buffer[14].i;
 		
 		version=buffer[20].i;
 		
@@ -208,8 +185,8 @@ void Trajectory::showHeader(){
   std::cerr << std::setw(25) << std::left << "Dynamics Steps" << ": " << nstep << std::endl;
   std::cerr << std::setw(25) << std::left << "Degrees of Freedom" << ": " << dof << std::endl;
 	std::cerr << std::setw(25) << std::left << "Number of Fixed" << ": " << nfixed << std::endl;
-  std::cerr << std::setw(25) << std::left << "Time Step (ps)" << ": " << static_cast<double>(static_cast<int>(tstep*AKMATPS*nsavc*100000.0+0.5))/100000.0 << std::endl;
-	std::cerr << std::setw(25) << std::left << "Start Time (ps)" << ": " << (npriv/nsavc)*(static_cast<double>(static_cast<int>(tstep*AKMATPS*nsavc*100000.0+0.5))/100000.0) <<  std::endl;
+  std::cerr << std::setw(25) << std::left << "Time Step (ps)" << ": " << this->getTStepPS() << std::endl;
+	std::cerr << std::setw(25) << std::left << "Start Time (ps)" << ": " << (npriv/nsavc)*this->getTStepPS() <<  std::endl;
   std::cerr << std::setw(25) << std::left << "Periodic Boundaries" << ": " << qcrystal << std::endl;
   std::cerr << std::setw(25) << std::left << "4D Trajectory" << ": " << q4d << std::endl;
   std::cerr << std::setw(25) << std::left << "Fluctuating Charges" << ": " << qcharge << std::endl;
@@ -227,7 +204,7 @@ void Trajectory::cloneHeader(Trajectory *ftrjin){
 
   dof=ftrjin->getDOF();
   nfixed=ftrjin->getNFixed();
-  tstep=ftrjin->getTStep();
+  tstep=ftrjin->getTStepAKMA();
   qcrystal=ftrjin->getQCrystal();
   q4d=ftrjin->getQ4D();
   qcharge=ftrjin->getQCharge();
@@ -348,7 +325,7 @@ int Trajectory::getNStep(){
 	return nstep;
 }
 
-bool Trajectory::getQVelocity(){
+int Trajectory::getQVelocity(){
 	return qvelocity;
 }
 
@@ -359,23 +336,27 @@ int Trajectory::getNFixed(){
 	return nfixed;
 }
 
-double Trajectory::getTStep(){
+float Trajectory::getTStepAKMA(){
 	return tstep;
 }
 
-bool Trajectory::getQCrystal(){
+double Trajectory::getTStepPS(){
+  return  static_cast<double>(static_cast<int>(static_cast<double>(tstep)*AKMATPS*nsavc*100000.0+0.5))/100000.0;
+}
+
+int Trajectory::getQCrystal(){
 	return qcrystal;
 }
 
-bool Trajectory::getQ4D(){
+int Trajectory::getQ4D(){
 	return q4d;
 }
 
-bool Trajectory::getQCharge(){
+int Trajectory::getQCharge(){
 	return qcharge;
 }
 
-bool Trajectory::getQCheck(){
+int Trajectory::getQCheck(){
 	return qcheck;
 }
 
@@ -418,7 +399,7 @@ void Trajectory::setNStep(const int &nstepin){
 	nstep=nstepin;
 }
 
-void Trajectory::setQVelocity(const bool &qvelocityin){
+void Trajectory::setQVelocity(const int &qvelocityin){
 	qvelocity=qvelocityin;
 }
 
@@ -431,22 +412,28 @@ void Trajectory::setNFixed(const int &nfixedin){
 }
 
 void Trajectory::setTStep(const double &tstepin){
-	tstep=tstepin;
+  //Convert from picoseconds double to AKMA float
+  tstep=static_cast<float>((static_cast<double>(static_cast<int>(tstepin*100000.0))-0.5)/100000.0/nsavc/AKMATPS);
 }
 
-void Trajectory::setQCrystal(const bool &qcrystalin){
+void Trajectory::setTStep(const float &tstepin){
+  //Float input is already in AKMA units
+  tstep=tstepin;
+}
+
+void Trajectory::setQCrystal(const int &qcrystalin){
 	qcrystal=qcrystalin;
 }
 
-void Trajectory::setQ4D(const bool &q4din){
+void Trajectory::setQ4D(const int &q4din){
 	q4d=q4din;
 }
 
-void Trajectory::setQCharge(const bool &qchargein){
+void Trajectory::setQCharge(const int &qchargein){
 	qcharge=qchargein;
 }
 
-void Trajectory::setQCheck(const bool &qcheckin){
+void Trajectory::setQCheck(const int &qcheckin){
 	qcheck=qcheckin;
 }
 

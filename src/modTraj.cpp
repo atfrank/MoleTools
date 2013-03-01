@@ -134,7 +134,7 @@ int main (int argc, char **argv){
 
       if (ftrjin->findFormat(trjin) == true){
 				ftrjin->readHeader(trjin);
-				//ftraj->showHeader();
+				ftrjin->showHeader();
 				if (j == 0 && out.length() > 0 && trjout.is_open()){
 					ftrjout->cloneHeader(ftrjin);
 				}
