@@ -137,7 +137,8 @@ int main (int argc, char **argv){
 				ftrjin->showHeader();
 				if (j == 0 && out.length() > 0 && trjout.is_open()){
 					ftrjout->cloneHeader(ftrjin);
-          ftrjout->showHeader();
+          //ftrjout->showHeader();
+          ftrjout->writeHeader(trjout);
 				}
 				for (i=0; i< ftrjin->getNFrame(); i++){
 					ftrjin->readFrame(trjin, i);

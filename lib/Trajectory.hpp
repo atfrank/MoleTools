@@ -62,12 +62,14 @@ class Trajectory {
 			char c[4];
 			float f;
 		} binbuf;
-   
+
   public:
     Trajectory ();
     bool findFormat(std::ifstream &trjin);
 		template <class BinBuf> 
 			BinBuf* readFortran(std::ifstream &trjin, BinBuf *buffer, int &length);
+    template <class BinBuf>
+      void writeFortran(std::ofstream &trjout, BinBuf *buffer, int &length);
     void writeFortran(std::ofstream &trjout);
 		void clearHeader();
 		void readHeader(std::ifstream &trjin);
@@ -79,6 +81,7 @@ class Trajectory {
     void setMolecule(Molecule *molin);
 
 		//Get
+    std::string getFormat();
 		std::string getHdr();
     int getNFrame();
     int getNPriv(); 

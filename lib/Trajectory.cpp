@@ -80,8 +80,14 @@ BinBuf* Trajectory::readFortran(std::ifstream &trjin, BinBuf *buffer, int &lengt
 	return binOut;
 }
 
-void Trajectory::writeFortran(std::ofstream &trjout){
-
+template <class BinBuf>
+void Trajectory::writeFortran(std::ofstream &trjout, BinBuf *buffer, int &length){
+  trjout.seekp(0, std::ios::beg);
+  //Write Fortran record lengths and buffer
+  trjout.write(reinterpret_cast<char*>(&length), sizeof(int));
+  //binOut = new BinBuf [recStart];
+  trjout.write(reinterpret_cast<char*>(buffer), length);
+  trjout.write(reinterpret_cast<char*>(&length), sizeof(int));
 }
 
 void Trajectory::clearHeader(){
@@ -182,14 +188,46 @@ void Trajectory::readHeader(std::ifstream &trjin){
 }
 
 void Trajectory::writeHeader(std::ofstream &trjout){
-  writeFortran(trjout);
+  if (format == "CHARMM"){
+    unsigned int icntrl[21];
+    int length;
+    binbuf *buffer=reinterpret_cast<binbuf *>(&icntrl[0]);
+    for (unsigned int i=0; i< 21; i++){
+      icntrl[i]=0;
+    }
+
+    buffer[0].c[0]='C';
+    buffer[0].c[1]='O';
+    buffer[0].c[2]='R';
+    buffer[0].c[3]='D';
+
+    icntrl[1]=getNFrame();
+    icntrl[2]=getNPriv();
+    icntrl[3]=getNSavc();
+    icntrl[4]=getNStep();
+    icntrl[5]=getQVelocity();
+
+    icntrl[8]=getDOF();
+    icntrl[9]=getNFixed();
+    buffer[10].f=getTStepAKMA();
+    icntrl[11]=getQCrystal();
+    icntrl[12]=getQ4D();
+    icntrl[13]=getQCharge();
+    icntrl[14]=getQCheck();
+
+    icntrl[20]=getVersion();
+
+    length=sizeof(int)*21;
+
+    writeFortran(trjout, buffer, length);
+  }
 }
 
 void Trajectory::showHeader(){
 	std::cerr << title1 << std::endl;
   std::cerr << title2 << std::endl;
 	std::cerr << std::fixed;
-	std::cerr << std::setw(25) << std::left << "Atoms" << ": " << natom << std::endl;
+  std::cerr << std::setw(25) << std::left << "Atoms" << ": " << natom << std::endl;
 	std::cerr << std::setw(25) << std::left << "Frames" << ": " << nframe << std::endl;
   std::cerr << std::setw(25) << std::left << "Start Frame" << ": " << npriv << std::endl;
   std::cerr << std::setw(25) << std::left << "Save Frequency" << ": " << nsavc << std::endl;
@@ -206,6 +244,7 @@ void Trajectory::showHeader(){
 }
 
 void Trajectory::cloneHeader(Trajectory *ftrjin){
+  format=ftrjin->getFormat();
 	hdr=ftrjin->getHdr();
   nframe=ftrjin->getNFrame();
   npriv=ftrjin->getNPriv();
@@ -315,6 +354,10 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 
 void Trajectory::setMolecule(Molecule *molin){
   mol=molin;
+}
+
+std::string Trajectory::getFormat(){
+  return format;
 }
 
 std::string Trajectory::getHdr(){
