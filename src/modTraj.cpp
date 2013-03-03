@@ -152,7 +152,7 @@ int main (int argc, char **argv){
               //Do nothing
             }
 					}
-
+          ftrjout->writeFrame(trjout, ftrjin, i);
 				}
 			}
 			else{

@@ -44,6 +44,7 @@ class Trajectory {
 		int natom;
 		std::vector<int> fixinx;
 
+    std::vector<double> pb;
 		double pbx;
 		double pby;
 		double pbz;
@@ -71,13 +72,13 @@ class Trajectory {
 			BinBuf* readFortran(std::ifstream &trjin, BinBuf *buffer, int &length);
     template <class BinBuf>
       void writeFortran(std::ofstream &trjout, BinBuf *buffer, int &length);
-    void writeFortran(std::ofstream &trjout);
 		void clearHeader();
 		void readHeader(std::ifstream &trjin);
     void writeHeader(std::ofstream &trjout);
 		void showHeader();
 		void cloneHeader(Trajectory *ftrjin);
 		void readFrame(std::ifstream &trjin, unsigned int frame);
+    void writeFrame(std::ofstream &trjout, Trajectory *ftrjin, unsigned int frame);
 		std::string getHeader(){return hdr;};
     void setMolecule(Molecule *molin);
 

@@ -308,6 +308,7 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 	float *zbuffer;
   int length;
 	int i;
+  unsigned int j;
 
 	dbuffer=NULL;
 	xbuffer=NULL;
@@ -317,16 +318,22 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 	if (qcrystal == true){
 		dbuffer=readFortran(trjin, dbuffer, length);
 
+    pb.resize(6);
+    for (j=0; j< pb.size(); j++){
+      pb.at(j)=dbuffer[j];
+    }
+
 		//Box dimensions
-		pbx=sqrt(dbuffer[0]*dbuffer[0]+dbuffer[1]*dbuffer[1]+dbuffer[3]*dbuffer[3]);
-    pby=sqrt(dbuffer[1]*dbuffer[1]+dbuffer[2]*dbuffer[2]+dbuffer[4]*dbuffer[4]);
-    pbz=sqrt(dbuffer[3]*dbuffer[3]+dbuffer[4]*dbuffer[4]+dbuffer[5]*dbuffer[5]);
+		pbx=sqrt(pb.at(0)*pb.at(0)+pb.at(1)*pb.at(1)+pb.at(3)*pb.at(3));
+    pby=sqrt(pb.at(1)*pb.at(1)+pb.at(2)*pb.at(2)+pb.at(4)*pb.at(4));
+    pbz=sqrt(pb.at(3)*pb.at(3)+pb.at(4)*pb.at(4)+pb.at(5)*pb.at(5));
 
 		//Box angles
-    pbalpha=acos(dbuffer[4]*(dbuffer[2]+dbuffer[5])+dbuffer[1]*dbuffer[3]/(pby*pbz))*180.0/PI;
-    pbbeta=acos(dbuffer[3]*(dbuffer[0]+dbuffer[5])+dbuffer[1]*dbuffer[4]/(pbz*pbx))*180.0/PI;
-    pbgamma=acos(dbuffer[1]*(dbuffer[0]+dbuffer[2])+dbuffer[3]*dbuffer[4]/(pbx*pby))*180.0/PI;
-		
+	  pbalpha=acos(pb.at(4)*(pb.at(2)+pb.at(5))+pb.at(1)*pb.at(3)/(pby*pbz))*180.0/PI;
+    pbbeta=acos(pb.at(3)*(pb.at(0)+pb.at(5))+pb.at(1)*pb.at(4)/(pbz*pbx))*180.0/PI;
+    pbgamma=acos(pb.at(1)*(pb.at(0)+pb.at(2))+pb.at(3)*pb.at(4)/(pbx*pby))*180.0/PI;
+
+
 		/*
 		std::cerr << "Periodic Box :";
 		std::cerr << pbx << " x " << pby << " x " << pbz << " ";
@@ -381,6 +388,23 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 	if (zbuffer != NULL){
 		delete zbuffer;
 	}
+}
+
+void Trajectory::writeFrame(std::ofstream &trjout, Trajectory *ftrjin, unsigned int frame){
+  double *dbuffer;
+  unsigned int i;
+  int length;
+
+  if (this->getQCrystal() > 0){
+    double pbc[pb.size()];
+    for(i=0; i< pb.size(); i++){
+      pbc[i]=pb.at(i);
+    }
+    dbuffer=&pbc[0];
+    length=sizeof(double)*pb.size();
+    writeFortran(trjout, dbuffer, length);
+  }
+  
 }
 
 void Trajectory::setMolecule(Molecule *molin){
