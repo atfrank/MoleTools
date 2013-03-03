@@ -21,6 +21,7 @@ class Trajectory {
     std::string format;
     bool swab; //Swap bytes
     Molecule *mol;
+    bool show;
 
 		std::string hdr;
 		int nframe; //ICNTRL[1], Number of frames
@@ -84,6 +85,7 @@ class Trajectory {
 
 		//Get
     std::string getFormat();
+    bool getShow();
 		std::string getHdr();
     int getNFrame();
     int getNPriv(); 
@@ -109,6 +111,7 @@ class Trajectory {
 		int getFixInx(int element);	
 
 		//Set
+    void setShow(const bool &val);
     void setHdr(const std::string &hdrin);
     void setNFrame(const int &nframein);
     void setNPriv(const int &nprivin);

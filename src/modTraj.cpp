@@ -43,6 +43,7 @@ int main (int argc, char **argv){
   std::ofstream trjout;
 	Trajectory *ftrjin;
 	Trajectory *ftrjout;
+  bool show=false;
 
   pdb.clear();
   mol=NULL;
@@ -84,6 +85,9 @@ int main (int argc, char **argv){
     else if (currArg == "-outsel"){
       currArg=argv[++i];
       outsel=currArg;
+    }
+    else if (currArg == "-show"){
+      show=true;
     }
     else{
       trajs.push_back(currArg);
@@ -143,6 +147,7 @@ int main (int argc, char **argv){
 
 		if (trjin.is_open()){
 			ftrjin=new Trajectory;
+      ftrjin->setShow(show);
 
       if (pdb.length() > 0){
         ftrjin->setMolecule(mol);
@@ -150,7 +155,6 @@ int main (int argc, char **argv){
 
       if (ftrjin->findFormat(trjin) == true){
 				ftrjin->readHeader(trjin);
-				//ftrjin->showHeader();
 				if (j == 0 && out.length() > 0 && trjout.is_open()){
 					ftrjout->cloneHeader(ftrjin);
           ftrjout->writeHeader(trjout);

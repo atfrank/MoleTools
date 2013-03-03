@@ -7,6 +7,7 @@
 Trajectory::Trajectory (){
   swab=false;
   mol=NULL;
+  show=false;
   hdr.clear();
   nframe=0;
   npriv=0;
@@ -172,7 +173,10 @@ void Trajectory::readHeader(std::ifstream &trjin){
       //  fixinx.push_back(buffer[i].i);
       //}
     }
-	
+
+    if (this->getShow() == true){
+      this->showHeader();
+    }	
 	}
 	else if (format.compare("AMBER") == 0){
 		
@@ -256,7 +260,6 @@ void Trajectory::writeHeader(std::ofstream &trjout){
       //}
     }
 
-    
   }
 }
 
@@ -339,11 +342,11 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
     pbbeta=acos(pb.at(3)*(pb.at(0)+pb.at(5))+pb.at(1)*pb.at(4)/(pbz*pbx))*180.0/PI;
     pbgamma=acos(pb.at(1)*(pb.at(0)+pb.at(2))+pb.at(3)*pb.at(4)/(pbx*pby))*180.0/PI;
 
-    /*
-		std::cout << "Periodic Box :";
-		std::cout << pbx << " x " << pby << " x " << pbz << " ";
-		std::cout << "( " << pbalpha << " x " << pbbeta << " x " << pbgamma << " )" << std::endl;
-		*/
+    if (this->getShow() == true){ 
+		  std::cout << "Periodic Box :  ";
+		  std::cout << pbx << " x " << pby << " x " << pbz << " ";
+		  std::cout << "( " << pbalpha << " x " << pbbeta << " x " << pbgamma << " )" << std::endl;
+    }
 
 		delete dbuffer;
 	}
@@ -365,34 +368,33 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
   }
 
 	if (nfixed > 0){
+    for (i=0; i< nfixed; i++){
+      //Do something
+    }
 		std::cerr << "Warning: Fixed atoms has yet to be implemented"<< std::endl;
 	}
 	else{
-    if (mol != NULL){
-			if (length/sizeof(float) != mol->getNAtom()){
-				std::cerr << "Error: The natom mismatch!" << std::endl;
-			}
-			else{
-      	for (i=0; i< natom; i++){
-        	mol->getAtom(i)->setCoor(Vector(static_cast<double>(xbuffer[i]), static_cast<double>(ybuffer[i]), static_cast<double>(zbuffer[i])));
-      	}
-			}
+    if (mol != NULL && length/sizeof(float) != mol->getNAtom()){
+			std::cerr << "Error: The natom mismatch!" << std::endl;
     }
-    else{
-		  for (i=0; i< natom; i++){
-				x.at(i)=xbuffer[i];
-			  y.at(i)=ybuffer[i];
-			  z.at(i)=zbuffer[i];
-		
-      /*
-			  std::cout << std::fixed;
-			  std::cout << "coor" << std::setw(7) << i+1;
-			  std::cout << std::setw(14) << xbuffer[i] << " ";
-			  std::cout << std::setw(14) << ybuffer[i] << " ";
-			  std::cout << std::setw(14) << zbuffer[i] << std::endl;
-      */
+	  for (i=0; i< natom; i++){
+      if (mol == NULL){
+			  x.at(i)=xbuffer[i];
+		    y.at(i)=ybuffer[i];
+		    z.at(i)=zbuffer[i];
       }
-		}
+      else{
+        mol->getAtom(i)->setCoor(Vector(static_cast<double>(xbuffer[i]), static_cast<double>(ybuffer[i]), static_cast<double>(zbuffer[i])));
+      }
+	
+      if (this->getShow() == true){
+        std::cout << std::fixed;
+        std::cout << "coor" << std::setw(10) << std::right << i+1;
+        std::cout << std::setw(14) << xbuffer[i] << " ";
+        std::cout << std::setw(14) << ybuffer[i] << " ";
+        std::cout << std::setw(14) << zbuffer[i] << std::endl;
+      }	
+    }
 	}
 
 	if (xbuffer != NULL){
@@ -449,10 +451,10 @@ void Trajectory::writeFrame(std::ofstream &trjout, Trajectory *ftrjin, unsigned 
   
   }
   else{
-    //xcoor
     float x[mol->getNAtom()];
     float y[mol->getNAtom()];
     float z[mol->getNAtom()];
+
     for(i=0; i< mol->getAtmVecSize(); i++){
       x[i]=mol->getAtom(i)->getX();
       y[i]=mol->getAtom(i)->getY();
@@ -478,6 +480,10 @@ void Trajectory::setMolecule(Molecule *molin){
 
 std::string Trajectory::getFormat(){
   return format;
+}
+
+bool Trajectory::getShow(){
+  return show;
 }
 
 std::string Trajectory::getHdr(){
@@ -563,6 +569,12 @@ unsigned int Trajectory::getFixInxVecSize(){
 
 int Trajectory::getFixInx(int element){
 	return fixinx.at(element);
+}
+
+//Set
+
+void Trajectory::setShow(const bool &val){
+  show=val;
 }
 
 void Trajectory::setHdr(const std::string &hdrin){
