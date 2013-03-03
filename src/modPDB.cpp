@@ -7,17 +7,16 @@
 #include <sstream> //string stream
 #include <string>
 #include <cstdlib>
-using namespace std;
 
 #define MAXINPFILES 4096
 #define MAXLINESIZE 4096
 
 void usage (){
-  cerr << endl;
-  cerr << "Usage:   manipPDB [options] <PDBfile>" << endl;
-  cerr << "Options: [-model num]" << endl;
-  cerr << "         [-sel selection]" << endl;
-  cerr << endl << endl;
+  std::cerr << std::endl;
+  std::cerr << "Usage:   manipPDB [options] <PDBfile>" << std::endl;
+  std::cerr << "Options: [-model num]" << std::endl;
+  std::cerr << "         [-sel selection]" << std::endl;
+  std::cerr << std::endl << std::endl;
   exit(0);
 }
 
@@ -25,9 +24,9 @@ int main (int argc, char **argv){
 
   int i;
   int model=0;
-  string pdb;
-  string currArg;
-  string sel;
+  std::string pdb;
+  std::string currArg;
+  std::string sel;
 
   pdb.clear();
   
@@ -38,7 +37,7 @@ int main (int argc, char **argv){
     }
     else if (currArg == "-model"){
       currArg=argv[++i];
-      stringstream(currArg) >> model; //atoi
+      std::stringstream(currArg) >> model; //atoi
     }
     else if (currArg == "-sel" || currArg == "-nsel"){
       currArg=argv[++i];
@@ -50,7 +49,7 @@ int main (int argc, char **argv){
   }
 
   if (pdb.length() == 0){
-    cerr << endl << "Error: Please provide an input file" << endl << endl;
+    std::cerr << std::endl << "Error: Please provide an input file" << std::endl << std::endl;
     usage();
   }
 

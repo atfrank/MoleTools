@@ -5,8 +5,9 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <string>
 #include <cstdlib>
-using namespace std;
 
 #define MAXINPFILES 4096
 #define MAXLINESIZE 4096
@@ -20,8 +21,8 @@ int main (int argc, char **argv){
 
   int i;
 	unsigned int j;
-	vector<string> pdbs;
-  string currArg;
+  std::vector<std::string> pdbs;
+  std::string currArg;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -34,7 +35,7 @@ int main (int argc, char **argv){
   }
 
   if (pdbs.size() == 0){
-    cerr << endl << "Error: Please provide an input file" << endl << endl;
+    std::cerr << std::endl << "Error: Please provide an input file" << std::endl << std::endl;
     usage();
   }
 
