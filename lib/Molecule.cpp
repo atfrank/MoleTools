@@ -232,3 +232,13 @@ void Molecule::select(std::string sel){
 unsigned int Molecule::getNAtom(){
   return atmVec.size();
 }
+
+unsigned int Molecule::getNAtomSelected(){
+  unsigned int natom=0;
+  for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+    if (this->getAtom(i)->getSel() == true){
+      natom++;
+    }
+  }
+  return natom;
+}

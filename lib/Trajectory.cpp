@@ -256,23 +256,23 @@ void Trajectory::writeHeader(std::ofstream &trjout){
 
 void Trajectory::showHeader(){
   for (unsigned int i=0; i< title.size(); i++){
-	  std::cerr << title[i] << std::endl;
+	  std::cout << title[i] << std::endl;
   }
-	std::cerr << std::fixed;
-  std::cerr << std::setw(25) << std::left << "Atoms" << ": " << natom << std::endl;
-	std::cerr << std::setw(25) << std::left << "Frames" << ": " << nframe << std::endl;
-  std::cerr << std::setw(25) << std::left << "Start Frame" << ": " << npriv << std::endl;
-  std::cerr << std::setw(25) << std::left << "Save Frequency" << ": " << nsavc << std::endl;
-  std::cerr << std::setw(25) << std::left << "Dynamics Steps" << ": " << nstep << std::endl;
-  std::cerr << std::setw(25) << std::left << "Degrees of Freedom" << ": " << dof << std::endl;
-	std::cerr << std::setw(25) << std::left << "Number of Fixed" << ": " << nfixed << std::endl;
-  std::cerr << std::setw(25) << std::left << "Time Step (ps)" << ": " << this->getTStepPS() << std::endl;
-	std::cerr << std::setw(25) << std::left << "Start Time (ps)" << ": " << (npriv/nsavc)*this->getTStepPS() <<  std::endl;
-  std::cerr << std::setw(25) << std::left << "Periodic Boundaries" << ": " << qcrystal << std::endl;
-  std::cerr << std::setw(25) << std::left << "4D Trajectory" << ": " << q4d << std::endl;
-  std::cerr << std::setw(25) << std::left << "Fluctuating Charges" << ": " << qcharge << std::endl;
-  std::cerr << std::setw(25) << std::left << "Consistency Check" << ": " << qcheck << std::endl;
-  std:: cerr << std::setw(25) << std::left << "Version" << ": " << version << std::endl;
+	std::cout << std::fixed;
+  std::cout << std::setw(25) << std::left << "Atoms" << ": " << natom << std::endl;
+	std::cout << std::setw(25) << std::left << "Frames" << ": " << nframe << std::endl;
+  std::cout << std::setw(25) << std::left << "Start Frame" << ": " << npriv << std::endl;
+  std::cout << std::setw(25) << std::left << "Save Frequency" << ": " << nsavc << std::endl;
+  std::cout << std::setw(25) << std::left << "Dynamics Steps" << ": " << nstep << std::endl;
+  std::cout << std::setw(25) << std::left << "Degrees of Freedom" << ": " << dof << std::endl;
+	std::cout << std::setw(25) << std::left << "Number of Fixed" << ": " << nfixed << std::endl;
+  std::cout << std::setw(25) << std::left << "Time Step (ps)" << ": " << this->getTStepPS() << std::endl;
+	std::cout << std::setw(25) << std::left << "Start Time (ps)" << ": " << (npriv/nsavc)*this->getTStepPS() <<  std::endl;
+  std::cout << std::setw(25) << std::left << "Periodic Boundaries" << ": " << qcrystal << std::endl;
+  std::cout << std::setw(25) << std::left << "4D Trajectory" << ": " << q4d << std::endl;
+  std::cout << std::setw(25) << std::left << "Fluctuating Charges" << ": " << qcharge << std::endl;
+  std::cout << std::setw(25) << std::left << "Consistency Check" << ": " << qcheck << std::endl;
+  std:: cout << std::setw(25) << std::left << "Version" << ": " << version << std::endl;
 }
 
 void Trajectory::cloneHeader(Trajectory *ftrjin){
@@ -315,7 +315,7 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 	ybuffer=NULL;
 	zbuffer=NULL;
 
-	if (qcrystal == true){
+	if (qcrystal > 0){
 		dbuffer=readFortran(trjin, dbuffer, length);
 
     pb.resize(6);
@@ -333,13 +333,12 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
     pbbeta=acos(pb.at(3)*(pb.at(0)+pb.at(5))+pb.at(1)*pb.at(4)/(pbz*pbx))*180.0/PI;
     pbgamma=acos(pb.at(1)*(pb.at(0)+pb.at(2))+pb.at(3)*pb.at(4)/(pbx*pby))*180.0/PI;
 
-
-		/*
-		std::cerr << "Periodic Box :";
-		std::cerr << pbx << " x " << pby << " x " << pbz << " ";
-		std::cerr << "( " << pbalpha << " x " << pbbeta << " x " << pbgamma << " )" << std::endl;
+    /*
+		std::cout << "Periodic Box :";
+		std::cout << pbx << " x " << pby << " x " << pbz << " ";
+		std::cout << "( " << pbalpha << " x " << pbbeta << " x " << pbgamma << " )" << std::endl;
 		*/
-		
+
 		delete dbuffer;
 	}
 
@@ -347,6 +346,17 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 	xbuffer=readFortran(trjin, xbuffer, length);
 	ybuffer=readFortran(trjin, ybuffer, length);
 	zbuffer=readFortran(trjin, zbuffer, length);
+
+  if (x.size() == 0 || y.size() == 0 || z.size() == 0){
+    x.resize(natom);
+    y.resize(natom);
+    z.resize(natom);
+  }
+  if (natom != static_cast<int>(x.size()) || 
+      natom != static_cast<int>(y.size()) || 
+      natom != static_cast<int>(z.size())){
+    std::cerr << "Error: The number of atoms \"natom\" does not match the number of atoms in each frame" << std::endl;
+  }
 
 	if (nfixed > 0){
 		std::cerr << "Warning: Fixed atoms has yet to be implemented"<< std::endl;
@@ -364,17 +374,17 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
     }
     else{
 		  for (i=0; i< natom; i++){
-				x.push_back(xbuffer[i]);
-			  y.push_back(ybuffer[i]);
-			  z.push_back(zbuffer[i]);
-			
-			/*	
+				x.at(i)=xbuffer[i];
+			  y.at(i)=ybuffer[i];
+			  z.at(i)=zbuffer[i];
+		
+      /*
 			  std::cout << std::fixed;
 			  std::cout << "coor" << std::setw(7) << i+1;
 			  std::cout << std::setw(14) << xbuffer[i] << " ";
 			  std::cout << std::setw(14) << ybuffer[i] << " ";
 			  std::cout << std::setw(14) << zbuffer[i] << std::endl;
-			*/
+      */
       }
 		}
 	}
@@ -392,19 +402,43 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 
 void Trajectory::writeFrame(std::ofstream &trjout, Trajectory *ftrjin, unsigned int frame){
   double *dbuffer;
+  float *fbuffer;
   unsigned int i;
   int length;
 
+  //crystal
   if (this->getQCrystal() > 0){
-    double pbc[pb.size()];
-    for(i=0; i< pb.size(); i++){
-      pbc[i]=pb.at(i);
+    double pbc[ftrjin->pb.size()];
+    for(i=0; i< ftrjin->pb.size(); i++){
+      pbc[i]=ftrjin->pb.at(i);
     }
     dbuffer=&pbc[0];
-    length=sizeof(double)*pb.size();
+    length=sizeof(double)*ftrjin->pb.size();
     writeFortran(trjout, dbuffer, length);
   }
+
+  //xcoor
+  float xyz[ftrjin->x.size()];
+  for(i=0; i< ftrjin->x.size(); i++){
+    xyz[i]=ftrjin->x.at(i);
+  } 
+  length=sizeof(float)*ftrjin->x.size();
+  fbuffer=&xyz[0];
+  writeFortran(trjout, fbuffer, length);
   
+  //ycoor
+  for(i=0; i< ftrjin->y.size(); i++){
+    xyz[i]=ftrjin->y.at(i);
+  }
+  fbuffer=&xyz[0];
+  writeFortran(trjout, fbuffer, length);
+
+  //zcoor
+  for(i=0; i< ftrjin->z.size(); i++){
+    xyz[i]=ftrjin->z.at(i);
+  }
+  fbuffer=&xyz[0];
+  writeFortran(trjout, fbuffer, length);
 }
 
 void Trajectory::setMolecule(Molecule *molin){

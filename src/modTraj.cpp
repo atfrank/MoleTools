@@ -30,6 +30,9 @@ int main (int argc, char **argv){
   vector<string> trajs;
   string out;
   Molecule *mol;
+  Molecule *outmol;
+  Molecule *fitmol;
+  Molecule *recmol;
   string pdb;
   string currArg;
   string sel;
@@ -37,7 +40,7 @@ int main (int argc, char **argv){
   string fitsel=":.CA+P";
   bool recenter=false;
   string recsel=":.CA+P";
-  string outsel="";
+  string outsel=":.";
 	ifstream trjin;
 	ofstream trjout;
 	Trajectory *ftrjin;
@@ -45,6 +48,9 @@ int main (int argc, char **argv){
 
   pdb.clear();
   mol=NULL;
+  outmol=NULL;
+  fitmol=NULL;
+  recmol=NULL;
 	ftrjin=NULL;
 	ftrjout=NULL;
 
@@ -112,14 +118,30 @@ int main (int argc, char **argv){
   }
   else if (pdb.length() > 0){
     mol=Molecule::readPDB(pdb);
+
+    if (outsel.length() > 0){
+      outmol=mol->clone();
+      //outmol->select(outsel);
+    }
+    if (fitsel.length() > 0 && fit == true){
+      fitmol=mol->clone();
+      fitmol->select(fitsel);
+    }
+    if (recsel.length() > 0 && recenter == true){
+      recmol=mol->clone();
+      recmol->select(recsel);
+    }
     if (sel.length() > 0){
-      mol->select(sel); //Don't need to clone, just write selected
+      mol->select(sel); //Currently serves no function
     }
   } 
 
   if (out.length() > 0){
     trjout.open(out.c_str(), ios::binary);
 		ftrjout=new Trajectory;
+    if (outmol != NULL){
+      ftrjout->setMolecule(outmol);
+    }
   }
 
 	for (j=0; j< trajs.size(); j++){
@@ -129,12 +151,12 @@ int main (int argc, char **argv){
 			ftrjin=new Trajectory;
 
       if (pdb.length() > 0){
-        ftrjin->setMolecule(mol);
+        //ftrjin->setMolecule(mol);
       }
 
       if (ftrjin->findFormat(trjin) == true){
 				ftrjin->readHeader(trjin);
-				ftrjin->showHeader();
+				//ftrjin->showHeader();
 				if (j == 0 && out.length() > 0 && trjout.is_open()){
 					ftrjout->cloneHeader(ftrjin);
           ftrjout->writeHeader(trjout);
@@ -152,7 +174,9 @@ int main (int argc, char **argv){
               //Do nothing
             }
 					}
-          ftrjout->writeFrame(trjout, ftrjin, i);
+          if (out.length() > 0 && trjout.is_open()){
+            ftrjout->writeFrame(trjout, ftrjin, i);
+          }
 				}
 			}
 			else{
@@ -167,7 +191,7 @@ int main (int argc, char **argv){
 		trjin.close();
 	}
 
-  if (out.length() > 0){
+  if (out.length() > 0 && trjout.is_open()){
     trjout.close();
 		if (ftrjout != NULL){
 			delete ftrjout;
