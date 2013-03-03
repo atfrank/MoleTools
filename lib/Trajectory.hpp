@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <cstring>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -27,7 +28,8 @@ class Trajectory {
 		int nsavc; //ICNTRL[3], Frequency for saving of frames
 		int nstep; //ICNTRL[4],Number of steps in the run that created this file
 		int qvelocity; //ICNTRL[5], Velocity flag
-		
+	  
+    int nblock; //ICNTRL[7], Total number of blocks in lambda dynamics
 		int dof; //ICNTRL[8], Degrees of freedom
 		int nfixed; //ICNTRL[9], Number of fixed atoms
     float tstep; //ICNTRL[10], AKMA units
@@ -38,8 +40,7 @@ class Trajectory {
 
 		int version; //ICNTRL[20], CHARMM version
 	
-		std::string title1;
-    std::string title2;
+    std::vector<std::string> title;
 		int natom;
 		std::vector<int> fixinx;
 
@@ -100,8 +101,8 @@ class Trajectory {
 
     int getVersion(); 
 
-    std::string getTitle1();
-    std::string getTitle2();
+    std::vector<std::string> getTitle();
+    std::string getTitle(const unsigned int &element);
     int getNAtom();
 		unsigned int getFixInxVecSize();
 		int getFixInx(int element);	
@@ -125,8 +126,10 @@ class Trajectory {
 
     void setVersion(const int &versionin);
 
-    void setTitle1(const std::string &title1in);
-    void setTitle2(const std::string &title2in);
+    void setTitle(const std::vector<std::string> &titlein);
+    void setTitle(const std::string &titlein, const unsigned int &element=0);
+    void clearTitle();
+    void addTitle(const std::string &titlein);
     void setNAtom(const int &natomin);
 		void addFixInx(const int &elementin);
 		void clearFixInx();

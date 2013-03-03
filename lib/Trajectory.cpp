@@ -21,8 +21,7 @@ Trajectory::Trajectory (){
   qcharge=false;
   qcheck=false;
   version=0;
-  title1.clear();
-  title2.clear();
+  title.clear();
   natom=0;
   fixinx.clear();
 }
@@ -82,10 +81,9 @@ BinBuf* Trajectory::readFortran(std::ifstream &trjin, BinBuf *buffer, int &lengt
 
 template <class BinBuf>
 void Trajectory::writeFortran(std::ofstream &trjout, BinBuf *buffer, int &length){
-  trjout.seekp(0, std::ios::beg);
+  
   //Write Fortran record lengths and buffer
   trjout.write(reinterpret_cast<char*>(&length), sizeof(int));
-  //binOut = new BinBuf [recStart];
   trjout.write(reinterpret_cast<char*>(buffer), length);
   trjout.write(reinterpret_cast<char*>(&length), sizeof(int));
 }
@@ -105,8 +103,7 @@ void Trajectory::clearHeader(){
 	qcharge=0;
 	qcheck=0;
 	version=0;
-	title1.clear();
-  title2.clear();
+	title.clear();
 	natom=0;
 	fixinx.clear();
 }
@@ -115,7 +112,7 @@ void Trajectory::readHeader(std::ifstream &trjin){
 	binbuf *buffer;
 	char *cbuffer;
 	int length;
-	//int i;
+	int i;
 
 	buffer=NULL;
 	cbuffer=NULL;
@@ -152,9 +149,11 @@ void Trajectory::readHeader(std::ifstream &trjin){
 		
 		//Title
 		cbuffer=readFortran(trjin, cbuffer, length);
-		title1.assign(cbuffer,80);
-    //81-84 are blank spaces, NOT null characters (\0)
-		title2.assign(cbuffer+84,80);
+    int ntitle=cbuffer[0];
+    title.resize(ntitle);
+    for (i=0; i< ntitle; i++){
+      title[i].assign(cbuffer+sizeof(int)+i*80,80);
+    }
 		
 
 		//NATOM
@@ -189,11 +188,16 @@ void Trajectory::readHeader(std::ifstream &trjin){
 
 void Trajectory::writeHeader(std::ofstream &trjout){
   if (format == "CHARMM"){
-    unsigned int icntrl[21];
-    int length;
+    trjout.seekp(0, std::ios::beg);
+
+    binbuf icntrl[21];
     binbuf *buffer=reinterpret_cast<binbuf *>(&icntrl[0]);
-    for (unsigned int i=0; i< 21; i++){
-      icntrl[i]=0;
+    int *ibuffer;
+    int length;
+    unsigned int i;
+
+    for (i=0; i< 21; i++){
+      buffer[i].i=0;
     }
 
     buffer[0].c[0]='C';
@@ -201,31 +205,59 @@ void Trajectory::writeHeader(std::ofstream &trjout){
     buffer[0].c[2]='R';
     buffer[0].c[3]='D';
 
-    icntrl[1]=getNFrame();
-    icntrl[2]=getNPriv();
-    icntrl[3]=getNSavc();
-    icntrl[4]=getNStep();
-    icntrl[5]=getQVelocity();
+    buffer[1].i=getNFrame();
+    buffer[2].i=getNPriv();
+    buffer[3].i=getNSavc();
+    buffer[4].i=getNStep();
+    icntrl[5].i=getQVelocity();
 
-    icntrl[8]=getDOF();
-    icntrl[9]=getNFixed();
+    buffer[8].i=getDOF();
+    buffer[9].i=getNFixed();
     buffer[10].f=getTStepAKMA();
-    icntrl[11]=getQCrystal();
-    icntrl[12]=getQ4D();
-    icntrl[13]=getQCharge();
-    icntrl[14]=getQCheck();
+    buffer[11].i=getQCrystal();
+    buffer[12].i=getQ4D();
+    buffer[13].i=getQCharge();
+    buffer[14].i=getQCheck();
 
-    icntrl[20]=getVersion();
+    buffer[20].i=getVersion();
 
     length=sizeof(int)*21;
 
     writeFortran(trjout, buffer, length);
+
+   
+    length=sizeof(int)+title.size()*80;
+    char *otitle=new char [length];
+    unsigned int *ntitle=reinterpret_cast<unsigned int *>(otitle);
+    *ntitle=title.size();
+    for (i=0; i< title.size(); i++){
+      memcpy(otitle+sizeof(int)+i*80, getTitle(i).c_str(), 80);
+    }
+
+    writeFortran(trjout, otitle, length);
+    delete otitle;
+
+    //binbuf natm=natom;
+    ibuffer=&natom;
+    length=sizeof(int);
+    writeFortran(trjout, ibuffer, length);
+
+    if (nfixed > 0){
+      std::cerr << "Warning: Fixed atoms has yet to be implemented" << std::endl;
+      //for (i=0; i< length; i++){
+      //  std::cerr << buffer[i].i << ":";
+      //  fixinx.push_back(buffer[i].i);
+      //}
+    }
+
+    
   }
 }
 
 void Trajectory::showHeader(){
-	std::cerr << title1 << std::endl;
-  std::cerr << title2 << std::endl;
+  for (unsigned int i=0; i< title.size(); i++){
+	  std::cerr << title[i] << std::endl;
+  }
 	std::cerr << std::fixed;
   std::cerr << std::setw(25) << std::left << "Atoms" << ": " << natom << std::endl;
 	std::cerr << std::setw(25) << std::left << "Frames" << ": " << nframe << std::endl;
@@ -262,8 +294,7 @@ void Trajectory::cloneHeader(Trajectory *ftrjin){
 
   version=ftrjin->getVersion();
 
-  title1=ftrjin->getTitle1();
-  title2=ftrjin->getTitle2();
+  title=ftrjin->getTitle();
   natom=ftrjin->getNAtom();
 	for (unsigned int i=0; i< ftrjin->getFixInxVecSize(); i++){
    	fixinx.push_back(ftrjin->getFixInx(i));
@@ -419,20 +450,18 @@ int Trajectory::getVersion(){
 	return version;
 }
 
-std::string Trajectory::getTitle1(){
-  if (title1.find_first_of("*") != 0){
-    title1.insert(0,"*");
+std::vector<std::string> Trajectory::getTitle(){
+  for (unsigned int i=0; i< title.size(); i++){
+    if (title[i].find("*") != 0){
+      title[i].insert(0,"*");
+    }
+    title[i].resize(80, ' ');
   }
-  title1.resize(80, ' ');
-	return title1;
+	return title;
 }
 
-std::string Trajectory::getTitle2(){
-  if (title2.find_first_of("*") != 0){
-    title2.insert(0,"*");
-  }
-  title2.resize(80, ' ');
-  return title2;
+std::string Trajectory::getTitle(const unsigned int &element){
+  return title.at(element);
 }
 
 int Trajectory::getNAtom(){
@@ -508,20 +537,47 @@ void Trajectory::setVersion(const int &versionin){
 	version=versionin;
 }
 
-void Trajectory::setTitle1(const std::string &title1in){
-	title1=title1in;
-  if (title1.find_first_of("*") != 0){
-    title1.insert(0,"*");
+void Trajectory::setTitle(const std::vector<std::string> &titlein){
+	title=titlein;
+  if (title.size() == 1){
+    title.resize(2);
   }
-  title1.resize(80, ' ');
+  for (unsigned int i=0; i< title.size(); i++){
+    if (title[i].find("*") != 0){
+      title[i].insert(0,"*");
+    }
+    title[i].resize(80, ' ');
+  }
 }
 
-void Trajectory::setTitle2(const std::string &title2in){
-  title2=title2in;
-  if(title2.find_first_of("*") != 0){
-    title2.insert(0,"*");
+void Trajectory::setTitle(const std::string &titlein, const unsigned int &element){
+  if (title.size() < element){
+    title.resize(element);
   }
-  title2.resize(80, ' ');
+  title[element]=titlein;
+  if (title.size() == 1){
+    title.resize(2);
+  }
+  for (unsigned int i=0; i< title.size(); i++){
+    if (title[i].find("*") != 0){
+      title[i].insert(0,"*");
+    }
+    title[i].resize(80, ' ');
+  }
+}
+
+void Trajectory::clearTitle(){
+  title.clear();
+}
+
+void Trajectory::addTitle(const std::string &titlein){
+  title.push_back(titlein);
+  for (unsigned int i=0; i< title.size(); i++){
+    if (title[i].find("*") != 0){
+      title[i].insert(0,"*");
+    }
+    title[i].resize(80, ' ');
+  }
 }
 
 void Trajectory::setNAtom(const int &natomin){
