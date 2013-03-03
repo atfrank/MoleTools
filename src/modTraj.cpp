@@ -6,19 +6,18 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-using namespace std;
 
 #define MAXINPFILES 4096
 #define MAXLINESIZE 4096
 
 void usage(){
-  cerr << endl << endl;
-  cerr << "Usage:   modTraj [-options] <TRAJfile(s)>" << endl;
-  cerr << "Options: [-pdb PDBfile] [-sel selection]" << endl;
-  cerr << "         [-fit | -recenter] [-fitsel selection] [-recsel selection]" << endl;
-  cerr << "         [-out TRAJname] [-outsel selection]" << endl;
-  cerr << "         [-skip frames]" << endl;
-	cerr << "         [-verbose] [-show]" << endl;
+  std::cerr << std::endl << std::endl;
+  std::cerr << "Usage:   modTraj [-options] <TRAJfile(s)>" << std::endl;
+  std::cerr << "Options: [-pdb PDBfile]" << std::endl;
+  std::cerr << "         [-fit | -recenter] [-fitsel selection] [-recsel selection]" << std::endl;
+  std::cerr << "         [-out TRAJname] [-outsel selection]" << std::endl;
+  std::cerr << "         [-skip frames]" << std::endl;
+	std::cerr << "         [-verbose] [-show]" << std::endl;
   exit(0);
 }
 
@@ -27,22 +26,21 @@ int main (int argc, char **argv){
 
   int i;
 	unsigned int j;
-  vector<string> trajs;
-  string out;
+  std::vector<std::string> trajs;
+  std::string out;
   Molecule *mol;
   Molecule *outmol;
   Molecule *fitmol;
   Molecule *recmol;
-  string pdb;
-  string currArg;
-  string sel;
+  std::string pdb;
+  std::string currArg;
   bool fit=false;
-  string fitsel=":.CA+P";
+  std::string fitsel=":.CA+P";
   bool recenter=false;
-  string recsel=":.CA+P";
-  string outsel=":.";
-	ifstream trjin;
-	ofstream trjout;
+  std::string recsel=":.CA+P";
+  std::string outsel="";
+  std::ifstream trjin;
+  std::ofstream trjout;
 	Trajectory *ftrjin;
 	Trajectory *ftrjout;
 
@@ -62,10 +60,6 @@ int main (int argc, char **argv){
     else if (currArg == "-pdb"){
       currArg=argv[++i];
       pdb=currArg;
-    }
-    else if (currArg == "-sel" || currArg == "-nsel"){
-      currArg=argv[++i];
-      sel=currArg;
     }
     else if (currArg == "-fit"){
       fit=true;
@@ -97,47 +91,47 @@ int main (int argc, char **argv){
   }
 
   if (trajs.size() == 0){
-    cerr << endl << "Error: Please provide an input trajectory file" << endl << endl;
+    std::cerr << std::endl << "Error: Please provide an input trajectory file" << std::endl << std::endl;
     usage();
   }
   else if (outsel.length() > 0 && out.length() == 0){
-    cerr << endl << "Error: Please specify an output trajectory via \"-out\" ";
-    cerr << endl << "when using option \"-outsel\"" << endl;
+    std::cerr << std::endl << "Error: Please specify an output trajectory via \"-out\" ";
+    std::cerr << std::endl << "when using option \"-outsel\"" << std::endl;
   }
 
   if (fit == true && recenter == true){
-    cerr << endl << "Error: Options \"-fit\" and \"-recenter\" cannot be used simultaneously";
-    cerr << endl;
+    std::cerr << std::endl << "Error: Options \"-fit\" and \"-recenter\" cannot be used simultaneously";
+    std::cerr << std::endl;
     usage();
   }
 
-  if (sel.length() > 0 && pdb.length() == 0){
-    cerr << endl << "Error: Please provide a PDB file via \"-pdb\"";
-    cerr << "in order to make a selection" << endl;
+  if ((outsel.length() > 0 || fit == true || recenter == true) && pdb.length() == 0){
+    std::cerr << std::endl << "Error: Please provide a PDB file via \"-pdb\" ";
+    std::cerr << "in order to make a selection" << std::endl;
     usage();
   }
   else if (pdb.length() > 0){
     mol=Molecule::readPDB(pdb);
 
     if (outsel.length() > 0){
-      outmol=mol->clone();
-      //outmol->select(outsel);
+      mol->select(outsel);
+      outmol=mol->copy();
     }
-    if (fitsel.length() > 0 && fit == true){
-      fitmol=mol->clone();
-      fitmol->select(fitsel);
+    if (fit == true){
+      mol->select(fitsel);
+      fitmol=mol->copy();
     }
-    if (recsel.length() > 0 && recenter == true){
-      recmol=mol->clone();
-      recmol->select(recsel);
+    if (recenter == true){
+      mol->select(recsel);
+      recmol=mol->copy();
     }
-    if (sel.length() > 0){
-      mol->select(sel); //Currently serves no function
-    }
-  } 
+  }
+  else{
+    //Do Nothing
+  }
 
   if (out.length() > 0){
-    trjout.open(out.c_str(), ios::binary);
+    trjout.open(out.c_str(), std::ios::binary);
 		ftrjout=new Trajectory;
     if (outmol != NULL){
       ftrjout->setMolecule(outmol);
@@ -145,13 +139,13 @@ int main (int argc, char **argv){
   }
 
 	for (j=0; j< trajs.size(); j++){
-		trjin.open(trajs.at(j).c_str(), ios::binary);
+		trjin.open(trajs.at(j).c_str(), std::ios::binary);
 
 		if (trjin.is_open()){
 			ftrjin=new Trajectory;
 
       if (pdb.length() > 0){
-        //ftrjin->setMolecule(mol);
+        ftrjin->setMolecule(mol);
       }
 
       if (ftrjin->findFormat(trjin) == true){
@@ -180,8 +174,8 @@ int main (int argc, char **argv){
 				}
 			}
 			else{
-				cerr << "Warning: Skipping unknown trajectory format \"";
-				cerr << trajs.at(j) << "\"" << endl;
+				std::cerr << "Warning: Skipping unknown trajectory format \"";
+				std::cerr << trajs.at(j) << "\"" << std::endl;
 			}
 			if (ftrjin != NULL){
 				delete ftrjin;

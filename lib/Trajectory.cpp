@@ -159,6 +159,9 @@ void Trajectory::readHeader(std::ifstream &trjin){
 		//NATOM
 		buffer=readFortran(trjin, buffer, length);
 		natom=buffer[0].i;
+    if (mol != NULL && static_cast<int>(mol->getNAtom()) != natom){
+      std::cerr << "Error: Atom number mismatch!" << std::endl;
+    }
 
     //FIXED
     if (nfixed > 0){
@@ -238,6 +241,9 @@ void Trajectory::writeHeader(std::ofstream &trjout){
     delete otitle;
 
     //binbuf natm=natom;
+    if (mol != NULL){
+      natom=mol->getNAtom();
+    }
     ibuffer=&natom;
     length=sizeof(int);
     writeFortran(trjout, ibuffer, length);
@@ -402,7 +408,9 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 
 void Trajectory::writeFrame(std::ofstream &trjout, Trajectory *ftrjin, unsigned int frame){
   double *dbuffer;
-  float *fbuffer;
+  float *xbuffer;
+  float *ybuffer;
+  float *zbuffer;
   unsigned int i;
   int length;
 
@@ -417,28 +425,51 @@ void Trajectory::writeFrame(std::ofstream &trjout, Trajectory *ftrjin, unsigned 
     writeFortran(trjout, dbuffer, length);
   }
 
-  //xcoor
-  float xyz[ftrjin->x.size()];
-  for(i=0; i< ftrjin->x.size(); i++){
-    xyz[i]=ftrjin->x.at(i);
-  } 
-  length=sizeof(float)*ftrjin->x.size();
-  fbuffer=&xyz[0];
-  writeFortran(trjout, fbuffer, length);
-  
-  //ycoor
-  for(i=0; i< ftrjin->y.size(); i++){
-    xyz[i]=ftrjin->y.at(i);
-  }
-  fbuffer=&xyz[0];
-  writeFortran(trjout, fbuffer, length);
+  if (mol == NULL){
 
-  //zcoor
-  for(i=0; i< ftrjin->z.size(); i++){
-    xyz[i]=ftrjin->z.at(i);
+    float x[ftrjin->x.size()];
+    float y[ftrjin->y.size()];
+    float z[ftrjin->z.size()];
+
+    for(i=0; i< ftrjin->x.size(); i++){
+      x[i]=ftrjin->x.at(i);
+      y[i]=ftrjin->y.at(i);
+      z[i]=ftrjin->z.at(i);
+    } 
+
+    length=sizeof(float)*ftrjin->x.size();
+
+    xbuffer=&x[0];
+    ybuffer=&y[0];
+    zbuffer=&z[0];
+
+    writeFortran(trjout, xbuffer, length);
+    writeFortran(trjout, ybuffer, length);
+    writeFortran(trjout, zbuffer, length);
+  
   }
-  fbuffer=&xyz[0];
-  writeFortran(trjout, fbuffer, length);
+  else{
+    //xcoor
+    float x[mol->getNAtom()];
+    float y[mol->getNAtom()];
+    float z[mol->getNAtom()];
+    for(i=0; i< mol->getAtmVecSize(); i++){
+      x[i]=mol->getAtom(i)->getX();
+      y[i]=mol->getAtom(i)->getY();
+      z[i]=mol->getAtom(i)->getZ();
+    }
+
+    length=sizeof(float)*mol->getNAtom();
+
+    xbuffer=&x[0];
+    ybuffer=&y[0];
+    zbuffer=&z[0];
+
+    writeFortran(trjout, xbuffer, length);
+    writeFortran(trjout, ybuffer, length);
+    writeFortran(trjout, zbuffer, length);
+
+  }
 }
 
 void Trajectory::setMolecule(Molecule *molin){
