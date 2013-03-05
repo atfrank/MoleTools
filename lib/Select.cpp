@@ -201,11 +201,15 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
   }
 	else if (selKeysRes.find(str) != selKeysRes.end() && group == "residue"){
 	  out.clear();
-		out=Select::recursiveDescentParser(selKeysRes[str], ref, group);
+    if (selKeysRes[str].length() > 0){
+		  out=Select::recursiveDescentParser(selKeysRes[str], ref, group);
+    }
 	}
 	else if (selKeysAtm.find(str) != selKeysAtm.end() && group == "atom"){
 		out.clear();
-		out=Select::recursiveDescentParser(selKeysAtm[str], ref, group);
+    if (selKeysAtm[str].length() > 0){
+		  out=Select::recursiveDescentParser(selKeysAtm[str], ref, group);
+    }
 	}
   else{
     out.clear();
@@ -303,11 +307,11 @@ void Select::initKeys(Molecule *mol){
 		atmname=Misc::trim(mol->getAtom(i)->getAtmName());
 		if (Select::atom(atmname, "heavy", heavy)){
 			heavy.push_back(atmname);
-			selKeysAtm["HEAVY"]+=atmname+" ";
+      selKeysAtm["HEAVY"]+=atmname+" ";
 		}
 		else if (Select::atom(atmname, "H", H)){
 			H.push_back(atmname);
-			selKeysAtm["HYDROGEN"]+=atmname+" ";	
+      selKeysAtm["HYDROGEN"]+=atmname+" ";
 		}
 		else if (Select::atom(atmname, "O", O)){
       O.push_back(atmname);
@@ -336,15 +340,15 @@ void Select::initKeys(Molecule *mol){
 		} 
 	}
 	
-	Misc::trim(selKeysAtm["HEAVY"]);
-	Misc::trim(selKeysAtm["HYDROGEN"]);
-	Misc::trim(selKeysAtm["OXYGEN"]);
-  Misc::trim(selKeysAtm["NITROGEN"]);
-  Misc::trim(selKeysAtm["CARBON"]);
-  Misc::trim(selKeysAtm["SULFUR"]);
-	Misc::trim(selKeysAtm["SULPHUR"]);
-  Misc::trim(selKeysAtm["PHOSPHORUS"]);
-	Misc::trim(selKeysAtm["PHOSPHOROUS"]);
+	selKeysAtm["HEAVY"]=Misc::trim(selKeysAtm["HEAVY"]);
+	selKeysAtm["HYDROGEN"]=Misc::trim(selKeysAtm["HYDROGEN"]);
+	selKeysAtm["OXYGEN"]=Misc::trim(selKeysAtm["OXYGEN"]);
+  selKeysAtm["NITROGEN"]=Misc::trim(selKeysAtm["NITROGEN"]);
+  selKeysAtm["CARBON"]=Misc::trim(selKeysAtm["CARBON"]);
+  selKeysAtm["SULFUR"]=Misc::trim(selKeysAtm["SULFUR"]);
+	selKeysAtm["SULPHUR"]=Misc::trim(selKeysAtm["SULPHUR"]);
+  selKeysAtm["PHOSPHORUS"]=Misc::trim(selKeysAtm["PHOSPHORUS"]);
+	selKeysAtm["PHOSPHOROUS"]=Misc::trim(selKeysAtm["PHOSPHOROUS"]);
 
   //std::cerr << selKeysAtm["HYDROGEN"] << std::endl;
 
