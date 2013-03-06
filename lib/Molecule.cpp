@@ -50,7 +50,7 @@ void Molecule::addAtom(Atom* atmEntry) {
   }
 }
 
-Molecule* Molecule::clone (bool selFlag){
+Molecule* Molecule::clone (bool selFlag, bool keep){
   //Deep copy
   Molecule *mol=new Molecule;
   Chain *c, *chnEntry;
@@ -100,6 +100,10 @@ Molecule* Molecule::clone (bool selFlag){
     else{
       delete chnEntry;
     }
+  }
+
+  if (keep == false){
+    delete this;
   }
 
   return mol;
@@ -241,4 +245,10 @@ unsigned int Molecule::getNAtomSelected(){
     }
   }
   return natom;
+}
+
+//Analysis Functions
+
+void Molecule::lsqfit (Molecule *refmol){
+  
 }

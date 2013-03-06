@@ -13,7 +13,7 @@
 void usage(){
   std::cerr << std::endl << std::endl;
   std::cerr << "Usage:   modTraj [-options] <TRAJfile(s)>" << std::endl;
-  std::cerr << "Options: [-pdb PDBfile]" << std::endl;
+  std::cerr << "Options: [-pdb PDBfile] [-sel selection]" << std::endl;
   std::cerr << "         [-fit | -recenter] [-fitsel selection] [-recsel selection]" << std::endl;
   std::cerr << "         [-out TRAJname] [-outsel selection]" << std::endl;
   std::cerr << "         [-skip frames]" << std::endl;
@@ -33,6 +33,7 @@ int main (int argc, char **argv){
   Molecule *fitmol;
   Molecule *recmol;
   std::string pdb;
+  std::string sel;
   std::string currArg;
   bool fit=false;
   std::string fitsel=":.CA+P";
@@ -61,6 +62,10 @@ int main (int argc, char **argv){
     else if (currArg == "-pdb"){
       currArg=argv[++i];
       pdb=currArg;
+    }
+    else if (currArg == "-sel"){
+      currArg=argv[++i];
+      sel=currArg;
     }
     else if (currArg == "-fit"){
       fit=true;
@@ -116,6 +121,10 @@ int main (int argc, char **argv){
   }
   else if (pdb.length() > 0){
     mol=Molecule::readPDB(pdb);
+    if (sel.length() > 0){
+      mol->select(sel); //Selection should match trajectory
+      mol=mol->clone(true, false); //Delete original molecule after cloning
+    }
 
     if (outsel.length() > 0){
       mol->select(outsel);

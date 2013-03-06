@@ -16,7 +16,7 @@ class Molecule {
 		~Molecule();
     static Molecule* readPDB (std::string ifile, int model=0);
     int writePDB ();
-    Molecule* clone(bool selFlag=true);
+    Molecule* clone(bool selFlag=true, bool keep=true);
 		Molecule* copy(bool selFlag=true);
     void addAtom(Atom* atmEntry);
     Atom* getAtom(int element); 
@@ -33,6 +33,9 @@ class Molecule {
     void select(std::string sel);
     unsigned int getNAtom();
     unsigned int getNAtomSelected();
+
+    //Analysis Functions
+    void lsqfit (Molecule *refmol);
 };
 
 #endif
