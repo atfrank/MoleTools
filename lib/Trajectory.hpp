@@ -22,6 +22,7 @@ class Trajectory {
     bool swab; //Swap bytes
     Molecule *mol;
     bool show;
+    unsigned int iframe;
 
 		std::string hdr;
 		int nframe; //ICNTRL[1], Number of frames

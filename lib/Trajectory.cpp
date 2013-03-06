@@ -8,6 +8,7 @@ Trajectory::Trajectory (){
   swab=false;
   mol=NULL;
   show=false;
+  iframe=0;
   hdr.clear();
   nframe=0;
   npriv=0;
@@ -318,6 +319,15 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
   int length;
 	int i;
   unsigned int j;
+
+  //Seek
+  
+
+  this->iframe++;
+  if (this->getShow() == true){
+    std::cout << std::fixed;
+    std::cout << "Frame : " << this->iframe << " ( " << frame+1 << " / " << getNFrame() << " ) " << std::endl; 
+  }
 
 	dbuffer=NULL;
 	xbuffer=NULL;

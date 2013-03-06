@@ -1,1 +1,3 @@
 This directory contains test cases 
+
+mdCHARMM.pl -par boxx=60,boxy=70,boxz=80,periodic,dynsteps=1000,dynoutfrq=10 -log file.log -trajout f.dcd file.pdb

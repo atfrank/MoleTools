@@ -6,7 +6,7 @@ TSTDIR = ../test
 OBJDIR = obj
 
 CC = g++
-CFLAGS = -Wall -lm -I$(LIBDIR)
+CFLAGS = -Wall -lm -I$(LIBDIR) 
 DEBUG = -g
 OPTFLAGS = -O3
 
