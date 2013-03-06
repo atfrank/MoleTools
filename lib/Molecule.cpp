@@ -249,6 +249,58 @@ unsigned int Molecule::getNAtomSelected(){
 
 //Analysis Functions
 
-void Molecule::lsqfit (Molecule *refmol){
-  
+Vector Molecule::centerOfGeometry(){
+	Vector cog=Vector(0.0, 0.0, 0.0);
+
+	for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+		cog+=this->getAtom(i)->getCoor();
+	}
+
+	cog/=this->getAtmVecSize();
+
+	return cog;
 }
+
+void Molecule::lsqfit (Molecule *refmol){
+	Eigen::MatrixXd cmp; //Nx3 Mobile Coordinate Matrix
+	Eigen::MatrixXd ref; //Nx3 Stationary Coordinate Matrix
+	Eigen::Matrix3d R; //3x3 Correlation Matrix
+	Eigen::JacobiSVD<Eigen::MatrixXd> svd(R, Eigen::ComputeThinU | Eigen::ComputeThinV); //SVD Matrix
+	Eigen::MatrixXd U; //Equivalent to Bosco's V
+	Eigen::MatrixXd S;
+	Eigen::MatrixXd V; //Equivalent to Bosco's Wt
+	unsigned int i;
+	Atom *atm;
+	
+	//Need to resize dynamic matrix!
+	cmp.resize(this->getAtmVecSize(),3);
+	ref.resize(refmol->getAtmVecSize(),3);
+
+	//Check selection sizes and load matrices
+
+	for (i=0; i< this->getAtmVecSize(); i++){
+		atm=this->getAtom(i);
+		cmp.row(i) << atm->getX(), atm->getY(), atm->getZ();
+	}
+
+	for (i=0; i< refmol->getAtmVecSize(); i++){
+	  atm=refmol->getAtom(i);
+		ref.row(i) << atm->getX(), atm->getY(), atm->getZ();
+	}
+
+	R=ref.transpose()*cmp;
+
+	U=svd.matrixU();
+	S=svd.singularValues();
+	V=svd.matrixV();
+
+	//if (V.determinant()*U.determinant() > 0.0){
+		//std::cout << V.determinant() << std::endl;
+		//std::cout << U.determinant() << std::endl;
+		std::cout << V.determinant()*U.determinant() << std::endl;
+	//}
+
+	//std::cout << S << std::endl;
+}
+
+

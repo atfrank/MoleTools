@@ -5,6 +5,7 @@
 #include "Chain.hpp"
 
 #include <vector>
+#include<Eigen/Dense>
 
 class Molecule {
   private:
@@ -35,6 +36,7 @@ class Molecule {
     unsigned int getNAtomSelected();
 
     //Analysis Functions
+		Vector centerOfGeometry();
     void lsqfit (Molecule *refmol);
 };
 

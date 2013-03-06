@@ -33,7 +33,7 @@ int main (int argc, char **argv){
   Molecule *fitmol;
   Molecule *recmol;
   std::string pdb;
-  std::string sel;
+  std::string sel=""; //To match NATOM in trajectory
   std::string currArg;
   bool fit=false;
   std::string fitsel=":.CA+P";

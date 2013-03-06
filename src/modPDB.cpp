@@ -16,6 +16,7 @@ void usage (){
   std::cerr << "Usage:   manipPDB [options] <PDBfile>" << std::endl;
   std::cerr << "Options: [-model num]" << std::endl;
   std::cerr << "         [-sel selection]" << std::endl;
+	std::cerr << "         [-fit refPDB] [-fitsel selection]" << std::endl;
   std::cerr << std::endl << std::endl;
   exit(0);
 }
@@ -27,8 +28,16 @@ int main (int argc, char **argv){
   std::string pdb;
   std::string currArg;
   std::string sel;
+	std::string fitsel=":."; //Default = fit all
+	std::string refpdb;
+	Molecule *mol;
+	Molecule *refmol;
+	Molecule *cmpmol;
 
   pdb.clear();
+	mol=NULL;
+	refmol=NULL; //Stationary molecule
+	cmpmol=NULL; //Moving molecule
   
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -43,32 +52,45 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       sel=currArg;
     }
+		else if (currArg == "-fitsel"){
+			currArg=argv[++i];
+			fitsel=currArg;
+		}
+		else if (currArg == "-fit"){
+			currArg=argv[++i];
+			refpdb=currArg;
+		}
     else{
       pdb=currArg;
     }
   }
 
   if (pdb.length() == 0){
-    std::cerr << std::endl << "Error: Please provide an input file" << std::endl << std::endl;
+    std::cerr << std::endl << "Error: Please provide an input PDB file" << std::endl << std::endl;
     usage();
   }
 
-  Molecule *mol=Molecule::readPDB(pdb, model);
-
-  Molecule *cmol=mol->clone();
-	
-  cmol->deselAll();
-  cmol->selAll();
-
+  mol=Molecule::readPDB(pdb, model);
   if (sel.length() >0){
-    cmol->select(sel);
+    mol->select(sel);
+		mol=mol->clone(true, false); //Clone and delete original
   }
 
-//  mol->writePDB();
-  cmol->writePDB();
+	if (refpdb.length() > 0){
+		cmpmol=mol->clone();
+		refmol=Molecule::readPDB(refpdb, model);
+	  cmpmol->lsqfit(refmol);
+	}
+	else{
+		std::cerr << std::endl << "Error: Please provide a reference PDB file for fitting" << std::endl;
+		usage();
+	}
 
-	delete cmol;
-	delete mol;
+  //mol->writePDB();
+
+	if (mol != NULL){
+		delete mol;
+	}
 
   return 0;
 }
