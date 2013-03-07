@@ -1,0 +1,419 @@
+1
+                 Chemistry at HARvard Macromolecular Mechanics
+           (CHARMM) - Developmental Version 38a1  September 30, 2012            
+       Copyright(c) 1984-2001  President and Fellows of Harvard College
+                              All Rights Reserved
+     Current operating system: Darwin-11.4.2(x86_64)@brabham.chem.lsa.umich     
+                 Created on  3/7/13 at 14:25:40 by user: seanlaw     
+
+            Maximum number of ATOMS:    360720, and RESidues:      120240
+ RDTITL> * TITLE...
+ RDTITL> *
+  
+ CHARMM>     
+  
+ CHARMM>    UNBUFIO
+  
+ CHARMM>    open unit 10 read form name "/home/seanlaw/Projects/MMTSB/mmtsb.git/data/toppar/top_all27_prot_na.rtf"
+ VOPEN> Attempting to open::/home/seanlaw/Projects/MMTSB/mmtsb.git/data/toppar/top_all27_prot_na.rtf::
+ OPNLGU> Unit 10 opened for READONLY access to /home/seanlaw/Projects/MMTSB/mmtsb.git/data/toppar/top_all27_prot_na.rtf
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    read rtf card unit 10
+ MAINIO> Residue topology file being read from unit  10.
+ TITLE> *>>>>>>>>CHARMM22 ALL-HYDROGEN TOPOLOGY FILE FOR PROTEINS <<<<<<<
+ TITLE> *>>>>>>>>>>>>>>>>>>>> AND NUCLEIC ACIDS <<<<<<<<<<<<<<<<<<<<<<<<<
+ TITLE> *>>>>> INCLUDES PHI, PSI CROSS TERM MAP (CMAP) CORRECTION <<<<<<<
+ TITLE> *>>>>>>>>>>>>>>>>>>>>>>   JULY, 2004    <<<<<<<<<<<<<<<<<<<<<<<<<<
+ TITLE> * ALL COMMENTS TO ADM JR. VIA THE CHARMM WEB SITE: WWW.CHARMM.ORG
+ TITLE> *               PARAMETER SET DISCUSSION FORUM
+ TITLE> *
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    close unit 10
+ VCLOSE: Closing unit   10 with status "KEEP"
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    open unit 10 read form name "/home/seanlaw/Projects/MMTSB/mmtsb.git/data/toppar/par_all27_prot_na.prm"
+ VOPEN> Attempting to open::/home/seanlaw/Projects/MMTSB/mmtsb.git/data/toppar/par_all27_prot_na.prm::
+ OPNLGU> Unit 10 opened for READONLY access to /home/seanlaw/Projects/MMTSB/mmtsb.git/data/toppar/par_all27_prot_na.prm
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    read para card unit 10
+
+          PARAMETER FILE BEING READ FROM UNIT 10
+ TITLE> *>>>>> CHARMM22 ALL-HYDROGEN PARAMETER FILE FOR PROTEINS <<<<<<<<
+ TITLE> *>>>>>>>>>>>>>>>>>>>> AND NUCLEIC ACIDS <<<<<<<<<<<<<<<<<<<<<<<<<
+ TITLE> *>>>>> INCLUDES PHI, PSI CROSS TERM MAP (CMAP) CORRECTION <<<<<<<
+ TITLE> *>>>>>>>>>>>>>>>>>>>>>> DECEMBER, 2003 <<<<<<<<<<<<<<<<<<<<<<<<<<
+ TITLE> * ALL COMMENTS TO ADM JR. VIA THE CHARMM WEB SITE: WWW.CHARMM.ORG
+ TITLE> *               PARAMETER SET DISCUSSION FORUM
+ TITLE> *
+ PARMIO> NONBOND, HBOND lists and IMAGE atoms cleared.
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    close unit 10
+ VCLOSE: Closing unit   10 with status "KEEP"
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    faster on
+ MISCOM> FAST option: EXPANDED (limited fast routines)
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    open unit 10 read form name "brabham.chem.lsa.umich.edu-pdb75968-N01A"
+ VOPEN> Attempting to open::brabham.chem.lsa.umich.edu-pdb75968-N01A::
+ OPNLGU> Unit 10 opened for READONLY access to brabham.chem.lsa.umich.edu-pdb75968-N01A
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    read sequ pdb unit 10
+ MAINIO> Sequence information being read from unit  10.
+ TITLE>  *
+
+          RESIDUE SEQUENCE --    14 RESIDUES
+          URA URA ADE URA ADE URA ADE URA ADE URA ADE URA ADE ADE 
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    generate first 5TER last 3TER N01A setup warn
+ THE PATCH '5TER' WILL BE USED FOR THE FIRST RESIDUE
+ THE PATCH '3TER' WILL BE USED FOR THE LAST  RESIDUE
+ ** WARNING ** BOND NOT FOUND FOR RESIDUE   1 URA   .
+ ATOMS "P     " "O1P   " WERE REQUESTED.
+ ** WARNING ** BOND NOT FOUND FOR RESIDUE   1 URA   .
+ ATOMS "P     " "O2P   " WERE REQUESTED.
+ ** WARNING ** BOND NOT FOUND FOR RESIDUE   1 URA   .
+ ATOMS "P     " "O5'   " WERE REQUESTED.
+ ** WARNING ** ACCEPTOR NOT FOUND FOR RESIDUE   1 URA   .
+ ATOMS "O1P   " "P     " WERE REQUESTED.
+ ** WARNING ** ACCEPTOR NOT FOUND FOR RESIDUE   1 URA   .
+ ATOMS "O2P   " "P     " WERE REQUESTED.
+ ** WARNING ** BOND NOT FOUND FOR RESIDUE  14 ADE   .
+ ATOMS "O3'   " "+P    " WERE REQUESTED.
+ GENPSF> Segment   1 has been generated. Its identifier is N01A.
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        1   Number of residues   =       14
+         Number of atoms         =      440   Number of groups     =       57
+         Number of bonds         =      474   Number of angles     =      848
+         Number of dihedrals     =     1268   Number of impropers  =       28
+         Number of cross-terms   =        0
+         Number of HB acceptors  =      117   Number of HB donors  =       37
+         Number of NB exclusions =        0   Total charge =  -13.00000
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    close unit 10
+ VCLOSE: Closing unit   10 with status "KEEP"
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    auto angle dihe
+ AUTOGEN: All angles are removed and regenerated.
+ AUTOGEN: All dihedrals are removed and regenerated.
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        1   Number of residues   =       14
+         Number of atoms         =      440   Number of groups     =       57
+         Number of bonds         =      474   Number of angles     =      848
+         Number of dihedrals     =     1268   Number of impropers  =       28
+         Number of cross-terms   =        0
+         Number of HB acceptors  =      117   Number of HB donors  =       37
+         Number of NB exclusions =        0   Total charge =  -13.00000
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    open unit 10 read form name "brabham.chem.lsa.umich.edu-pdb75968-N01B"
+ VOPEN> Attempting to open::brabham.chem.lsa.umich.edu-pdb75968-N01B::
+ OPNLGU> Unit 10 opened for READONLY access to brabham.chem.lsa.umich.edu-pdb75968-N01B
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    read sequ pdb unit 10
+ MAINIO> Sequence information being read from unit  10.
+ TITLE>  *
+
+          RESIDUE SEQUENCE --    14 RESIDUES
+          URA URA ADE URA ADE URA ADE URA ADE URA ADE URA ADE ADE 
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    generate first 5TER last 3TER N01B setup warn
+ THE PATCH '5TER' WILL BE USED FOR THE FIRST RESIDUE
+ THE PATCH '3TER' WILL BE USED FOR THE LAST  RESIDUE
+ ** WARNING ** BOND NOT FOUND FOR RESIDUE  15 URA   .
+ ATOMS "P     " "O1P   " WERE REQUESTED.
+ ** WARNING ** BOND NOT FOUND FOR RESIDUE  15 URA   .
+ ATOMS "P     " "O2P   " WERE REQUESTED.
+ ** WARNING ** BOND NOT FOUND FOR RESIDUE  15 URA   .
+ ATOMS "P     " "O5'   " WERE REQUESTED.
+ ** WARNING ** ACCEPTOR NOT FOUND FOR RESIDUE  15 URA   .
+ ATOMS "O1P   " "P     " WERE REQUESTED.
+ ** WARNING ** ACCEPTOR NOT FOUND FOR RESIDUE  15 URA   .
+ ATOMS "O2P   " "P     " WERE REQUESTED.
+ ** WARNING ** BOND NOT FOUND FOR RESIDUE  28 ADE   .
+ ATOMS "O3'   " "+P    " WERE REQUESTED.
+ GENPSF> Segment   2 has been generated. Its identifier is N01B.
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        2   Number of residues   =       28
+         Number of atoms         =      880   Number of groups     =      114
+         Number of bonds         =      948   Number of angles     =     1696
+         Number of dihedrals     =     2536   Number of impropers  =       56
+         Number of cross-terms   =        0
+         Number of HB acceptors  =      234   Number of HB donors  =       74
+         Number of NB exclusions =        0   Total charge =  -26.00000
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    close unit 10
+ VCLOSE: Closing unit   10 with status "KEEP"
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    auto angle dihe
+ AUTOGEN: All angles are removed and regenerated.
+ AUTOGEN: All dihedrals are removed and regenerated.
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        2   Number of residues   =       28
+         Number of atoms         =      880   Number of groups     =      114
+         Number of bonds         =      948   Number of angles     =     1696
+         Number of dihedrals     =     2536   Number of impropers  =       56
+         Number of cross-terms   =        0
+         Number of HB acceptors  =      234   Number of HB donors  =       74
+         Number of NB exclusions =        0   Total charge =  -26.00000
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    auto angle dihe
+ AUTOGEN: All angles are removed and regenerated.
+ AUTOGEN: All dihedrals are removed and regenerated.
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        2   Number of residues   =       28
+         Number of atoms         =      880   Number of groups     =      114
+         Number of bonds         =      948   Number of angles     =     1696
+         Number of dihedrals     =     2536   Number of impropers  =       56
+         Number of cross-terms   =        0
+         Number of HB acceptors  =      234   Number of HB donors  =       74
+         Number of NB exclusions =        0   Total charge =  -26.00000
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    open unit 10 read form name "brabham.chem.lsa.umich.edu-pdb75968-N01A"
+ VOPEN> Attempting to open::brabham.chem.lsa.umich.edu-pdb75968-N01A::
+ OPNLGU> Unit 10 opened for READONLY access to brabham.chem.lsa.umich.edu-pdb75968-N01A
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    read coor pdb unit 10 resi
+  read CHARMM-pdb format
+          SPATIAL COORDINATES BEING READ FROM UNIT 10
+ TITLE>  *
+ ** WARNING ** After reading, there are no coordinates for selected atom:   441    15 URA  H5T 
+ ** WARNING ** After reading, there are no coordinates for selected atom:   442    15 URA  O5' 
+ ** WARNING ** After reading, there are no coordinates for selected atom:   443    15 URA  C5' 
+ ** WARNING ** After reading, there are no coordinates for selected atom:   444    15 URA  H5' 
+ ** WARNING ** After reading, there are no coordinates for selected atom:   445    15 URA  H5''
+ ** WARNING ** After reading, there are no coordinates for selected atom:   446    15 URA  C4' 
+ ** WARNING ** After reading, there are no coordinates for selected atom:   447    15 URA  H4' 
+ ** WARNING ** After reading, there are no coordinates for selected atom:   448    15 URA  O4' 
+ ** WARNING ** After reading, there are no coordinates for selected atom:   449    15 URA  C1' 
+ ** WARNING ** After reading, there are no coordinates for selected atom:   450    15 URA  H1' 
+
+ ** A total of   440 selected atoms have no coordinates
+ *** LEVEL  2 WARNING *** BOMLEV IS    0
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    close unit 10
+ VCLOSE: Closing unit   10 with status "KEEP"
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    open unit 10 read form name "brabham.chem.lsa.umich.edu-pdb75968-N01B"
+ VOPEN> Attempting to open::brabham.chem.lsa.umich.edu-pdb75968-N01B::
+ OPNLGU> Unit 10 opened for READONLY access to brabham.chem.lsa.umich.edu-pdb75968-N01B
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    read coor pdb unit 10 resi
+  read CHARMM-pdb format
+          SPATIAL COORDINATES BEING READ FROM UNIT 10
+ TITLE>  *
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    close unit 10
+ VCLOSE: Closing unit   10 with status "KEEP"
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    bomlev -2
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    ic param
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    set tmpNIC ?NIC
+ RDCMND substituted energy or value "?NIC" to "928"
+ Parameter: TMPNIC <- "928"
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    coor copy comp
+ SELECTED COORDINATES COPIED TO THE COMPARISON SET.
+
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    ic build comp
+ INTCOR> The comparison coordinates will be used.
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    coor copy select .not. hydrogen end
+ SELRPN>    582 atoms have been selected out of    880
+ SELECTED COORDINATES COPIED TO THE MAIN SET.
+
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    hbuild atom cdie eps 80.0 cutnb 10.0 ctofnb 7.5 ctonnb 6.5 shift vshift bygr
+
+      ***** LEVEL  4 WARNING FROM <GTHBUI> *****
+      ***** Zero selection specified
+      ******************************************
+      BOMLEV ( -2) IS NOT REACHED. WRNLEV IS  5
+
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    coor set xdir 1.0 dist 9001.0 comp select all end
+ SELRPN>    880 atoms have been selected out of    880
+ SELECTED COORDINATES SET IN THE COMPARISON SET.
+
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    open unit 10 read form name "brabham.chem.lsa.umich.edu-rpdb75968-N01A"
+ VOPEN> Attempting to open::brabham.chem.lsa.umich.edu-rpdb75968-N01A::
+ OPNLGU> Unit 10 opened for READONLY access to brabham.chem.lsa.umich.edu-rpdb75968-N01A
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    read coor pdb unit 10 comp resi
+  read CHARMM-pdb format
+          SPATIAL COORDINATES BEING READ FROM UNIT 10
+ TITLE>  *
+
+ ** WARNING ** Coordinates were overwritten for   440 atoms.
+ *** LEVEL  2 WARNING *** BOMLEV IS   -2
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    close unit 10
+ VCLOSE: Closing unit   10 with status "KEEP"
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    open unit 10 read form name "brabham.chem.lsa.umich.edu-rpdb75968-N01B"
+ VOPEN> Attempting to open::brabham.chem.lsa.umich.edu-rpdb75968-N01B::
+ OPNLGU> Unit 10 opened for READONLY access to brabham.chem.lsa.umich.edu-rpdb75968-N01B
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    read coor pdb unit 10 comp resi
+  read CHARMM-pdb format
+          SPATIAL COORDINATES BEING READ FROM UNIT 10
+ TITLE>  *
+
+ ** WARNING ** Coordinates were overwritten for   440 atoms.
+ *** LEVEL  2 WARNING *** BOMLEV IS   -2
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    close unit 10
+ VCLOSE: Closing unit   10 with status "KEEP"
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    open read unform unit 22 name "ref.dcd"
+ VOPEN> Attempting to open::ref.dcd::
+ OPNLGU> Unit 22 opened for READONLY access to ref.dcd
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    traj iread 22 nread 1
+ TRAJ: INITIATING READ OF A TRAJECTORY, OPTIONS;
+    FIRSTU =  22 NUNIT =   1 SKIP =     1
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    traj read
+
+ READING TRAJECTORY FROM UNIT  22
+   NUMBER OF COORDINATE SETS IN FILE:       1
+   NUMBER OF PREVIOUS DYNAMICS STEPS:       1
+   FREQUENCY FOR SAVING COORDINATES:        1
+   NUMBER OF STEPS FOR CREATION RUN:        1
+
+ TITLE>  * Generated by MDCONV
+ TITLE>  *
+ *****  WARNING  ***** BEGIN=       0 Was not specified. It has been set to:       1
+
+    1 CORD RECORDS READ FROM   1 UNITS STARTING WITH UNIT  22
+ RUNNING FROM STEP       1 TO        1 SKIPPING    1 STEPS BETWEEN RECORDS
+ Time step was   20.45483     AKMA time units.
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    label ?DELTA
+ RDCMND substituted energy or value "?DELTA" to "20.4548"
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    coor orie  rms
+ CENTER OF ATOMS BEFORE TRANSLATION   -34.17117   -10.25832    12.47392
+ CENTER OF REFERENCE COORDINATE SET    -0.00048     0.00005     0.00034
+ NET TRANSLATION OF ROTATED ATOMS      34.17069    10.25837   -12.47358
+ ROTATION MATRIX
+    -0.193959   -0.906244    0.375636
+    -0.813741   -0.065234   -0.577555
+     0.547910   -0.417692   -0.724795
+ AXIS OF ROTATION IS -0.632946  0.682087 -0.366246  ANGLE IS  172.75
+
+ CENTER OF ROTATION -17.236422 -5.776091  5.292515  SHIFT IS-10.062707
+
+ TOTAL SQUARE DIFF IS   9643.0194  DENOMINATOR IS    880.0000
+       THUS RMS DIFF IS    3.310283
+ ALL COORDINATES ORIENTED IN THE MAIN SET BASED ON SELECTED ATOMS.
+
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    close unit 22
+ VCLOSE: Closing unit   22 with status "KEEP"
+  
+ CHARMM>    label PERLDONE
+  
+ CHARMM>    stop
+$$$$$$  New timer profile $$$$$
+ Total time                      0.76 Other:            0.00
+
+                    NORMAL TERMINATION BY NORMAL STOP
+                    MOST SEVERE WARNING WAS AT LEVEL  2
+
+                    $$$$$ JOB ACCOUNTING INFORMATION $$$$$
+                     ELAPSED TIME:     0.76  SECONDS 
+                         CPU TIME:     0.25  SECONDS 

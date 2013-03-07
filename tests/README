@@ -1,3 +1,7 @@
 This directory contains test cases 
 
 mdCHARMM.pl -par boxx=60,boxy=70,boxz=80,periodic,dynsteps=1000,dynoutfrq=10 -log file.log -trajout f.dcd file.pdb
+
+RMSD
+analyzeCHARMM.pl -par nodeoxy -comp ref.pdb -pdb ref.pdb -rms ref.dcd -log logfile
+analyzeCHARMM.pl -par nodeoxy -comp ref.center.pdb -pdb ref.center.pdb -rms ref.center.dcd -log logfile

@@ -28,7 +28,8 @@ int main (int argc, char **argv){
   std::string pdb;
   std::string currArg;
   std::string sel;
-	std::string fitsel=""; 
+	std::string fitsel=":."; //Default = Fit All
+	bool fit=false;
 	std::string refpdb;
 	Molecule *mol;
 	Molecule *refmol;
@@ -55,10 +56,12 @@ int main (int argc, char **argv){
 		else if (currArg == "-fitsel"){
 			currArg=argv[++i];
 			fitsel=currArg;
+			fit=true;
 		}
 		else if (currArg == "-fit"){
 			currArg=argv[++i];
 			refpdb=currArg;
+			fit=true;
 		}
     else{
       pdb=currArg;
@@ -76,11 +79,12 @@ int main (int argc, char **argv){
 		mol=mol->clone(true, false); //Clone and delete original
   }
 
-	if (fitsel.length() > 0){
+	if (fit == true){
 		if (refpdb.length() > 0){
 			cmpmol=mol->clone();
 			refmol=Molecule::readPDB(refpdb, model);
 	  	cmpmol->lsqfit(refmol);
+			cmpmol->writePDB();
 		}
 		else {
 			std::cerr << std::endl << "Error: Please provide a reference PDB file for fitting" << std::endl;
@@ -88,7 +92,7 @@ int main (int argc, char **argv){
 		}
 	}
 
-  mol->writePDB();
+  //mol->writePDB();
 
 	if (mol != NULL){
 		delete mol;
