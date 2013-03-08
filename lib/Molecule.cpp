@@ -249,10 +249,13 @@ unsigned int Molecule::getNAtomSelected(){
 
 //Analysis Functions
 
-Vector Molecule::centerOfGeometry(){
+Vector Molecule::centerOfGeometry(bool selFlag){
 	Vector cog=Vector(0.0, 0.0, 0.0);
 
 	for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+		if (selFlag == true && this->getAtom(i)->getSel() == false){
+			continue;
+		}
 		cog+=this->getAtom(i)->getCoor();
 	}
 
@@ -261,13 +264,19 @@ Vector Molecule::centerOfGeometry(){
 	return cog;
 }
 
-void Molecule::lsqfit (Molecule *refmol){
+double Molecule::lsqfit (Molecule *refmol, bool move){
 	Eigen::MatrixXd cmp; //Nx3 Mobile Coordinate Matrix
 	Eigen::MatrixXd ref; //Nx3 Stationary Coordinate Matrix
 	Eigen::Matrix3d R; //3x3 Covariance Matrix
-	unsigned int i;
-	Vector cog;
+	Eigen::Matrix3d C; //3x3 Covariance Matrix
+	unsigned int i, j;
+	Vector cmpCOG;
+	Vector refCOG;
 	Atom *atm;
+	double E0;
+	double RMSD;
+
+	E0=0.0;
 	
 	//Need to resize dynamic matrix!
 	cmp.resize(this->getAtmVecSize(),3);
@@ -275,59 +284,72 @@ void Molecule::lsqfit (Molecule *refmol){
 
 	//Check selection sizes and load matrices
 
-	cog=this->centerOfGeometry();
+	cmpCOG=this->centerOfGeometry();
 
   for (i=0; i< this->getAtmVecSize(); i++){
     atm=this->getAtom(i);
-    cmp.row(i) << atm->getX()-cog.x(), atm->getY()-cog.y(), atm->getZ()-cog.z();
+    cmp.row(i) << atm->getX()-cmpCOG.x(), atm->getY()-cmpCOG.y(), atm->getZ()-cmpCOG.z();
+		for (j=0; j< 3; j++){
+			E0+=cmp(i,j)*cmp(i,j);
+		}
   }
 
-	cog=refmol->centerOfGeometry();
+	refCOG=refmol->centerOfGeometry();
 
 	for (i=0; i< refmol->getAtmVecSize(); i++){
 	  atm=refmol->getAtom(i);
-		ref.row(i) << atm->getX()-cog.x(), atm->getY()-cog.y(), atm->getZ()-cog.z();
+		ref.row(i) << atm->getX()-refCOG.x(), atm->getY()-refCOG.y(), atm->getZ()-refCOG.z();
+		for (j=0; j< 3; j++){
+      E0+=ref(i,j)*ref(i,j);
+    }
 	}
 
-  R=cmp.transpose()*ref;
+  //R=cmp.transpose()*ref;
+	R=ref.transpose()*cmp;
 
 	Eigen::JacobiSVD<Eigen::MatrixXd> svd(R, Eigen::ComputeThinU | Eigen::ComputeThinV); 
 	Eigen::MatrixXd V; 
-	Eigen::MatrixXd Vt; //V transpose
 	Eigen::MatrixXd S;
 	Eigen::MatrixXd W;
+	Eigen::MatrixXd Wt; //W transpose
 	Eigen::MatrixXd Umin; //Rotation matrix
-	double WdVtd; //W determinant * Vt determinant
+	double VdWtd; //Vt determinant * W determinant
 
 	V=svd.matrixU();
 	S=svd.singularValues();
 	W=svd.matrixV();
 
-	Vt=V.transpose();
+	Wt=W.transpose();
 
-	WdVtd=W.determinant()*Vt.determinant();
+	VdWtd=V.determinant()*Wt.determinant();
 
-	if (WdVtd < 0.0){
-		//Untested!!
-		//Is a reflection!
-		//Make third column negative
-		std::cerr << "LSQFIT: Relection Found" << std::endl;
-		for (i=0; i< 3; i++){
-			W(i,2)=-W(i,2); //Base zero
-		}
-	}
-
-	Umin=W*Vt; //Optimal rotation matrix, should already be normalized
-
-	Eigen::MatrixXd tmp;
-	tmp=Umin*cmp.transpose();
-	cmp=tmp.transpose();
-
-	for (i=0; i< this->getAtmVecSize(); i++){
-	  atm=this->getAtom(i);
-		atm->setCoor(Vector(cmp(i,0), cmp(i,1), cmp(i,2))+cog);
+  if (VdWtd < 0.0){
+    //Is a reflection!
+    //Make third column negative
+    //Untested
+    std::cerr << "Warning: LSQFIT Relection Found!" << std::endl;
+    for (i=0; i< 3; i++){
+      V(i,2)=-V(i,2); //Base zero
+    }
+    S(2,0)=-S(2,0);
   }
 
+	Umin=V*Wt; //Optimal rotation matrix, should already be normalized
+
+ 	if (move == true){
+		Eigen::MatrixXd tmp;
+		tmp=Umin*cmp.transpose();
+		cmp=tmp.transpose();
+
+		for (i=0; i< this->getAtmVecSize(); i++){
+	  	atm=this->getAtom(i);
+			atm->setCoor(Vector(cmp(i,0), cmp(i,1), cmp(i,2))+refCOG);
+		}
+  }
+
+	RMSD=sqrt((E0-2.0*(S(0,0)+S(1,0)+S(2,0)))/this->getAtmVecSize());
+
+	return RMSD;
 }
 
 
