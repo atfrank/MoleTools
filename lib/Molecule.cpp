@@ -289,7 +289,7 @@ void Molecule::lsqfit (Molecule *refmol){
 		ref.row(i) << atm->getX()-cog.x(), atm->getY()-cog.y(), atm->getZ()-cog.z();
 	}
 
-	R=ref.transpose()*cmp;
+  R=cmp.transpose()*ref;
 
 	Eigen::JacobiSVD<Eigen::MatrixXd> svd(R, Eigen::ComputeThinU | Eigen::ComputeThinV); 
 	Eigen::MatrixXd V; 
@@ -322,8 +322,6 @@ void Molecule::lsqfit (Molecule *refmol){
 	Eigen::MatrixXd tmp;
 	tmp=Umin*cmp.transpose();
 	cmp=tmp.transpose();
-
-	Vector c;
 
 	for (i=0; i< this->getAtmVecSize(); i++){
 	  atm=this->getAtom(i);
