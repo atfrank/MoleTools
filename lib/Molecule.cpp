@@ -383,4 +383,62 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
 	return S(0,0)+S(1,0)+S(2,0);
 }
 
+double Molecule::rmsd (Molecule *refmol, bool lsqfit, bool transform){
+	double RMSD;
+	double E0;
+	double sumS;
+	bool selFlag;
+	Vector cmpCOG;
+  Vector refCOG;
+	unsigned int i;
+	Atom *atm;
+	double dx;
+	double dy;
+	double dz;
 
+	RMSD=-1.0;
+	selFlag=true;
+	E0=0.0;
+
+	//Check selection sizes and resize matrices
+  if (this->getNAtomSelected() != refmol->getNAtomSelected()){
+    std::cerr << "Error: Atom number mismatch in RMSD calculation" << std::endl;
+    return -1.0;
+  }
+
+	if (lsqfit == true ){
+		sumS=this->lsqfit(refmol, transform);
+
+		cmpCOG=this->centerOfGeometry(selFlag);
+		refCOG=refmol->centerOfGeometry(selFlag);
+
+		for (i=0; i< this->getNAtom(); i++){
+			atm=this->getAtom(i);
+    	if (atm->getSel() == false){
+      	continue;
+    	}
+			dx=atm->getX()-cmpCOG.x();
+			dy=atm->getY()-cmpCOG.y();
+			dz=atm->getZ()-cmpCOG.z();
+      E0+=dx*dx+dy*dy+dz*dz;
+		}
+
+		for (i=0; i< refmol->getNAtom(); i++){
+			atm=this->getAtom(i);
+      if (atm->getSel() == false){
+        continue;
+      }
+			dx=atm->getX()-cmpCOG.x();
+      dy=atm->getY()-cmpCOG.y();
+      dz=atm->getZ()-cmpCOG.z();
+      E0+=dx*dx+dy*dy+dz*dz;
+    }
+
+		RMSD=sqrt((E0-2.0*(sumS))/this->getNAtom());
+	}
+	else{
+
+	}
+
+	return RMSD;
+}
