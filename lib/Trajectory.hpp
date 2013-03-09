@@ -80,13 +80,14 @@ class Trajectory {
 		void showHeader();
 		void cloneHeader(Trajectory *ftrjin);
 		void readFrame(std::ifstream &trjin, unsigned int frame);
-    void writeFrame(std::ofstream &trjout, Trajectory *ftrjin, unsigned int frame);
+    void writeFrame(std::ofstream &trjout, Trajectory *ftrjin);
 		std::string getHeader(){return hdr;};
     void setMolecule(Molecule *molin);
 
 		//Get
     std::string getFormat();
     bool getShow();
+		Molecule* getMolecule();
 		std::string getHdr();
     int getNFrame();
     int getNPriv(); 

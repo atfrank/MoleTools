@@ -33,12 +33,10 @@ int main (int argc, char **argv){
 	std::string refpdb;
 	Molecule *mol;
 	Molecule *refmol;
-	Molecule *cmpmol;
 
   pdb.clear();
 	mol=NULL;
 	refmol=NULL; //Stationary molecule
-	cmpmol=NULL; //Moving molecule
   
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -81,10 +79,10 @@ int main (int argc, char **argv){
 
 	if (fit == true){
 		if (refpdb.length() > 0){
-			cmpmol=mol->clone();
 			refmol=Molecule::readPDB(refpdb, model);
-	  	cmpmol->lsqfit(refmol);
-			cmpmol->writePDB();
+			refmol->select(fitsel);
+			mol->select(fitsel);
+	  	mol->lsqfit(refmol);
 		}
 		else {
 			std::cerr << std::endl << "Error: Please provide a reference PDB file for fitting" << std::endl;
@@ -92,7 +90,7 @@ int main (int argc, char **argv){
 		}
 	}
 
-  //mol->writePDB();
+  mol->writePDB();
 
 	if (mol != NULL){
 		delete mol;

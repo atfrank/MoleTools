@@ -259,12 +259,17 @@ Vector Molecule::centerOfGeometry(bool selFlag){
 		cog+=this->getAtom(i)->getCoor();
 	}
 
-	cog/=this->getAtmVecSize();
+	if (selFlag == true){
+		cog/=this->getNAtomSelected();
+	}
+	else{
+		cog/=this->getNAtom();
+	}
 
 	return cog;
 }
 
-double Molecule::lsqfit (Molecule *refmol, bool move){
+double Molecule::lsqfit (Molecule *refmol, bool transform){
 	Eigen::MatrixXd cmp; //Nx3 Mobile Coordinate Matrix
 	Eigen::MatrixXd ref; //Nx3 Stationary Coordinate Matrix
 	Eigen::Matrix3d R; //3x3 Covariance Matrix
@@ -272,39 +277,59 @@ double Molecule::lsqfit (Molecule *refmol, bool move){
 	unsigned int i, j;
 	Vector cmpCOG;
 	Vector refCOG;
+	Vector coor;
 	Atom *atm;
 	double E0;
 	double RMSD;
+	unsigned int nrow;
+	bool selFlag;
 
-	E0=0.0;
-	
-	//Need to resize dynamic matrix!
-	cmp.resize(this->getAtmVecSize(),3);
-	ref.resize(refmol->getAtmVecSize(),3);
+	//For optimal efficiency, atoms need to be pre-selected 
+	//for both *this and *refmol before lsqfit() is called
+	selFlag=true;
 
-	//Check selection sizes and load matrices
+	E0=0.0;		
 
-	cmpCOG=this->centerOfGeometry();
-
-  for (i=0; i< this->getAtmVecSize(); i++){
-    atm=this->getAtom(i);
-    cmp.row(i) << atm->getX()-cmpCOG.x(), atm->getY()-cmpCOG.y(), atm->getZ()-cmpCOG.z();
-		for (j=0; j< 3; j++){
-			E0+=cmp(i,j)*cmp(i,j);
-		}
-  }
-
-	refCOG=refmol->centerOfGeometry();
-
-	for (i=0; i< refmol->getAtmVecSize(); i++){
-	  atm=refmol->getAtom(i);
-		ref.row(i) << atm->getX()-refCOG.x(), atm->getY()-refCOG.y(), atm->getZ()-refCOG.z();
-		for (j=0; j< 3; j++){
-      E0+=ref(i,j)*ref(i,j);
-    }
+	//Check selection sizes and resize matrices 
+	if (this->getNAtomSelected() != refmol->getNAtomSelected()){
+		std::cerr << "Error: Atom number mismatch in least squares fitting" << std::endl;
+		return -1.0;
+	}
+	else{
+		cmp.resize(this->getNAtomSelected(),3);
+ 		ref.resize(refmol->getNAtomSelected(),3);
 	}
 
-  //R=cmp.transpose()*ref;
+	cmpCOG=this->centerOfGeometry(selFlag);
+
+	nrow=0;
+  for (i=0; i< this->getNAtom(); i++){
+    atm=this->getAtom(i);
+		if (atm->getSel() == false){
+			continue;
+		}
+    cmp.row(nrow) << atm->getX()-cmpCOG.x(), atm->getY()-cmpCOG.y(), atm->getZ()-cmpCOG.z();
+		for (j=0; j< 3; j++){
+			E0+=cmp(nrow,j)*cmp(nrow,j);
+		}
+		nrow++;
+  }
+
+	refCOG=refmol->centerOfGeometry(selFlag);
+
+	nrow=0;
+	for (i=0; i< refmol->getNAtom(); i++){
+	  atm=refmol->getAtom(i);
+		if (atm->getSel() == false){
+			continue;
+		}
+		ref.row(nrow) << atm->getX()-refCOG.x(), atm->getY()-refCOG.y(), atm->getZ()-refCOG.z();
+		for (j=0; j< 3; j++){
+      E0+=ref(nrow,j)*ref(nrow,j);
+    }
+		nrow++;
+	}
+
 	R=ref.transpose()*cmp;
 
 	Eigen::JacobiSVD<Eigen::MatrixXd> svd(R, Eigen::ComputeThinU | Eigen::ComputeThinV); 
@@ -336,20 +361,26 @@ double Molecule::lsqfit (Molecule *refmol, bool move){
 
 	Umin=V*Wt; //Optimal rotation matrix, should already be normalized
 
- 	if (move == true){
-		Eigen::MatrixXd tmp;
-		tmp=Umin*cmp.transpose();
-		cmp=tmp.transpose();
-
-		for (i=0; i< this->getAtmVecSize(); i++){
+ 	if (transform == true){
+		//Apply best fit (rigid body) transformation to entire molecule
+		for (i=0; i< this->getNAtom(); i++){
 	  	atm=this->getAtom(i);
-			atm->setCoor(Vector(cmp(i,0), cmp(i,1), cmp(i,2))+refCOG);
+			atm->setCoor(atm->getCoor()-cmpCOG); //Translate molecule to origin based on selected
+			//Apply rotation matrix to entire molecule, not just selected
+			//This is equivalent to doing Umin*cmp but for the entire molecule, not just selected
+			coor.x()=Umin(0,0)*atm->getX()+Umin(0,1)*atm->getY()+Umin(0,2)*atm->getZ();
+			coor.y()=Umin(1,0)*atm->getX()+Umin(1,1)*atm->getY()+Umin(1,2)*atm->getZ();
+			coor.z()=Umin(2,0)*atm->getX()+Umin(2,1)*atm->getY()+Umin(2,2)*atm->getZ();
+			coor+=refCOG; //Translate molecule to reference based on selected
+			atm->setCoor(coor);
 		}
   }
 
-	RMSD=sqrt((E0-2.0*(S(0,0)+S(1,0)+S(2,0)))/this->getAtmVecSize());
+	RMSD=sqrt((E0-2.0*(S(0,0)+S(1,0)+S(2,0)))/this->getNAtom());
 
-	return RMSD;
+	std::cerr << "RMSD of selected : " << RMSD << std::endl;
+
+	return S(0,0)+S(1,0)+S(2,0);
 }
 
 

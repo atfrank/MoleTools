@@ -37,7 +37,7 @@ class Molecule {
 
     //Analysis Functions
 		Vector centerOfGeometry(bool selFlag=true);
-    double lsqfit (Molecule *refmol, bool move=true);
+    double lsqfit (Molecule *refmol, bool transform=true);
 };
 
 #endif

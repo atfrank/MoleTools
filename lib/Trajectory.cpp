@@ -418,7 +418,7 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 	}
 }
 
-void Trajectory::writeFrame(std::ofstream &trjout, Trajectory *ftrjin, unsigned int frame){
+void Trajectory::writeFrame(std::ofstream &trjout, Trajectory *ftrjin){
   double *dbuffer;
   float *xbuffer;
   float *ybuffer;
@@ -495,6 +495,11 @@ std::string Trajectory::getFormat(){
 bool Trajectory::getShow(){
   return show;
 }
+
+Molecule* Trajectory::getMolecule(){
+	return mol;
+}
+
 
 std::string Trajectory::getHdr(){
 	return hdr;

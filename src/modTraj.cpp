@@ -14,7 +14,7 @@ void usage(){
   std::cerr << std::endl << std::endl;
   std::cerr << "Usage:   modTraj [-options] <TRAJfile(s)>" << std::endl;
   std::cerr << "Options: [-pdb PDBfile] [-sel selection]" << std::endl;
-  std::cerr << "         [-fit | -recenter] [-fitsel selection] [-recsel selection]" << std::endl;
+  std::cerr << "         [-fit refPDB] [-fitsel selection] [-recsel selection]" << std::endl;
   std::cerr << "         [-out TRAJname] [-outsel selection]" << std::endl;
   std::cerr << "         [-skip frames]" << std::endl;
 	std::cerr << "         [-verbose] [-show]" << std::endl;
@@ -27,19 +27,21 @@ int main (int argc, char **argv){
   int i;
 	unsigned int j;
   std::vector<std::string> trajs;
-  std::string out;
+  std::string fout;
+	bool out=false;
   Molecule *mol;
   Molecule *outmol;
-  Molecule *fitmol;
+  Molecule *refmol;
   Molecule *recmol;
   std::string pdb;
+	std::string refpdb;
   std::string sel=""; //To match NATOM in trajectory
   std::string currArg;
   bool fit=false;
-  std::string fitsel=":.CA+P";
+  std::string fitsel=":.";
   bool recenter=false;
-  std::string recsel=":.CA+P";
-  std::string outsel="";
+  std::string recsel=":.";
+  std::string outsel=":.";
   std::ifstream trjin;
   std::ofstream trjout;
 	Trajectory *ftrjin;
@@ -47,9 +49,10 @@ int main (int argc, char **argv){
   bool show=false;
 
   pdb.clear();
+	refpdb.clear();
   mol=NULL;
   outmol=NULL;
-  fitmol=NULL;
+  refmol=NULL;
   recmol=NULL;
 	ftrjin=NULL;
 	ftrjout=NULL;
@@ -68,6 +71,8 @@ int main (int argc, char **argv){
       sel=currArg;
     }
     else if (currArg == "-fit"){
+			currArg=argv[++i];
+			refpdb=currArg;
       fit=true;
     }
     else if (currArg == "-fitsel"){
@@ -85,11 +90,13 @@ int main (int argc, char **argv){
     }
     else if (currArg == "-out"){
       currArg=argv[++i];
-      out=currArg;
+      fout=currArg;
+			out=true;
     }
     else if (currArg == "-outsel"){
       currArg=argv[++i];
       outsel=currArg;
+			out=true;
     }
     else if (currArg == "-show"){
       show=true;
@@ -103,7 +110,7 @@ int main (int argc, char **argv){
     std::cerr << std::endl << "Error: Please provide an input trajectory file" << std::endl << std::endl;
     usage();
   }
-  else if (outsel.length() > 0 && out.length() == 0){
+  else if (out == true && fout.length() == 0){
     std::cerr << std::endl << "Error: Please specify an output trajectory via \"-out\" ";
     std::cerr << std::endl << "when using option \"-outsel\"" << std::endl;
   }
@@ -114,9 +121,8 @@ int main (int argc, char **argv){
     usage();
   }
 
-  if ((outsel.length() > 0 || fit == true || recenter == true) && pdb.length() == 0){
-    std::cerr << std::endl << "Error: Please provide a PDB file via \"-pdb\" ";
-    std::cerr << "in order to make a selection" << std::endl;
+  if (((out == true && outsel.length() > 0) || recenter == true) && pdb.length() == 0){
+    std::cerr << std::endl << "Error: Please provide a PDB file via \"-pdb\"" << std::endl;
     usage();
   }
   else if (pdb.length() > 0){
@@ -131,8 +137,13 @@ int main (int argc, char **argv){
       outmol=mol->copy();
     }
     if (fit == true){
-      mol->select(fitsel);
-      fitmol=mol->copy();
+			if (refpdb.length() == 0){
+				std::cerr << std::endl << "Error: Please provide a reference PDB file via \"-fit\"" << std::endl;
+    		usage();
+			}
+			refmol=Molecule::readPDB(refpdb);
+			refmol->select(fitsel);
+      refmol=refmol->clone(true, false); //Delete original after cloning
     }
     if (recenter == true){
       mol->select(recsel);
@@ -143,8 +154,8 @@ int main (int argc, char **argv){
     //Do Nothing
   }
 
-  if (out.length() > 0){
-    trjout.open(out.c_str(), std::ios::binary);
+  if (out == true){
+    trjout.open(fout.c_str(), std::ios::binary);
 		ftrjout=new Trajectory;
     if (outmol != NULL){
       ftrjout->setMolecule(outmol);
@@ -160,11 +171,14 @@ int main (int argc, char **argv){
 
       if (pdb.length() > 0){
         ftrjin->setMolecule(mol);
+				if (fit == true){
+					ftrjin->getMolecule()->select(fitsel);
+				}
       }
 
       if (ftrjin->findFormat(trjin) == true){
 				ftrjin->readHeader(trjin);
-				if (j == 0 && out.length() > 0 && trjout.is_open()){
+				if (j == 0 && out == true && trjout.is_open()){
 					ftrjout->cloneHeader(ftrjin);
           ftrjout->writeHeader(trjout);
 				}
@@ -172,7 +186,7 @@ int main (int argc, char **argv){
 					ftrjin->readFrame(trjin, i);
           if (pdb.length() >0){
             if (fit == true){
-
+							ftrjin->getMolecule()->lsqfit(refmol);
 					  }
 					  else if (recenter == true){
 
@@ -181,8 +195,8 @@ int main (int argc, char **argv){
               //Do nothing
             }
 					}
-          if (out.length() > 0 && trjout.is_open()){
-            ftrjout->writeFrame(trjout, ftrjin, i);
+          if (out == true && trjout.is_open()){
+            ftrjout->writeFrame(trjout, ftrjin);
           }
 				}
 			}
@@ -198,7 +212,7 @@ int main (int argc, char **argv){
 		trjin.close();
 	}
 
-  if (out.length() > 0 && trjout.is_open()){
+  if (out == true && trjout.is_open()){
     trjout.close();
 		if (ftrjout != NULL){
 			delete ftrjout;
