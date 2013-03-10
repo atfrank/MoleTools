@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cstdlib>
 
 #define MAXINPFILES 4096
@@ -16,7 +17,7 @@ void usage(){
   std::cerr << "Options: [-pdb PDBfile] [-sel selection]" << std::endl;
   std::cerr << "         [-fit refPDB] [-fitsel selection] [-recsel selection]" << std::endl;
   std::cerr << "         [-out TRAJname] [-outsel selection]" << std::endl;
-  std::cerr << "         [-skip frames]" << std::endl;
+  std::cerr << "         [-skip frames] [-start frame]" << std::endl;
 	std::cerr << "         [-verbose] [-show]" << std::endl;
   exit(0);
 }
@@ -41,12 +42,14 @@ int main (int argc, char **argv){
   std::string fitsel=":.";
   bool recenter=false;
   std::string recsel=":.";
-  std::string outsel=":.";
+  std::string outsel="";
   std::ifstream trjin;
   std::ofstream trjout;
 	Trajectory *ftrjin;
 	Trajectory *ftrjout;
   bool show=false;
+  int skip=0;
+  int start=0;
 
   pdb.clear();
 	refpdb.clear();
@@ -97,6 +100,15 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       outsel=currArg;
 			out=true;
+    }
+    else if (currArg == "-skip"){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> skip;
+    }
+    else if (currArg == "-start"){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> start;
+      start--;
     }
     else if (currArg == "-show"){
       show=true;
@@ -180,9 +192,18 @@ int main (int argc, char **argv){
 				ftrjin->readHeader(trjin);
 				if (j == 0 && out == true && trjout.is_open()){
 					ftrjout->cloneHeader(ftrjin);
+          ftrjout->setNFrame(0);
+          if (start != 0){
+            ftrjout->setNPriv(ftrjout->getNPriv()+start*ftrjout->getNSavc());
+          }
+          if (skip != 0){
+            //ftrjout->setTStep(ftrjout->getTStepPS()*(skip+1));
+            ftrjout->setNSavc(ftrjout->getNSavc()*(skip+1));
+          }
           ftrjout->writeHeader(trjout);
 				}
-				for (i=0; i< ftrjin->getNFrame(); i++){
+        //Loop through desired frames
+				for (i=start; i< ftrjin->getNFrame(); i=i+1+skip){
 					ftrjin->readFrame(trjin, i);
           if (pdb.length() >0){
             if (fit == true){
@@ -196,6 +217,7 @@ int main (int argc, char **argv){
             }
 					}
           if (out == true && trjout.is_open()){
+            ftrjout->setNFrame(ftrjout->getNFrame()+1);
             ftrjout->writeFrame(trjout, ftrjin);
           }
 				}
@@ -213,6 +235,8 @@ int main (int argc, char **argv){
 	}
 
   if (out == true && trjout.is_open()){
+    //Re-write header in case of any changes
+    ftrjout->writeHeader(trjout);
     trjout.close();
 		if (ftrjout != NULL){
 			delete ftrjout;

@@ -13,7 +13,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <climits>
+#include <limits>
 #include <cstdlib>
 
 class Trajectory {
@@ -23,6 +23,9 @@ class Trajectory {
     Molecule *mol;
     bool show;
     unsigned int iframe;
+    unsigned int hdrSize;
+    unsigned int frameSize;
+    unsigned int lastFrame;
 
 		std::string hdr;
 		int nframe; //ICNTRL[1], Number of frames
@@ -86,6 +89,9 @@ class Trajectory {
 
 		//Get
     std::string getFormat();
+    unsigned int getHdrSize();
+    unsigned int getFrameSize();
+    unsigned int getLastFrame();
     bool getShow();
 		Molecule* getMolecule();
 		std::string getHdr();
@@ -113,6 +119,9 @@ class Trajectory {
 		int getFixInx(int element);	
 
 		//Set
+    void setHdrSize(const unsigned int &size);
+    void setFrameSize(const unsigned int &size);
+    void setLastFrame(const unsigned int &frame);
     void setShow(const bool &val);
     void setHdr(const std::string &hdrin);
     void setNFrame(const int &nframein);

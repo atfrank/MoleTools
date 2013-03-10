@@ -9,6 +9,9 @@ Trajectory::Trajectory (){
   mol=NULL;
   show=false;
   iframe=0;
+  hdrSize=0;
+  frameSize=0;
+  lastFrame=0;
   hdr.clear();
   nframe=0;
   npriv=0;
@@ -123,6 +126,7 @@ void Trajectory::readHeader(std::ifstream &trjin){
 
 	if (format.compare("CHARMM") == 0){
 		buffer=readFortran(trjin, buffer, length);
+    this->setHdrSize(this->getHdrSize()+length+sizeof(int)*2);
 
 		//HDR
 		hdr.assign(buffer[0].c,4);
@@ -151,6 +155,7 @@ void Trajectory::readHeader(std::ifstream &trjin){
 		
 		//Title
 		cbuffer=readFortran(trjin, cbuffer, length);
+    this->setHdrSize(this->getHdrSize()+length+sizeof(int)*2);
     int ntitle=cbuffer[0];
     title.resize(ntitle);
     for (i=0; i< ntitle; i++){
@@ -160,6 +165,7 @@ void Trajectory::readHeader(std::ifstream &trjin){
 
 		//NATOM
 		buffer=readFortran(trjin, buffer, length);
+    this->setHdrSize(this->getHdrSize()+length+sizeof(int)*2);
 		natom=buffer[0].i;
     if (mol != NULL && static_cast<int>(mol->getNAtom()) != natom){
       std::cerr << "Error: Atom number mismatch!" << std::endl;
@@ -168,6 +174,7 @@ void Trajectory::readHeader(std::ifstream &trjin){
     //FIXED
     if (nfixed > 0){
       buffer=readFortran(trjin, buffer, length);
+      this->setHdrSize(this->getHdrSize()+length+sizeof(int)*2);
       std::cerr << "Warning: Fixed atoms has yet to be implemented" << std::endl;
       //for (i=0; i< length; i++){
 			//	std::cerr << buffer[i].i << ":";
@@ -277,7 +284,7 @@ void Trajectory::showHeader(){
   std::cout << std::setw(25) << std::left << "Degrees of Freedom" << ": " << dof << std::endl;
 	std::cout << std::setw(25) << std::left << "Number of Fixed" << ": " << nfixed << std::endl;
   std::cout << std::setw(25) << std::left << "Time Step (ps)" << ": " << this->getTStepPS() << std::endl;
-	std::cout << std::setw(25) << std::left << "Start Time (ps)" << ": " << (npriv/nsavc)*this->getTStepPS() <<  std::endl;
+	std::cout << std::setw(25) << std::left << "Start Time (ps)" << ": " << npriv*this->getTStepPS()/nsavc << std::endl;
   std::cout << std::setw(25) << std::left << "Periodic Boundaries" << ": " << qcrystal << std::endl;
   std::cout << std::setw(25) << std::left << "4D Trajectory" << ": " << q4d << std::endl;
   std::cout << std::setw(25) << std::left << "Fluctuating Charges" << ": " << qcharge << std::endl;
@@ -319,9 +326,31 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
   int length;
 	int i;
   unsigned int j;
+  unsigned int maxSeekFrame;
 
-  //Seek
-  
+  if (this->getFrameSize() == 0){
+    this->setFrameSize((this->getNAtom()*sizeof(float)+sizeof(int)*2)*3);
+    if (qcrystal > 0){
+      this->setFrameSize(this->getFrameSize()+sizeof(double)*6+2*sizeof(int));
+    }
+  }
+
+  maxSeekFrame=(std::numeric_limits<int>::max()/this->getFrameSize())-10; //10 buffer
+
+  //Assume header has been read
+  //Seek frames
+  if (frame-this->getLastFrame() > maxSeekFrame){
+    //Seek frame by frame to be safe
+    for (j=0; j< frame-this->getLastFrame(); j++){
+      trjin.seekg(this->getFrameSize(), std::ios::cur);
+    }
+  }
+  else{
+    trjin.seekg((frame-this->getLastFrame())*this->getFrameSize(), std::ios::cur);
+  }
+  this->setLastFrame(frame+1); 
+  //The "+1" positions the pointer at the end of this frame after it has been read
+
 
   this->iframe++;
   if (this->getShow() == true){
@@ -488,6 +517,18 @@ void Trajectory::setMolecule(Molecule *molin){
   mol=molin;
 }
 
+unsigned int Trajectory::getHdrSize(){
+  return hdrSize;
+}
+
+unsigned int Trajectory::getFrameSize(){
+  return frameSize;
+}
+
+unsigned int Trajectory::getLastFrame(){
+  return lastFrame;
+}
+
 std::string Trajectory::getFormat(){
   return format;
 }
@@ -587,6 +628,18 @@ int Trajectory::getFixInx(int element){
 }
 
 //Set
+
+void Trajectory::setHdrSize(const unsigned int &size){
+  hdrSize=size;
+}
+
+void Trajectory::setFrameSize(const unsigned int &size){
+  frameSize=size;
+}
+
+void Trajectory::setLastFrame(const unsigned int &frame){
+  lastFrame=frame;
+}
 
 void Trajectory::setShow(const bool &val){
   show=val;
