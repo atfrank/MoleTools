@@ -48,7 +48,6 @@ $(BINDIR)/modTraj: $(OBJDIR)/modTraj.o $(OBJDIR)/Trajectory.o \
 		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
 		$(OBJDIR)/Misc.o
 
-
 modPDB: $(BINDIR)/modPDB;
 $(BINDIR)/modPDB: $(OBJDIR)/modPDB.o $(OBJDIR)/Molecule.o \
 		$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
@@ -60,7 +59,7 @@ $(BINDIR)/modPDB: $(OBJDIR)/modPDB.o $(OBJDIR)/Molecule.o \
 		$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
 		$(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
 		$(OBJDIR)/Constants.o $(OBJDIR)/PDB.o \
-		$(OBJDIR)/Select.o $(OBJDIR)/Misc.o
+		$(OBJDIR)/Select.o $(OBJDIR)/Misc.o 
 
 $(OBJDIR)/secondary.o: secondary.cpp \
 		$(LIBDIR)/Molecule.hpp $(LIBDIR)/SABA.hpp
@@ -71,7 +70,7 @@ $(OBJDIR)/modTraj.o: modTraj.cpp \
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c modTraj.cpp
 
 $(OBJDIR)/modPDB.o: modPDB.cpp \
-		$(LIBDIR)/Molecule.hpp
+		$(LIBDIR)/Molecule.hpp  
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c modPDB.cpp
 
 $(OBJDIR)/Trajectory.o: $(LIBDIR)/Trajectory.cpp $(LIBDIR)/Trajectory.hpp \

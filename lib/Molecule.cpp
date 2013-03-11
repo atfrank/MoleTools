@@ -273,14 +273,14 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
 	Eigen::MatrixXd cmp; //Nx3 Mobile Coordinate Matrix
 	Eigen::MatrixXd ref; //Nx3 Stationary Coordinate Matrix
 	Eigen::Matrix3d R; //3x3 Covariance Matrix
-	Eigen::Matrix3d C; //3x3 Covariance Matrix
-	unsigned int i, j;
+	unsigned int i;
 	Vector cmpCOG;
 	Vector refCOG;
 	Vector coor;
 	Atom *atm;
-	double E0;
-	double RMSD;
+	//double E0;
+	//unsigned int j;
+	//double RMSD;
 	unsigned int nrow;
 	bool selFlag;
 
@@ -288,7 +288,7 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
 	//for both *this and *refmol before lsqfit() is called
 	selFlag=true;
 
-	E0=0.0;		
+	//E0=0.0;		
 
 	//Check selection sizes and resize matrices 
 	if (this->getNAtomSelected() != refmol->getNAtomSelected()){
@@ -309,9 +309,9 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
 			continue;
 		}
     cmp.row(nrow) << atm->getX()-cmpCOG.x(), atm->getY()-cmpCOG.y(), atm->getZ()-cmpCOG.z();
-		for (j=0; j< 3; j++){
-			E0+=cmp(nrow,j)*cmp(nrow,j);
-		}
+		//for (j=0; j< 3; j++){
+		//	E0+=cmp(nrow,j)*cmp(nrow,j);
+		//}
 		nrow++;
   }
 
@@ -324,9 +324,9 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
 			continue;
 		}
 		ref.row(nrow) << atm->getX()-refCOG.x(), atm->getY()-refCOG.y(), atm->getZ()-refCOG.z();
-		for (j=0; j< 3; j++){
-      E0+=ref(nrow,j)*ref(nrow,j);
-    }
+		//for (j=0; j< 3; j++){
+    //  E0+=ref(nrow,j)*ref(nrow,j);
+    //}
 		nrow++;
 	}
 
@@ -376,29 +376,25 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
 		}
   }
 
-	RMSD=sqrt((E0-2.0*(S(0,0)+S(1,0)+S(2,0)))/this->getNAtom());
-
-	std::cerr << "RMSD of selected : " << RMSD << std::endl;
+	//RMSD=sqrt((E0-2.0*(S(0,0)+S(1,0)+S(2,0)))/this->getNAtom());
+	//std::cerr << "RMSD of selected : " << RMSD << std::endl;
 
 	return S(0,0)+S(1,0)+S(2,0);
 }
 
-double Molecule::rmsd (Molecule *refmol, bool lsqfit, bool transform){
+double Molecule::rmsd (Molecule *refmol){
 	double RMSD;
-	double E0;
-	double sumS;
-	bool selFlag;
-	Vector cmpCOG;
-  Vector refCOG;
-	unsigned int i;
+	double E;
+	unsigned int i, j;
 	Atom *atm;
-	double dx;
-	double dy;
-	double dz;
+	std::vector<double> dx;
+	std::vector<double> dy;
+	std::vector<double> dz;
 
+	//For optimal efficiency, atoms need to be pre-selected
+  //for both *this and *refmol before rmsd() is called
 	RMSD=-1.0;
-	selFlag=true;
-	E0=0.0;
+	E=0.0;
 
 	//Check selection sizes and resize matrices
   if (this->getNAtomSelected() != refmol->getNAtomSelected()){
@@ -406,39 +402,30 @@ double Molecule::rmsd (Molecule *refmol, bool lsqfit, bool transform){
     return -1.0;
   }
 
-	if (lsqfit == true ){
-		sumS=this->lsqfit(refmol, transform);
+	for (i=0; i< this->getNAtom(); i++){
+		atm=this->getAtom(i);
+   	if (atm->getSel() == false){
+     	continue;
+   	}
+		dx.push_back(atm->getX());
+		dy.push_back(atm->getY());
+		dz.push_back(atm->getZ());
+	}
 
-		cmpCOG=this->centerOfGeometry(selFlag);
-		refCOG=refmol->centerOfGeometry(selFlag);
-
-		for (i=0; i< this->getNAtom(); i++){
-			atm=this->getAtom(i);
-    	if (atm->getSel() == false){
-      	continue;
-    	}
-			dx=atm->getX()-cmpCOG.x();
-			dy=atm->getY()-cmpCOG.y();
-			dz=atm->getZ()-cmpCOG.z();
-      E0+=dx*dx+dy*dy+dz*dz;
-		}
-
-		for (i=0; i< refmol->getNAtom(); i++){
-			atm=this->getAtom(i);
-      if (atm->getSel() == false){
-        continue;
-      }
-			dx=atm->getX()-cmpCOG.x();
-      dy=atm->getY()-cmpCOG.y();
-      dz=atm->getZ()-cmpCOG.z();
-      E0+=dx*dx+dy*dy+dz*dz;
+	j=0;
+	for (i=0; i< refmol->getNAtom(); i++){
+		atm=refmol->getAtom(i);
+    if (atm->getSel() == false){
+      continue;
     }
+		dx.at(j)=dx.at(j)-atm->getX();
+    dy.at(j)=dy.at(j)-atm->getY();
+    dz.at(j)=dz.at(j)-atm->getZ();
+    E+=dx.at(j)*dx.at(j)+dy.at(j)*dy.at(j)+dz.at(j)*dz.at(j);
+		j++;
+  }
 
-		RMSD=sqrt((E0-2.0*(sumS))/this->getNAtom());
-	}
-	else{
-
-	}
+	RMSD=sqrt(E/this->getNAtomSelected());
 
 	return RMSD;
 }

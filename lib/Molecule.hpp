@@ -5,7 +5,7 @@
 #include "Chain.hpp"
 
 #include <vector>
-#include<Eigen/Dense>
+#include <Eigen/Dense>
 
 class Molecule {
   private:
@@ -38,7 +38,7 @@ class Molecule {
     //Analysis Functions
 		Vector centerOfGeometry(bool selFlag=true);
     double lsqfit (Molecule *refmol, bool transform=true);
-		double rmsd (Molecule *refmol, bool lsqfit=true, bool transform=true);
+		double rmsd (Molecule *refmol);
 };
 
 #endif
