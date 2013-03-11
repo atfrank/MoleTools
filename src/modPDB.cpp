@@ -83,7 +83,7 @@ int main (int argc, char **argv){
 			refmol->select(fitsel);
 			mol->select(fitsel);
 	  	mol->lsqfit(refmol);
-			std::cerr << mol->rmsd(refmol);
+			mol->rmsd(refmol);
 		}
 		else {
 			std::cerr << std::endl << "Error: Please provide a reference PDB file for fitting" << std::endl;
