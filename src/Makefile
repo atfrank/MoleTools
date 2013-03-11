@@ -24,14 +24,15 @@ $(BINDIR)/secondary: $(OBJDIR)/secondary.o $(OBJDIR)/SABA.o \
 		$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
 		$(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
 		$(OBJDIR)/Constants.o $(OBJDIR)/PDB.o \
-		$(OBJDIR)/Select.o $(OBJDIR)/Misc.o
+		$(OBJDIR)/Select.o $(OBJDIR)/Misc.o \
+		$(OBJDIR)/Analyze.o
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ \
 		$(OBJDIR)/secondary.o $(OBJDIR)/SABA.o \
 		$(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
 		$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o \
 		$(OBJDIR)/Vector.o $(OBJDIR)/Constants.o \
 		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
-		$(OBJDIR)/Misc.o
+		$(OBJDIR)/Misc.o $(OBJDIR)/Analyze.o
 
 modTraj: $(BINDIR)/modTraj;
 $(BINDIR)/modTraj: $(OBJDIR)/modTraj.o $(OBJDIR)/Trajectory.o \
@@ -39,27 +40,29 @@ $(BINDIR)/modTraj: $(OBJDIR)/modTraj.o $(OBJDIR)/Trajectory.o \
 		$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o \
 		$(OBJDIR)/Vector.o $(OBJDIR)/Constants.o \
 		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
-		$(OBJDIR)/Misc.o
+		$(OBJDIR)/Misc.o $(OBJDIR)/Analyze.o
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ \
 		$(OBJDIR)/modTraj.o $(OBJDIR)/Trajectory.o \
 		$(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
 		$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o \
 		$(OBJDIR)/Vector.o $(OBJDIR)/Constants.o \
 		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
-		$(OBJDIR)/Misc.o
+		$(OBJDIR)/Misc.o $(OBJDIR)/Analyze.o
 
 modPDB: $(BINDIR)/modPDB;
 $(BINDIR)/modPDB: $(OBJDIR)/modPDB.o $(OBJDIR)/Molecule.o \
 		$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
 		$(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
 		$(OBJDIR)/Constants.o $(OBJDIR)/PDB.o \
-		$(OBJDIR)/Select.o $(OBJDIR)/Misc.o
+		$(OBJDIR)/Select.o $(OBJDIR)/Misc.o \
+		$(OBJDIR)/Analyze.o
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ \
 		$(OBJDIR)/modPDB.o $(OBJDIR)/Molecule.o \
 		$(OBJDIR)/Chain.o $(OBJDIR)/Residue.o \
 		$(OBJDIR)/Atom.o $(OBJDIR)/Vector.o \
 		$(OBJDIR)/Constants.o $(OBJDIR)/PDB.o \
-		$(OBJDIR)/Select.o $(OBJDIR)/Misc.o 
+		$(OBJDIR)/Select.o $(OBJDIR)/Misc.o \
+		$(OBJDIR)/Analyze.o
 
 $(OBJDIR)/secondary.o: secondary.cpp \
 		$(LIBDIR)/Molecule.hpp $(LIBDIR)/SABA.hpp
@@ -81,8 +84,12 @@ $(OBJDIR)/PDB.o: $(LIBDIR)/PDB.cpp $(LIBDIR)/PDB.hpp \
 		$(LIBDIR)/Molecule.hpp 
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c $(LIBDIR)/PDB.cpp
 
+$(OBJDIR)/Analyze.o: $(LIBDIR)/Analyze.cpp $(LIBDIR)/Analyze.hpp \
+		$(LIBDIR)/Molecule.hpp
+	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c $(LIBDIR)/Analyze.cpp
+
 $(OBJDIR)/Molecule.o: $(LIBDIR)/Molecule.cpp $(LIBDIR)/Molecule.hpp \
-		$(LIBDIR)/PDB.hpp $(LIBDIR)/Chain.hpp 
+		$(LIBDIR)/PDB.hpp $(LIBDIR)/Chain.hpp $(LIBDIR)/Analyze.hpp 
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c $(LIBDIR)/Molecule.cpp
 
 $(OBJDIR)/Chain.o: $(LIBDIR)/Chain.cpp $(LIBDIR)/Chain.hpp \

@@ -1,8 +1,11 @@
 //Sean M. Law
 
 #include "Molecule.hpp"
+
+//Circular dependencies must be listed here instead of the header file
 #include "PDB.hpp"
 #include "Select.hpp"
+#include "Analyze.hpp"
 
 Molecule::~Molecule (){
 	Chain *c;
@@ -247,28 +250,6 @@ unsigned int Molecule::getNAtomSelected(){
   return natom;
 }
 
-//Analysis Functions
-
-Vector Molecule::centerOfGeometry(bool selFlag){
-	Vector cog=Vector(0.0, 0.0, 0.0);
-
-	for (unsigned int i=0; i< this->getAtmVecSize(); i++){
-		if (selFlag == true && this->getAtom(i)->getSel() == false){
-			continue;
-		}
-		cog+=this->getAtom(i)->getCoor();
-	}
-
-	if (selFlag == true){
-		cog/=this->getNAtomSelected();
-	}
-	else{
-		cog/=this->getNAtom();
-	}
-
-	return cog;
-}
-
 double Molecule::lsqfit (Molecule *refmol, bool transform){
 	Eigen::MatrixXd cmp; //Nx3 Mobile Coordinate Matrix
 	Eigen::MatrixXd ref; //Nx3 Stationary Coordinate Matrix
@@ -300,7 +281,7 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
  		ref.resize(refmol->getNAtomSelected(),3);
 	}
 
-	cmpCOG=this->centerOfGeometry(selFlag);
+	cmpCOG=Analyze::centerOfGeometry(this, selFlag);
 
 	nrow=0;
   for (i=0; i< this->getNAtom(); i++){
@@ -315,7 +296,7 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
 		nrow++;
   }
 
-	refCOG=refmol->centerOfGeometry(selFlag);
+	refCOG=Analyze::centerOfGeometry(refmol, selFlag);
 
 	nrow=0;
 	for (i=0; i< refmol->getNAtom(); i++){
