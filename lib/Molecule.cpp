@@ -366,3 +366,7 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
 double Molecule::rmsd (Molecule *refmol){
 	return Analyze::rmsd(this, refmol);
 }
+
+void Molecule::recenter (Molecule *recmol){
+	std::cerr << "Warning: Image recentering has not been implemented yet" << std::endl;
+}

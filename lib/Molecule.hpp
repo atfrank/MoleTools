@@ -35,10 +35,9 @@ class Molecule {
     unsigned int getNAtom();
     unsigned int getNAtomSelected();
 
-    //Analysis Functions
-		Vector centerOfGeometry(bool selFlag=true);
     double lsqfit (Molecule *refmol, bool transform=true);
 		double rmsd (Molecule *refmol);
+		void recenter (Molecule *recmol);
 };
 
 #endif

@@ -133,10 +133,14 @@ int main (int argc, char **argv){
     usage();
   }
 
-  if (((out == true && outsel.length() > 0) || recenter == true) && pdb.length() == 0){
+  if (((out == true && outsel.length() > 0)) && pdb.length() == 0){
     std::cerr << std::endl << "Error: Please provide a PDB file via \"-pdb\"" << std::endl;
     usage();
   }
+	else if (pdb.length() == 0 && (recenter == true || fit == true)){
+		std::cerr << std::endl << "Error: Please provide a PDB file via \"-pdb\"" << std::endl;
+    usage();
+	}
   else if (pdb.length() > 0){
     mol=Molecule::readPDB(pdb);
     if (sel.length() > 0){
@@ -197,7 +201,6 @@ int main (int argc, char **argv){
             ftrjout->setNPriv(ftrjout->getNPriv()+start*ftrjout->getNSavc());
           }
           if (skip != 0){
-            //ftrjout->setTStep(ftrjout->getTStepPS()*(skip+1));
             ftrjout->setNSavc(ftrjout->getNSavc()*(skip+1));
           }
           ftrjout->writeHeader(trjout);
@@ -206,11 +209,12 @@ int main (int argc, char **argv){
 				for (i=start; i< ftrjin->getNFrame(); i=i+1+skip){
 					ftrjin->readFrame(trjin, i);
           if (pdb.length() >0){
+						//Transform molecule only if PDB is provided
             if (fit == true){
 							ftrjin->getMolecule()->lsqfit(refmol);
 					  }
 					  else if (recenter == true){
-
+							ftrjin->getMolecule()->recenter(recmol);
             }
             else{
               //Do nothing

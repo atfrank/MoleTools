@@ -70,3 +70,73 @@ double Analyze::rmsd (Molecule *cmpmol, Molecule *refmol){
   return RMSD;
 
 }
+
+double Analyze::distance (const Vector& u, const Vector& v){
+	Vector d=u-v;
+	return d.norm();
+}
+
+double Analyze::angle (const Vector& u, const Vector& v, const Vector& w){
+  double angle;
+  Vector dx, dy;
+  double dp, nx, ny;
+
+  dx=u-v;
+  dy=w-v;
+
+  nx=dx.norm();
+  ny=dy.norm();
+
+  dp=dx.dot(dy);
+
+  angle=acos(dp/(nx*ny));
+
+  return angle/PI*180.0;
+}
+
+double Analyze::dihedral (const Vector& t, const Vector& u, const Vector& v, const Vector& w) {
+  double dihedral;
+  Vector dx, dy, dz, p1, p2, p3;
+  double np1, np2, dp1, dp2, ts;
+
+  dx=t-u;
+  dy=u-v;
+  dz=w-v; //This is correct!
+
+  p1=dx.cross(dy);
+
+  np1=p1.norm();
+  p1=p1/np1;
+
+  p2=dz.cross(dy);
+  np2=p2.norm();
+  p2=p2/np2;
+
+  dp1=p1.dot(p2); //Dot product
+
+  ts=1.0-dp1*dp1;
+  ts=(ts<0.0)?0.0:sqrt(ts);
+  dihedral=PI/2.0-atan2(dp1,ts);
+
+  p3=p1.cross(p2);
+
+  dp2=p3.dot(dy); //Dot product
+
+  if (dp2 > 0.0){
+    dihedral=-dihedral;
+  }
+
+  return dihedral/PI*180.0;
+}
+
+double distance (Molecule* sel1, Molecule* sel2, bool selFlag){
+	return Analyze::distance(Analyze::centerOfGeometry(sel1,selFlag), Analyze::centerOfGeometry(sel2,selFlag));
+}
+
+double angle (Molecule* sel1, Molecule* sel2, Molecule* sel3, bool selFlag){
+	return Analyze::angle(Analyze::centerOfGeometry(sel1,selFlag), Analyze::centerOfGeometry(sel2,selFlag), Analyze::centerOfGeometry(sel3,selFlag));
+}
+
+double dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecule* sel4, bool selFlag){
+	return Analyze::dihedral(Analyze::centerOfGeometry(sel1,selFlag), Analyze::centerOfGeometry(sel2,selFlag), Analyze::centerOfGeometry(sel3,selFlag), Analyze::centerOfGeometry(sel4,selFlag));
+}

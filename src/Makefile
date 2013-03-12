@@ -85,7 +85,7 @@ $(OBJDIR)/PDB.o: $(LIBDIR)/PDB.cpp $(LIBDIR)/PDB.hpp \
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c $(LIBDIR)/PDB.cpp
 
 $(OBJDIR)/Analyze.o: $(LIBDIR)/Analyze.cpp $(LIBDIR)/Analyze.hpp \
-		$(LIBDIR)/Molecule.hpp
+		$(LIBDIR)/Molecule.hpp $(LIBDIR)/Vector.hpp $(LIBDIR)/Constants.hpp
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c $(LIBDIR)/Analyze.cpp
 
 $(OBJDIR)/Molecule.o: $(LIBDIR)/Molecule.cpp $(LIBDIR)/Molecule.hpp \
@@ -104,8 +104,7 @@ $(OBJDIR)/Atom.o: $(LIBDIR)/Atom.cpp $(LIBDIR)/Atom.hpp \
 		$(LIBDIR)/Vector.hpp 
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c $(LIBDIR)/Atom.cpp
 
-$(OBJDIR)/Vector.o: $(LIBDIR)/Vector.cpp $(LIBDIR)/Vector.hpp \
-		$(LIBDIR)/Constants.hpp
+$(OBJDIR)/Vector.o: $(LIBDIR)/Vector.cpp $(LIBDIR)/Vector.hpp 
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c $(LIBDIR)/Vector.cpp
 
 $(OBJDIR)/Constants.o: $(LIBDIR)/Constants.cpp $(LIBDIR)/Constants.hpp

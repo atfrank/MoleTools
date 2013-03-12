@@ -5,6 +5,7 @@
 
 #include "Molecule.hpp"
 #include "Residue.hpp"
+#include "Analyze.hpp"
 
 class SABA {
   private:
