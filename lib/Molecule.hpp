@@ -12,11 +12,12 @@ class Molecule {
     std::vector<Chain*> chnVec;
     std::vector<Residue*> resVec;
     std::vector<Atom*> atmVec;
+		bool copyFlag; //This molecule is a copy if true
 
   public:
 		~Molecule();
     static Molecule* readPDB (std::string ifile, int model=0);
-    int writePDB ();
+    void writePDB (bool selFlag=true);
     Molecule* clone(bool selFlag=true, bool keep=true);
 		Molecule* copy(bool selFlag=true);
     void addAtom(Atom* atmEntry);
@@ -34,6 +35,8 @@ class Molecule {
     void select(std::string sel);
     unsigned int getNAtom();
     unsigned int getNAtomSelected();
+		void setCopyFlag(bool copyFlagIn=false);
+		bool getCopyFlag();
 
     double lsqfit (Molecule *refmol, bool transform=true);
 		double rmsd (Molecule *refmol);

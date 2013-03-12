@@ -6,7 +6,7 @@ PDB::PDB(){
   chnMap.clear();
 }
 
-std::string PDB::writePDBFormat (Molecule* mol){
+std::string PDB::writePDBFormat (Molecule* mol, bool selFlag ){
   std::ostringstream out;
   Chain *chn;
   Residue *res;
@@ -26,7 +26,9 @@ std::string PDB::writePDBFormat (Molecule* mol){
       //if(!res->getSel()){continue;}
       for (unsigned int k=0; k< res->getAtmVecSize(); k++){
         atm=res->getAtom(k);
-        if (!atm->getSel()){continue;}
+        if (selFlag == true && atm->getSel() == false){
+					continue;
+				}
 				if (atm->getAtmNum() <= 99999){
 					out << std::setw(6) << std::left << atm->getRecName();
         	out << std::setw(5) << std::right << atm->getAtmNum(); //PDB format
@@ -102,6 +104,7 @@ Molecule* PDB::readPDB(std::string ifile, int model){
 
   atmEntry=NULL;
   lastAtom=NULL;
+	mol->setCopyFlag(false);
 
   if (ifile == "-"){ //Input from pipe
     inp=&std::cin;

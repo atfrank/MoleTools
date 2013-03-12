@@ -17,7 +17,7 @@ class PDB {
 
   public:
     PDB();
-    static std::string writePDBFormat (Molecule* mol);
+    static std::string writePDBFormat (Molecule* mol, bool selFlag=true);
     static Molecule* readPDB (std::string ifile, int model=0);
     Atom* processAtomLine (std::string line, Atom* lastAtom);
 };

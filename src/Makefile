@@ -85,7 +85,8 @@ $(OBJDIR)/secondary.o: secondary.cpp \
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c secondary.cpp
 
 $(OBJDIR)/contact.o: contact.cpp \
-		$(LIBDIR)/Molecule.hpp $(LIBDIR)/Trajectory.hpp
+		$(LIBDIR)/Molecule.hpp $(LIBDIR)/Trajectory.hpp $(LIBDIR)/Misc.hpp \
+		$(LIBDIR)/Analyze.hpp
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c contact.cpp
 
 $(OBJDIR)/modTraj.o: modTraj.cpp \

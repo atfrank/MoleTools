@@ -16,9 +16,12 @@ Molecule::~Molecule (){
 		c=this->getChain(i);
 		for (unsigned int j=0; j< c->getResVecSize(); j++){
 			r=c->getResidue(j);
-			for (unsigned int k=0; k< r->getAtmVecSize(); k++){
-				a=r->getAtom(k);
-				delete a;
+			if (this->getCopyFlag() == false){
+				//Only destruct atoms if molecule is NOT a copy
+				for (unsigned int k=0; k< r->getAtmVecSize(); k++){
+					a=r->getAtom(k);
+					delete a;
+				}
 			}
 			delete r;
 		}
@@ -36,15 +39,13 @@ Molecule* Molecule::readPDB (std::string ifile, int model){
   }
 }
 
-int Molecule::writePDB(){
+void Molecule::writePDB(bool selFlag){
 
   std::string out;
 
-  out=PDB::writePDBFormat(this);
+  out=PDB::writePDBFormat(this, selFlag);
 
   std::cout << out;
-
-  return 0;
 }
 
 void Molecule::addAtom(Atom* atmEntry) {
@@ -66,6 +67,7 @@ Molecule* Molecule::clone (bool selFlag, bool keep){
 	chnEntry=NULL;
 	resEntry=NULL;
   atmEntry=NULL;
+	mol->setCopyFlag(false); //Not a copy
 	
   for (unsigned int i=0; i< this->getChnVecSize(); i++){
     c=this->getChain(i);
@@ -126,6 +128,7 @@ Molecule* Molecule::copy (bool selFlag){
   a=NULL;
 	chnEntry=NULL;
 	resEntry=NULL;
+	mol->setCopyFlag(true); //Is a copy, do not destruct atoms!
 
 	for (unsigned int i=0; i< this->getChnVecSize(); i++){
 		c=this->getChain(i);
@@ -248,6 +251,14 @@ unsigned int Molecule::getNAtomSelected(){
     }
   }
   return natom;
+}
+
+void Molecule::setCopyFlag(bool copyFlagIn){
+	copyFlag=copyFlagIn;
+}
+
+bool Molecule::getCopyFlag(){
+	return copyFlag;
 }
 
 double Molecule::lsqfit (Molecule *refmol, bool transform){

@@ -129,14 +129,14 @@ double Analyze::dihedral (const Vector& t, const Vector& u, const Vector& v, con
   return dihedral/PI*180.0;
 }
 
-double distance (Molecule* sel1, Molecule* sel2, bool selFlag){
+double Analyze::distance (Molecule* sel1, Molecule* sel2, bool selFlag){
 	return Analyze::distance(Analyze::centerOfGeometry(sel1,selFlag), Analyze::centerOfGeometry(sel2,selFlag));
 }
 
-double angle (Molecule* sel1, Molecule* sel2, Molecule* sel3, bool selFlag){
+double Analyze::angle (Molecule* sel1, Molecule* sel2, Molecule* sel3, bool selFlag){
 	return Analyze::angle(Analyze::centerOfGeometry(sel1,selFlag), Analyze::centerOfGeometry(sel2,selFlag), Analyze::centerOfGeometry(sel3,selFlag));
 }
 
-double dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecule* sel4, bool selFlag){
+double Analyze::dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecule* sel4, bool selFlag){
 	return Analyze::dihedral(Analyze::centerOfGeometry(sel1,selFlag), Analyze::centerOfGeometry(sel2,selFlag), Analyze::centerOfGeometry(sel3,selFlag), Analyze::centerOfGeometry(sel4,selFlag));
 }
