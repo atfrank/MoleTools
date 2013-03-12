@@ -2,7 +2,7 @@
 
 LIBDIR = ../lib
 BINDIR = ../bin
-TSTDIR = ../test
+TSTDIR = ../tests
 OBJDIR = obj
 
 CC = g++
