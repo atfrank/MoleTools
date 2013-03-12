@@ -19,7 +19,7 @@ void usage(){
   std::cerr << "Usage:   contact [-options] <-pdb PDBFILE> <TRAJfile(s)>" << std::endl;
   std::cerr << "Options: [-sel selection]" << std::endl;
 	std::cerr << "         [-add distance] [-scale value]" << std::endl;
-	std::cerr << "         [-contact file]" << std::endl;
+	std::cerr << "         [-ref file]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame]" << std::endl;
   exit(0);
 }
@@ -80,7 +80,7 @@ int main (int argc, char **argv){
 			currArg=argv[++i];
 			std::stringstream(currArg) >> scale;
 		}
-		else if (currArg == "-contact"){
+		else if (currArg == "-ref"){
 			currArg=argv[++i];
 			fcontact=currArg;
 		}
