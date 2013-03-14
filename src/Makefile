@@ -94,7 +94,7 @@ $(OBJDIR)/modTraj.o: modTraj.cpp \
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c modTraj.cpp
 
 $(OBJDIR)/modPDB.o: modPDB.cpp \
-		$(LIBDIR)/Molecule.hpp  
+		$(LIBDIR)/Molecule.hpp $(LIBDIR)/Vector.hpp 
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c modPDB.cpp
 
 $(OBJDIR)/Trajectory.o: $(LIBDIR)/Trajectory.cpp $(LIBDIR)/Trajectory.hpp \

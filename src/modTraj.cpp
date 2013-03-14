@@ -18,6 +18,8 @@ void usage(){
   std::cerr << "         [-fit refPDB] [-fitsel selection] [-recsel selection]" << std::endl;
   std::cerr << "         [-out TRAJname] [-outsel selection]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame]" << std::endl;
+	std::cerr << "         [-center]" << std::endl;
+	std::cerr << "         [-translate dx dy dz]" << std::endl;
 	std::cerr << "         [-verbose] [-show]" << std::endl;
   exit(0);
 }
@@ -41,6 +43,10 @@ int main (int argc, char **argv){
   std::string fitsel=":.";
   bool recenter=false;
   std::string recsel=":.";
+	bool translate=false;
+	double dx, dy, dz;
+	Vector dxyz;
+	bool center=false;
   std::string outsel="";
   std::ifstream trjin;
   std::ofstream trjout;
@@ -58,6 +64,9 @@ int main (int argc, char **argv){
   recmol=NULL;
 	ftrjin=NULL;
 	ftrjout=NULL;
+	dx=0;
+	dy=0;
+	dz=0;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -89,6 +98,19 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       recsel=currArg;
       recenter=true;
+    }
+		else if (currArg == "-center"){
+			center=true;
+		}	
+		else if (currArg == "-translate"){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> dx;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> dy;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> dz;
+      dxyz=Vector(dx, dy, dz);
+      translate=true;
     }
     else if (currArg == "-out"){
       currArg=argv[++i];
@@ -215,6 +237,12 @@ int main (int argc, char **argv){
 					  else if (recenter == true){
 							ftrjin->getMolecule()->recenter(recmol);
             }
+						else if (center == true){
+							ftrjin->getMolecule()->center();
+						}
+						else if (translate == true){
+							ftrjin->getMolecule()->translate(dxyz);
+						}
             else{
               //Do nothing
             }
