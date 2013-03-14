@@ -41,6 +41,9 @@ class Molecule {
     double lsqfit (Molecule *refmol, bool transform=true);
 		double rmsd (Molecule *refmol);
 		void recenter (Molecule *recmol);
+    void translate (const double &dx, const double &dy, const double &dz);
+    void translate (const Vector &u);
+    void center (bool selFlag=true);
 };
 
 #endif

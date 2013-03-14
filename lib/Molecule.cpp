@@ -210,27 +210,13 @@ Residue* Molecule::getResidue(int element){
 }
 
 void Molecule::selAll(){
-  unsigned int i;
-//  for (i=0; i< this->getChnVecSize(); i++){
-//    this->getChain(i)->setSel(true);
-//  }
-//  for (i=0; i< this->getResVecSize(); i++){
-//    this->getResidue(i)->setSel(true);
-//  }
-  for (i=0; i< this->getAtmVecSize(); i++){
+  for (unsigned int i=0; i< this->getNAtom(); i++){
     this->getAtom(i)->setSel(true);
   }
 }
 
 void Molecule::deselAll(){
-  unsigned int i;
-//  for (i=0; i< this->getChnVecSize(); i++){
-//    this->getChain(i)->setSel(false);
-//  }
-//  for (i=0; i< this->getResVecSize(); i++){
-//    this->getResidue(i)->setSel(false);
-//  }
-  for (i=0; i< this->getAtmVecSize(); i++){
+  for (unsigned int i=0; i< this->getNAtom(); i++){
     this->getAtom(i)->setSel(false);
   }
 }
@@ -380,4 +366,23 @@ double Molecule::rmsd (Molecule *refmol){
 
 void Molecule::recenter (Molecule *recmol){
 	std::cerr << "Warning: Image recentering has not been implemented yet" << std::endl;
+}
+
+void Molecule::translate (const double &dx, const double &dy, const double &dz){
+  for(unsigned int i=0; i< this->getNAtom(); i++){
+    this->getAtom(i)->setCoor(this->getAtom(i)->getCoor()+Vector(dx, dy, dz));
+  }
+}
+
+void Molecule::translate (const Vector &u){
+  for(unsigned int i=0; i< this->getNAtom(); i++){
+    this->getAtom(i)->setCoor(this->getAtom(i)->getCoor()+u);
+  }
+}
+
+void Molecule::center (bool selFlag){
+  Vector cog=Analyze::centerOfGeometry(this, selFlag);
+  for (unsigned int i=0; i< this->getNAtom(); i++){
+    this->getAtom(i)->setCoor(this->getAtom(i)->getCoor()-cog);
+  }
 }

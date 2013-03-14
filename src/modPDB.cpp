@@ -1,6 +1,7 @@
 //Sean M. Law
 
 #include "Molecule.hpp"
+#include "Vector.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -17,6 +18,8 @@ void usage (){
   std::cerr << "Options: [-model num]" << std::endl;
   std::cerr << "         [-sel selection]" << std::endl;
 	std::cerr << "         [-fit refPDB] [-fitsel selection]" << std::endl;
+  std::cerr << "         [-translate dx dy dz]" << std::endl;
+  std::cerr << "         [-center] [-censel selection]" << std::endl;
   std::cerr << std::endl << std::endl;
   exit(0);
 }
@@ -28,8 +31,13 @@ int main (int argc, char **argv){
   std::string pdb;
   std::string currArg;
   std::string sel;
-	std::string fitsel=":."; //Default = Fit All
+	std::string fitsel=""; //Default = Fit All
 	bool fit=false;
+  std::string censel="";
+  bool center=false;
+  double dx, dy, dz;
+  Vector dxyz;
+  bool translate=false;
 	std::string refpdb;
 	Molecule *mol;
 	Molecule *refmol;
@@ -37,6 +45,9 @@ int main (int argc, char **argv){
   pdb.clear();
 	mol=NULL;
 	refmol=NULL; //Stationary molecule
+  dx=0;
+  dy=0;
+  dz=0;
   
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -61,6 +72,24 @@ int main (int argc, char **argv){
 			refpdb=currArg;
 			fit=true;
 		}
+    else if (currArg == "-center"){
+      center=true;
+    }
+    else if (currArg == "-censel"){
+      currArg=argv[++i];
+      censel=currArg;
+      center=true;
+    }
+    else if (currArg == "-translate"){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> dx;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> dy;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> dz;
+      dxyz=Vector(dx, dy, dz);
+      translate=true;
+    }
     else{
       pdb=currArg;
     }
@@ -80,16 +109,41 @@ int main (int argc, char **argv){
 	if (fit == true){
 		if (refpdb.length() > 0){
 			refmol=Molecule::readPDB(refpdb, model);
-			refmol->select(fitsel);
-			mol->select(fitsel);
+      if (fitsel.length() > 0){
+			  refmol->select(fitsel);
+			  mol->select(fitsel);
+      }
+      else{
+        refmol->selAll();
+        mol->selAll();
+      }
 	  	mol->lsqfit(refmol);
 			mol->rmsd(refmol);
+      mol->selAll();
+      delete refmol;
 		}
 		else {
 			std::cerr << std::endl << "Error: Please provide a reference PDB file for fitting" << std::endl;
 			usage();
 		}
 	}
+  else if (center == true){
+    if (censel.length() > 0){ 
+      mol->select(censel);
+    }
+    else{
+      mol->selAll();
+    }
+    mol->center();
+    mol->selAll();
+  }
+  else if (translate == true){
+    mol->translate(dxyz);
+
+  }
+  else{
+    //Do nothing
+  }
 
   mol->writePDB();
 
