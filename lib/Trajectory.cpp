@@ -31,6 +31,27 @@ Trajectory::Trajectory (){
   fixinx.clear();
 }
 
+void Trajectory::setDefaultHeader(){
+	this->setFormat("CHARMM");
+  this->setHdr("CORD");
+  this->setNFrame(0);
+  this->setNPriv(1);
+  this->setNSavc(1);
+  this->setNStep(1);
+  this->setQVelocity(false);
+  this->setDOF(0);
+  this->setNFixed(0);
+  this->setTStep(1.0);
+  this->setQCrystal(false);
+  this->setQ4D(false);
+  this->setQCharge(false);
+  this->setQCheck(false);
+  this->setVersion(0);
+  title.clear();
+  this->setNAtom(0);
+  fixinx.clear();
+}
+
 bool Trajectory::findFormat(std::ifstream &trjin){
  	binbuf *buffer;
   int length;
@@ -454,6 +475,7 @@ void Trajectory::writeFrame(std::ofstream &trjout, Trajectory *ftrjin){
   float *zbuffer;
   unsigned int i;
   int length;
+	Molecule *mol;
 
   //crystal
   if (this->getQCrystal() > 0){
@@ -466,8 +488,7 @@ void Trajectory::writeFrame(std::ofstream &trjout, Trajectory *ftrjin){
     writeFortran(trjout, dbuffer, length);
   }
 
-  if (mol == NULL){
-
+  if (this->getMolecule() == NULL){
     float x[ftrjin->x.size()];
     float y[ftrjin->y.size()];
     float z[ftrjin->z.size()];
@@ -490,11 +511,12 @@ void Trajectory::writeFrame(std::ofstream &trjout, Trajectory *ftrjin){
   
   }
   else{
+		mol=this->getMolecule();
     float x[mol->getNAtom()];
     float y[mol->getNAtom()];
     float z[mol->getNAtom()];
 
-    for(i=0; i< mol->getAtmVecSize(); i++){
+    for(i=0; i< mol->getNAtom(); i++){
       x[i]=mol->getAtom(i)->getX();
       y[i]=mol->getAtom(i)->getY();
       z[i]=mol->getAtom(i)->getZ();
@@ -628,6 +650,10 @@ int Trajectory::getFixInx(int element){
 }
 
 //Set
+
+void Trajectory::setFormat(const std::string &formatin){
+	format=formatin;
+}
 
 void Trajectory::setHdrSize(const unsigned int &size){
   hdrSize=size;

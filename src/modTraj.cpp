@@ -20,7 +20,7 @@ void usage(){
   std::cerr << "         [-skip frames] [-start frame]" << std::endl;
 	std::cerr << "         [-center]" << std::endl;
 	std::cerr << "         [-translate dx dy dz]" << std::endl;
-	std::cerr << "         [-verbose] [-show]" << std::endl;
+	std::cerr << "         [-show]" << std::endl;
   exit(0);
 }
 

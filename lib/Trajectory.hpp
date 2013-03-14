@@ -83,7 +83,7 @@ class Trajectory {
 		void showHeader();
 		void cloneHeader(Trajectory *ftrjin);
 		void readFrame(std::ifstream &trjin, unsigned int frame);
-    void writeFrame(std::ofstream &trjout, Trajectory *ftrjin);
+    void writeFrame(std::ofstream &trjout, Trajectory *ftrjin=NULL);
 		std::string getHeader(){return hdr;};
     void setMolecule(Molecule *molin);
 
@@ -119,6 +119,8 @@ class Trajectory {
 		int getFixInx(int element);	
 
 		//Set
+		void setFormat(const std::string &formatin);
+		void setDefaultHeader();
     void setHdrSize(const unsigned int &size);
     void setFrameSize(const unsigned int &size);
     void setLastFrame(const unsigned int &frame);
