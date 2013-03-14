@@ -17,7 +17,7 @@ class Molecule {
   public:
 		~Molecule();
     static Molecule* readPDB (std::string ifile, int model=0);
-    void writePDB (bool selFlag=true);
+    std::string writePDB (bool selFlag=true, bool print=true);
     Molecule* clone(bool selFlag=true, bool keep=true);
 		Molecule* copy(bool selFlag=true);
     void addAtom(Atom* atmEntry);

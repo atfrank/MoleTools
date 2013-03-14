@@ -10,7 +10,7 @@ CFLAGS = -Wall -lm -I$(LIBDIR)
 DEBUG = -g
 OPTFLAGS = -O3
 
-all: $(BINDIR) $(OBJDIR) modPDB modTraj secondary contact pdb2Traj;
+all: $(BINDIR) $(OBJDIR) modPDB modTraj secondary contact pdb2Traj traj2PDB;
 
 $(BINDIR):
 	mkdir -p $(BINDIR)
@@ -64,6 +64,21 @@ $(BINDIR)/pdb2Traj: $(OBJDIR)/pdb2Traj.o $(OBJDIR)/Trajectory.o \
 		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
 		$(OBJDIR)/Misc.o $(OBJDIR)/Analyze.o
 
+traj2PDB: $(BINDIR)/traj2PDB;
+$(BINDIR)/traj2PDB: $(OBJDIR)/traj2PDB.o $(OBJDIR)/Trajectory.o \
+		$(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
+		$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o \
+		$(OBJDIR)/Vector.o $(OBJDIR)/Constants.o \
+		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
+		$(OBJDIR)/Misc.o $(OBJDIR)/Analyze.o
+	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ \
+		$(OBJDIR)/traj2PDB.o $(OBJDIR)/Trajectory.o \
+		$(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
+		$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o \
+		$(OBJDIR)/Vector.o $(OBJDIR)/Constants.o \
+		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
+		$(OBJDIR)/Misc.o $(OBJDIR)/Analyze.o
+
 modTraj: $(BINDIR)/modTraj;
 $(BINDIR)/modTraj: $(OBJDIR)/modTraj.o $(OBJDIR)/Trajectory.o \
 		$(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
@@ -97,6 +112,10 @@ $(BINDIR)/modPDB: $(OBJDIR)/modPDB.o $(OBJDIR)/Molecule.o \
 $(OBJDIR)/secondary.o: secondary.cpp \
 		$(LIBDIR)/Molecule.hpp $(LIBDIR)/SABA.hpp
 	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c secondary.cpp
+
+$(OBJDIR)/traj2PDB.o: traj2PDB.cpp \
+		$(LIBDIR)/Molecule.hpp $(LIBDIR)/Trajectory.hpp
+	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c traj2PDB.cpp
 
 $(OBJDIR)/pdb2Traj.o: pdb2Traj.cpp \
 		$(LIBDIR)/Molecule.hpp $(LIBDIR)/Trajectory.hpp
