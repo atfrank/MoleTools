@@ -215,6 +215,18 @@ void Atom::setICode(){
   icode=" ";
 }
 
+void Atom::setX (const double& xin){
+  coor.x()=xin;
+}
+
+void Atom::setY (const double& yin){
+  coor.y()=yin;
+}
+
+void Atom::setZ (const double& zin){
+  coor.z()=zin;
+}
+
 void Atom::setCoor (const Vector& coorin){
   coor=coorin;
 }

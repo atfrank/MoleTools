@@ -43,6 +43,7 @@ class Molecule {
 		void recenter (Molecule *recmol);
     void translate (const double &dx, const double &dy, const double &dz);
     void translate (const Vector &u);
+    void rotate (const double &r1c1, const double &r1c2, const double &r1c3, const double &r2c1, const double &r2c2, const double &r2c3, const double &r3c1, const double &r3c2, const double &r3c3);
     void center (bool selFlag=true);
 };
 

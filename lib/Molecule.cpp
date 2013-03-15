@@ -384,6 +384,25 @@ void Molecule::translate (const Vector &u){
   }
 }
 
+void Molecule::rotate (const double &r1c1, const double &r1c2, const double &r1c3, const double &r2c1, const double &r2c2, const double &r2c3, const double &r3c1, const double &r3c2, const double &r3c3){
+  Atom *atm;
+  Vector coor;
+  Vector cog;
+
+  cog=Analyze::centerOfGeometry(this, false);
+
+  for (unsigned int i=0; i< this->getNAtom(); i++){
+    atm=this->getAtom(i);
+    atm->setCoor(atm->getCoor()-cog); //Translate molecule to origin based on selected
+    //Apply rotation matrix to entire molecule
+    coor.x()=r1c1*atm->getX()+r1c2*atm->getY()+r1c3*atm->getZ();
+    coor.y()=r2c1*atm->getX()+r2c2*atm->getY()+r2c3*atm->getZ();
+    coor.z()=r3c1*atm->getX()+r3c2*atm->getY()+r3c3*atm->getZ();
+    coor+=cog; //Translate molecule back
+    atm->setCoor(coor);
+  }
+}
+
 void Molecule::center (bool selFlag){
   Vector cog=Analyze::centerOfGeometry(this, selFlag);
   for (unsigned int i=0; i< this->getNAtom(); i++){

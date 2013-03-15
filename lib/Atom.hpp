@@ -76,6 +76,9 @@ class Atom {
     void setResId(const int& residin);
     void setICode(const std::string& icodein);
     void setICode(); //Clear
+    void setX(const double &xin);
+    void setY(const double &yin);
+    void setZ(const double &zin);
     void setCoor(const Vector& coorin);
     void setOccu(const double& occuin);
     void setBFac(const double& bfacin);
