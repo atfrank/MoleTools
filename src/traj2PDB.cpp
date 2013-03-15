@@ -16,6 +16,7 @@ void usage(){
   std::cerr << "Usage:   traj2PDB [-options] <-pdb PDBfile> <TRAJfile(s)>" << std::endl;
   std::cerr << "Options: [-sel selection]" << std::endl;
   std::cerr << "         [-out tag] [-outsel selection]" << std::endl;
+  std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
 	std::cerr << "         [-show]" << std::endl;
   exit(0);
 }
@@ -40,11 +41,14 @@ int main (int argc, char **argv){
   bool show=false;
 	int skip=0;
 	int start=0;
+  int stop=-1;
+  unsigned int npdb;
 
   pdb.clear();
   mol=NULL;
   outmol=NULL;
 	ftrjin=NULL;
+  npdb=1;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -66,6 +70,19 @@ int main (int argc, char **argv){
     else if (currArg == "-outsel"){
       currArg=argv[++i];
       outsel=currArg;
+    }
+    else if (currArg == "-skip"){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> skip;
+    }
+    else if (currArg == "-start"){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> start;
+      start--;
+    }
+    else if (currArg == "-stop"){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> stop;
     }
     else if (currArg == "-show"){
       show=true;
@@ -112,10 +129,13 @@ int main (int argc, char **argv){
 
       if (ftrjin->findFormat(trjin) == true){
 				ftrjin->readHeader(trjin);
+        if (stop < 0){
+          stop=ftrjin->getNFrame();
+        }
         //Loop through desired frames
-				for (i=start; i< ftrjin->getNFrame(); i=i+1+skip){
+				for (i=start; i< ftrjin->getNFrame() && i< stop; i=i+1+skip){
 					ftrjin->readFrame(trjin, i);
-					fout << tag << "." << i+1 << ".pdb";
+					fout << tag << "." << npdb << ".pdb";
 					outname=fout.str();
 					pdbout.open(outname.c_str(), std::ios::out);
 					if (outsel.length() > 0){
@@ -126,6 +146,7 @@ int main (int argc, char **argv){
       		}
 					pdbout.close();
 					fout.str(std::string()); //Clear fout
+          npdb++;
 				}
 			}
 			else{

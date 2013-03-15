@@ -17,7 +17,7 @@ void usage(){
   std::cerr << "Options: [-pdb PDBfile] [-sel selection]" << std::endl;
   std::cerr << "         [-fit refPDB] [-fitsel selection] [-recsel selection]" << std::endl;
   std::cerr << "         [-out TRAJname] [-outsel selection]" << std::endl;
-  std::cerr << "         [-skip frames] [-start frame]" << std::endl;
+  std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
 	std::cerr << "         [-center]" << std::endl;
 	std::cerr << "         [-translate dx dy dz]" << std::endl;
 	std::cerr << "         [-show]" << std::endl;
@@ -55,6 +55,7 @@ int main (int argc, char **argv){
   bool show=false;
   int skip=0;
   int start=0;
+  int stop=-1;
 
   pdb.clear();
 	refpdb.clear();
@@ -130,6 +131,10 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       std::stringstream(currArg) >> start;
       start--;
+    }
+    else if (currArg == "-stop"){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> stop;
     }
     else if (currArg == "-show"){
       show=true;
@@ -215,6 +220,9 @@ int main (int argc, char **argv){
 
       if (ftrjin->findFormat(trjin) == true){
 				ftrjin->readHeader(trjin);
+        if (stop < 0){
+          stop=ftrjin->getNFrame();
+        }
 				if (j == 0 && out == true && trjout.is_open()){
 					ftrjout->cloneHeader(ftrjin);
           ftrjout->setNFrame(0);
@@ -227,7 +235,7 @@ int main (int argc, char **argv){
           ftrjout->writeHeader(trjout);
 				}
         //Loop through desired frames
-				for (i=start; i< ftrjin->getNFrame(); i=i+1+skip){
+				for (i=start; i< ftrjin->getNFrame() && i< stop; i=i+1+skip){
 					ftrjin->readFrame(trjin, i);
           if (pdb.length() >0){
 						//Transform molecule only if PDB is provided
