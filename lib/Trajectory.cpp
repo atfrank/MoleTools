@@ -104,6 +104,10 @@ BinBuf* Trajectory::readFortran(std::ifstream &trjin, BinBuf *buffer, int &lengt
 
 	return binOut;
 }
+template Trajectory::binbuf* Trajectory::readFortran<Trajectory::binbuf> (std::ifstream&, Trajectory::binbuf*, int&);
+template double* Trajectory::readFortran<double> (std::ifstream&, double*, int&);
+template float* Trajectory::readFortran<float> (std::ifstream&, float*, int&);
+template char* Trajectory::readFortran<char> (std::ifstream&, char*, int&);
 
 template <class BinBuf>
 void Trajectory::writeFortran(std::ofstream &trjout, BinBuf *buffer, int &length){
@@ -113,6 +117,10 @@ void Trajectory::writeFortran(std::ofstream &trjout, BinBuf *buffer, int &length
   trjout.write(reinterpret_cast<char*>(buffer), length);
   trjout.write(reinterpret_cast<char*>(&length), sizeof(int));
 }
+template void Trajectory::writeFortran<Trajectory::binbuf> (std::ofstream&, Trajectory::binbuf*, int&);
+template void Trajectory::writeFortran<double> (std::ofstream&, double*, int&);
+template void Trajectory::writeFortran<float> (std::ofstream&, float*, int&);
+template void Trajectory::writeFortran<char> (std::ofstream&, char*, int&);
 
 void Trajectory::clearHeader(){
 	hdr.clear();
