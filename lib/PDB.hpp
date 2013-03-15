@@ -9,7 +9,6 @@
 #include <iomanip>
 #include <map>
 #include <stdexcept>
-#include <iostream>
 
 class PDB {
   private:
@@ -17,7 +16,7 @@ class PDB {
 
   public:
     PDB();
-    static std::string writePDBFormat (Molecule* mol, bool selFlag=true);
+    static void writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag=true);
     static Molecule* readPDB (std::string ifile, int model=0);
     Atom* processAtomLine (std::string line, Atom* lastAtom);
 };

@@ -15,7 +15,8 @@ void usage(){
   std::cerr << std::endl << std::endl;
   std::cerr << "Usage:   modTraj [-options] <TRAJfile(s)>" << std::endl;
   std::cerr << "Options: [-pdb PDBfile] [-sel selection]" << std::endl;
-  std::cerr << "         [-fit refPDB] [-fitsel selection] [-recsel selection]" << std::endl;
+  std::cerr << "         [-fit refPDB] [-fitsel selection]" << std::endl;
+	std::cerr << "         [-recenter] [-recsel selection]" << std::endl;
   std::cerr << "         [-out TRAJname] [-outsel selection]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
 	std::cerr << "         [-center]" << std::endl;

@@ -6,8 +6,7 @@ PDB::PDB(){
   chnMap.clear();
 }
 
-std::string PDB::writePDBFormat (Molecule* mol, bool selFlag ){
-  std::ostringstream out;
+void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag){
   Chain *chn;
   Residue *res;
   Atom *atm;
@@ -87,7 +86,6 @@ std::string PDB::writePDBFormat (Molecule* mol, bool selFlag ){
     out << "END" << std::endl;
   }
 
-  return out.str();
 }
 
 Molecule* PDB::readPDB(std::string ifile, int model){

@@ -41,15 +41,15 @@ Molecule* Molecule::readPDB (std::string ifile, int model){
 
 std::string Molecule::writePDB(bool selFlag, bool print){
 
-  std::string out;
+  std::ostringstream out;
 
-  out=PDB::writePDBFormat(this, selFlag);
+  PDB::writePDBFormat(this, out, selFlag);
 
 	if (print == true){
-  	std::cout << out;
+  	std::cout << out.str();
 	}
 	
-	return out;
+	return out.str();
 }
 
 void Molecule::addAtom(Atom* atmEntry) {
