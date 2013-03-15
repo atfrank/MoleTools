@@ -121,11 +121,7 @@ int main (int argc, char **argv){
 		if (trjin.is_open()){
 			ftrjin=new Trajectory;
       ftrjin->setShow(show);
-			
-
-      if (pdb.length() > 0){
-        ftrjin->setMolecule(mol);
-      }
+      ftrjin->setMolecule(mol);
 
       if (ftrjin->findFormat(trjin) == true){
 				ftrjin->readHeader(trjin);
