@@ -19,6 +19,7 @@ void usage (){
   std::cerr << "         [-sel selection]" << std::endl;
 	std::cerr << "         [-fit refPDB] [-fitsel selection]" << std::endl;
   std::cerr << "         [-translate dx dy dz]" << std::endl;
+	std::cerr << "         [-rotate r1c1 r1c2 r1c3 r2c1 r2c2 r2c3 r3c1 r3c2 r3c3]" << std::endl;
   std::cerr << "         [-center] [-censel selection]" << std::endl;
   std::cerr << std::endl << std::endl;
   exit(0);
@@ -38,6 +39,8 @@ int main (int argc, char **argv){
   double dx, dy, dz;
   Vector dxyz;
   bool translate=false;
+	double r1c1, r1c2, r1c3, r2c1, r2c2, r2c3, r3c1, r3c2, r3c3;
+	bool rotate=false;
 	std::string refpdb;
 	Molecule *mol;
 	Molecule *refmol;
@@ -45,9 +48,18 @@ int main (int argc, char **argv){
   pdb.clear();
 	mol=NULL;
 	refmol=NULL; //Stationary molecule
-  dx=0;
-  dy=0;
-  dz=0;
+  dx=0.0;
+  dy=0.0;
+  dz=0.0;
+	r1c1=0.0;
+	r1c2=0.0;
+	r1c3=0.0;
+ 	r2c1=0.0;
+	r2c2=0.0;
+	r2c3=0.0;
+	r3c1=0.0;
+	r3c2=0.0;
+	r3c3=0.0;
   
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -90,6 +102,27 @@ int main (int argc, char **argv){
       dxyz=Vector(dx, dy, dz);
       translate=true;
     }
+		else if (currArg == "-rotate"){
+			currArg=argv[++i];
+      std::stringstream(currArg) >> r1c1;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r1c2;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r1c3;
+			currArg=argv[++i];
+      std::stringstream(currArg) >> r2c1;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r2c2;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r2c3;
+			currArg=argv[++i];
+      std::stringstream(currArg) >> r3c1;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r3c2;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r3c3;
+      rotate=true;
+		}
     else{
       pdb=currArg;
     }
@@ -139,8 +172,10 @@ int main (int argc, char **argv){
   }
   else if (translate == true){
     mol->translate(dxyz);
-
   }
+	else if (rotate == true){
+		mol->rotate(r1c1, r1c2, r1c3, r2c1, r2c2, r2c3, r3c1, r3c2, r3c3);
+	}
   else{
     //Do nothing
   }

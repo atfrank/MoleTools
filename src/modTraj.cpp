@@ -21,6 +21,7 @@ void usage(){
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
 	std::cerr << "         [-center]" << std::endl;
 	std::cerr << "         [-translate dx dy dz]" << std::endl;
+	std::cerr << "         [-rotate r1c1 r1c2 r1c3 r2c1 r2c2 r2c3 r3c1 r3c2 r3c3]" << std::endl;
 	std::cerr << "         [-show]" << std::endl;
   exit(0);
 }
@@ -47,6 +48,8 @@ int main (int argc, char **argv){
 	bool translate=false;
 	double dx, dy, dz;
 	Vector dxyz;
+	double r1c1, r1c2, r1c3, r2c1, r2c2, r2c3, r3c1, r3c2, r3c3;
+  bool rotate=false;
 	bool center=false;
   std::string outsel="";
   std::ifstream trjin;
@@ -69,6 +72,15 @@ int main (int argc, char **argv){
 	dx=0;
 	dy=0;
 	dz=0;
+  r1c1=0.0;
+  r1c2=0.0;
+  r1c3=0.0;
+  r2c1=0.0;
+  r2c2=0.0;
+  r2c3=0.0;
+  r3c1=0.0;
+  r3c2=0.0;
+  r3c3=0.0;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -113,6 +125,27 @@ int main (int argc, char **argv){
       std::stringstream(currArg) >> dz;
       dxyz=Vector(dx, dy, dz);
       translate=true;
+    }
+    else if (currArg == "-rotate"){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r1c1;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r1c2;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r1c3;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r2c1;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r2c2;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r2c3;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r3c1;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r3c2;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> r3c3;
+      rotate=true;
     }
     else if (currArg == "-out"){
       currArg=argv[++i];
@@ -251,6 +284,9 @@ int main (int argc, char **argv){
 						}
 						else if (translate == true){
 							ftrjin->getMolecule()->translate(dxyz);
+						}
+						else if (rotate == true){
+							ftrjin->getMolecule()->rotate(r1c1, r1c2, r1c3, r2c1, r2c2, r2c3, r3c1, r3c2, r3c3);
 						}
             else{
               //Do nothing
