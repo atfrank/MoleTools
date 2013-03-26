@@ -134,6 +134,7 @@ int main (int argc, char **argv){
 					fout << tag << "." << npdb << ".pdb";
 					outname=fout.str();
 					pdbout.open(outname.c_str(), std::ios::out);
+          std::cerr << "Writing \"" << outname << "\"..." << std::endl;
 					if (outsel.length() > 0){
         		pdbout << outmol->writePDB(true, false);
       		}
