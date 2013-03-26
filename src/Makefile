@@ -7,7 +7,7 @@ OBJDIR = obj
 
 CC = g++
 CFLAGS = -Wall -lm -I$(LIBDIR) 
-DEBUG = -g
+#DEBUG = -g
 OPTFLAGS = -O3
 
 all: $(BINDIR) $(OBJDIR) modPDB modTraj secondary contact pdb2Traj traj2PDB;
