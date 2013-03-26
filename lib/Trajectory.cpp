@@ -8,6 +8,7 @@ Trajectory::Trajectory (){
   swab=false;
   mol=NULL;
   show=false;
+	scan=false;
   iframe=0;
   hdrSize=0;
   frameSize=0;
@@ -382,7 +383,7 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 
 
   this->iframe++;
-  if (this->getShow() == true){
+  if (this->getShow() == true || this->getScan() == true){
     std::cout << std::fixed;
     std::cout << "Frame : " << this->iframe << " ( " << frame+1 << " / " << getNFrame() << " ) " << std::endl; 
   }
@@ -395,26 +396,28 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 	if (qcrystal > 0){
 		dbuffer=readFortran(trjin, dbuffer, length);
 
-    pb.resize(6);
-    for (j=0; j< pb.size(); j++){
-      pb.at(j)=dbuffer[j];
-    }
+		if (this->getScan() == false){ //
+    	pb.resize(6);
+    	for (j=0; j< pb.size(); j++){
+      	pb.at(j)=dbuffer[j];
+    	}
 
-		//Box dimensions
-		pbx=sqrt(pb.at(0)*pb.at(0)+pb.at(1)*pb.at(1)+pb.at(3)*pb.at(3));
-    pby=sqrt(pb.at(1)*pb.at(1)+pb.at(2)*pb.at(2)+pb.at(4)*pb.at(4));
-    pbz=sqrt(pb.at(3)*pb.at(3)+pb.at(4)*pb.at(4)+pb.at(5)*pb.at(5));
+			//Box dimensions
+			pbx=sqrt(pb.at(0)*pb.at(0)+pb.at(1)*pb.at(1)+pb.at(3)*pb.at(3));
+    	pby=sqrt(pb.at(1)*pb.at(1)+pb.at(2)*pb.at(2)+pb.at(4)*pb.at(4));
+    	pbz=sqrt(pb.at(3)*pb.at(3)+pb.at(4)*pb.at(4)+pb.at(5)*pb.at(5));
 
-		//Box angles
-	  pbalpha=acos(pb.at(4)*(pb.at(2)+pb.at(5))+pb.at(1)*pb.at(3)/(pby*pbz))*180.0/PI;
-    pbbeta=acos(pb.at(3)*(pb.at(0)+pb.at(5))+pb.at(1)*pb.at(4)/(pbz*pbx))*180.0/PI;
-    pbgamma=acos(pb.at(1)*(pb.at(0)+pb.at(2))+pb.at(3)*pb.at(4)/(pbx*pby))*180.0/PI;
+			//Box angles
+	  	pbalpha=acos(pb.at(4)*(pb.at(2)+pb.at(5))+pb.at(1)*pb.at(3)/(pby*pbz))*180.0/PI;
+    	pbbeta=acos(pb.at(3)*(pb.at(0)+pb.at(5))+pb.at(1)*pb.at(4)/(pbz*pbx))*180.0/PI;
+    	pbgamma=acos(pb.at(1)*(pb.at(0)+pb.at(2))+pb.at(3)*pb.at(4)/(pbx*pby))*180.0/PI;
 
-    if (this->getShow() == true){ 
-		  std::cout << "Periodic Box :  ";
-		  std::cout << pbx << " x " << pby << " x " << pbz << " ";
-		  std::cout << "( " << pbalpha << " x " << pbbeta << " x " << pbgamma << " )" << std::endl;
-    }
+    	if (this->getShow() == true){ 
+		  	std::cout << "Periodic Box :  ";
+		  	std::cout << pbx << " x " << pby << " x " << pbz << " ";
+		  	std::cout << "( " << pbalpha << " x " << pbbeta << " x " << pbgamma << " )" << std::endl;
+    	}
+		}
 
 		delete dbuffer;
 	}
@@ -424,45 +427,47 @@ void Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
 	ybuffer=readFortran(trjin, ybuffer, length);
 	zbuffer=readFortran(trjin, zbuffer, length);
 
-  if (x.size() == 0 || y.size() == 0 || z.size() == 0){
-    x.resize(natom);
-    y.resize(natom);
-    z.resize(natom);
-  }
-  if (natom != static_cast<int>(x.size()) || 
+	if (this->getScan() == false){
+  	if (x.size() == 0 || y.size() == 0 || z.size() == 0){
+    	x.resize(natom);
+    	y.resize(natom);
+    	z.resize(natom);
+  	}
+  	if (natom != static_cast<int>(x.size()) || 
       natom != static_cast<int>(y.size()) || 
       natom != static_cast<int>(z.size())){
-    std::cerr << "Error: The number of atoms \"natom\" does not match the number of atoms in each frame" << std::endl;
-  }
+    		std::cerr << "Error: The number of atoms \"natom\" does not match the number of atoms in each frame" << std::endl;
+  	}
 
-	if (nfixed > 0){
-    for (i=0; i< nfixed; i++){
-      //Do something
-    }
-		std::cerr << "Warning: Fixed atoms has yet to be implemented"<< std::endl;
-	}
-	else{
-    if (mol != NULL && length/sizeof(float) != mol->getNAtom()){
-			std::cerr << "Error: The natom mismatch!" << std::endl;
-    }
-	  for (i=0; i< natom; i++){
-      if (mol == NULL){
-			  x.at(i)=xbuffer[i];
-		    y.at(i)=ybuffer[i];
-		    z.at(i)=zbuffer[i];
-      }
-      else{
-        mol->getAtom(i)->setCoor(Vector(static_cast<double>(xbuffer[i]), static_cast<double>(ybuffer[i]), static_cast<double>(zbuffer[i])));
-      }
+		if (nfixed > 0){
+    	for (i=0; i< nfixed; i++){
+      	//Do something
+    	}
+			std::cerr << "Warning: Fixed atoms has yet to be implemented"<< std::endl;
+		}
+		else{
+    	if (mol != NULL && length/sizeof(float) != mol->getNAtom()){
+				std::cerr << "Error: The natom mismatch!" << std::endl;
+    	}
+	  	for (i=0; i< natom; i++){
+      	if (mol == NULL){
+			  	x.at(i)=xbuffer[i];
+		    	y.at(i)=ybuffer[i];
+		    	z.at(i)=zbuffer[i];
+      	}
+      	else{
+        	mol->getAtom(i)->setCoor(Vector(static_cast<double>(xbuffer[i]), static_cast<double>(ybuffer[i]), static_cast<double>(zbuffer[i])));
+      	}
 	
-      if (this->getShow() == true){
-        std::cout << std::fixed;
-        std::cout << "coor" << std::setw(10) << std::right << i+1;
-        std::cout << std::setw(14) << xbuffer[i] << " ";
-        std::cout << std::setw(14) << ybuffer[i] << " ";
-        std::cout << std::setw(14) << zbuffer[i] << std::endl;
-      }	
-    }
+      	if (this->getShow() == true){
+        	std::cout << std::fixed;
+        	std::cout << "coor" << std::setw(10) << std::right << i+1;
+        	std::cout << std::setw(14) << xbuffer[i] << " ";
+        	std::cout << std::setw(14) << ybuffer[i] << " ";
+        	std::cout << std::setw(14) << zbuffer[i] << std::endl;
+      	}	
+    	}
+		}
 	}
 
 	if (xbuffer != NULL){
@@ -565,6 +570,10 @@ std::string Trajectory::getFormat(){
 
 bool Trajectory::getShow(){
   return show;
+}
+
+bool Trajectory::getScan(){
+	return scan;
 }
 
 Molecule* Trajectory::getMolecule(){
@@ -677,6 +686,10 @@ void Trajectory::setLastFrame(const unsigned int &frame){
 
 void Trajectory::setShow(const bool &val){
   show=val;
+}
+
+void Trajectory::setScan(const bool &val){
+  scan=val;
 }
 
 void Trajectory::setHdr(const std::string &hdrin){

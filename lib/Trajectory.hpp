@@ -22,6 +22,7 @@ class Trajectory {
     bool swab; //Swap bytes
     Molecule *mol;
     bool show;
+		bool scan;
     unsigned int iframe;
     unsigned int hdrSize;
     unsigned int frameSize;
@@ -83,6 +84,7 @@ class Trajectory {
 		void showHeader();
 		void cloneHeader(Trajectory *ftrjin);
 		void readFrame(std::ifstream &trjin, unsigned int frame);
+		void scanFrame(std::ifstream &trjin, unsigned int frame);
     void writeFrame(std::ofstream &trjout, Trajectory *ftrjin=NULL);
 		std::string getHeader(){return hdr;};
     void setMolecule(Molecule *molin);
@@ -93,6 +95,7 @@ class Trajectory {
     unsigned int getFrameSize();
     unsigned int getLastFrame();
     bool getShow();
+		bool getScan();
 		Molecule* getMolecule();
 		std::string getHdr();
     int getNFrame();
@@ -125,6 +128,7 @@ class Trajectory {
     void setFrameSize(const unsigned int &size);
     void setLastFrame(const unsigned int &frame);
     void setShow(const bool &val);
+		void setScan(const bool &val);
     void setHdr(const std::string &hdrin);
     void setNFrame(const int &nframein);
     void setNPriv(const int &nprivin);

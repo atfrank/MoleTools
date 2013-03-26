@@ -22,7 +22,7 @@ void usage(){
 	std::cerr << "         [-center]" << std::endl;
 	std::cerr << "         [-translate dx dy dz]" << std::endl;
 	std::cerr << "         [-rotate r1c1 r1c2 r1c3 r2c1 r2c2 r2c3 r3c1 r3c2 r3c3]" << std::endl;
-	std::cerr << "         [-show]" << std::endl;
+	std::cerr << "         [-show | -scan]" << std::endl;
   exit(0);
 }
 
@@ -57,6 +57,7 @@ int main (int argc, char **argv){
 	Trajectory *ftrjin;
 	Trajectory *ftrjout;
   bool show=false;
+	bool scan=false;
   int skip=0;
   int start=0;
   int stop=-1;
@@ -172,7 +173,12 @@ int main (int argc, char **argv){
     }
     else if (currArg == "-show"){
       show=true;
+			scan=false;
     }
+		else if (currArg == "-scan"){
+			scan=true;
+			show=false;
+		}
     else{
       trajs.push_back(currArg);
     }
@@ -244,6 +250,7 @@ int main (int argc, char **argv){
 		if (trjin.is_open()){
 			ftrjin=new Trajectory;
       ftrjin->setShow(show);
+			ftrjin->setScan(scan);
 
       if (pdb.length() > 0){
         ftrjin->setMolecule(mol);
