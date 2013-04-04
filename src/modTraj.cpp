@@ -61,6 +61,7 @@ int main (int argc, char **argv){
   int skip=0;
   int start=0;
   int stop=-1;
+  bool startFlag=false; //Tracks if user set start value
 
   pdb.clear();
 	refpdb.clear();
@@ -166,6 +167,7 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       std::stringstream(currArg) >> start;
       start--;
+      startFlag=true;
     }
     else if (currArg == "-stop"){
       currArg=argv[++i];
@@ -266,12 +268,20 @@ int main (int argc, char **argv){
         }
 				if (j == 0 && out == true && trjout.is_open()){
 					ftrjout->cloneHeader(ftrjin);
-          ftrjout->setNFrame(0);
-          if (start != 0){
+          if (start > 0){
             ftrjout->setNPriv(ftrjout->getNPriv()+start*ftrjout->getNSavc());
           }
-          if (skip != 0){
+          if (skip > 0){
+            if (startFlag == false){
+              start=skip;
+              ftrjout->setNPriv(ftrjout->getNPriv()+start*ftrjout->getNSavc());
+            }
             ftrjout->setNSavc(ftrjout->getNSavc()*(skip+1));
+          }
+          //Figure Nframe
+          ftrjout->setNFrame(0);
+          for (i=start; i< ftrjin->getNFrame() && i< stop; i=i+1+skip){
+            ftrjout->setNFrame(ftrjout->getNFrame()+1);
           }
           ftrjout->writeHeader(trjout);
 				}
@@ -300,7 +310,6 @@ int main (int argc, char **argv){
             }
 					}
           if (out == true && trjout.is_open()){
-            ftrjout->setNFrame(ftrjout->getNFrame()+1);
             ftrjout->writeFrame(trjout, ftrjin);
           }
 				}

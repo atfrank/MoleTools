@@ -307,7 +307,12 @@ void Trajectory::showHeader(){
   }
 	std::cout << std::fixed;
   std::cout << std::setw(25) << std::left << "Atoms" << ": " << natom << std::endl;
-	std::cout << std::setw(25) << std::left << "Frames" << ": " << nframe << std::endl;
+  if (nframe == 0){
+    std::cout << std::setw(25) << std::left << "Frames" << ": " << nframe << " ***Warning: Zero frames detected!***" << std::endl;
+  }
+  else{
+	  std::cout << std::setw(25) << std::left << "Frames" << ": " << nframe << std::endl;
+  }
   std::cout << std::setw(25) << std::left << "Start Frame" << ": " << npriv << std::endl;
   std::cout << std::setw(25) << std::left << "Save Frequency" << ": " << nsavc << std::endl;
   std::cout << std::setw(25) << std::left << "Dynamics Steps" << ": " << nstep << std::endl;
