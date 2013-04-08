@@ -19,6 +19,8 @@ void usage(){
   std::cerr << "Usage:   analyzeTraj [-options] <-pdb PDBFILE> <TRAJfile(s)>" << std::endl;
   std::cerr << "Options: [-sel selection]" << std::endl;
   std::cerr << "         [-dsel selection selection]" << std::endl;
+	std::cerr << "         [-tsel selection selection selection]" << std::endl;
+	std::cerr << "         [-qsel selection selection selection selection]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame]" << std::endl;
   exit(0);
 }
@@ -33,7 +35,6 @@ int main (int argc, char **argv){
   Molecule *mol2;
   Molecule *mol3;
   Molecule *mol4;
-	Molecule *cmol;
   std::string pdb;
   std::string sel1=""; //To match NATOM in trajectory
   std::string sel2="";
@@ -50,6 +51,8 @@ int main (int argc, char **argv){
 	std::vector<Molecule *> p2;
 	std::string line;
 	std::vector<std::string> s;
+	std::string analysis="";
+	Vector xyz;
 
   pdb.clear();
 	fcontact.clear();
@@ -58,7 +61,6 @@ int main (int argc, char **argv){
   mol2=NULL;
   mol3=NULL;
   mol4=NULL;
-	cmol=NULL;
 	ftrjin=NULL;
 
   for (i=1; i<argc; i++){
@@ -140,6 +142,34 @@ int main (int argc, char **argv){
         //Loop through desired frames
 				for (i=start; i< ftrjin->getNFrame(); i=i+1+skip){
 					ftrjin->readFrame(trjin, i);
+					std::cout << i*ftrjin->getTStepPS();
+					if (analysis == "SOME ANALYSIS"){
+
+					}
+					else{
+						switch (nsel){
+							case 1:
+								xyz=Analyze::centerOfGeometry(mol1);
+								std::cout << std::fixed;
+								std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.x();
+								std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.y();
+								std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.z();
+								break;
+							case 2:
+								std::cout << std::fixed;
+								std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::distance(Analyze::centerOfGeometry(mol1), Analyze::centerOfGeometry(mol2));
+								break;
+							case 3:
+								std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::angle(Analyze::centerOfGeometry(mol1), Analyze::centerOfGeometry(mol2), Analyze::centerOfGeometry(mol3));
+								break;
+							case 4:
+								std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::dihedral(Analyze::centerOfGeometry(mol1), Analyze::centerOfGeometry(mol2), Analyze::centerOfGeometry(mol3), Analyze::centerOfGeometry(mol4));
+								break;
+							default:
+								break;
+						}
+					}
+					std::cout << std::endl;
 				}
 			}
 			else{

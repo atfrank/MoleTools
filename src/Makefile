@@ -41,7 +41,7 @@ $(BINDIR)/analyzeTraj: $(OBJDIR)/analyzeTraj.o $(OBJDIR)/Trajectory.o \
 		$(OBJDIR)/Vector.o $(OBJDIR)/Constants.o \
 		$(OBJDIR)/PDB.o $(OBJDIR)/Select.o \
 		$(OBJDIR)/Misc.o $(OBJDIR)/Analyze.o
-	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ \
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ \
 		$(OBJDIR)/analyzeTraj.o $(OBJDIR)/Trajectory.o \
 		$(OBJDIR)/Molecule.o $(OBJDIR)/Chain.o \
 		$(OBJDIR)/Residue.o $(OBJDIR)/Atom.o \
@@ -141,10 +141,10 @@ $(OBJDIR)/contact.o: contact.cpp \
 		$(LIBDIR)/Analyze.hpp
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c contact.cpp
 
-$(OBJDIR)/analyzeTraj.o: contact.cpp \
+$(OBJDIR)/analyzeTraj.o: analyzeTraj.cpp \
 		$(LIBDIR)/Molecule.hpp $(LIBDIR)/Trajectory.hpp $(LIBDIR)/Misc.hpp \
 		$(LIBDIR)/Analyze.hpp
-	$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c analyzeTraj.cpp
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) -o $@ -c analyzeTraj.cpp
 
 $(OBJDIR)/modTraj.o: modTraj.cpp \
 		$(LIBDIR)/Molecule.hpp $(LIBDIR)/Trajectory.hpp
