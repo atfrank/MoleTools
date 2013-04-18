@@ -2,11 +2,14 @@ include ../makefile.defs
 
 OBJS = libtools.so
 
-all:	libtools.so contact modPDB modTraj pdb2Traj secondary traj2PDB
+all:	$(BINDIR) libtools.so contact modPDB modTraj pdb2Traj secondary traj2PDB
 
 clean:
 	rm -rf *.o
 	rm -rf *stackdump
+
+$(BINDIR):
+	mkdir -p $(BINDIR)
 
 libtools.so:
 	$(MAKE) -C ../lib libtools.so
