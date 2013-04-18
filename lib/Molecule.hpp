@@ -3,9 +3,9 @@
 #define MOLECULE_H
 
 #include "Chain.hpp"
+#include "Eigen/Dense"
 
 #include <vector>
-#include <Eigen/Dense>
 
 class Molecule {
   private:

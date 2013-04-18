@@ -1,0 +1,8 @@
+MAKE = make
+CXX = g++
+#DEBUG = -g
+EIGENLIBS = ../
+LIBFLAGS = -fpic -shared -I$(EIGENLIBS) 
+INCFLAGS = -I../lib -I$(EIGENLIBS)
+LINKFLAGS = -L../lib -ltools
+BINDIR = ../bin
