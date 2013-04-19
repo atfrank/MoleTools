@@ -1,5 +1,7 @@
 MAKE = make
 CXX = g++
+CXXFLAGS = -Wall -lm
+OPTFLAGS = -O3
 #DEBUG = -g
 EIGENLIBS = ../
 LIBFLAGS = -fpic -shared -I$(EIGENLIBS) 
