@@ -81,7 +81,9 @@ int main (int argc, char **argv){
     else if (currArg == "-skip"){
       currArg=argv[++i];
       std::stringstream(currArg) >> skip;
-      skip--;
+      if (skip > 0){
+        skip--;
+      }
     } 
     else{
       ifile=currArg;
