@@ -4,7 +4,7 @@ include ../makefile.defs
 
 OBJS = libtools.so
 
-all:	$(BINDIR) libtools.so contact modPDB modTraj pdb2Traj secondary traj2PDB correl analyzeTraj
+all:	$(BINDIR) libtools.so unitTest contact modPDB modTraj pdb2Traj secondary traj2PDB correl analyzeTraj
 
 clean:
 	rm -rf *.o
@@ -16,6 +16,9 @@ $(BINDIR):
 
 libtools.so:
 	$(MAKE) -C ../lib libtools.so
+
+unitTest: unitTest.o $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
 
 contact: contact.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
