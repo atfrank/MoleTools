@@ -64,7 +64,10 @@ int main (int argc, char **argv){
       continue;
     }
     s=Misc::split(line, " \t", false); //Split on one or more consecutive whitespace
-    std::cerr << s.size() << std::endl;
+    for (j=0; j< s.size(); j++){
+      std::cerr << s.at(j) << ":";
+    }
+    std::cerr << std::endl;
   }
 
   if (ifile != "-"){
