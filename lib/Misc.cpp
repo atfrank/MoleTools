@@ -33,7 +33,7 @@ std::vector<std::string> Misc::split (const std::string &str, const std::string 
     p1=str.find_first_of(delim, p0);
   }
   //After last delimiter
-  if (p1-p0 > 0 && p1 != std::string::npos){
+  if (p1-p0 > 0){ //Do NOT add "&& p1 != std::string::npos"
     tokens.push_back(str.substr(p0,p1-p0));
   }
   else{
