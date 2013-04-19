@@ -122,7 +122,6 @@ int main (int argc, char **argv){
 		while (coninp->good() && !(coninp->eof())){
 			getline(*coninp, line);
 			s=Misc::split(line, " \t", false);
-      std::cout << s.size() << std::endl;
 			if (s.size() == 3){
 				mol->select(s.at(0));
 				cmol=mol->copy();
