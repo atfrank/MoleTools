@@ -12,6 +12,10 @@
 #define MAXLINESIZE 4096
 
 void usage(){
+  std::cerr << std::endl << std::endl;
+  std::cerr << "Usage:   correl [-options] <file>" << std::endl;
+  std::cerr << "Options: [-x column] [-y column]" << std::endl;
+  std::cerr << "         [-skip lines]" << std::endl; 
   exit(0);
 }
 
@@ -22,6 +26,7 @@ int main (int argc, char **argv){
   unsigned int j;
   int xcol;
   int ycol;
+  int skip;
   std::string ifile;
   std::string currArg;
   std::ifstream inpFile;
@@ -30,6 +35,7 @@ int main (int argc, char **argv){
   std::vector<std::string> s;
 
   int n;
+  int nline;
   std::vector<double> xvals;
   std::vector<double> yvals;
   double xval;
@@ -46,7 +52,9 @@ int main (int argc, char **argv){
   ifile.clear();
   xcol=0;
   ycol=1;
-  n=0;
+  skip=0;
+  n=0; //Counts the number datapoints used for correlation analysis
+  nline=0; //Number of lines, used with skip
   xvals.clear();
   yvals.clear();
   xavg=0;
@@ -70,6 +78,11 @@ int main (int argc, char **argv){
       std::stringstream(currArg) >> ycol;
       ycol--;
     }
+    else if (currArg == "-skip"){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> skip;
+      skip--;
+    } 
     else{
       ifile=currArg;
     }
@@ -93,14 +106,21 @@ int main (int argc, char **argv){
     if (line.size() == 0){
       continue;
     }
-    s=Misc::split(line, " \t", false); //Split on one or more consecutive whitespace
-    std::stringstream(s.at(xcol)) >> xval;
-    std::stringstream(s.at(ycol)) >> yval;
-    xvals.push_back(xval);
-    yvals.push_back(yval);
-    xavg=xavg+xval;
-    yavg=yavg+yval;
-    n++;
+    if (nline != skip){
+      nline++;
+      continue;
+    }
+    else{
+      s=Misc::split(line, " \t", false); //Split on one or more consecutive whitespace
+      std::stringstream(s.at(xcol)) >> xval;
+      std::stringstream(s.at(ycol)) >> yval;
+      xvals.push_back(xval);
+      yvals.push_back(yval);
+      xavg=xavg+xval;
+      yavg=yavg+yval;
+      n++;
+      nline=0;
+    }
   }
 
   xavg=xavg/n;

@@ -4,7 +4,7 @@ include ../makefile.defs
 
 OBJS = libtools.so
 
-all:	$(BINDIR) libtools.so contact modPDB modTraj pdb2Traj secondary traj2PDB correl
+all:	$(BINDIR) libtools.so contact modPDB modTraj pdb2Traj secondary traj2PDB correl analyzeTraj
 
 clean:
 	rm -rf *.o
@@ -36,6 +36,9 @@ traj2PDB: traj2PDB.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
 
 correl: correl.o $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
+
+analyzeTraj: analyzeTraj.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
 
 %.o:	%.cpp

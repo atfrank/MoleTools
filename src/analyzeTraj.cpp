@@ -47,11 +47,13 @@ int main (int argc, char **argv){
 	Trajectory *ftrjin;
   int skip=0;
   int start=0;
-	std::vector<Molecule *> p1;
-	std::vector<Molecule *> p2;
+	std::vector<Molecule *> quick1;
+	std::vector<Molecule *> quick2;
+  std::vector<Molecule *> quick3;
+  std::vector<Molecule *> quick4;
 	std::string line;
 	std::vector<std::string> s;
-	std::string analysis="";
+	std::string analysis="QUICK";
 	Vector xyz;
 
   pdb.clear();
@@ -146,7 +148,7 @@ int main (int argc, char **argv){
 					if (analysis == "SOME ANALYSIS"){
 
 					}
-					else{
+          else if (analysis == "QUICK"){
 						switch (nsel){
 							case 1:
 								xyz=Analyze::centerOfGeometry(mol1);
@@ -169,6 +171,9 @@ int main (int argc, char **argv){
 								break;
 						}
 					}
+          else{
+            //No Op
+          }
 					std::cout << std::endl;
 				}
 			}
@@ -184,11 +189,11 @@ int main (int argc, char **argv){
 		trjin.close();
 	}
 
-	for (j=0; j< p1.size(); j++){
-		delete p1.at(j);
+	for (j=0; j< quick1.size(); j++){
+		delete quick1.at(j);
 	}
-	for (j=0; j< p2.size(); j++){
-		delete p2.at(j);
+	for (j=0; j< quick2.size(); j++){
+		delete quick2.at(j);
   }
 	//delete mol;
 
