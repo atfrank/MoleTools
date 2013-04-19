@@ -125,6 +125,10 @@ int main (int argc, char **argv){
     }
   }
 
+  if (ifile != "-"){
+    inpFile.close();
+  }
+
   xavg=xavg/n;
   yavg=yavg/n;
   
