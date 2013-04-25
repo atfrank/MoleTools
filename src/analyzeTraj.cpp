@@ -17,10 +17,13 @@
 void usage(){
   std::cerr << std::endl << std::endl;
   std::cerr << "Usage:   analyzeTraj [-options] <-pdb PDBFILE> <TRAJfile(s)>" << std::endl;
-  std::cerr << "Options: [-sel selection]" << std::endl;
-  std::cerr << "         [-dsel selection selection]" << std::endl;
-	std::cerr << "         [-tsel selection selection selection]" << std::endl;
+  std::cerr << "Options: [-sel selection] [-cog selection]" << std::endl;
+  std::cerr << "         [-dsel selection selection ] [-dist selection selection]" << std::endl;
+	std::cerr << "         [-tsel selection selection selection] [-angle selection selection selection]" << std::endl;
 	std::cerr << "         [-qsel selection selection selection selection]" << std::endl;
+	std::cerr << "         [-dihedral selection selection selection selection]" << std::endl;
+	std::cerr << "         [-fit refPDB] [-fitsel selection]" << std::endl;
+	std::cerr << "         [-rmsd selection]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame]" << std::endl;
   exit(0);
 }
@@ -31,39 +34,28 @@ int main (int argc, char **argv){
 	unsigned int j;
   std::vector<std::string> trajs;
   Molecule *mol;
-  Molecule *mol1;
-  Molecule *mol2;
-  Molecule *mol3;
-  Molecule *mol4;
   std::string pdb;
-  std::string sel1=""; //To match NATOM in trajectory
-  std::string sel2="";
-  std::string sel3="";
-  std::string sel4="";
-  int nsel=0; //Number of selections
+	std::string refpdb;
+	bool fit=false;
+	std::string fitsel=":.";
 	std::string fcontact;
   std::string currArg;
   std::ifstream trjin;
 	Trajectory *ftrjin;
   int skip=0;
   int start=0;
-	std::vector<Molecule *> quick1;
-	std::vector<Molecule *> quick2;
-  std::vector<Molecule *> quick3;
-  std::vector<Molecule *> quick4;
 	std::string line;
 	std::vector<std::string> s;
-	std::string analysis="QUICK";
 	Vector xyz;
+
+	std::vector<Analyze *> analyses;
+	Analyze *anin;
 
   pdb.clear();
 	fcontact.clear();
   mol=NULL;
-  mol1=NULL;
-  mol2=NULL;
-  mol3=NULL;
-  mol4=NULL;
 	ftrjin=NULL;
+
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -74,18 +66,64 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       pdb=currArg;
     }
-    else if (currArg == "-sel" || currArg == "-nsel"){
+    else if (currArg == "-sel" || currArg == "-nsel" || currArg == "-cog"){
+			anin=new Analyze;
+      anin->setType("quick");
       currArg=argv[++i];
-      sel1=currArg;
-      nsel=1;
+			anin->addSel(currArg);
+			analyses.push_back(anin);
     }
-    else if (currArg == "-dsel"){
+    else if (currArg == "-dsel" || currArg == "-dist" || currArg == "-distance"){
+			anin=new Analyze;
+      anin->setType("quick");
       currArg=argv[++i];
-      sel1=currArg;
+			anin->addSel(currArg);
       currArg=argv[++i];
-      sel2=currArg;
-      nsel=2;
+			anin->addSel(currArg);
+			analyses.push_back(anin);
     }
+		else if (currArg == "-tsel" || currArg == "-angle"){
+			anin=new Analyze;
+      anin->setType("quick");
+			currArg=argv[++i];
+			anin->addSel(currArg);
+			currArg=argv[++i];
+			anin->addSel(currArg);
+			currArg=argv[++i];
+			anin->addSel(currArg);
+			analyses.push_back(anin);
+		}
+		else if (currArg == "-qsel" || currArg == "-dihedral"){
+			anin=new Analyze;
+      anin->setType("quick");
+      currArg=argv[++i];
+			anin->addSel(currArg);
+      currArg=argv[++i];
+			anin->addSel(currArg);
+      currArg=argv[++i];
+			anin->addSel(currArg);
+			currArg=argv[++i];
+			anin->addSel(currArg);
+			analyses.push_back(anin);
+		}
+		else if (currArg == "-fit"){
+			fit=true;
+			currArg=argv[++i];
+			refpdb=currArg;
+			fit=true;
+		}
+		else if (currArg == "-fitsel"){
+			fit=true;
+			currArg=argv[++i];
+			fitsel=currArg;
+		}
+		else if (currArg == "-rmsd"){
+			anin=new Analyze;
+			anin->setType("rmsd");
+			currArg=argv[++i];
+			anin->addSel(currArg);
+      analyses.push_back(anin);
+		}
     else if (currArg == "-skip"){
       currArg=argv[++i];
       std::stringstream(currArg) >> skip;
@@ -111,22 +149,9 @@ int main (int argc, char **argv){
 	}
   else {
     mol=Molecule::readPDB(pdb);
-    if (sel1.length() > 0){
-      mol->select(sel1); 
-      mol1=mol->copy(); 
-    }
-    if (sel2.length() > 0){
-      mol->select(sel2); 
-      mol2=mol->copy(); 
-    }
-    if (sel3.length() > 0){
-      mol->select(sel3); 
-      mol3=mol->copy(); 
-    }
-    if (sel4.length() > 0){
-      mol->select(sel4);
-      mol4=mol->copy(); 
-    } 
+		for (j=0; j< analyses.size(); j++){
+			analyses.at(j)->setupMolSel(mol); //Make copies of mol from selection
+		}
     mol->selAll();
   }
 
@@ -144,36 +169,10 @@ int main (int argc, char **argv){
         //Loop through desired frames
 				for (i=start; i< ftrjin->getNFrame(); i=i+1+skip){
 					ftrjin->readFrame(trjin, i);
-					std::cout << i*ftrjin->getTStepPS();
-					if (analysis == "SOME ANALYSIS"){
-
+					std::cout << ftrjin->getNPriv()*ftrjin->getTStepPS()/ftrjin->getNSavc()+i*ftrjin->getTStepPS();
+					for (j=0; j< analyses.size(); j++){
+						analyses.at(j)->runAnalysis(ftrjin->getMolecule());
 					}
-          else if (analysis == "QUICK"){
-						switch (nsel){
-							case 1:
-								xyz=Analyze::centerOfGeometry(mol1);
-								std::cout << std::fixed;
-								std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.x();
-								std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.y();
-								std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.z();
-								break;
-							case 2:
-								std::cout << std::fixed;
-								std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::distance(Analyze::centerOfGeometry(mol1), Analyze::centerOfGeometry(mol2));
-								break;
-							case 3:
-								std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::angle(Analyze::centerOfGeometry(mol1), Analyze::centerOfGeometry(mol2), Analyze::centerOfGeometry(mol3));
-								break;
-							case 4:
-								std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::dihedral(Analyze::centerOfGeometry(mol1), Analyze::centerOfGeometry(mol2), Analyze::centerOfGeometry(mol3), Analyze::centerOfGeometry(mol4));
-								break;
-							default:
-								break;
-						}
-					}
-          else{
-            //No Op
-          }
 					std::cout << std::endl;
 				}
 			}
@@ -189,12 +188,6 @@ int main (int argc, char **argv){
 		trjin.close();
 	}
 
-	for (j=0; j< quick1.size(); j++){
-		delete quick1.at(j);
-	}
-	for (j=0; j< quick2.size(); j++){
-		delete quick2.at(j);
-  }
 	//delete mol;
 
   return 0;

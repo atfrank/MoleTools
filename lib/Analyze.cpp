@@ -2,6 +2,120 @@
 
 #include "Analyze.hpp"
 
+Analyze::Analyze (){
+	type.clear();
+	sel.clear();
+	mol.clear();
+	resel=false;
+}
+
+void Analyze::setType(const std::string& typein){
+	this->type=typein;
+	//Depending upon the type, initialize necessary vectors
+}
+
+std::string Analyze::getType(){
+	return this->type;
+}
+
+void Analyze::addSel(const std::string& selin){
+	this->sel.push_back(selin);
+}
+
+std::string Analyze::getSel(const int& element){
+	return this->sel.at(element);
+}
+
+unsigned int Analyze::getNSel(){
+	return this->sel.size();
+}
+
+void Analyze::addMol(Molecule* molin){
+	this->mol.push_back(molin);
+}
+
+void Analyze::setupMolSel(Molecule* molin){
+	unsigned int i;
+	Molecule* tmpmol;
+
+	if (this->getType() == "newtype"){
+
+	}
+	else if (this->getType() == "rmsd"){
+		molin->select(this->getSel(0));
+		tmpmol=molin->copy();
+		this->addMol(tmpmol);
+	}
+	else{
+		for (i=0; i< this->getNSel(); i++){
+			molin->select(this->getSel(i));
+			tmpmol=molin->copy();
+			this->addMol(tmpmol);
+		}
+	}
+}
+
+Molecule* Analyze::getMol(const int& element){
+	return this->mol.at(element);
+}
+
+unsigned int Analyze::getNMol(){
+	return this->mol.size();
+}
+
+//void Analyze::runAnalysis(Molecule* refmol){
+void Analyze::runAnalysis(Molecule* molin){
+	Vector xyz;
+	Molecule* refmol;
+
+	std::cout << std::fixed;
+	//Process all analyses based on type
+	if (this->getType() == "newtype"){
+		
+	}
+	else if (this->getType() == "rmsd"){
+		if (this->getNMol() == 2){
+			std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::rmsd(this->getMol(0),this->getMol(1));
+		}
+		else if (this->getNMol() > 2){
+			std::cerr << "Error:  In RMSD analysis - I shouldn't be here" << std::endl;
+		}
+		else{
+			//Set refmol (second molecule = mol.at(1)) to first simulation frame
+			//What if molin is NULL??
+			molin->select(this->getSel(0));
+			refmol=molin->clone();
+			this->addMol(refmol);
+			molin->selAll();
+			std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::rmsd(this->getMol(0),this->getMol(1));
+		}
+	}
+	else if(this->getType() == "quick"){
+		if (this->getNMol() == 1){
+			xyz=Analyze::centerOfGeometry(this->getMol(0));
+     	std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.x();
+			std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.y();
+			std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.z();
+		}
+		else if (this->getNMol() == 2){
+      std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::distance(Analyze::centerOfGeometry(mol.at(0)), Analyze::centerOfGeometry(mol.at(1)));
+		}
+		else if (this->getNMol() == 3){
+			std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::angle(Analyze::centerOfGeometry(this->getMol(0)), Analyze::centerOfGeometry(this->getMol(1)), Analyze::centerOfGeometry(this->getMol(2)));
+		}
+		else if (this->getNMol() == 4){
+			std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::dihedral(Analyze::centerOfGeometry(this->getMol(0)), Analyze::centerOfGeometry(this->getMol(1)), Analyze::centerOfGeometry(this->getMol(2)), Analyze::centerOfGeometry(this->getMol(3)));
+		}
+		else{
+			std::cout << std::fixed;
+      std::cout << std::setw(9) << "NaN";
+		}
+	}
+	else{
+		std::cerr << "Error: Skipping unrecognized analysis type \"" << type << "\"" << std::endl;
+	}
+}
+
 Vector Analyze::centerOfGeometry(Molecule *mol, bool selFlag){
 	Vector cog=Vector(0.0, 0.0, 0.0);
 
