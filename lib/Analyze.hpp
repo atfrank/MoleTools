@@ -20,9 +20,11 @@ class Analyze {
 		unsigned int getNSel();
 		void setupMolSel(Molecule* molin);
     void addMol(Molecule* molin);
+		void setMol(const int element, Molecule* molin);
+		void resizeNMol(const int sizein);
 		Molecule* getMol(const int& element);
 		unsigned int getNMol();
-		void runAnalysis(Molecule* molin=NULL);
+		void runAnalysis();
 
 		//Analysis functions
 		static Vector centerOfGeometry(Molecule* mol, bool selFlag=true);

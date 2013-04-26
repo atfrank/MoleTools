@@ -34,6 +34,14 @@ void Analyze::addMol(Molecule* molin){
 	this->mol.push_back(molin);
 }
 
+void Analyze::setMol(const int element, Molecule* molin){
+	this->mol.at(element)=molin;
+}
+
+void Analyze::resizeNMol(const int sizein){
+  this->mol.resize(sizein);
+}
+
 void Analyze::setupMolSel(Molecule* molin){
 	unsigned int i;
 	Molecule* tmpmol;
@@ -63,10 +71,8 @@ unsigned int Analyze::getNMol(){
 	return this->mol.size();
 }
 
-//void Analyze::runAnalysis(Molecule* refmol){
-void Analyze::runAnalysis(Molecule* molin){
+void Analyze::runAnalysis(){
 	Vector xyz;
-	Molecule* refmol;
 
 	std::cout << std::fixed;
 	//Process all analyses based on type
@@ -77,17 +83,8 @@ void Analyze::runAnalysis(Molecule* molin){
 		if (this->getNMol() == 2){
 			std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::rmsd(this->getMol(0),this->getMol(1));
 		}
-		else if (this->getNMol() > 2){
-			std::cerr << "Error:  In RMSD analysis - I shouldn't be here" << std::endl;
-		}
 		else{
-			//Set refmol (second molecule = mol.at(1)) to first simulation frame
-			//What if molin is NULL??
-			molin->select(this->getSel(0));
-			refmol=molin->clone();
-			this->addMol(refmol);
-			molin->selAll();
-			std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::rmsd(this->getMol(0),this->getMol(1));
+			std::cout << std::setw(9) << std::right << std::setprecision(3) << "NaN";
 		}
 	}
 	else if(this->getType() == "quick"){
@@ -152,7 +149,9 @@ double Analyze::rmsd (Molecule *cmpmol, Molecule *refmol){
 
   //Check selection sizes and resize matrices
   if (cmpmol->getNAtomSelected() != refmol->getNAtomSelected()){
-    std::cerr << "Error: Atom number mismatch in RMSD calculation" << std::endl;
+    std::cerr << std::endl << "Error: Atom number mismatch in RMSD calculation" << std::endl;
+		std::cerr << "CMP-NATOM: " << cmpmol->getNAtomSelected() << ", ";
+		std::cerr << "REF-NATOM: " << refmol->getNAtomSelected() << std::endl;
     return -1.0;
   }
 

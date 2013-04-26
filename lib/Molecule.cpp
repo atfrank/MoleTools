@@ -275,6 +275,8 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
 	//Check selection sizes and resize matrices 
 	if (this->getNAtomSelected() != refmol->getNAtomSelected()){
 		std::cerr << "Error: Atom number mismatch in least squares fitting" << std::endl;
+		std::cerr << "CMP-NATOM: " << this->getNAtomSelected() << ", ";
+    std::cerr << "REF-NATOM: " << refmol->getNAtomSelected() << std::endl;
 		return -1.0;
 	}
 	else{

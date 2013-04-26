@@ -34,6 +34,8 @@ int main (int argc, char **argv){
 	unsigned int j;
   std::vector<std::string> trajs;
   Molecule *mol;
+	Molecule *fitmol; //For fitting only
+	Molecule *refmol; //For RMSD calculation only
   std::string pdb;
 	std::string refpdb;
 	bool fit=false;
@@ -54,6 +56,8 @@ int main (int argc, char **argv){
   pdb.clear();
 	fcontact.clear();
   mol=NULL;
+	fitmol=NULL;
+	refmol=NULL;
 	ftrjin=NULL;
 
 
@@ -110,7 +114,6 @@ int main (int argc, char **argv){
 			fit=true;
 			currArg=argv[++i];
 			refpdb=currArg;
-			fit=true;
 		}
 		else if (currArg == "-fitsel"){
 			fit=true;
@@ -143,6 +146,15 @@ int main (int argc, char **argv){
     usage();
   }
 
+  if (fit == true){
+    if (refpdb.length() > 0){
+      refmol=Molecule::readPDB(refpdb);
+      refmol->select(fitsel);
+      refmol=refmol->clone(true, false); //Clone and delete original
+    }
+		//Else, use input PDB as reference, see below
+  }
+
 	if (pdb.length() == 0){
 		std::cerr << std::endl << "Error: Please provide a PDB file via \"-pdb\"" << std::endl;
     usage();
@@ -151,6 +163,12 @@ int main (int argc, char **argv){
     mol=Molecule::readPDB(pdb);
 		for (j=0; j< analyses.size(); j++){
 			analyses.at(j)->setupMolSel(mol); //Make copies of mol from selection
+			if (analyses.at(j)->getType() == "rmsd"){
+				if (refmol == NULL){
+					refmol=mol->clone();
+				}
+				analyses.at(j)->setupMolSel(refmol);
+			}
 		}
     mol->selAll();
   }
@@ -169,9 +187,14 @@ int main (int argc, char **argv){
         //Loop through desired frames
 				for (i=start; i< ftrjin->getNFrame(); i=i+1+skip){
 					ftrjin->readFrame(trjin, i);
+					if (fit == true){
+						ftrjin->getMolecule()->select(fitsel);
+						ftrjin->getMolecule()->lsqfit(refmol);
+						ftrjin->getMolecule()->selAll();
+					}
 					std::cout << ftrjin->getNPriv()*ftrjin->getTStepPS()/ftrjin->getNSavc()+i*ftrjin->getTStepPS();
 					for (j=0; j< analyses.size(); j++){
-						analyses.at(j)->runAnalysis(ftrjin->getMolecule());
+						analyses.at(j)->runAnalysis();
 					}
 					std::cout << std::endl;
 				}
