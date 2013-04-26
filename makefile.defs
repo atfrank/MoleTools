@@ -8,7 +8,7 @@ LIBFLAGS = -fpic -shared -I$(EIGENLIBS)
 INCFLAGS = -I../lib -I$(EIGENLIBS)
 LINKFLAGS = -L../lib -ltools
 BINDIR = ../bin
-ifeq ($(shell uname -o), Cygwin)
+ifeq ($(shell uname -o 2>/dev/null), Cygwin)
 	LIBEXT=dll
 else
 	LIBEXT=so

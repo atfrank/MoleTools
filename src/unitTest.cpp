@@ -23,9 +23,9 @@ int main (int argc, char **argv){
 
   int i;
   unsigned int j;
-  int xcol;
-  int ycol;
-  int skip;
+//  int xcol;
+//  int ycol;
+//  int skip;
   std::string ifile;
   std::string currArg;
   std::ifstream inpFile;
