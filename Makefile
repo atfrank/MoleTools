@@ -1,8 +1,9 @@
 include ./makefile.defs
 
-all: libtools.so programs
+all: libtools.$(LIBEXT) programs
 
-libtools.so:
+libtools.$(LIBEXT):
+	$(UNAME)
 	$(MAKE) -C lib 
 
 programs:

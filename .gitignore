@@ -6,3 +6,4 @@ src/obj
 *stackdump
 *.o
 *.so
+*.dll
