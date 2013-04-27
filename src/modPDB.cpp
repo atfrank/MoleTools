@@ -17,7 +17,7 @@ void usage (){
   std::cerr << "Usage:   manipPDB [options] <PDBfile>" << std::endl;
   std::cerr << "Options: [-model num]" << std::endl;
   std::cerr << "         [-sel selection]" << std::endl;
-	std::cerr << "         [-fit refPDB] [-fitsel selection]" << std::endl;
+	std::cerr << "         [-fit fitPDB] [-fitsel selection]" << std::endl;
   std::cerr << "         [-translate dx dy dz]" << std::endl;
 	std::cerr << "         [-rotate r1c1 r1c2 r1c3 r2c1 r2c2 r2c3 r3c1 r3c2 r3c3]" << std::endl;
   std::cerr << "         [-center] [-censel selection]" << std::endl;
@@ -41,13 +41,13 @@ int main (int argc, char **argv){
   bool translate=false;
 	double r1c1, r1c2, r1c3, r2c1, r2c2, r2c3, r3c1, r3c2, r3c3;
 	bool rotate=false;
-	std::string refpdb;
+	std::string fitpdb;
 	Molecule *mol;
-	Molecule *refmol;
+	Molecule *fitmol;
 
   pdb.clear();
 	mol=NULL;
-	refmol=NULL; //Stationary molecule
+	fitmol=NULL; //Stationary molecule
   dx=0.0;
   dy=0.0;
   dz=0.0;
@@ -81,7 +81,7 @@ int main (int argc, char **argv){
 		}
 		else if (currArg == "-fit"){
 			currArg=argv[++i];
-			refpdb=currArg;
+			fitpdb=currArg;
 			fit=true;
 		}
     else if (currArg == "-center"){
@@ -140,23 +140,23 @@ int main (int argc, char **argv){
   }
 
 	if (fit == true){
-		if (refpdb.length() > 0){
-			refmol=Molecule::readPDB(refpdb, model);
+		if (fitpdb.length() > 0){
+			fitmol=Molecule::readPDB(fitpdb, model);
       if (fitsel.length() > 0){
-			  refmol->select(fitsel);
+			  fitmol->select(fitsel);
 			  mol->select(fitsel);
       }
       else{
-        refmol->selAll();
+        fitmol->selAll();
         mol->selAll();
       }
-	  	mol->lsqfit(refmol);
-			mol->rmsd(refmol);
+	  	mol->lsqfit(fitmol);
+			//mol->rmsd(fitmol);
       mol->selAll();
-      delete refmol;
+      delete fitmol;
 		}
 		else {
-			std::cerr << std::endl << "Error: Please provide a reference PDB file for fitting" << std::endl;
+			std::cerr << std::endl << "Error: Please provide a PDB file for fitting" << std::endl;
 			usage();
 		}
 	}
