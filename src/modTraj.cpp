@@ -15,7 +15,7 @@ void usage(){
   std::cerr << std::endl << std::endl;
   std::cerr << "Usage:   modTraj [-options] <TRAJfile(s)>" << std::endl;
   std::cerr << "Options: [-pdb PDBfile] [-sel selection]" << std::endl;
-  std::cerr << "         [-fit refPDB] [-fitsel selection]" << std::endl;
+  std::cerr << "         [-fit fitPDB] [-fitsel selection]" << std::endl;
 	std::cerr << "         [-recenter] [-recsel selection]" << std::endl;
   std::cerr << "         [-out TRAJname] [-outsel selection]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
@@ -35,10 +35,10 @@ int main (int argc, char **argv){
 	bool out=false;
   Molecule *mol;
   Molecule *outmol;
-  Molecule *refmol;
+  Molecule *fitmol;
   Molecule *recmol;
   std::string pdb;
-	std::string refpdb;
+	std::string fitpdb;
   std::string sel=""; //To match NATOM in trajectory
   std::string currArg;
   bool fit=false;
@@ -64,10 +64,10 @@ int main (int argc, char **argv){
   bool startFlag=false; //Tracks if user set start value
 
   pdb.clear();
-	refpdb.clear();
+	fitpdb.clear();
   mol=NULL;
   outmol=NULL;
-  refmol=NULL;
+  fitmol=NULL;
   recmol=NULL;
 	ftrjin=NULL;
 	ftrjout=NULL;
@@ -99,7 +99,7 @@ int main (int argc, char **argv){
     }
     else if (currArg == "-fit"){
 			currArg=argv[++i];
-			refpdb=currArg;
+			fitpdb=currArg;
       fit=true;
     }
     else if (currArg == "-fitsel"){
@@ -221,13 +221,13 @@ int main (int argc, char **argv){
       outmol=mol->copy();
     }
     if (fit == true){
-			if (refpdb.length() == 0){
-				std::cerr << std::endl << "Error: Please provide a reference PDB file via \"-fit\"" << std::endl;
+			if (fitpdb.length() == 0){
+				std::cerr << std::endl << "Error: Please provide a PDB file for fitting via \"-fit\"" << std::endl;
     		usage();
 			}
-			refmol=Molecule::readPDB(refpdb);
-			refmol->select(fitsel);
-      refmol=refmol->clone(true, false); //Delete original after cloning
+			fitmol=Molecule::readPDB(fitpdb);
+			fitmol->select(fitsel);
+      fitmol=fitmol->clone(true, false); //Delete original after cloning
     }
     if (recenter == true){
       mol->select(recsel);
@@ -291,7 +291,7 @@ int main (int argc, char **argv){
           if (pdb.length() >0){
 						//Transform molecule only if PDB is provided
             if (fit == true){
-							ftrjin->getMolecule()->lsqfit(refmol);
+							ftrjin->getMolecule()->lsqfit(fitmol);
 					  }
 					  else if (recenter == true){
 							ftrjin->getMolecule()->recenter(recmol);
