@@ -22,7 +22,7 @@ void usage(){
 	std::cerr << "         [-tsel selection selection selection] [-angle selection selection selection]" << std::endl;
 	std::cerr << "         [-qsel selection selection selection selection]" << std::endl;
 	std::cerr << "         [-dihedral selection selection selection selection]" << std::endl;
-	std::cerr << "         [-fit refPDB] [-fitsel selection]" << std::endl;
+	std::cerr << "         [-fit fitPDB] [-fitsel selection]" << std::endl;
 	std::cerr << "         [-rmsd selection]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame]" << std::endl;
   exit(0);
