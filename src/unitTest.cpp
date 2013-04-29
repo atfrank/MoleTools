@@ -1,6 +1,7 @@
 //Sean M. Law
 
 #include "Misc.hpp"
+#include "Molecule.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -65,14 +66,19 @@ int main (int argc, char **argv){
     }
     s=Misc::split(line, " \t", false); //Split on one or more consecutive whitespace
     for (j=0; j< s.size(); j++){
-      std::cerr << s.at(j) << ":";
+  //    std::cerr << s.at(j) << ":";
     }
-    std::cerr << std::endl;
+  //  std::cerr << std::endl;
   }
 
   if (ifile != "-"){
     inpFile.close();
   }
+
+	Molecule* mol;
+	mol=new Molecule;
+	mol->readPDB(ifile);
+	mol->select(".CA");
 
   return 0;
 }
