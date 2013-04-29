@@ -38,9 +38,9 @@ int main (int argc, char **argv){
 	Molecule *refmol; //For RMSD calculation only
   std::string pdb;
 	std::string refpdb;
+	std::string fitpdb;
 	bool fit=false;
 	std::string fitsel=":.";
-	std::string fcontact;
   std::string currArg;
   std::ifstream trjin;
 	Trajectory *ftrjin;
@@ -54,7 +54,6 @@ int main (int argc, char **argv){
 	Analyze *anin;
 
   pdb.clear();
-	fcontact.clear();
   mol=NULL;
 	fitmol=NULL;
 	refmol=NULL;
@@ -113,7 +112,7 @@ int main (int argc, char **argv){
 		else if (currArg == "-fit"){
 			fit=true;
 			currArg=argv[++i];
-			refpdb=currArg;
+			fitpdb=currArg;
 		}
 		else if (currArg == "-fitsel"){
 			fit=true;
@@ -147,10 +146,10 @@ int main (int argc, char **argv){
   }
 
   if (fit == true){
-    if (refpdb.length() > 0){
-      refmol=Molecule::readPDB(refpdb);
-      refmol->select(fitsel);
-      refmol=refmol->clone(true, false); //Clone and delete original
+    if (fitpdb.length() > 0){
+      fitmol=Molecule::readPDB(fitpdb);
+      fitmol->select(fitsel);
+      fitmol=fitmol->clone(true, false); //Clone and delete original
     }
 		//Else, use input PDB as reference, see below
   }
@@ -187,11 +186,13 @@ int main (int argc, char **argv){
         //Loop through desired frames
 				for (i=start; i< ftrjin->getNFrame(); i=i+1+skip){
 					ftrjin->readFrame(trjin, i);
+					//Fit if needed
 					if (fit == true){
 						ftrjin->getMolecule()->select(fitsel);
-						ftrjin->getMolecule()->lsqfit(refmol);
+						ftrjin->getMolecule()->lsqfit(fitmol);
 						ftrjin->getMolecule()->selAll();
 					}
+					//Start analyses
 					std::cout << ftrjin->getNPriv()*ftrjin->getTStepPS()/ftrjin->getNSavc()+i*ftrjin->getTStepPS();
 					for (j=0; j< analyses.size(); j++){
 						analyses.at(j)->runAnalysis();

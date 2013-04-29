@@ -251,6 +251,55 @@ bool Molecule::getCopyFlag(){
 	return copyFlag;
 }
 
+void Molecule::storeSel(int element){
+	std::vector<bool> selFlags;
+	Chain *chn;
+	Residue *res;
+	Atom *atm;
+
+	for (unsigned int i=0; i< this->getChnVecSize(); i++){
+		chn=this->getChain(i);
+		for (unsigned int j=0; j< chn->getResVecSize(); j++){
+			res=chn->getResidue(j);
+			for (unsigned int k=0; k< res->getAtmVecSize(); k++){
+				atm=res->getAtom(k);
+				selFlags.push_back(atm->getSel());
+			}
+		}
+	}
+
+	if (element < 0){
+		//Append
+		storedSel.push_back(selFlags);
+	}
+	else{
+		//Add at specific position
+		storedSel.at(element)=selFlags;
+	}
+}
+
+void Molecule::recallSel(int element){
+  Chain *chn;
+  Residue *res;
+  Atom *atm;
+	unsigned int n;
+
+	n=0;
+	
+  for (unsigned int i=0; i< this->getChnVecSize(); i++){
+    chn=this->getChain(i);
+    for (unsigned int j=0; j< chn->getResVecSize(); j++){
+      res=chn->getResidue(j);
+      for (unsigned int k=0; k< res->getAtmVecSize(); k++){
+        atm=res->getAtom(k);
+				atm->setSel(storedSel.at(element).at(n));
+				n++;
+      }
+    }
+  }
+
+}
+
 double Molecule::lsqfit (Molecule *refmol, bool transform){
 	Eigen::MatrixXd cmp; //Nx3 Mobile Coordinate Matrix
 	Eigen::MatrixXd ref; //Nx3 Stationary Coordinate Matrix

@@ -13,6 +13,7 @@ class Molecule {
     std::vector<Residue*> resVec;
     std::vector<Atom*> atmVec;
 		bool copyFlag; //This molecule is a copy if true
+		std::vector< std::vector<bool> > storedSel; //Store selections for recalling
 
   public:
 		~Molecule();
@@ -37,6 +38,8 @@ class Molecule {
     unsigned int getNAtomSelected();
 		void setCopyFlag(bool copyFlagIn=false);
 		bool getCopyFlag();
+		void storeSel(int element=-1);
+		void recallSel(int element=0);
 
     double lsqfit (Molecule *refmol, bool transform=true);
 		double rmsd (Molecule *refmol);
