@@ -31,7 +31,7 @@ void usage(){
 int main (int argc, char **argv){
 
   int i;
-	unsigned int j;
+	unsigned int itrj, ianalysis, iline, j;
   std::vector<std::string> trajs;
   Molecule *mol;
 	Molecule *fitmol; //For fitting only
@@ -53,6 +53,7 @@ int main (int argc, char **argv){
 	std::vector<Analyze *> analyses;
 	Analyze *anin;
 
+	iline=1;
   pdb.clear();
 	fitpdb.clear();
   mol=NULL;
@@ -178,8 +179,8 @@ int main (int argc, char **argv){
 
 	//Process Trajectories
 
-	for (j=0; j< trajs.size(); j++){
-		trjin.open(trajs.at(j).c_str(), std::ios::binary);
+	for (itrj=0; itrj< trajs.size(); itrj++){
+		trjin.open(trajs.at(itrj).c_str(), std::ios::binary);
 
 		if (trjin.is_open()){
 			ftrjin=new Trajectory;
@@ -197,22 +198,23 @@ int main (int argc, char **argv){
 						ftrjin->getMolecule()->selAll();
 					}
 					//Start analyses
+					std::cout << iline << "  ";
 					std::cout << ftrjin->getNPriv()*ftrjin->getTStepPS()/ftrjin->getNSavc()+i*ftrjin->getTStepPS();
-					for (j=0; j< analyses.size(); j++){
-						analyses.at(j)->runAnalysis();
+					for (ianalysis=0; ianalysis< analyses.size(); ianalysis++){
+						analyses.at(ianalysis)->runAnalysis();
 					}
 					std::cout << std::endl;
+					iline++;
 				}
 			}
 			else{
 				std::cerr << "Warning: Skipping unknown trajectory format \"";
-				std::cerr << trajs.at(j) << "\"" << std::endl;
+				std::cerr << trajs.at(itrj) << "\"" << std::endl;
 			}
 			if (ftrjin != NULL){
 				delete ftrjin;
 			}
 		}
-	
 		trjin.close();
 	}
 

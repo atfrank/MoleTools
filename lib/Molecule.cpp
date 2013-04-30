@@ -276,8 +276,10 @@ void Molecule::recallSel(std::string key){
   Residue *res;
   Atom *atm;
   unsigned int n;
+	std::vector<bool>* storedSelVal;
 
   n=0;
+	storedSelVal=&storedSel[key];
   
   for (unsigned int i=0; i< this->getChnVecSize(); i++){
     chn=this->getChain(i);
@@ -285,7 +287,7 @@ void Molecule::recallSel(std::string key){
       res=chn->getResidue(j);
       for (unsigned int k=0; k< res->getAtmVecSize(); k++){
         atm=res->getAtom(k);
-        atm->setSel(storedSel[key].at(n));
+				atm->setSel(storedSelVal->at(n));
         n++;
       }
     }
