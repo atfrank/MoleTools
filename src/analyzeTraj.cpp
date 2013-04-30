@@ -54,6 +54,7 @@ int main (int argc, char **argv){
 	Analyze *anin;
 
   pdb.clear();
+	fitpdb.clear();
   mol=NULL;
 	fitmol=NULL;
 	refmol=NULL;
@@ -174,7 +175,6 @@ int main (int argc, char **argv){
 		mol->storeSel("fit");
 		mol->selAll();
   }
-
 
 	//Process Trajectories
 
