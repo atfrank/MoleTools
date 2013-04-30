@@ -6,6 +6,7 @@
 #include "Eigen/Dense"
 
 #include <vector>
+#include <map>
 
 class Molecule {
   private:
@@ -13,7 +14,7 @@ class Molecule {
     std::vector<Residue*> resVec;
     std::vector<Atom*> atmVec;
 		bool copyFlag; //This molecule is a copy if true
-		std::vector< std::vector<bool> > storedSel; //Store selections for recalling
+		std::map< std::string, std::vector<bool> > storedSel;
 
   public:
 		~Molecule();
@@ -38,8 +39,9 @@ class Molecule {
     unsigned int getNAtomSelected();
 		void setCopyFlag(bool copyFlagIn=false);
 		bool getCopyFlag();
-		void storeSel(int element=-1);
-		void recallSel(int element=0);
+		void storeSel(std::string key="tmp");
+		void recallSel(std::string key="tmp");
+		void eraseSel(std::string key="tmp");
 
     double lsqfit (Molecule *refmol, bool transform=true);
 		double rmsd (Molecule *refmol);

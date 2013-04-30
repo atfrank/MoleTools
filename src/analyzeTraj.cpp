@@ -119,7 +119,7 @@ int main (int argc, char **argv){
 			currArg=argv[++i];
 			fitsel=currArg;
 		}
-		else if (currArg == "-rmsd"){
+		else if (currArg == "-rmsd" || currArg == "-rms"){
 			anin=new Analyze;
 			anin->setType("rmsd");
 			currArg=argv[++i];
@@ -171,7 +171,7 @@ int main (int argc, char **argv){
 		else{
 			fitmol=mol->clone();
 		}
-		mol->storeSel();
+		mol->storeSel("fit");
 		mol->selAll();
   }
 
@@ -192,7 +192,7 @@ int main (int argc, char **argv){
 					ftrjin->readFrame(trjin, i);
 					//Fit if needed
 					if (fit == true){
-						ftrjin->getMolecule()->recallSel(0);
+						ftrjin->getMolecule()->recallSel("fit");
 						ftrjin->getMolecule()->lsqfit(fitmol);
 						ftrjin->getMolecule()->selAll();
 					}
