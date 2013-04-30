@@ -145,15 +145,6 @@ int main (int argc, char **argv){
     usage();
   }
 
-  if (fit == true){
-    if (fitpdb.length() > 0){
-      fitmol=Molecule::readPDB(fitpdb);
-      fitmol->select(fitsel);
-      fitmol=fitmol->clone(true, false); //Clone and delete original
-    }
-		//Else, use input PDB as reference, see below
-  }
-
 	if (pdb.length() == 0){
 		std::cerr << std::endl << "Error: Please provide a PDB file via \"-pdb\"" << std::endl;
     usage();
@@ -163,14 +154,27 @@ int main (int argc, char **argv){
 		for (j=0; j< analyses.size(); j++){
 			analyses.at(j)->setupMolSel(mol); //Make copies of mol from selection
 			if (analyses.at(j)->getType() == "rmsd"){
-				if (refmol == NULL){
-					refmol=mol->clone();
-				}
+				refmol=mol->clone();
 				analyses.at(j)->setupMolSel(refmol);
 			}
 		}
     mol->selAll();
   }
+
+	if (fit == true){
+		mol->select(fitsel);
+    if (fitpdb.length() > 0){
+      fitmol=Molecule::readPDB(fitpdb);
+      fitmol->select(fitsel);
+      fitmol=fitmol->clone(true, false); //Clone and delete original
+    }
+		else{
+			fitmol=mol->clone();
+		}
+		mol->storeSel();
+		mol->selAll();
+  }
+
 
 	//Process Trajectories
 
@@ -188,7 +192,7 @@ int main (int argc, char **argv){
 					ftrjin->readFrame(trjin, i);
 					//Fit if needed
 					if (fit == true){
-						ftrjin->getMolecule()->select(fitsel);
+						ftrjin->getMolecule()->recallSel(0);
 						ftrjin->getMolecule()->lsqfit(fitmol);
 						ftrjin->getMolecule()->selAll();
 					}

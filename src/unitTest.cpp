@@ -76,9 +76,12 @@ int main (int argc, char **argv){
   }
 
 	Molecule* mol;
-	mol=new Molecule;
-	mol->readPDB(ifile);
-	mol->select(".CA");
+	mol=Molecule::readPDB(ifile);
+	mol->select("B:.CA");
+	mol->storeSel();
+	mol->selAll();
+	mol->recallSel();
+	mol->writePDB();
 
   return 0;
 }

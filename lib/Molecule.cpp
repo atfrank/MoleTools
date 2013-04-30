@@ -271,6 +271,7 @@ void Molecule::storeSel(int element){
 	if (element < 0){
 		//Append
 		storedSel.push_back(selFlags);
+		//std::cerr << this->storedSel.size() << std::endl;
 	}
 	else{
 		//Add at specific position
@@ -297,7 +298,6 @@ void Molecule::recallSel(int element){
       }
     }
   }
-
 }
 
 double Molecule::lsqfit (Molecule *refmol, bool transform){
