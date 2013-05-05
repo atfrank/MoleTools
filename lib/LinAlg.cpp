@@ -197,7 +197,7 @@ static void SVD (const std::vector< std::vector <double> > &M){
         for (j=k+1; j<nu; j++){
           t=0;
           for (i=k; i<m; i++){
-            t+-U.at(i).at(k)*U.at(i).at(k);
+            t+=U.at(i).at(k)*U.at(i).at(k);
           }
           t=-t/U.at(k).at(k);
           for (i=k; i<m; i++){
@@ -223,5 +223,28 @@ static void SVD (const std::vector< std::vector <double> > &M){
 
   //If required, generate V.
   
+  if (wantv){
+    for (k=n-1; k>=0; k--){
+      if ((k>nrt) & (e.at(k) != 0.0)){
+        for (j=k+1; j<nu; j++){
+          t=0;
+          for(i=k+1; i<n; i++){
+            t+=V.at(i).at(k)*V.at(i).at(j);
+          }
+          t=-t/V.at(k+1).at(k);
+          for(i=k+1; i<n; i++){
+            V.at(i).at(j)+=t*V.at(i).at(k);
+          }
+        }
+      }
+      for (i=0; i<n; i++){
+        V.at(i).at(k)=0.0;
+      }
+      V.at(k).at(k)=1.0;
+    }
+  }
+  
   //Main iteration loop for the singular values
+
+
 }
