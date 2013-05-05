@@ -25,6 +25,11 @@ static void SVD (const std::vector< std::vector <double> > &M){
   unsigned int nrt;
   unsigned int p;
 
+  unsigned int pp;
+  unsigned iter;
+  unsigned int kase;
+  double eps;
+
   //This code was adapted from Template Numerical Toolkit
   //math.nist.gov/tnt
   //
@@ -83,26 +88,27 @@ static void SVD (const std::vector< std::vector <double> > &M){
   for (k=0; k< std::max(nct, nrt); k++){
     if (k<nct){
       //Compute the transformation for the k-th column and
-      //place the k-th diagonal in S[k].
+      //place the k-th diagonal in S.at(k).
       //Compute 2-norm of the k-th column without under/overflow.
-      S[k]=0;
+      S.at(k)=0;
       for (i=k; i<m; i++){
+        //S[k]=hypot(S[k],A[i][k]);
         //Hypotenuse without under/overflow
-        S[k]=S[k]*sqrt(1+(S[k]/A.at(i).at(k))*(S[k]/A.at(i).at(k))); 
+        S.at(k)=S.at(k)*sqrt(1+(A.at(i).at(k)/S.at(k))*(A.at(i).at(k)/S.at(k))); 
       }
-      if (S[k] != 0.0){
+      if (S.at(k) != 0.0){
         if (A.at(k).at(k) < 0.0){
-          S[k]=-S[k];
+          S.at(k)=-S.at(k);
         }
         for (i=k; i<m; i++){
-          A.at(i).at(k) /= S[k];
+          A.at(i).at(k) /= S.at(k);
         }
         A.at(k).at(k) += 1.0;
       }
-      S[k]=-S[k];
+      S.at(k)=-S.at(k);
     }
     for (j=k+1; j<n; j++){
-      if (k<nct && S[k]!=0.0){
+      if (k<nct && S.at(k)!=0.0){
         //Apply transformation
         t=0;
         for(i=k; i<m; i++){
@@ -132,7 +138,7 @@ static void SVD (const std::vector< std::vector <double> > &M){
       e.at(k)=0;
       for (i=k+1; i<n; i++){
         //Hypotenuse without under/overflow
-        e.at(k)=e.at(k)*sqrt(1+(e.at(k)/e.at(i))*(e.at(k)/e.at(i)));
+        e.at(k)=e.at(k)*sqrt(1+(e.at(i)/e.at(k))*(e.at(i)/e.at(k)));
       }
       if (e.at(k) != 0.0){
         if (e.at(k+1) < 0.0){
@@ -246,5 +252,236 @@ static void SVD (const std::vector< std::vector <double> > &M){
   
   //Main iteration loop for the singular values
 
+  pp=p-1;
+  iter=0;
+  eps=pow(2.0,-52.0);
 
+  unsigned int negativeOne;
+  negativeOne=-1;
+
+  while (p > 0) {
+    k=0;
+    kase=0;
+
+    // Here is where a test for too many iterations would go.
+
+    // This section of the program inspects for
+    // negligible elements in the s and e arrays.  On
+    // completion the variables kase and k are set as follows.
+
+    // kase = 1     if s(p) and e.at(k-1) are negligible and k<p
+    // kase = 2     if s(k) is negligible and k<p
+    // kase = 3     if e.at(k-1) is negligible, k<p, and
+    //              s(k), ..., s(p) are not negligible (qr step).
+    // kase = 4     if e(p-1) is negligible (convergence).
+
+    for (k = p-2; k >= negativeOne; k--) {
+      if (k == negativeOne) {
+        break;
+      }
+      if (abs(e.at(k)) <= eps*(abs(S.at(k)) + abs(S.at(k+1)))) {
+        e.at(k) = 0.0;
+        break;
+      }
+    }
+    if (k == p-2) {
+      kase = 4;
+    } 
+    else {
+      unsigned int ks;
+      for (ks = p-1; ks >= k; ks--) {
+        if (ks == k) {
+          break;
+        }
+        t = (ks != p ? abs(e.at(ks)) : 0.) + (ks != k+1 ? abs(e.at(ks-1)) : 0.);
+        if (abs(S.at(ks)) <= eps*t)  {
+          S.at(ks) = 0.0;
+          break;
+        }
+      }
+      if (ks == k) {
+        kase = 3;
+      } 
+      else if (ks == p-1) {
+        kase = 1;
+      }
+      else {
+        kase = 2;
+        k = ks;
+      }
+    }
+    k++;
+   
+    // Perform the task indicated by kase.
+ 
+    switch (kase) {
+ 
+      // Deflate negligible s(p).
+ 
+      case 1: {
+        double f = e.at(p-2);
+        e.at(p-2) = 0.0;
+        for (j = p-2; j >= k; j--) {
+          //t = hypot(S.at(j),f);
+          //Hypotenuse without under/overflow
+          t = S.at(j)*sqrt(1+(f/S.at(j))*(f/S.at(j)));
+          double cs = S.at(j)/t;
+          double sn = f/t;
+          S.at(j) = t;
+          if (j != k) {
+            f = -sn*e.at(j-1);
+            e.at(j-1) = cs*e.at(j-1);
+          }
+          if (wantv) {
+            for (i = 0; i < n; i++) {
+              t = cs*V.at(i).at(j) + sn*V.at(i).at(p-1);
+              V.at(i).at(p-1) = -sn*V.at(i).at(j) + cs*V.at(i).at(p-1);
+              V.at(i).at(j) = t;
+            }
+          }
+        }
+      }
+      break;
+ 
+      // Split at negligible s(k).
+ 
+      case 2: {
+        double f = e.at(k-1);
+        e.at(k-1) = 0.0;
+        for (j = k; j < p; j++) {
+          //t = hypot(S.at(j),f);
+          //Hypotenuse without under/overflow
+          t = S.at(j)*sqrt(1+(f/S.at(j))*(f/S.at(j)));
+          double cs = S.at(j)/t;
+          double sn = f/t;
+          S.at(j) = t;
+          f = -sn*e.at(j);
+          e.at(j) = cs*e.at(j);
+          if (wantu) {
+            for (i = 0; i < m; i++) {
+              t = cs*U.at(i).at(j) + sn*U.at(i).at(k-1);
+              U.at(i).at(k-1) = -sn*U.at(i).at(j) + cs*U.at(i).at(k-1);
+              U.at(i).at(j) = t;
+            }
+          }
+        }
+      }
+      break;
+ 
+      // Perform one qr step.
+ 
+      case 3: {
+        // Calculate the shift.
+        double scale = std::max(std::max(std::max(std::max(
+          abs(S.at(p-1)),abs(S.at(p-2))),abs(e.at(p-2))), 
+          abs(S.at(k))),abs(e.at(k)));
+        double sp = S.at(p-1)/scale;
+        double spm1 = S.at(p-2)/scale;
+        double epm1 = e.at(p-2)/scale;
+        double sk = S.at(k)/scale;
+        double ek = e.at(k)/scale;
+        double b = ((spm1 + sp)*(spm1 - sp) + epm1*epm1)/2.0;
+        double c = (sp*epm1)*(sp*epm1);
+        double shift = 0.0;
+        if ((b != 0.0) | (c != 0.0)) {
+          shift = sqrt(b*b + c);
+          if (b < 0.0) {
+            shift = -shift;
+          }
+          shift = c/(b + shift);
+        }
+        double f = (sk + sp)*(sk - sp) + shift;
+        double g = sk*ek;
+    
+        // Chase zeros.
+    
+        for (j = k; j < p-1; j++) {
+          //t = hypot(f,g);
+          //Hypotenuse without under/overflow
+          t = f*sqrt(1+(g/f)*(g/f));
+          double cs = f/t;
+          double sn = g/t;
+          if (j != k) {
+            e.at(j-1) = t;
+          }
+          f = cs*S.at(j) + sn*e.at(j);
+          e.at(j) = cs*e.at(j) - sn*S.at(j);
+          g = sn*S.at(j+1);
+          S.at(j+1) = cs*S.at(j+1);
+          if (wantv) {
+            for (i = 0; i < n; i++) {
+              t = cs*V.at(i).at(j) + sn*V.at(i).at(j+1);
+              V.at(i).at(j+1) = -sn*V.at(i).at(j) + cs*V.at(i).at(j+1);
+              V.at(i).at(j) = t;
+            }
+          }
+          //t = hypot(f,g);
+          //Hypotenuse without under/overflow
+          t = f*sqrt(1+(g/f)*(g/f));
+          cs = f/t;
+          sn = g/t;
+          S.at(j) = t;
+          f = cs*e.at(j) + sn*S.at(j+1);
+          S.at(j+1) = -sn*e.at(j) + cs*S.at(j+1);
+          g = sn*e.at(j+1);
+          e.at(j+1) = cs*e.at(j+1);
+          if (wantu && (j < m-1)) {
+            for (i = 0; i < m; i++) {
+              t = cs*U.at(i).at(j) + sn*U.at(i).at(j+1);
+              U.at(i).at(j+1) = -sn*U.at(i).at(j) + cs*U.at(i).at(j+1);
+              U.at(i).at(j) = t;
+            }
+          }
+        }
+        e.at(p-2) = f;
+        iter = iter + 1;
+      }
+      break;
+ 
+      // Convergence.
+
+      case 4: {
+ 
+        // Make the singular values positive.
+    
+        if (S.at(k) <= 0.0) {
+          S.at(k) = (S.at(k) < 0.0 ? -S.at(k) : 0.0);
+          if (wantv) {
+            for (i = 0; i <= pp; i++) {
+              V.at(i).at(k) = -V.at(i).at(k);
+            }
+          }
+        }
+    
+        // Order the singular values.
+    
+        while (k < pp) {
+          if (S.at(k) >= S.at(k+1)) {
+            break;
+          }
+          t = S.at(k);
+          S.at(k) = S.at(k+1);
+          S.at(k+1) = t;
+          if (wantv && (k < n-1)) {
+            for (i = 0; i < n; i++) {
+              t = V.at(i).at(k+1);
+              V.at(i).at(k+1) = V.at(i).at(k);
+              V.at(i).at(k) = t;
+            }
+          }
+          if (wantu && (k < m-1)) {
+            for (i = 0; i < m; i++) {
+              t = U.at(i).at(k+1);
+              U.at(i).at(k+1) = U.at(i).at(k); 
+              U.at(i).at(k) = t;
+            }
+          }
+          k++;
+        }
+        iter = 0;
+        p--;
+      }
+      break;
+    } //Switch
+  } //While
 }
