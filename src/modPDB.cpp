@@ -19,6 +19,7 @@ void usage (){
   std::cerr << "         [-sel selection]" << std::endl;
 	std::cerr << "         [-fit fitPDB] [-fitsel selection]" << std::endl;
   std::cerr << "         [-translate dx dy dz]" << std::endl;
+  std::cerr << "         [-outsel selection]" << std::endl;
 	std::cerr << "         [-rotate r1c1 r1c2 r1c3 r2c1 r2c2 r2c3 r3c1 r3c2 r3c3]" << std::endl;
   std::cerr << "         [-center] [-censel selection]" << std::endl;
   std::cerr << std::endl << std::endl;
@@ -42,6 +43,7 @@ int main (int argc, char **argv){
 	double r1c1, r1c2, r1c3, r2c1, r2c2, r2c3, r3c1, r3c2, r3c3;
 	bool rotate=false;
 	std::string fitpdb;
+  std::string outsel="";
 	Molecule *mol;
 	Molecule *fitmol;
 
@@ -73,6 +75,10 @@ int main (int argc, char **argv){
     else if (currArg == "-sel" || currArg == "-nsel"){
       currArg=argv[++i];
       sel=currArg;
+    }
+    else if (currArg == "-outsel"){
+      currArg=argv[++i];
+      outsel=currArg;
     }
 		else if (currArg == "-fitsel"){
 			currArg=argv[++i];
@@ -180,6 +186,9 @@ int main (int argc, char **argv){
     //Do nothing
   }
 
+  if (outsel.length() >0){
+    mol->select(outsel);
+  }
   mol->writePDB();
 
 	if (mol != NULL){

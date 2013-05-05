@@ -377,6 +377,9 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
 	S=svd.singularValues();
 	W=svd.matrixV();
 
+  std::cerr << R << std::endl;
+  std::cerr << S << std::endl;
+
 	Wt=W.transpose();
 
 	VdWtd=V.determinant()*Wt.determinant();
