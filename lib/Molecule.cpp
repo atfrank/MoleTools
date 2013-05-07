@@ -377,7 +377,7 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
 	S=svd.singularValues();
 	W=svd.matrixV();
 
-  std::cerr << R << std::endl;
+  //std::cerr << R << std::endl;
   std::vector< std::vector<double> > M;
   unsigned int j;
   M.resize(3);
@@ -388,7 +388,7 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
     }
   }
   LinAlg::SVD(M);
-  std::cerr << S << std::endl;
+  //std::cerr << S << std::endl;
 
 	Wt=W.transpose();
 

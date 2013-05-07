@@ -1,7 +1,6 @@
 //Sean M. Law`
 
 #include "LinAlg.hpp"
-//A = [[168422, 52018.2, 879.072],[47630.9,  154571, 23175.8],[411.489, 17325.3, 94222.3]]
 //modPDB.exe tests/file.pdb -fit tests/file.ref.pdb -outsel :.CA > t.pdb
 void LinAlg::SVD (const std::vector< std::vector <double> > &M){
   std::vector< std::vector<double> > A; //A copy of matrix M
@@ -48,9 +47,9 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
   n=M.at(0).size();
 
   A.resize(m);
-  for (i=0; i< A.size(); i++){
+  for (i=0; i< m; i++){
     A.at(i).resize(n);
-    for (j=0; j< A.at(i).size(); j++){
+    for (j=0; j< n; j++){
       A.at(i).at(j)=M.at(i).at(j);
     }
   }
@@ -60,22 +59,30 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
   U.resize(m);
   V.resize(n);
 
-  for (i=0; i<U.size(); i++){
+  for (i=0; i<m; i++){
     U.at(i).resize(nu);
-    for(j=0; j<U.at(i).size(); j++){
-      U.at(i).at(j)=0;
+    for(j=0; j<nu; j++){
+      U.at(i).at(j)=0.0;
     }
   }
 
-  for (i=0; i<V.size(); i++){
+  for (i=0; i<n; i++){
     V.at(i).resize(n);
-    for (j=0; j<V.at(i).size(); j++){
-      V.at(i).at(j);
+    for (j=0; j<n; j++){
+      V.at(i).at(j)=0.0;
     }
   }
 
   e.resize(n);
+	for (i=0; i<n; i++){
+		e.at(i)=0.0;
+	}
+
   work.resize(m);
+	for (i=0; i<m; i++){
+		work.at(i)=0.0;
+	}
+
   i=j=k=0;
 
   // Reduce A to bidiagonal form, storing the diagonal elements
@@ -121,9 +128,9 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
  
       // Place the k-th row of A into e for the
       // subsequent calculation of the row transformation.
- 
       e[j] = A[k][j];
     }
+
     if (wantu & (k < nct)) {
  
       // Place the transformation in U for subsequent back
@@ -155,7 +162,6 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
       if ((k+1 < m) & (e[k] != 0.0)) {
 
         // Apply the transformation.
- 
         for (i = k+1; i < m; i++) {
           work[i] = 0.0;
         }
@@ -171,6 +177,7 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
           }
         }
       }
+
       if (wantv) {
  
         // Place the transformation in V for subsequent
@@ -182,7 +189,7 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
       }
     }
   }
- 
+
   // Set up the final bidiagonal matrix or order p.
  
   p = std::min(n,m+1);
@@ -474,5 +481,7 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
       break;
     }
   }
-
+	for (i=0; i<3; i++){
+		//std::cerr << s.at(i) << std::endl;
+	}
 }

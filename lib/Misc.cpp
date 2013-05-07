@@ -110,6 +110,13 @@ void Misc::toupper (std::string &str){
 }
 
 double Misc::hypot (const double &a, const double &b){
-  //Prevent under/overflow
-  return a*sqrt(1+(b/a)*(b/a));
+	if (a !=0){
+		return a*sqrt(1+(b/a)*(b/a));
+	}
+	else if (b !=0){
+		return b*sqrt(1+(a/b)*(a/b));
+	}
+	else{
+		return 0.0;
+	}
 }
