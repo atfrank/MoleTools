@@ -1,8 +1,10 @@
 //Sean M. Law
+
 #ifndef MOLECULE_H
 #define MOLECULE_H
 
 #include "Chain.hpp"
+#include "LinAlg.hpp"
 #include "Eigen/Dense"
 
 #include <vector>

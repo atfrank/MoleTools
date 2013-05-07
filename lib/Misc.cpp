@@ -108,3 +108,8 @@ std::string Misc::processRange (const std::string &start, const std::string &end
 void Misc::toupper (std::string &str){
   std::transform(str.begin(), str.end(), str.begin(), ::toupper);
 }
+
+double Misc::hypot (const double &a, const double &b){
+  //Prevent under/overflow
+  return a*sqrt(1+(b/a)*(b/a));
+}
