@@ -94,41 +94,41 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
     if (k < nct) {
  
       // Compute the transformation for the k-th column and
-      // place the k-th diagonal in s[k].
+      // place the k-th diagonal in s.at(k).
       // Compute 2-norm of k-th column without under/overflow.
-      s[k] = 0;
+      s.at(k) = 0;
       for (i = k; i < m; i++) {
-        s[k] = Misc::hypot(s[k],A[i][k]);
+        s.at(k) = Misc::hypot(s.at(k),A.at(i).at(k));
       }
-      if (s[k] != 0.0) {
-        if (A[k][k] < 0.0) {
-          s[k] = -s[k];
+      if (s.at(k) != 0.0) {
+        if (A.at(k).at(k) < 0.0) {
+          s.at(k) = -s.at(k);
         }
         for (i = k; i < m; i++) {
-          A[i][k] /= s[k];
+          A.at(i).at(k) /= s.at(k);
         }
-        A[k][k] += 1.0;
+        A.at(k).at(k) += 1.0;
       }
-      s[k] = -s[k];
+      s.at(k) = -s.at(k);
     }
     for (j = k+1; j < n; j++) {
-      if ((k < nct) && (s[k] != 0.0))  {
+      if ((k < nct) && (s.at(k) != 0.0))  {
 
         // Apply the transformation.
  
         t = 0;
         for (i = k; i < m; i++) {
-          t += A[i][k]*A[i][j];
+          t += A.at(i).at(k)*A.at(i).at(j);
         }
-        t = -t/A[k][k];
+        t = -t/A.at(k).at(k);
         for (i = k; i < m; i++) {
-          A[i][j] += t*A[i][k];
+          A.at(i).at(j) += t*A.at(i).at(k);
         }
       }
  
       // Place the k-th row of A into e for the
       // subsequent calculation of the row transformation.
-      e[j] = A[k][j];
+      e.at(j) = A.at(k).at(j);
     }
 
     if (wantu & (k < nct)) {
@@ -137,43 +137,43 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
       // multiplication.
  
       for (i = k; i < m; i++) {
-        U[i][k] = A[i][k];
+        U.at(i).at(k) = A.at(i).at(k);
       }
     }
     if (k < nrt) {
  
       // Compute the k-th row transformation and place the
-      // k-th super-diagonal in e[k].
+      // k-th super-diagonal in e.at(k).
       // Compute 2-norm without under/overflow.
-      e[k] = 0;
+      e.at(k) = 0;
       for (i = k+1; i < n; i++) {
-        e[k] = Misc::hypot(e[k],e[i]);
+        e.at(k) = Misc::hypot(e.at(k),e.at(i));
       }
-      if (e[k] != 0.0) {
-        if (e[k+1] < 0.0) {
-          e[k] = -e[k];
+      if (e.at(k) != 0.0) {
+        if (e.at(k+1) < 0.0) {
+          e.at(k) = -e.at(k);
         }
         for (i = k+1; i < n; i++) {
-           e[i] /= e[k];
+           e.at(i) /= e.at(k);
         }
-        e[k+1] += 1.0;
+        e.at(k+1) += 1.0;
       }
-      e[k] = -e[k];
-      if ((k+1 < m) & (e[k] != 0.0)) {
+      e.at(k) = -e.at(k);
+      if ((k+1 < m) & (e.at(k) != 0.0)) {
 
         // Apply the transformation.
         for (i = k+1; i < m; i++) {
-          work[i] = 0.0;
+          work.at(i) = 0.0;
         }
         for (j = k+1; j < n; j++) {
            for (i = k+1; i < m; i++) {
-              work[i] += e[j]*A[i][j];
+              work.at(i) += e.at(j)*A.at(i).at(j);
            }
         }
         for (j = k+1; j < n; j++) {
-          t = -e[j]/e[k+1];
+          t = -e.at(j)/e.at(k+1);
           for (i = k+1; i < m; i++) {
-            A[i][j] += t*work[i];
+            A.at(i).at(j) += t*work.at(i);
           }
         }
       }
@@ -184,7 +184,7 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
         // back multiplication.
  
         for (i = k+1; i < n; i++) {
-          V[i][k] = e[i];
+          V.at(i).at(k) = e.at(i);
         }
       }
     }
@@ -194,50 +194,50 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
  
   p = std::min(n,m+1);
   if (nct < n) {
-    s[nct] = A[nct][nct];
+    s.at(nct) = A.at(nct).at(nct);
   }
   if (m < p) {
-    s[p-1] = 0.0;
+    s.at(p-1) = 0.0;
   }
   if (nrt+1 < p) {
-    e[nrt] = A[nrt][p-1];
+    e.at(nrt) = A.at(nrt).at(p-1);
   }
-  e[p-1] = 0.0;
+  e.at(p-1) = 0.0;
 
   // If required, generate U.
 
   if (wantu) {
     for (j = nct; j < nu; j++) {
       for (i = 0; i < m; i++) {
-        U[i][j] = 0.0;
+        U.at(i).at(j) = 0.0;
       }
-      U[j][j] = 1.0;
+      U.at(j).at(j) = 1.0;
     }
     for (k = nct-1; k >= 0; k--) {
-      if (s[k] != 0.0) {
+      if (s.at(k) != 0.0) {
         for (j = k+1; j < nu; j++) {
           t = 0;
           for (i = k; i < m; i++) {
-            t += U[i][k]*U[i][j];
+            t += U.at(i).at(k)*U.at(i).at(j);
           }
-          t = -t/U[k][k];
+          t = -t/U.at(k).at(k);
           for (i = k; i < m; i++) {
-            U[i][j] += t*U[i][k];
+            U.at(i).at(j) += t*U.at(i).at(k);
           }
         }
         for (i = k; i < m; i++ ) {
-          U[i][k] = -U[i][k];
+          U.at(i).at(k) = -U.at(i).at(k);
         }
-        U[k][k] = 1.0 + U[k][k];
+        U.at(k).at(k) = 1.0 + U.at(k).at(k);
         for (i = 0; i < k-1; i++) {
-          U[i][k] = 0.0;
+          U.at(i).at(k) = 0.0;
         }
       }
       else {
         for (i = 0; i < m; i++) {
-          U[i][k] = 0.0;
+          U.at(i).at(k) = 0.0;
         }
-        U[k][k] = 1.0;
+        U.at(k).at(k) = 1.0;
       }
     }
   }
@@ -245,22 +245,22 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
   // If required, generate V.
   if (wantv) {
     for (k = n-1; k >= 0; k--) {
-      if ((k < nrt) & (e[k] != 0.0)) {
+      if ((k < nrt) & (e.at(k) != 0.0)) {
         for (j = k+1; j < nu; j++) {
           t = 0;
           for (i = k+1; i < n; i++) {
-            t += V[i][k]*V[i][j];
+            t += V.at(i).at(k)*V.at(i).at(j);
           }
-          t = -t/V[k+1][k];
+          t = -t/V.at(k+1).at(k);
           for (i = k+1; i < n; i++) {
-            V[i][j] += t*V[i][k];
+            V.at(i).at(j) += t*V.at(i).at(k);
           }
         }
       }
       for (i = 0; i < n; i++) {
-        V[i][k] = 0.0;
+        V.at(i).at(k) = 0.0;
       }
-      V[k][k] = 1.0;
+      V.at(k).at(k) = 1.0;
     }
   }
  
@@ -279,9 +279,9 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
     // negligible elements in the s and e arrays.  On
     // completion the variables kase and k are set as follows.
  
-    // kase = 1     if s(p) and e[k-1] are negligible and k<p
+    // kase = 1     if s(p) and e.at(k-1) are negligible and k<p
     // kase = 2     if s(k) is negligible and k<p
-    // kase = 3     if e[k-1] is negligible, k<p, and
+    // kase = 3     if e.at(k-1) is negligible, k<p, and
     //              s(k), ..., s(p) are not negligible (qr step).
     // kase = 4     if e(p-1) is negligible (convergence).
  
@@ -289,8 +289,8 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
       if (k == -1) {
         break;
       }
-      if (abs(e[k]) <= eps*(abs(s[k]) + abs(s[k+1]))) {
-        e[k] = 0.0;
+      if (abs(e.at(k)) <= eps*(abs(s.at(k)) + abs(s.at(k+1)))) {
+        e.at(k) = 0.0;
         break;
       }
     }
@@ -303,9 +303,9 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
         if (ks == k) {
           break;
         }
-        t = (ks != p ? abs(e[ks]) : 0.) + (ks != k+1 ? abs(e[ks-1]) : 0.);
-        if (abs(s[ks]) <= eps*t)  {
-          s[ks] = 0.0;
+        t = (ks != p ? abs(e.at(ks)) : 0.) + (ks != k+1 ? abs(e.at(ks-1)) : 0.);
+        if (abs(s.at(ks)) <= eps*t)  {
+          s.at(ks) = 0.0;
           break;
         }  
       }
@@ -329,22 +329,22 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
       // Deflate negligible s(p).
  
       case 1: {
-        double f = e[p-2];
-        e[p-2] = 0.0;
+        double f = e.at(p-2);
+        e.at(p-2) = 0.0;
         for (j = p-2; j >= k; j--) {
-          t = Misc::hypot(s[j],f);
-          double cs = s[j]/t;
+          t = Misc::hypot(s.at(j),f);
+          double cs = s.at(j)/t;
           double sn = f/t;
-          s[j] = t;
+          s.at(j) = t;
           if (j != k) {
-            f = -sn*e[j-1];
-            e[j-1] = cs*e[j-1];
+            f = -sn*e.at(j-1);
+            e.at(j-1) = cs*e.at(j-1);
           }
           if (wantv) {
             for (i = 0; i < n; i++) {
-              t = cs*V[i][j] + sn*V[i][p-1];
-              V[i][p-1] = -sn*V[i][j] + cs*V[i][p-1];
-              V[i][j] = t;
+              t = cs*V.at(i).at(j) + sn*V.at(i).at(p-1);
+              V.at(i).at(p-1) = -sn*V.at(i).at(j) + cs*V.at(i).at(p-1);
+              V.at(i).at(j) = t;
             }
           }
         }
@@ -354,20 +354,20 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
       // Split at negligible s(k).
       
       case 2: {
-        double f = e[k-1];
-        e[k-1] = 0.0;
+        double f = e.at(k-1);
+        e.at(k-1) = 0.0;
         for (j = k; j < p; j++) {
-          t = Misc::hypot(s[j],f);
-          double cs = s[j]/t;
+          t = Misc::hypot(s.at(j),f);
+          double cs = s.at(j)/t;
           double sn = f/t;
-          s[j] = t;
-          f = -sn*e[j];
-          e[j] = cs*e[j];
+          s.at(j) = t;
+          f = -sn*e.at(j);
+          e.at(j) = cs*e.at(j);
           if (wantu) {
             for (i = 0; i < m; i++) {
-              t = cs*U[i][j] + sn*U[i][k-1];
-              U[i][k-1] = -sn*U[i][j] + cs*U[i][k-1];
-              U[i][j] = t;
+              t = cs*U.at(i).at(j) + sn*U.at(i).at(k-1);
+              U.at(i).at(k-1) = -sn*U.at(i).at(j) + cs*U.at(i).at(k-1);
+              U.at(i).at(j) = t;
             }
           }
         }
@@ -381,13 +381,13 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
         // Calculate the shift.
     
         double scale = std::max(std::max(std::max(std::max(
-                        abs(s[p-1]),abs(s[p-2])),abs(e[p-2])), 
-                        abs(s[k])),abs(e[k]));
-        double sp = s[p-1]/scale;
-        double spm1 = s[p-2]/scale;
-        double epm1 = e[p-2]/scale;
-        double sk = s[k]/scale;
-        double ek = e[k]/scale;
+                        abs(s.at(p-1)),abs(s.at(p-2))),abs(e.at(p-2))), 
+                        abs(s.at(k))),abs(e.at(k)));
+        double sp = s.at(p-1)/scale;
+        double spm1 = s.at(p-2)/scale;
+        double epm1 = e.at(p-2)/scale;
+        double sk = s.at(k)/scale;
+        double ek = e.at(k)/scale;
         double b = ((spm1 + sp)*(spm1 - sp) + epm1*epm1)/2.0;
         double c = (sp*epm1)*(sp*epm1);
         double shift = 0.0;
@@ -406,36 +406,36 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
           double cs = f/t;
           double sn = g/t;
           if (j != k) {
-            e[j-1] = t;
+            e.at(j-1) = t;
           }
-          f = cs*s[j] + sn*e[j];
-          e[j] = cs*e[j] - sn*s[j];
-          g = sn*s[j+1];
-          s[j+1] = cs*s[j+1];
+          f = cs*s.at(j) + sn*e.at(j);
+          e.at(j) = cs*e.at(j) - sn*s.at(j);
+          g = sn*s.at(j+1);
+          s.at(j+1) = cs*s.at(j+1);
           if (wantv) {
             for (i = 0; i < n; i++) {
-              t = cs*V[i][j] + sn*V[i][j+1];
-              V[i][j+1] = -sn*V[i][j] + cs*V[i][j+1];
-              V[i][j] = t;
+              t = cs*V.at(i).at(j) + sn*V.at(i).at(j+1);
+              V.at(i).at(j+1) = -sn*V.at(i).at(j) + cs*V.at(i).at(j+1);
+              V.at(i).at(j) = t;
             }
           }
           t = Misc::hypot(f,g);
           cs = f/t;
           sn = g/t;
-          s[j] = t;
-          f = cs*e[j] + sn*s[j+1];
-          s[j+1] = -sn*e[j] + cs*s[j+1];
-          g = sn*e[j+1];
-          e[j+1] = cs*e[j+1];
+          s.at(j) = t;
+          f = cs*e.at(j) + sn*s.at(j+1);
+          s.at(j+1) = -sn*e.at(j) + cs*s.at(j+1);
+          g = sn*e.at(j+1);
+          e.at(j+1) = cs*e.at(j+1);
           if (wantu && (j < m-1)) {
             for (i = 0; i < m; i++) {
-              t = cs*U[i][j] + sn*U[i][j+1];
-              U[i][j+1] = -sn*U[i][j] + cs*U[i][j+1];
-              U[i][j] = t;
+              t = cs*U.at(i).at(j) + sn*U.at(i).at(j+1);
+              U.at(i).at(j+1) = -sn*U.at(i).at(j) + cs*U.at(i).at(j+1);
+              U.at(i).at(j) = t;
             }
           }
         }
-        e[p-2] = f;
+        e.at(p-2) = f;
         iter = iter + 1;
       }
       break;
@@ -445,11 +445,11 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
       case 4: {
         // Make the singular values positive.
    
-        if (s[k] <= 0.0) {
-          s[k] = (s[k] < 0.0 ? -s[k] : 0.0);
+        if (s.at(k) <= 0.0) {
+          s.at(k) = (s.at(k) < 0.0 ? -s.at(k) : 0.0);
           if (wantv) {
             for (i = 0; i <= pp; i++) {
-              V[i][k] = -V[i][k];
+              V.at(i).at(k) = -V.at(i).at(k);
             }
           }
         }
@@ -457,20 +457,20 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
         // Order the singular values.
    
         while (k < pp) {
-          if (s[k] >= s[k+1]) {
+          if (s.at(k) >= s.at(k+1)) {
             break;
           }
-          t = s[k];
-          s[k] = s[k+1];
-          s[k+1] = t;
+          t = s.at(k);
+          s.at(k) = s.at(k+1);
+          s.at(k+1) = t;
           if (wantv && (k < n-1)) {
             for (i = 0; i < n; i++) {
-              t = V[i][k+1]; V[i][k+1] = V[i][k]; V[i][k] = t;
+              t = V.at(i).at(k+1); V.at(i).at(k+1) = V.at(i).at(k); V.at(i).at(k) = t;
             }
           }
           if (wantu && (k < m-1)) {
             for (i = 0; i < m; i++) {
-              t = U[i][k+1]; U[i][k+1] = U[i][k]; U[i][k] = t;
+              t = U.at(i).at(k+1); U.at(i).at(k+1) = U.at(i).at(k); U.at(i).at(k) = t;
             }
           }
           k++;
