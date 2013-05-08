@@ -1,16 +1,18 @@
 //Sean M. Law`
 
 #include "LinAlg.hpp"
+
 //modPDB.exe tests/file.pdb -fit tests/file.ref.pdb -outsel :.CA > t.pdb
+
+
+
 void LinAlg::SVD (const std::vector< std::vector <double> > &M){
   std::vector< std::vector<double> > A; //A copy of matrix M
-  std::vector< std::vector<double> > U;
-  std::vector< std::vector<double> > V;
-  std::vector<double> s;
   std::vector<double> e;
   std::vector<double> work;
   int m; //Rows
   int n; //Columns
+  int last;
   int nu;
   bool wantu;
   bool wantv;
@@ -43,15 +45,18 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
 
   wantu=true;
   wantv=true;
-  m=M.size();
-  n=M.at(0).size();
-
-  A.resize(m);
-  for (i=0; i< m; i++){
-    A.at(i).resize(n);
-    for (j=0; j< n; j++){
-      A.at(i).at(j)=M.at(i).at(j);
+  
+  A=M;
+  m=A.size();
+  n=A.at(0).size();
+  //Check the size of each row
+  last=0;
+  for (i=0; i<m; i++){
+    n=A.at(i).size();
+    if (last !=0 && last != n){
+      std::cerr << std::endl << "Warning: Matrix has jagged rows" << std::endl;
     }
+    last=n;
   }
 
   nu=std::min(m,n); 
@@ -481,7 +486,4 @@ void LinAlg::SVD (const std::vector< std::vector <double> > &M){
       break;
     }
   }
-	for (i=0; i<3; i++){
-		//std::cerr << s.at(i) << std::endl;
-	}
 }

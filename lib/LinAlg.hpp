@@ -12,9 +12,13 @@
 
 class LinAlg {
   private:
-
+    std::vector< std::vector<double> > U;
+    std::vector< std::vector<double> > V;
+    std::vector<double> s;
+    
   public:
-    static void SVD (const std::vector< std::vector <double> > &M);
+    void SVD (const std::vector< std::vector <double> > &M);
+    void transpose ();
 };
 
 #endif
