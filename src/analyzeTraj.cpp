@@ -25,7 +25,7 @@ void usage(){
 	std::cerr << "         [-fit fitPDB] [-fitsel selection]" << std::endl;
 	std::cerr << "         [-rmsd selection]" << std::endl;
 	std::cerr << "         [-rmsf selection]" << std::endl;
-  std::cerr << "         [-skip frames] [-start frame]" << std::endl;
+  std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
 	std::cerr << "         [-average selection]" << std::endl;
 	exit(0);
 }
@@ -48,6 +48,8 @@ int main (int argc, char **argv){
 	Trajectory *ftrjin;
   int skip=0;
   int start=0;
+	int stop=-1;
+	bool startFlag=false;
 	std::string line;
 	std::vector<std::string> s;
 	Vector xyz;
@@ -152,7 +154,12 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       std::stringstream(currArg) >> start;
       start--;
+			startFlag=true;
     }
+		else if (currArg == "-stop"){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> stop;
+		}
     else{
       trajs.push_back(currArg);
     }
@@ -212,8 +219,14 @@ int main (int argc, char **argv){
 
       if (ftrjin->findFormat(trjin) == true){
 				ftrjin->readHeader(trjin);
+				if (stop < 0){
+					stop=ftrjin->getNFrame();
+				}
+				if (skip > 0 && startFlag == false){
+					start=skip;
+				}
         //Loop through desired frames
-				for (i=start; i< ftrjin->getNFrame(); i=i+1+skip){
+				for (i=start; i< ftrjin->getNFrame() && i< stop; i=i+1+skip){
 					ftrjin->readFrame(trjin, i);
 					//Fit if needed
 					if (fit == true){
