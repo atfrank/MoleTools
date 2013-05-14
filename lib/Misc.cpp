@@ -10,10 +10,10 @@ std::string Misc::single (const std::string &resnamein){
 	return "";
 }
 
-std::vector<std::string> Misc::split (const std::string &str, const std::string &delim, const bool repeat){
-  std::vector<std::string> tokens;
+void Misc::splitStr (const std::string &str, const std::string &delim, std::vector<std::string> &out, const bool repeat){
   size_t p0=0;
   size_t p1=std::string::npos;
+	out.clear();
 
   //"repeat" = true means that a blank string is added when there are
   //back-to-back delimiters. Otherwise, repeat=false ignores back-to-back delimiters.
@@ -22,11 +22,11 @@ std::vector<std::string> Misc::split (const std::string &str, const std::string 
 
   while (p1 != std::string::npos){
     if (p1-p0 > 0){
-      tokens.push_back(str.substr(p0,p1-p0));
+      out.push_back(str.substr(p0,p1-p0));
     }
     else{
       if (repeat){
-        tokens.push_back(str.substr(p0,p1-p0));
+        out.push_back(str.substr(p0,p1-p0));
       }
     }
     p0=p1+1;
@@ -34,16 +34,65 @@ std::vector<std::string> Misc::split (const std::string &str, const std::string 
   }
   //After last delimiter
   if (p1-p0 > 0){ //Do NOT add "&& p1 != std::string::npos"
-    tokens.push_back(str.substr(p0,p1-p0));
+    out.push_back(str.substr(p0,p1-p0));
   }
   else{
     if (repeat){
-      tokens.push_back(str.substr(p0,p1-p0));
+      out.push_back(str.substr(p0,p1-p0));
     }
   }
 
-  return tokens;
 }
+
+template <class SplitVec>
+void Misc::splitNum (const std::string &str, const std::string &delim, SplitVec &out, const bool repeat){
+	out.clear();
+	out.reserve(500); //Still need resizing but reduces moving of data in memory
+  size_t p0=0;
+  size_t p1=std::string::npos;
+	int n=0;
+
+  //"repeat" = true means that a blank string is added when there are
+  //back-to-back delimiters. Otherwise, repeat=false ignores back-to-back delimiters.
+
+  p1=str.find_first_of(delim,p0);
+
+  while (p1 != std::string::npos){
+    if (p1-p0 > 0){
+			out.resize(n+1);
+			std::stringstream(str.substr(p0,p1-p0)) >> out.at(n);
+			n++;
+    }
+    else{
+      if (repeat){
+				out.resize(n+1);
+				std::stringstream(str.substr(p0,p1-p0)) >> out.at(n);
+				n++;
+      }
+    }
+    p0=p1+1;
+    p1=str.find_first_of(delim, p0);
+  }
+  //After last delimiter
+  if (p1-p0 > 0){ //Do NOT add "&& p1 != std::string::npos"
+		out.resize(n+1);
+		std::stringstream(str.substr(p0,p1-p0)) >> out.at(n);
+		n++;
+  }
+  else{
+    if (repeat){
+			out.resize(n+1);
+			std::stringstream(str.substr(p0,p1-p0)) >> out.at(n);
+			n++;
+    }
+  }
+}
+
+template void Misc::splitNum<std::vector<int> > (const std::string&, const std::string&, std::vector<int>&, const bool);
+
+template void Misc::splitNum<std::vector<double> > (const std::string&, const std::string&, std::vector<double>&, const bool);
+
+template void Misc::splitNum<std::vector<float> > (const std::string&, const std::string&, std::vector<float>&, const bool);
 
 bool Misc::isdigit (const std::string &str){
   return str.find_first_not_of("0123456789") == std::string::npos;

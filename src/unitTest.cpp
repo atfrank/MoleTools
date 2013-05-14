@@ -64,7 +64,7 @@ int main (int argc, char **argv){
     if (line.size() == 0){
       continue;
     }
-    s=Misc::split(line, " \t", false); //Split on one or more consecutive whitespace
+    Misc::splitStr(line, " \t", s, false); //Split on one or more consecutive whitespace
     for (j=0; j< s.size(); j++){
   //    std::cerr << s.at(j) << ":";
     }

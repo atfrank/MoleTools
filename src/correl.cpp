@@ -113,7 +113,7 @@ int main (int argc, char **argv){
       continue;
     }
     else{
-      s=Misc::split(line, " \t", false); //Split on one or more consecutive whitespace
+      Misc::splitStr(line, " \t", s, false); //Split on one or more consecutive whitespace
       std::stringstream(s.at(xcol)) >> xval;
       std::stringstream(s.at(ycol)) >> yval;
       xvals.push_back(xval);

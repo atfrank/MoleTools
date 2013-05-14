@@ -121,7 +121,7 @@ int main (int argc, char **argv){
 		coninp=&conFile;
 		while (coninp->good() && !(coninp->eof())){
 			getline(*coninp, line);
-			s=Misc::split(line, " \t", false);
+			Misc::splitStr(line, " \t", s, false);
 			if (s.size() == 3){
 				mol->select(s.at(0));
 				cmol=mol->copy();

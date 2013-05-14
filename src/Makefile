@@ -4,7 +4,7 @@ include ../makefile.defs
 
 OBJS = libtools.$(LIBEXT)
 
-all:	$(BINDIR) libtools.$(LIBEXT) unitTest contact modPDB modTraj pdb2Traj secondary traj2PDB correl analyzeTraj 
+all:	$(BINDIR) libtools.$(LIBEXT) unitTest contact modPDB modTraj pdb2Traj secondary traj2PDB correl analyzeTraj contactAppOrder
 
 clean:
 	rm -rf *.o
@@ -42,6 +42,9 @@ correl: correl.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
 
 analyzeTraj: analyzeTraj.o $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
+
+contactAppOrder: contactAppOrder.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
 
 %.o:	%.cpp
