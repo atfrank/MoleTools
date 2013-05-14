@@ -33,7 +33,7 @@ class Analyze {
 		static Vector centerOfGeometry(Molecule* mol, bool selFlag=true);
 		static double rmsd (Molecule* cmpmol, Molecule* refmol);
 		static void rmsf (Molecule* cmpmol, Molecule* refmol, std::vector<double> &tdataIO, int &ndataIO);
-		static void avgMol(Molecule* cmpmol, Molecule* refmol, int &ndataIO);
+		static void averageMol(Molecule* cmpmol, Molecule* refmol, int &ndataIO);
 		static double distance (const Vector& u, const Vector& v);
 		static double angle (const Vector& u, const Vector& v, const Vector& w);
     static double dihedral (const Vector& t, const Vector& u, const Vector& v, const Vector& w);

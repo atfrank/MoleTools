@@ -109,7 +109,10 @@ void Analyze::runAnalysis(){
 	}
 	else if (this->getType() == "average"){
 		//No output during analysis. Only during post-analysis
-		Analyze::avgMol(this->getMol(0), this->getMol(1), ndata);
+		if (ndata == 0){
+			this->getMol(1)->zeroCoor();
+		}
+		Analyze::averageMol(this->getMol(0), this->getMol(1), ndata);
 	}
 	else if(this->getType() == "quick"){
 		if (this->getNMol() == 1){
@@ -279,7 +282,7 @@ void Analyze::rmsf (Molecule* cmpmol, Molecule* refmol, std::vector<double> &tda
 	}
 }
 
-void Analyze::avgMol (Molecule* cmpmol, Molecule* refmol, int &ndataIO){
+void Analyze::averageMol (Molecule* cmpmol, Molecule* refmol, int &ndataIO){
   unsigned i,j;
   Atom *atm;
   std::vector<Vector> coor;

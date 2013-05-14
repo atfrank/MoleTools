@@ -6,6 +6,9 @@ RMSD
 analyzeCHARMM.pl -par nodeoxy -comp ref.pdb -pdb ref.pdb -rms ref.dcd -log logfile
 analyzeCHARMM.pl -par nodeoxy -comp ref.center.pdb -pdb ref.center.pdb -rms ref.center.dcd -log logfile
 
-RMSD
-analyzeCHARMM.pl -rmsf -pdb copy.pdb -comp copy.pdb -log logfile -fitsel :.CA tests/file.dcd
-analyzeTraj -rmsf :.CA -pdb copy.pdb -fit copy.pdb -fitsel :.CA tests/file.dcd
+RMSF
+analyzeCHARMM.pl -rmsf -pdb tests/file.avg.pdb -comp tests/file.avg.pdb -log logfile -fitsel :.CA tests/file.dcd
+analyzeTraj -rmsf :.CA -pdb tests/file.avg.pdb -fit tests/file.avg.pdb -fitsel :.CA tests/file.dcd
+
+Average
+analyzeTraj -average :.CA -pdb tests/file.pdb t.dcd | grep ATOM > avg2.pdb
