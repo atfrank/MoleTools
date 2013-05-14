@@ -44,6 +44,7 @@ class Molecule {
 		void storeSel(std::string key="tmp");
 		void recallSel(std::string key="tmp");
 		void eraseSel(std::string key="tmp");
+		void zeroCoor();
 
     double lsqfit (Molecule *refmol, bool transform=true);
 		double rmsd (Molecule *refmol);

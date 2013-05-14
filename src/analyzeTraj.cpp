@@ -24,8 +24,10 @@ void usage(){
 	std::cerr << "         [-dihedral selection selection selection selection]" << std::endl;
 	std::cerr << "         [-fit fitPDB] [-fitsel selection]" << std::endl;
 	std::cerr << "         [-rmsd selection]" << std::endl;
+	std::cerr << "         [-rmsf selection]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame]" << std::endl;
-  exit(0);
+	std::cerr << "         [-average selection]" << std::endl;
+	exit(0);
 }
 
 int main (int argc, char **argv){
@@ -128,6 +130,20 @@ int main (int argc, char **argv){
 			anin->addSel(currArg);
       analyses.push_back(anin);
 		}
+		else if (currArg == "-rmsf"){
+			anin=new Analyze;
+			anin->setType("rmsf");
+			currArg=argv[++i];
+			anin->addSel(currArg);
+			analyses.push_back(anin);
+		}
+		else if (currArg == "-average"){
+			anin=new Analyze;
+			anin->setType("average");
+			currArg=argv[++i];
+			anin->addSel(currArg);
+			analyses.push_back(anin);
+		}
     else if (currArg == "-skip"){
       currArg=argv[++i];
       std::stringstream(currArg) >> skip;
@@ -156,6 +172,14 @@ int main (int argc, char **argv){
 		for (j=0; j< analyses.size(); j++){
 			analyses.at(j)->setupMolSel(mol); //Make copies of mol from selection
 			if (analyses.at(j)->getType() == "rmsd"){
+				refmol=mol->clone();
+				analyses.at(j)->setupMolSel(refmol);
+			}
+			if (analyses.at(j)->getType() == "rmsf"){
+				refmol=mol->clone();
+			  analyses.at(j)->setupMolSel(refmol);
+			}
+			if (analyses.at(j)->getType() == "average"){
 				refmol=mol->clone();
 				analyses.at(j)->setupMolSel(refmol);
 			}
@@ -217,6 +241,10 @@ int main (int argc, char **argv){
 		}
 		trjin.close();
 	}
+
+	for (ianalysis=0; ianalysis< analyses.size(); ianalysis++){
+    analyses.at(ianalysis)->postAnalysis();
+  }
 
 	//delete mol;
 

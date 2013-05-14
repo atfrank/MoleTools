@@ -152,6 +152,14 @@ Vector& Vector::operator/= (const double val){
   return(*this);
 }
 
+Vector& Vector::operator/ (const int val){
+  xcoor/=val;
+	ycoor/=val;
+	zcoor/=val;
+	return(*this);
+}
+
+
 Vector Vector::operator- () const {
   return Vector(-xcoor,-ycoor,-zcoor);
 }

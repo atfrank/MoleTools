@@ -6,6 +6,8 @@ Analyze::Analyze (){
 	type.clear();
 	sel.clear();
 	mol.clear();
+	tdata.clear();
+	ndata=0;
 	resel=false;
 }
 
@@ -49,7 +51,17 @@ void Analyze::setupMolSel(Molecule* molin){
 	if (this->getType() == "newtype"){
 
 	}
+	else if (this->getType() == "rmsf"){
+    molin->select(this->getSel(0));
+    tmpmol=molin->copy();
+    this->addMol(tmpmol);
+  }
 	else if (this->getType() == "rmsd"){
+		molin->select(this->getSel(0));
+		tmpmol=molin->copy();
+		this->addMol(tmpmol);
+	}
+	else if (this->getType() == "average"){
 		molin->select(this->getSel(0));
 		tmpmol=molin->copy();
 		this->addMol(tmpmol);
@@ -79,6 +91,14 @@ void Analyze::runAnalysis(){
 	if (this->getType() == "newtype"){
 		
 	}
+	else if (this->getType() == "rmsf"){
+		//Resize and initialize if necessary
+		if (ndata == 0){
+			tdata.resize(this->getMol(0)->getNAtomSelected(), 0);
+		}
+		//No output during analysis. Only during post-analysis
+		Analyze::rmsf(this->getMol(0), this->getMol(1), tdata, ndata);
+	}
 	else if (this->getType() == "rmsd"){
 		if (this->getNMol() == 2){
 			std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::rmsd(this->getMol(0),this->getMol(1));
@@ -86,6 +106,10 @@ void Analyze::runAnalysis(){
 		else{
 			std::cout << std::setw(9) << std::right << std::setprecision(3) << "NaN";
 		}
+	}
+	else if (this->getType() == "average"){
+		//No output during analysis. Only during post-analysis
+		Analyze::avgMol(this->getMol(0), this->getMol(1), ndata);
 	}
 	else if(this->getType() == "quick"){
 		if (this->getNMol() == 1){
@@ -110,6 +134,42 @@ void Analyze::runAnalysis(){
 	}
 	else{
 		std::cerr << "Error: Skipping unrecognized analysis type \"" << type << "\"" << std::endl;
+	}
+}
+
+void Analyze::postAnalysis(){
+	unsigned int i, j;
+	Atom *atm;
+
+	std::cout << std::fixed;
+	std::cout << std::endl << std::endl; //For using index in Gnuplot
+  //Process all analyses based on type
+  if (this->getType() == "rmsf"){
+		j=0;
+		for(i=0; i< this->getMol(0)->getNAtomSelected(); i++){
+			atm=this->getMol(0)->getAtom(i);
+			if (atm->getSel() == false){
+				continue;
+			}
+			tdata.at(j)=sqrt(tdata.at(j)/ndata);
+			std::cout << atm->getSummary();  
+			std::cout << std::setw(9) << std::right << std::setprecision(3) << tdata.at(j);
+			std::cout << std::endl;
+			j++;
+		}
+	}
+	else if (this->getType() == "average"){
+		for(i=0; i< this->getMol(1)->getNAtomSelected(); i++){
+			atm=this->getMol(1)->getAtom(i);
+      if (atm->getSel() == false){
+        continue;
+      }
+			atm->setCoor(atm->getCoor()/ndata);
+		}
+		this->getMol(1)->writePDB(true, true);
+	}
+	else{
+		//Do nothing
 	}
 }
 
@@ -182,6 +242,75 @@ double Analyze::rmsd (Molecule *cmpmol, Molecule *refmol){
 
   return RMSD;
 
+}
+
+void Analyze::rmsf (Molecule* cmpmol, Molecule* refmol, std::vector<double> &tdataIO, int &ndataIO){
+	unsigned i,j;
+	Atom *atm;
+	std::vector<Vector> coor;
+	Vector d;
+
+	//Check selection sizes and resize matrices
+  if (cmpmol->getNAtomSelected() != refmol->getNAtomSelected()){
+		std::cerr << std::endl << "Error: Atom number mismatch in RMSD calculation" << std::endl;
+    std::cerr << "CMP-NATOM: " << cmpmol->getNAtomSelected() << ", ";
+    std::cerr << "REF-NATOM: " << refmol->getNAtomSelected() << std::endl;
+	}
+	else{
+		for (i=0; i< cmpmol->getNAtom(); i++){
+			atm=cmpmol->getAtom(i);
+    	if (atm->getSel() == false){
+      	continue;
+    	}
+			coor.push_back(atm->getCoor());
+		}
+
+		j=0;
+		for (i=0; i< refmol->getNAtom(); i++){
+			atm=refmol->getAtom(i);
+	    if (atm->getSel() == false){
+	      continue;
+	    }
+			d=coor.at(j)-atm->getCoor();
+			tdataIO.at(j)+=d.norm()*d.norm(); //Add squared distance to previous frame
+			j++;
+		}
+		ndataIO++;
+	}
+}
+
+void Analyze::avgMol (Molecule* cmpmol, Molecule* refmol, int &ndataIO){
+  unsigned i,j;
+  Atom *atm;
+  std::vector<Vector> coor;
+  Vector d;
+
+  //Check selection sizes and resize matrices
+  if (cmpmol->getNAtomSelected() != refmol->getNAtomSelected()){
+    std::cerr << std::endl << "Error: Atom number mismatch in RMSD calculation" << std::endl;
+    std::cerr << "CMP-NATOM: " << cmpmol->getNAtomSelected() << ", ";
+    std::cerr << "REF-NATOM: " << refmol->getNAtomSelected() << std::endl;
+  }
+  else{
+    for (i=0; i< cmpmol->getNAtom(); i++){
+      atm=cmpmol->getAtom(i);
+      if (atm->getSel() == false){
+        continue;
+      }
+      coor.push_back(atm->getCoor());
+    }
+
+    j=0;
+    for (i=0; i< refmol->getNAtom(); i++){
+      atm=refmol->getAtom(i);
+      if (atm->getSel() == false){
+        continue;
+      }
+      atm->setCoor(coor.at(j)+atm->getCoor());
+      j++;
+    }
+    ndataIO++;
+  }
 }
 
 double Analyze::distance (const Vector& u, const Vector& v){

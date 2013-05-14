@@ -5,3 +5,7 @@ mdCHARMM.pl -par boxx=60,boxy=70,boxz=80,periodic,dynsteps=1000,dynoutfrq=10 -lo
 RMSD
 analyzeCHARMM.pl -par nodeoxy -comp ref.pdb -pdb ref.pdb -rms ref.dcd -log logfile
 analyzeCHARMM.pl -par nodeoxy -comp ref.center.pdb -pdb ref.center.pdb -rms ref.center.dcd -log logfile
+
+RMSD
+analyzeCHARMM.pl -rmsf -pdb copy.pdb -comp copy.pdb -log logfile -fitsel :.CA tests/file.dcd
+analyzeTraj -rmsf :.CA -pdb copy.pdb -fit copy.pdb -fitsel :.CA tests/file.dcd

@@ -299,6 +299,26 @@ void Molecule::eraseSel(std::string key){
 	storedSel.erase(key);
 }
 
+void Molecule::zeroCoor(){
+	Chain *chn;
+  Residue *res;
+  Atom *atm;
+	Vector coor;
+
+	coor=Vector(0.0, 0.0, 0.0);
+
+  for (unsigned int i=0; i< this->getChnVecSize(); i++){
+    chn=this->getChain(i);
+    for (unsigned int j=0; j< chn->getResVecSize(); j++){
+      res=chn->getResidue(j);
+      for (unsigned int k=0; k< res->getAtmVecSize(); k++){
+        atm=res->getAtom(k);
+        atm->setCoor(coor);
+      }
+    }
+  }
+	
+}
 
 double Molecule::lsqfit (Molecule *refmol, bool transform){
 	Eigen::MatrixXd cmp; //Nx3 Mobile Coordinate Matrix

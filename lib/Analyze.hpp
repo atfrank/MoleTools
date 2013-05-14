@@ -9,6 +9,8 @@ class Analyze {
 		std::string type;
     std::vector<std::string> sel;
 		std::vector<Molecule*> mol;
+		std::vector<double> tdata; //Time dependent data, maybe for averaging
+		int ndata; //Total number of datapoints
 		bool resel; //Re-do selection for each analysis, not implemented yet
 
 	public:
@@ -25,10 +27,13 @@ class Analyze {
 		Molecule* getMol(const int& element);
 		unsigned int getNMol();
 		void runAnalysis();
+		void postAnalysis();
 
 		//Analysis functions
 		static Vector centerOfGeometry(Molecule* mol, bool selFlag=true);
 		static double rmsd (Molecule* cmpmol, Molecule* refmol);
+		static void rmsf (Molecule* cmpmol, Molecule* refmol, std::vector<double> &tdataIO, int &ndataIO);
+		static void avgMol(Molecule* cmpmol, Molecule* refmol, int &ndataIO);
 		static double distance (const Vector& u, const Vector& v);
 		static double angle (const Vector& u, const Vector& v, const Vector& w);
     static double dihedral (const Vector& t, const Vector& u, const Vector& v, const Vector& w);
