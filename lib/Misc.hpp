@@ -7,9 +7,9 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <algorithm>
 #include <typeinfo>
 
 class Misc {
@@ -27,6 +27,10 @@ class Misc {
     static std::string processRange (const std::string &start, const std::string &end);
     static void toupper (std::string &str);
 		static double hypot (const double &a, const double &b);
+		static bool sortPairFirst(const std::pair<int, int> &a, const std::pair<int, int> &b);
+		static bool sortPairSecond(const std::pair<int, int> &a, const std::pair<int, int> &b);
+		static bool findUniqueFirst(const std::pair<int, int> &a, const std::pair<int, int> &b);
+		static bool findUniqueSecond(const std::pair<int, int> &a, const std::pair<int, int> &b);
 };
 
 #endif

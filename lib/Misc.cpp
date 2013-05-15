@@ -169,3 +169,23 @@ double Misc::hypot (const double &a, const double &b){
 		return 0.0;
 	}
 }
+
+bool Misc::sortPairFirst(const std::pair<int, int> &a, const std::pair<int, int> &b){
+  return (a.first < b.first);
+}
+
+
+bool Misc::sortPairSecond(const std::pair<int, int> &a, const std::pair<int, int> &b){
+	return (a.second < b.second);
+}
+
+bool Misc::findUniqueFirst(const std::pair<int, int> &a, const std::pair<int, int> &b){
+	return (a.first == b.first);
+}
+
+bool Misc::findUniqueSecond(const std::pair<int, int> &a, const std::pair<int, int> &b){
+	return (a.second == b.second);
+}
+
+
+
