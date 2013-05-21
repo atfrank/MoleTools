@@ -19,34 +19,31 @@ class Vector {
     Vector& operator= (const Vector& vec);
     Vector& operator= (const double val);
     //Addition
-    Vector& operator+ (const Vector& vec);
+    Vector operator+ (const Vector& vec) const;
     Vector& operator+= (const Vector& vec);
-    Vector& operator+ (const double val);
+    Vector operator+ (const double val) const;
     Vector& operator+= (const double val);
     //Subtraction
-    Vector& operator- (const Vector& vec);
+    Vector operator- (const Vector& vec) const;
     Vector& operator-= (const Vector& vec);
-    Vector& operator- (const double val);
+    Vector operator- (const double val) const;
     Vector& operator-= (const double val);
     //Multiplication
-    Vector& operator* (const Vector& vec);
+    Vector operator* (const Vector& vec) const;
     Vector& operator*= (const Vector& vec);
-    Vector& operator* (const double val);
+    Vector operator* (const double val) const;
     Vector& operator*= (const double val);
     //Division
-    Vector& operator/ (const Vector& vec);
+    Vector operator/ (const Vector& vec) const;
     Vector& operator/= (const Vector& vec);
-    Vector& operator/ (const double val);
+    Vector operator/ (const double val) const;
     Vector& operator/= (const double val);
-		Vector& operator/ (const int val);
 
     double& x(){return xcoor;};
     double& y(){return ycoor;};
     double& z(){return zcoor;};
 
     Vector operator- () const;
-    Vector operator- (const Vector& vec) const;
-    Vector operator+ (const Vector& vec) const;
     double dot (const Vector& vec) const; //Dot Product
     Vector cross (const Vector& vec) const; //Cross Product
     double norm () const;
