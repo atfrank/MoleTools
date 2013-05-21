@@ -19,6 +19,7 @@ class Molecule {
 		std::map< std::string, std::vector<bool> > storedSel;
 
   public:
+		Molecule(); //Constructor
 		~Molecule();
     static Molecule* readPDB (std::string ifile, int model=0);
     std::string writePDB (bool selFlag=true, bool print=true);
@@ -38,7 +39,7 @@ class Molecule {
     void deselAll();
     void select(std::string sel);
     unsigned int getNAtom();
-    unsigned int getNAtomSelected();
+    unsigned int getNAtomSelected(); //Determining this on the fly is a good safety measure
 		void setCopyFlag(bool copyFlagIn=false);
 		bool getCopyFlag();
 		void storeSel(std::string key="tmp");

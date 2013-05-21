@@ -7,6 +7,14 @@
 #include "Select.hpp"
 #include "Analyze.hpp"
 
+Molecule::Molecule (){
+	chnVec.clear();
+	resVec.clear();
+	atmVec.clear();
+	copyFlag=false;
+	storedSel.clear();
+}
+
 Molecule::~Molecule (){
 	Chain *c;
 	Residue *r;
