@@ -22,7 +22,8 @@ class Molecule {
 		Molecule(); //Constructor
 		~Molecule();
     static Molecule* readPDB (std::string ifile, int model=0);
-    std::string writePDB (bool selFlag=true, bool print=true);
+    std::string writePDB (bool selFlag=true, bool print=true, bool chnFlag=false);
+		static Molecule* readMol2 (std::string ifile);
     Molecule* clone(bool selFlag=true, bool keep=true);
 		Molecule* copy(bool selFlag=true);
     void addAtom(Atom* atmEntry);

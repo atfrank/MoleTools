@@ -1,24 +1,24 @@
 //Sean M. Law
-#ifndef PDB_H
-#define PDB_H
+#ifndef MOL2_H
+#define MOL2_H
 
 #include "Molecule.hpp"
 #include "Misc.hpp"
+#include "Select.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <map>
 #include <stdexcept>
 
-class PDB {
+class Mol2 {
   private:
     std::map<std::string, int> chnMap;
-		std::string format; //Output format
 
   public:
-    PDB();
-    static void writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag=true, bool chnFlag=false);
-    static Molecule* readPDB (std::string ifile, int model=0);
+    Mol2();
+    static void writeMol2Format (Molecule* mol, std::ostringstream &out, bool selFlag=true);
+    static Molecule* readMol2 (std::string ifile);
     Atom* processAtomLine (std::string line, Atom* lastAtom);
 };
 

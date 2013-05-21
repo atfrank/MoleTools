@@ -4,19 +4,34 @@
 
 PDB::PDB(){
   chnMap.clear();
+	format.clear();
 }
 
-void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag){
+void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, bool chnFlag){
   Chain *chn;
   Residue *res;
   Atom *atm;
   std::string lastChain="+";
   int natom=0;
   int catom=0;
+	unsigned int i;
+	std::map<char, int> mapIds;
+	char currId;
+	bool addIdFlag;
 
   out.clear();
+	currId='A';
+	addIdFlag=false;
 
-  for (unsigned int i=0; i< mol->getChnVecSize(); i++){
+	//Create map of chainIds
+	for (i=0; i< mol->getChnVecSize(); i++){
+  	chn=mol->getChain(i);
+		if (chn->getChainId() != " "){
+			mapIds[chn->getChainId().at(0)]=1; 
+		}
+	}
+
+  for (i=0; i< mol->getChnVecSize(); i++){
     chn=mol->getChain(i);
     catom=0;
     //if(!chn->getSel()){continue;}
@@ -47,7 +62,16 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag){
 				else{
 					out << std::setw(4) << std::left << atm->getResName();
 				}
-        out << std::setw(1) << std::left << atm->getChainId();
+				if (chnFlag == true && atm->getChainId() == " "){
+					while (mapIds.find(currId) != mapIds.end()){
+						currId++;
+					}
+					out << std::setw(1) << std::left << currId;
+					addIdFlag=true;
+				}
+				else{
+        	out << std::setw(1) << std::left << atm->getChainId();
+				}
 				if (atm->getResId() <= 999){
         	out << std::setw(4) << std::right << atm->getResId(); //PDB format
         	out << std::setw(1) << std::left << atm->getICode(); //PDB format
@@ -79,6 +103,9 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag){
     }
     if (catom>0){
       out << "TER" << std::endl;
+			if (addIdFlag == true){
+				mapIds[currId]=1;
+			}
     }
   }
 
@@ -246,3 +273,4 @@ Atom* PDB::processAtomLine (std::string line, Atom* lastAtom){
 
   return atmEntry;
 }
+
