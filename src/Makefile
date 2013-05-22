@@ -4,12 +4,13 @@ include ../makefile.defs
 
 OBJS = libtools.$(LIBEXT)
 
-all:	$(BINDIR) libtools.$(LIBEXT) unitTest contact modPDB modTraj pdb2Traj secondary traj2PDB correl analyzeTraj contactAppOrder
+all:	$(BINDIR) libtools.$(LIBEXT) unitTest contact modPDB modTraj pdb2Traj secondary traj2PDB correl analyzeTraj contactAppOrder mol22PDB
 
 clean:
 	rm -rf *.o
 	rm -rf *stackdump
 	rm -rf ../bin/*
+	rm -rf *~
 
 $(BINDIR):
 	mkdir -p $(BINDIR)
@@ -45,6 +46,9 @@ analyzeTraj: analyzeTraj.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
 
 contactAppOrder: contactAppOrder.o $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
+
+mol22PDB: mol22PDB.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
 
 %.o:	%.cpp

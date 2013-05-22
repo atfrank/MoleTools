@@ -4,8 +4,17 @@
 
 //Circular dependencies must be listed here instead of the header file
 #include "PDB.hpp"
+#include "Mol2.hpp"
 #include "Select.hpp"
 #include "Analyze.hpp"
+
+Molecule::Molecule (){
+	chnVec.clear();
+	resVec.clear();
+	atmVec.clear();
+	copyFlag=false;
+	storedSel.clear();
+}
 
 Molecule::~Molecule (){
 	Chain *c;
@@ -39,11 +48,11 @@ Molecule* Molecule::readPDB (std::string ifile, int model){
   }
 }
 
-std::string Molecule::writePDB(bool selFlag, bool print){
+std::string Molecule::writePDB(bool selFlag, bool print, bool chnFlag){
 
   std::ostringstream out;
 
-  PDB::writePDBFormat(this, out, selFlag);
+  PDB::writePDBFormat(this, out, selFlag, chnFlag);
 
 	if (print == true){
   	std::cout << out.str();
@@ -51,6 +60,17 @@ std::string Molecule::writePDB(bool selFlag, bool print){
 	
 	return out.str();
 }
+
+Molecule* Molecule::readMol2 (std::string ifile){
+  if (ifile.length() == 0){
+    std::cerr << "Error: Mol2 file \"" << ifile << "\" cannot be found" << std::endl;
+    return new Molecule;
+  }
+  else{
+    return Mol2::readMol2(ifile);
+  }
+}
+
 
 void Molecule::addAtom(Atom* atmEntry) {
   if (atmEntry->getAtmNum()){

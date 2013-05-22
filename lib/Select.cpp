@@ -307,37 +307,37 @@ void Select::initKeys(Molecule *mol){
 		atmname=Misc::trim(mol->getAtom(i)->getAtmName());
 		if (Select::atom(atmname, "heavy", heavy)){
 			heavy.push_back(atmname);
-      selKeysAtm["HEAVY"]+=atmname+" ";
+     	selKeysAtm["HEAVY"]+=atmname+" ";
 		}
 		else if (Select::atom(atmname, "H", H)){
 			H.push_back(atmname);
-      selKeysAtm["HYDROGEN"]+=atmname+" ";
+     	selKeysAtm["HYDROGEN"]+=atmname+" ";
 		}
 		else if (Select::atom(atmname, "O", O)){
-      O.push_back(atmname);
-      selKeysAtm["OXYGEN"]+=atmname+" ";
-    }
+     	O.push_back(atmname);
+     	selKeysAtm["OXYGEN"]+=atmname+" ";
+   	}
 		else if (Select::atom(atmname, "N", N)){
-      N.push_back(atmname);
-      selKeysAtm["NITROGEN"]+=atmname+" ";
-    }
+     	N.push_back(atmname);
+     	selKeysAtm["NITROGEN"]+=atmname+" ";
+   	}
 		else if (Select::atom(atmname, "C", C)){
-      C.push_back(atmname);
-      selKeysAtm["CARBON"]+=atmname+" ";
-    }
+     	C.push_back(atmname);
+     	selKeysAtm["CARBON"]+=atmname+" ";
+   	}
 		else if (Select::atom(atmname, "S", S)){
-      S.push_back(atmname);
+     	S.push_back(atmname);
 			selKeysAtm["SULFUR"]+=atmname+" ";
-      selKeysAtm["SULPHUR"]+=atmname+" ";
-    }
+     	selKeysAtm["SULPHUR"]+=atmname+" ";
+   	}
 		else if (Select::atom(atmname, "P", P)){
-      P.push_back(atmname);
-      selKeysAtm["PHOSPHORUS"]+=atmname+" ";
+     	P.push_back(atmname);
+     	selKeysAtm["PHOSPHORUS"]+=atmname+" ";
 			selKeysAtm["PHOSPHOROUS"]+=atmname+" ";
-    }
+   	}
 		else{
 			continue;
-		} 
+		}
 	}
 	
 	selKeysAtm["HEAVY"]=Misc::trim(selKeysAtm["HEAVY"]);
@@ -353,13 +353,13 @@ void Select::initKeys(Molecule *mol){
   //std::cerr << selKeysAtm["HYDROGEN"] << std::endl;
 
   selKeysRes["HETERO"]="HETATM HETAT HETA";
-	selKeysRes["PEPTIDE"]="ALA CYS VAL LEU ILE ASP GLU GLY GLN ASN HSD HSE HSP HIE HID HIS PRO TRP MET SER THR PHE TYR LYS ARG";
+	selKeysRes["PEPTIDE"]="ALA CYS CYX VAL LEU ILE ASP GLU GLY GLN ASN HSD HSE HSP HIE HID HIS PRO TRP MET SER THR PHE TYR LYS ARG";
 	selKeysRes["PROTEIN"]=selKeysRes["PEPTIDE"];
 	//At physiological pH
 	selKeysRes["BASIC"]="ARG LYS";
 	selKeysRes["ACIDIC"]="ASP GLU";
 	selKeysRes["CHARGED"]="ARG LYS ASP GLU";
-	selKeysRes["HYDROPHOBIC"]="ALA VAL LEU ILE PHE GLY PRO CYS MET TRP";
+	selKeysRes["HYDROPHOBIC"]="ALA VAL LEU ILE PHE GLY PRO CYS CYX MET TRP";
 	selKeysRes["POLAR"]="SER THR TYR ASN GLN";
 	selKeysRes["NUCLEIC"]="ADE THY CYT GUA URA A T C G U DA DT DC DG DU";
 	selKeysRes["PURINE"]="ADE GUA A G DA DG";
@@ -368,6 +368,7 @@ void Select::initKeys(Molecule *mol){
 	selKeysRes["METAL"]="ZN FE NI MN CU CO CA BE";
 	selKeysRes["ION"]="MG NA CL K SOD CLA CLM NAP";
 	selKeysRes["SOLVENT"]="MG NA CL K SOD CLA CLM NAP TIP3 TIP HOH SPC SPCE TIP4 TIP5";
+	selKeysRes["TERMINI"]="ACE ACP AHE CT2 NME CT3 FOR";
 
 	//Replace spaces with "+"
 	std::replace(selKeysAtm["BACKBONE"].begin(), selKeysAtm["BACKBONE"].end(), ' ', '+');
@@ -398,6 +399,7 @@ void Select::initKeys(Molecule *mol){
 	std::replace(selKeysRes["METAL"].begin(), selKeysRes["METAL"].end(), ' ', '+');
 	std::replace(selKeysRes["ION"].begin(), selKeysRes["ION"].end(), ' ', '+');
 	std::replace(selKeysRes["SOLVENT"].begin(), selKeysRes["SOLVENT"].end(), ' ', '+');
+	std::replace(selKeysRes["TERMINI"].begin(), selKeysRes["TERMINI"].end(), ' ', '+');
 	
 }
 

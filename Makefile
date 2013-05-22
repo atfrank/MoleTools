@@ -13,3 +13,4 @@ clean:
 	$(MAKE) -C lib clean
 	$(MAKE) -C src clean
 	rm -rf *~
+	rm -rf *stackdump
