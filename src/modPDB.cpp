@@ -14,7 +14,7 @@
 
 void usage (){
   std::cerr << std::endl;
-  std::cerr << "Usage:   manipPDB [-options] <PDBfile>" << std::endl;
+  std::cerr << "Usage:   modPDB [-options] <PDBfile>" << std::endl;
   std::cerr << "Options: [-model num]" << std::endl;
   std::cerr << "         [-sel selection]" << std::endl;
 	std::cerr << "         [-fit fitPDB] [-fitsel selection]" << std::endl;
@@ -22,6 +22,7 @@ void usage (){
   std::cerr << "         [-outsel selection]" << std::endl;
 	std::cerr << "         [-rotate r1c1 r1c2 r1c3 r2c1 r2c2 r2c3 r3c1 r3c2 r3c3]" << std::endl;
   std::cerr << "         [-center] [-censel selection]" << std::endl;
+	std::cerr << "         [-format type] [-chains]" << std::endl;
   std::cerr << std::endl << std::endl;
   exit(0);
 }
@@ -46,6 +47,8 @@ int main (int argc, char **argv){
   std::string outsel="";
 	Molecule *mol;
 	Molecule *fitmol;
+	std::string format;
+	bool chnFlag;
 
   pdb.clear();
 	mol=NULL;
@@ -62,6 +65,8 @@ int main (int argc, char **argv){
 	r3c1=0.0;
 	r3c2=0.0;
 	r3c3=0.0;
+	format="UNFORMATTED";
+	chnFlag=false;
   
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -129,6 +134,14 @@ int main (int argc, char **argv){
       std::stringstream(currArg) >> r3c3;
       rotate=true;
 		}
+		else if (currArg == "-format"){
+			currArg=argv[++i];
+			Misc::toupper(currArg);
+			format=currArg;
+		}
+		else if (currArg == "-chains"){
+			chnFlag=true;
+		}
     else{
       pdb=currArg;
     }
@@ -189,7 +202,7 @@ int main (int argc, char **argv){
   if (outsel.length() >0){
     mol->select(outsel);
   }
-  mol->writePDB();
+  mol->writePDB(true, true, chnFlag, format);
 
 	if (mol != NULL){
 		delete mol;

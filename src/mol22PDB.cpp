@@ -12,8 +12,8 @@
 void usage(){
   std::cerr << std::endl;
   std::cerr << "Usage:   mol22PDB [-options] <MOL2file>" << std::endl;
-  std::cerr << "Options: [-chains]" << std::endl;
-  std::cerr << "         [-sel selection]" << std::endl;
+  std::cerr << "Options: [-sel selection]" << std::endl;
+	std::cerr << "         [-format type] [-chains]" << std::endl;
   std::cerr << std::endl;
   exit(0);
 }
@@ -25,6 +25,7 @@ int main (int argc, char **argv){
   std::string mol2;
   std::string currArg;
   std::string sel;
+	std::string format="UNFORMATTED";
   bool chnFlag;
 
   mol2.clear();
@@ -39,6 +40,11 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       sel=currArg;
     }
+		else if (currArg == "-format"){
+			currArg=argv[++i];
+			Misc::toupper(currArg);
+			format=currArg;
+		}
     else if (currArg == "-chains"){
       chnFlag=true;
     }
@@ -58,7 +64,7 @@ int main (int argc, char **argv){
     mol->select(sel);
   }
 
- 	mol->writePDB(true, true, chnFlag); 
+ 	mol->writePDB(true, true, chnFlag, format); 
 
   return 0;
 }

@@ -7,10 +7,12 @@ PDB::PDB(){
 	format.clear();
 }
 
-void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, bool chnFlag){
+void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, bool chnFlag, std::string format){
   Chain *chn;
   Residue *res;
   Atom *atm;
+	Residue *lastRes;
+	Residue *nextRes;
   std::string lastChain="+";
   int natom=0;
   int catom=0;
@@ -20,6 +22,8 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
 	bool addIdFlag;
 
   out.clear();
+	lastRes=NULL;
+	nextRes=NULL;
 	currId='A';
 	addIdFlag=false;
 
@@ -36,6 +40,19 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
     catom=0;
     //if(!chn->getSel()){continue;}
     for (unsigned int j=0; j< chn->getResVecSize(); j++){
+			if (j>1){
+				lastRes=chn->getResidue(j-1);
+			}
+			else{
+				lastRes=NULL;
+			}
+			if (j< chn->getResVecSize()-1){
+				nextRes=chn->getResidue(j+1);
+			}
+			else{
+				nextRes=NULL;
+			}
+
       res=chn->getResidue(j);
       //if(!res->getSel()){continue;}
       for (unsigned int k=0; k< res->getAtmVecSize(); k++){
@@ -56,11 +73,21 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
         out << std::setw(4) << std::left << atm->getAtmName();
         out << std::setw(1) << std::left << atm->getAlt();
 				if (atm->getResName().length() < 4){
-        	out << std::setw(3) << std::left << atm->getResName(); //PDB format
+					if (format == "CHARMM"){
+						out << std::setw(3) << std::left << PDB::formatCHARMMResName(atm); //PDB format
+					}
+					else {
+        		out << std::setw(3) << std::left << atm->getResName(); //PDB format
+					}
         	out << " "; //PDB format
 				}
 				else{
-					out << std::setw(4) << std::left << atm->getResName();
+					if (format == "CHARMM"){
+						out << std::setw(4) << std::left << PDB::formatCHARMMResName(atm);
+					}
+					else{
+						out << std::setw(4) << std::left << atm->getResName();
+					}
 				}
 				if (chnFlag == true && atm->getChainId() == " "){
 					while (mapIds.find(currId) != mapIds.end()){
@@ -73,20 +100,40 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
         	out << std::setw(1) << std::left << atm->getChainId();
 				}
 				if (atm->getResId() <= 999){
-        	out << std::setw(4) << std::right << atm->getResId(); //PDB format
+					if (format == "CHARMM"){
+						out << std::setw(4) << std::right << PDB::formatCHARMMResId(atm, lastRes, nextRes); //PDB format
+					}
+					else{
+        		out << std::setw(4) << std::right << atm->getResId(); //PDB format
+					}
         	out << std::setw(1) << std::left << atm->getICode(); //PDB format
         	out << "   "; //PDB format
 				}
 //				else if (atm->getResId() <= 9999){
-//					out << std::setw(5) << std::right << atm->getResId();
+//					if (format == "CHARMM"){
+//						out << std::setw(5) << std::right << PDB::formatCHARMMResId(atm, lastRes, nextRes);	
+//					}
+//					else{
+//						out << std::setw(5) << std::right << atm->getResId();
+//					}
 //          out << "   ";
 //				}
 				else if (atm->getResId() <= 99999){
-					out << std::setw(5) << std::right << atm->getResId();
+					if (format == "CHARMM"){
+						out << std::setw(5) << std::right << PDB::formatCHARMMResId(atm, lastRes, nextRes);
+					}
+					else{
+						out << std::setw(5) << std::right << atm->getResId();
+					}
 					out << "   ";
 				}
 				else{
-					out << std::setw(6) << std::left << atm->getResId();
+					if (format == "CHARMM"){
+						out << std::setw(6) << std::left << PDB::formatCHARMMResId(atm, lastRes, nextRes);
+					}
+					else{
+						out << std::setw(6) << std::left << atm->getResId();
+					}
 				}
         out << std::fixed; //For setting precision
         out << std::setw(8) << std::right << std::setprecision(3) << atm->getX();
@@ -274,3 +321,43 @@ Atom* PDB::processAtomLine (std::string line, Atom* lastAtom){
   return atmEntry;
 }
 
+std::string PDB::formatCHARMMResName (Atom* atmEntry){
+	if (atmEntry->getResName() == "HIE"){
+		return "HSE";
+	}
+	else if (atmEntry->getResName() == "HID"){
+		return "HSD";
+	}
+	else if (atmEntry->getResName() == "HIP"){
+		return "HSP";
+	}
+	else if (atmEntry->getResName() == "AHE"){
+		return "CT2";
+	}
+	else if (atmEntry->getResName() == "NME"){
+		return "CT3";
+	}
+	else if (atmEntry->getResName() == "CYX"){
+		std::cerr << "Warning: " << atmEntry->getSummary() << " has a disulfide bond" << std::endl;
+		return "CYS";
+	}
+	else if (atmEntry->getResName() == "FOR" || atmEntry->getResName() == "CSO" || atmEntry->getResName() == "CME"){
+		std::cerr << "Warning: " << atmEntry->getSummary() << " has no matching residue name in CHARMM" << std::endl;
+		return atmEntry->getResName();
+	}
+	else{
+		return atmEntry->getResName();
+	}
+}
+
+int PDB::formatCHARMMResId(Atom* atmEntry, Residue* lastRes, Residue* nextRes){
+	if (atmEntry->getResName() == "ACE" && nextRes != NULL){
+		return nextRes->getResId();
+	}
+	else if ((atmEntry->getResName() == "AHE" || atmEntry->getResName() == "NME") && lastRes != NULL){
+		return lastRes->getResId();
+	}
+	else{
+		return atmEntry->getResId();
+	}
+}

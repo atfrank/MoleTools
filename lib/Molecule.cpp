@@ -48,11 +48,11 @@ Molecule* Molecule::readPDB (std::string ifile, int model){
   }
 }
 
-std::string Molecule::writePDB(bool selFlag, bool print, bool chnFlag){
+std::string Molecule::writePDB(bool selFlag, bool print, bool chnFlag, std::string format){
 
   std::ostringstream out;
 
-  PDB::writePDBFormat(this, out, selFlag, chnFlag);
+  PDB::writePDBFormat(this, out, selFlag, chnFlag, format);
 
 	if (print == true){
   	std::cout << out.str();
