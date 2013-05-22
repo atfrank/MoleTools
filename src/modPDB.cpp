@@ -14,7 +14,7 @@
 
 void usage (){
   std::cerr << std::endl;
-  std::cerr << "Usage:   manipPDB [options] <PDBfile>" << std::endl;
+  std::cerr << "Usage:   manipPDB [-options] <PDBfile>" << std::endl;
   std::cerr << "Options: [-model num]" << std::endl;
   std::cerr << "         [-sel selection]" << std::endl;
 	std::cerr << "         [-fit fitPDB] [-fitsel selection]" << std::endl;

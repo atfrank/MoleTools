@@ -10,6 +10,11 @@
 #define MAXLINESIZE 4096
 
 void usage(){
+  std::cerr << std::endl;
+  std::cerr << "Usage:   mol22PDB [-options] <MOL2file>" << std::endl;
+  std::cerr << "Options: [-chains]" << std::endl;
+  std::cerr << "         [-sel selection]" << std::endl;
+  std::cerr << std::endl;
   exit(0);
 }
 
@@ -20,17 +25,22 @@ int main (int argc, char **argv){
   std::string mol2;
   std::string currArg;
   std::string sel;
+  bool chnFlag;
 
   mol2.clear();
+  chnFlag=false;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
     if (currArg == "-h" || currArg == "-help"){
       usage();
     }
-    else if (currArg == "-nsel"){
+    else if (currArg == "-sel" || currArg == "-nsel"){
       currArg=argv[++i];
       sel=currArg;
+    }
+    else if (currArg == "-chains"){
+      chnFlag=true;
     }
     else{
       mol2=currArg;
@@ -48,7 +58,7 @@ int main (int argc, char **argv){
     mol->select(sel);
   }
 
- 	mol->writePDB(true, true, true); 
+ 	mol->writePDB(true, true, chnFlag); 
 
   return 0;
 }
