@@ -183,7 +183,7 @@ int main (int argc, char **argv){
 	//Normalize ranks by nevents
 	for (j=0; j< rank.size(); j++){
 		for (k=0; k< rank.size(); k++){
-			std::cout << j+1 << " " << k+1 << " " << rank.at(j).at(k)/nevents << std::endl;
+			std::cout << j+1 << " " << k+1 << " " << rank.at(j).at(k)/nevents << " " << nevents << std::endl;
 		}
 		std::cout << std::endl;
 	}
