@@ -10,6 +10,7 @@ clean:
 	rm -rf *.o
 	rm -rf *stackdump
 	rm -rf ../bin/*
+	rm -rf *~
 
 $(BINDIR):
 	mkdir -p $(BINDIR)

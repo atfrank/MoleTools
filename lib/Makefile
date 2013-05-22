@@ -13,6 +13,7 @@ clean:
 	rm -rf *.o
 	rm -rf *.$(LIBEXT)
 	rm -rf *stackdump
+	rm -rf *~
 
 %.o:	%.cpp
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(LIBFLAGS) $(DEBUG) -c $< -o $@
