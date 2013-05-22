@@ -86,6 +86,7 @@ int main (int argc, char **argv){
     	inpFile.open((ifiles.at(j)).c_str());
     	inp=&inpFile;
   	}
+    std::cerr << "Processing file " << ifiles.at(j) << "..." << std::endl;
 		while (inp->good() && !(inp->eof())){
 			getline(*inp, line);
 			if (line.size() == 0){
