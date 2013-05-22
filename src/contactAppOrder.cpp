@@ -155,8 +155,8 @@ int main (int argc, char **argv){
 
 									//Add current order to rank
 									for (m=start; m< stop; m++){
-										for (n=start; n< stop; n++){ //Contact
-											rank.at(n).at(l)+=1.0/nrange;
+										for (n=start; n< stop; n++){ //Contact index, actual contact number is "order.at(n).first"
+											rank.at(order.at(n).first).at(l)+=1.0/nrange;
 										}
 										l++;
 									}
