@@ -18,6 +18,7 @@ void usage(){
   std::cerr << "         [-out tag] [-outsel selection]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
 	std::cerr << "         [-show]" << std::endl;
+  std::cerr << "         [-format type] [-chains]" << std::endl;
   exit(0);
 }
 
@@ -43,6 +44,8 @@ int main (int argc, char **argv){
 	int start=0;
   int stop=-1;
   unsigned int npdb;
+  std::string format;
+  bool chnFlag;
 
   pdb.clear();
   mol=NULL;
@@ -86,6 +89,14 @@ int main (int argc, char **argv){
     }
     else if (currArg == "-show"){
       show=true;
+    }
+    else if (currArg == "-format"){
+      currArg=argv[++i];
+      Misc::toupper(currArg);
+      format=currArg;
+    }
+    else if (currArg == "-chains"){
+      chnFlag=true;
     }
     else{
       trajs.push_back(currArg);
@@ -139,7 +150,7 @@ int main (int argc, char **argv){
         		pdbout << outmol->writePDB(true, false);
       		}
       		else{
-        		pdbout << ftrjin->getMolecule()->writePDB(true, false);
+        		pdbout << ftrjin->getMolecule()->writePDB(true, false, chnFlag, format);
       		}
 					pdbout.close();
 					fout.str(std::string()); //Clear fout
