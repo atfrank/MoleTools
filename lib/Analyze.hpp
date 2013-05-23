@@ -4,6 +4,7 @@
 #include "Vector.hpp"
 #include "Constants.hpp"
 
+//Abstract base class (cannot create instance of it!)
 class Analyze {
 	private:
 		std::string type;
@@ -26,6 +27,9 @@ class Analyze {
 		void resizeNMol(const int sizein);
 		Molecule* getMol(const int& element);
 		unsigned int getNMol();
+
+		//Pure virtual functions
+		virtual void preAnalysis() =0; //Setup
 		void runAnalysis();
 		void postAnalysis();
 
@@ -40,4 +44,41 @@ class Analyze {
 		static double distance (Molecule* sel1, Molecule* sel2, bool selFlag=true);
 		static double angle (Molecule* sel1, Molecule* sel2, Molecule* sel3, bool selFlag=true);
 	  static double dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecule* sel4,bool selFlag=true);
+};
+
+//Derived classes
+
+class AnalyzeCOG: public Analyze {
+	public:
+		void preAnalysis();
+};
+
+class AnalyzeRMSD: public Analyze {
+	public:
+		void preAnalysis();
+};
+
+class AnalyzeRMSF: public Analyze {
+  public:
+    void preAnalysis();
+};
+
+class AnalyzeAverage: public Analyze {
+	public:
+		void preAnalysis();
+};
+
+class AnalyzeDistance: public Analyze {
+  public:
+    void preAnalysis();
+};
+
+class AnalyzeAngle: public Analyze {
+  public:
+    void preAnalysis();
+};
+
+class AnalyzeDihedral: public Analyze {
+	public:
+		void preAnalysis();
 };

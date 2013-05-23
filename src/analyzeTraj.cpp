@@ -76,14 +76,14 @@ int main (int argc, char **argv){
       pdb=currArg;
     }
     else if (currArg == "-sel" || currArg == "-nsel" || currArg == "-cog"){
-			anin=new Analyze;
+			anin=new AnalyzeCOG;
       anin->setType("quick");
       currArg=argv[++i];
 			anin->addSel(currArg);
 			analyses.push_back(anin);
     }
     else if (currArg == "-dsel" || currArg == "-dist" || currArg == "-distance"){
-			anin=new Analyze;
+			anin=new AnalyzeDistance;
       anin->setType("quick");
       currArg=argv[++i];
 			anin->addSel(currArg);
@@ -92,7 +92,7 @@ int main (int argc, char **argv){
 			analyses.push_back(anin);
     }
 		else if (currArg == "-tsel" || currArg == "-angle"){
-			anin=new Analyze;
+			anin=new AnalyzeAngle;
       anin->setType("quick");
 			currArg=argv[++i];
 			anin->addSel(currArg);
@@ -103,7 +103,7 @@ int main (int argc, char **argv){
 			analyses.push_back(anin);
 		}
 		else if (currArg == "-qsel" || currArg == "-dihedral"){
-			anin=new Analyze;
+			anin=new AnalyzeDihedral;
       anin->setType("quick");
       currArg=argv[++i];
 			anin->addSel(currArg);
@@ -126,21 +126,21 @@ int main (int argc, char **argv){
 			fitsel=currArg;
 		}
 		else if (currArg == "-rmsd" || currArg == "-rms"){
-			anin=new Analyze;
+			anin=new AnalyzeRMSD;
 			anin->setType("rmsd");
 			currArg=argv[++i];
 			anin->addSel(currArg);
       analyses.push_back(anin);
 		}
 		else if (currArg == "-rmsf"){
-			anin=new Analyze;
+			anin=new AnalyzeRMSF;
 			anin->setType("rmsf");
 			currArg=argv[++i];
 			anin->addSel(currArg);
 			analyses.push_back(anin);
 		}
 		else if (currArg == "-average"){
-			anin=new Analyze;
+			anin=new AnalyzeAverage;
 			anin->setType("average");
 			currArg=argv[++i];
 			anin->addSel(currArg);

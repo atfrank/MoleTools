@@ -83,6 +83,35 @@ unsigned int Analyze::getNMol(){
 	return this->mol.size();
 }
 
+
+void AnalyzeCOG::preAnalysis(){
+  std::cerr << "ACOG::preAnalysis()\n";
+}
+
+void AnalyzeRMSD::preAnalysis(){
+  std::cerr << "ARMSD::preAnalysis()\n";
+}
+
+void AnalyzeRMSF::preAnalysis(){
+  std::cerr << "ARMSF::preAnalysis()\n";
+}
+
+void AnalyzeAverage::preAnalysis(){
+  std::cerr << "AAverage::preAnalysis()\n";
+}
+
+void AnalyzeDistance::preAnalysis(){
+  std::cerr << "ADistance::preAnalysis()\n";
+}
+
+void AnalyzeAngle::preAnalysis(){
+	std::cerr << "AAngle::preAnalysis()\n";
+}
+
+void AnalyzeDihedral::preAnalysis(){
+	std::cerr << "ADihedral::preAnalysis()\n";
+}
+
 void Analyze::runAnalysis(){
 	Vector xyz;
 

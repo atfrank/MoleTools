@@ -2,6 +2,7 @@
 
 #include "Misc.hpp"
 #include "Molecule.hpp"
+#include "Analyze.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -81,7 +82,15 @@ int main (int argc, char **argv){
 	mol->storeSel();
 	mol->selAll();
 	mol->recallSel();
-	mol->writePDB();
+//	mol->writePDB();
+
+	Analyze* a;
+	AnalyzeDistance* dist=new AnalyzeDistance;
+	AnalyzeDihedral* phi=new AnalyzeDihedral;
+	phi->preAnalysis();
+	dist->preAnalysis();
+	a=phi;
+	a->preAnalysis();
 
   return 0;
 }
