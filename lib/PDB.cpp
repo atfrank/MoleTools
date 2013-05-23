@@ -20,12 +20,14 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
 	std::map<char, int> mapIds;
 	char currId;
 	bool addIdFlag;
+	int nUNK; //Number of unknown residues
 
   out.clear();
 	lastRes=NULL;
 	nextRes=NULL;
 	currId='A';
 	addIdFlag=false;
+	nUNK=0;
 
 	//Create map of chainIds
 	for (i=0; i< mol->getChnVecSize(); i++){
@@ -52,8 +54,10 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
 			else{
 				nextRes=NULL;
 			}
-
       res=chn->getResidue(j);
+			if (res->getResName() == "UNK"){
+				nUNK++;
+			}
       //if(!res->getSel()){continue;}
       for (unsigned int k=0; k< res->getAtmVecSize(); k++){
         atm=res->getAtom(k);
@@ -159,6 +163,10 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
   if (natom > 0){
     out << "END" << std::endl;
   }
+
+	if (nUNK > 1){
+		std::cerr << "Warning: More than one (" << nUNK << ") UNK residues found" << std::endl;
+	}
 
 }
 
