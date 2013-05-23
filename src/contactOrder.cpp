@@ -14,7 +14,7 @@
 void usage(){
 	std::cerr << std::endl << std::endl;
 	std::cerr << "Usage:   contactOrder [-options] <file(s)>" << std::endl;
-	std::cerr << "Options: [-reverse]" << std::endl;
+	std::cerr << "Options: [-loss]" << std::endl;
 	std::cerr << "         [-skip lines]" << std::endl;
   exit(0);
 }
@@ -44,7 +44,7 @@ int main (int argc, char **argv){
 	int start;
 	int stop;
 	int nrange;
-	bool reverse; //Disappearance of contacts
+	bool lossFlag; //Disappearance of contacts
 
 	ifiles.clear();
 	skip=0;
@@ -54,15 +54,15 @@ int main (int argc, char **argv){
 	nevents=0;
 	trackFlag=false;
 	lastTime=-1;
-	reverse=false;
+	lossFlag=false;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
     if (currArg == "-h" || currArg == "-help"){
       usage();
     }
-		else if (currArg == "-reverse" || currArg == "-r"){
-			reverse=true;
+		else if (currArg == "-loss"){
+			lossFlag=true;
 		}
     else if (currArg == "-skip"){
       currArg=argv[++i];
@@ -117,7 +117,7 @@ int main (int argc, char **argv){
 				}
 
 				//Assess snapshot
-				if (reverse == false && s.at(0) == 0 && trackFlag == false){
+				if (lossFlag == false && s.at(0) == 0 && trackFlag == false){
 					//Reset appearance of contacts
 					time=0;
 					for (k=0; k< order.size(); k++){
@@ -125,7 +125,7 @@ int main (int argc, char **argv){
 					}	
 					trackFlag=true;
 				}
-				else if (reverse == true && s.at(0) == s.at(2) && trackFlag == false){
+				else if (lossFlag == true && s.at(0) == s.at(2) && trackFlag == false){
 					//Reset disappearance
 					time=0;
           for (k=0; k< order.size(); k++){
@@ -139,25 +139,25 @@ int main (int argc, char **argv){
 						l=0;
 						for (k=3; k< s.size(); k=k+2){
 							if (s.at(k) == 0){
-								if (reverse == false){
+								if (lossFlag == false){
 									order.at(l).second=0; //Set time to zero if contact is broken
 								}
-								if (reverse == true && order.at(l).second == 0){
+								if (lossFlag == true && order.at(l).second == 0){
 									order.at(l).second=time; //Only record time if contact breaks when REVERSE
 								}
 							}
 							else{
 								//Contact is formed
-								if (reverse == false && order.at(l).second == 0){
+								if (lossFlag == false && order.at(l).second == 0){
 									order.at(l).second=time; //Only record time if the contact was broken and now formed
 								}
-								if (reverse == true && order.at(l).second > 0){
+								if (lossFlag == true && order.at(l).second > 0){
 									order.at(l).second=0; //Set time to zero if contact is still formed when REVERSE
 								}
 							}
 							l++;
 						}
-						if ((reverse == false && s.at(0) == s.at(2)) || (reverse == true && s.at(0) == 0)){ //All contacts are formed/broken
+						if ((lossFlag == false && s.at(0) == s.at(2)) || (lossFlag == true && s.at(0) == 0)){ //All contacts are formed/loss
 
             	//Sort by time
 							std::sort(order.begin(), order.end(), Misc::sortPairSecond);
