@@ -223,12 +223,12 @@ Atom* Mol2::processAtomLine (std::string line, Atom* lastAtom){
 		}
 		ref.clear();
 		ref.push_back(atmEntry);
-		atmSel=sel->recursiveDescentParser(":PROTEIN+NUCLEIC+TERMINI.", ref);
+		atmSel=sel->recursiveDescentParser(":PROTEIN+NUCLEIC+ION+METAL+SOLVENT+TERMINI.", ref);
 		if (atmSel.size() == 0){
 			atmEntry->setResName(s.at(7).substr(0,3));	
 			ref.clear();
 	    ref.push_back(atmEntry);
-	    atmSel=sel->recursiveDescentParser(":PROTEIN+NUCLEIC+TERMINI.", ref);
+	    atmSel=sel->recursiveDescentParser(":PROTEIN+NUCLEIC+ION+METAL+SOLVENT+TERMINI.", ref);
 			if (atmSel.size() == 0){
 			  atmEntry->setResName("UNK");	
 			}
