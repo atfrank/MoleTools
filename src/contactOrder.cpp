@@ -14,7 +14,7 @@
 void usage(){
 	std::cerr << std::endl << std::endl;
 	std::cerr << "Usage:   contactOrder [-options] <file(s)>" << std::endl;
-	std::cerr << "Options: [-min contacts]" << std::endl;
+	std::cerr << "Options: [-reverse]" << std::endl;
 	std::cerr << "         [-skip lines]" << std::endl;
   exit(0);
 }
@@ -40,11 +40,11 @@ int main (int argc, char **argv){
 	int nline;
 	int nevents;
 	bool trackFlag;
-	int min; //Not-implemented yet! Adjust the number of contacts needed for "fully" bound state
 	int lastTime;
 	int start;
 	int stop;
 	int nrange;
+	bool reverse; //Disappearance of contacts
 
 	ifiles.clear();
 	skip=0;
@@ -53,17 +53,16 @@ int main (int argc, char **argv){
 	time=0;
 	nevents=0;
 	trackFlag=false;
-	min=-1;
 	lastTime=-1;
+	reverse=false;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
     if (currArg == "-h" || currArg == "-help"){
       usage();
     }
-		else if (currArg == "-min"){
-			currArg=argv[++i];
-			std::stringstream(currArg) >> min;
+		else if (currArg == "-reverse" || currArg == "-r"){
+			reverse=true;
 		}
     else if (currArg == "-skip"){
       currArg=argv[++i];
@@ -97,56 +96,72 @@ int main (int argc, char **argv){
 				continue;
 			}
 			else{
-				//Assess snapshot
+				//Split snapshot
 				Misc::splitNum(line, " \t", s, false); //Split on one or more consecutive whitespaces
-				if (min >= 0 && min <= s.at(2)){
-					s.at(2)=min;
-				}
+
+				//Initialize once
 				if (order.size() == 0){
-//					order.resize((s.size()-3)/2);
 					order.resize(s.at(2));
 					for (k=0; k< order.size(); k++){
 						order.at(k)=std::make_pair(k,0);
 					}
 				}
 				if (rank.size() == 0){
-//					rank.resize((s.size()-3)/2);
 					rank.resize(s.at(2));
 					for (k=0; k< rank.size(); k++){ //Contact
-//						rank.at(k).resize((s.size()-3)/2);
 						rank.at(k).resize(s.at(2));
 						for (p=0; p< rank.size(); p++){ //Rank
             	rank.at(k).at(p)=0.0;
 						}
           }
 				}
-				if (s.at(0) == 0 && trackFlag == false){
+
+				//Assess snapshot
+				if (reverse == false && s.at(0) == 0 && trackFlag == false){
+					//Reset appearance of contacts
 					time=0;
 					for (k=0; k< order.size(); k++){
 						order.at(k).second=0;
 					}	
 					trackFlag=true;
 				}
+				else if (reverse == true && s.at(0) == s.at(2) && trackFlag == false){
+					//Reset disappearance
+					time=0;
+          for (k=0; k< order.size(); k++){
+            order.at(k).second=0;
+          }
+          trackFlag=true;
+				}
 				else{
-					if (s.at(0) > 0 && trackFlag == true){
+					if (s.at(0) >= 0 && trackFlag == true){
 						time++;
 						l=0;
 						for (k=3; k< s.size(); k=k+2){
 							if (s.at(k) == 0){
-								order.at(l).second=0; //Set time to zero if contact is broken
+								if (reverse == false){
+									order.at(l).second=0; //Set time to zero if contact is broken
+								}
+								if (reverse == true && order.at(l).second == 0){
+									order.at(l).second=time; //Only record time if contact breaks when REVERSE
+								}
 							}
 							else{
 								//Contact is formed
-								if (order.at(l).second == 0){
+								if (reverse == false && order.at(l).second == 0){
 									order.at(l).second=time; //Only record time if the contact was broken and now formed
+								}
+								if (reverse == true && order.at(l).second > 0){
+									order.at(l).second=0; //Set time to zero if contact is still formed when REVERSE
 								}
 							}
 							l++;
 						}
-						if (s.at(0) == s.at(2)){ //All contacts are formed
+						if ((reverse == false && s.at(0) == s.at(2)) || (reverse == true && s.at(0) == 0)){ //All contacts are formed/broken
+
             	//Sort by time
 							std::sort(order.begin(), order.end(), Misc::sortPairSecond);
-
+							
 							//Find range of contacts for each time and add to rank
 							lastTime=-1;
 							nrange=1;
@@ -188,9 +203,9 @@ int main (int argc, char **argv){
 	}
 
 	//Normalize ranks by nevents
-	for (j=0; j< rank.size(); j++){
-		for (k=0; k< rank.size(); k++){
-			std::cout << j+1 << " " << k+1 << " " << rank.at(j).at(k)/nevents << " " << nevents << std::endl;
+	for (j=0; j< rank.size(); j++){ //Contact number
+		for (k=0; k< rank.size(); k++){ //Rank number (appearance/disappearance order)
+			std::cout << j+1 << "   " << k+1 << "   " << rank.at(j).at(k)/nevents << "   " << nevents << std::endl;
 		}
 		std::cout << std::endl;
 	}
