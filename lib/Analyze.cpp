@@ -3,21 +3,11 @@
 #include "Analyze.hpp"
 
 Analyze::Analyze (){
-	type.clear();
 	sel.clear();
 	mol.clear();
 	tdata.clear();
 	ndata=0;
 	resel=false;
-}
-
-void Analyze::setType(const std::string& typein){
-	this->type=typein;
-	//Depending upon the type, initialize necessary vectors
-}
-
-std::string Analyze::getType(){
-	return this->type;
 }
 
 void Analyze::addSel(const std::string& selin){

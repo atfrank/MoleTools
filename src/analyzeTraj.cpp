@@ -84,7 +84,6 @@ int main (int argc, char **argv){
     }
     else if (currArg == "-dsel" || currArg == "-dist" || currArg == "-distance"){
 			anin=new AnalyzeDistance;
-      anin->setType("quick");
       currArg=argv[++i];
 			anin->addSel(currArg);
       currArg=argv[++i];
@@ -93,7 +92,6 @@ int main (int argc, char **argv){
     }
 		else if (currArg == "-tsel" || currArg == "-angle"){
 			anin=new AnalyzeAngle;
-      anin->setType("quick");
 			currArg=argv[++i];
 			anin->addSel(currArg);
 			currArg=argv[++i];
@@ -104,7 +102,6 @@ int main (int argc, char **argv){
 		}
 		else if (currArg == "-qsel" || currArg == "-dihedral"){
 			anin=new AnalyzeDihedral;
-      anin->setType("quick");
       currArg=argv[++i];
 			anin->addSel(currArg);
       currArg=argv[++i];
@@ -139,7 +136,6 @@ int main (int argc, char **argv){
 		}
 		else if (currArg == "-average"){
 			anin=new AnalyzeAverage;
-			anin->setType("average");
 			currArg=argv[++i];
 			anin->addSel(currArg);
 			analyses.push_back(anin);

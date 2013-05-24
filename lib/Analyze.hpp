@@ -7,7 +7,6 @@
 //Abstract base class (cannot create instance of it!)
 class Analyze {
 	private:
-		std::string type;
     std::vector<std::string> sel;
 		std::vector<Molecule*> mol;
 		std::vector<double> tdata; //Time dependent data, maybe for averaging
@@ -16,8 +15,6 @@ class Analyze {
 
 	public:
 		Analyze ();
-		void setType(const std::string& typein);
-		std::string getType();
 		void addSel(const std::string& selin);
 		std::string getSel(const int& element);
 		unsigned int getNSel();
