@@ -84,6 +84,7 @@ int main (int argc, char **argv){
 	mol->recallSel();
 //	mol->writePDB();
 
+/*
 	Analyze* a;
 	AnalyzeDistance* dist=new AnalyzeDistance;
 	AnalyzeDihedral* phi=new AnalyzeDihedral;
@@ -91,6 +92,6 @@ int main (int argc, char **argv){
 	dist->preAnalysis();
 	a=phi;
 	a->preAnalysis();
-
+*/
   return 0;
 }

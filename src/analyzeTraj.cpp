@@ -77,7 +77,7 @@ int main (int argc, char **argv){
     }
     else if (currArg == "-sel" || currArg == "-nsel" || currArg == "-cog"){
 			anin=new AnalyzeCOG;
-      anin->setType("quick");
+      //anin->setType("quick");
       currArg=argv[++i];
 			anin->addSel(currArg);
 			analyses.push_back(anin);
@@ -127,14 +127,12 @@ int main (int argc, char **argv){
 		}
 		else if (currArg == "-rmsd" || currArg == "-rms"){
 			anin=new AnalyzeRMSD;
-			anin->setType("rmsd");
 			currArg=argv[++i];
 			anin->addSel(currArg);
       analyses.push_back(anin);
 		}
 		else if (currArg == "-rmsf"){
 			anin=new AnalyzeRMSF;
-			anin->setType("rmsf");
 			currArg=argv[++i];
 			anin->addSel(currArg);
 			analyses.push_back(anin);
@@ -177,19 +175,7 @@ int main (int argc, char **argv){
   else {
     mol=Molecule::readPDB(pdb);
 		for (j=0; j< analyses.size(); j++){
-			analyses.at(j)->setupMolSel(mol); //Make copies of mol from selection
-			if (analyses.at(j)->getType() == "rmsd"){
-				refmol=mol->clone();
-				analyses.at(j)->setupMolSel(refmol);
-			}
-			if (analyses.at(j)->getType() == "rmsf"){
-				refmol=mol->clone();
-			  analyses.at(j)->setupMolSel(refmol);
-			}
-			if (analyses.at(j)->getType() == "average"){
-				refmol=mol->clone();
-				analyses.at(j)->setupMolSel(refmol);
-			}
+			analyses.at(j)->preAnalysis(mol); //Make copies of mol from selection
 		}
     mol->selAll();
   }

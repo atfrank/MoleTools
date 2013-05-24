@@ -45,34 +45,44 @@ void Analyze::resizeNMol(const int sizein){
 }
 
 void Analyze::setupMolSel(Molecule* molin){
-	unsigned int i;
 	Molecule* tmpmol;
 
-	if (this->getType() == "newtype"){
+  molin->select(this->getSel(0));
+  tmpmol=molin->copy();
+  this->addMol(tmpmol);
+}
 
+void AnalyzeDistance::setupMolSel(Molecule* molin){
+	unsigned int i;
+  Molecule* tmpmol;
+
+	for (i=0; i< this->getNSel(); i++){
+		molin->select(this->getSel(i));
+		tmpmol=molin->copy();
+		this->addMol(tmpmol);
 	}
-	else if (this->getType() == "rmsf"){
-    molin->select(this->getSel(0));
+}
+
+void AnalyzeAngle::setupMolSel(Molecule* molin){
+  unsigned int i;
+  Molecule* tmpmol;
+
+  for (i=0; i< this->getNSel(); i++){
+    molin->select(this->getSel(i));
     tmpmol=molin->copy();
     this->addMol(tmpmol);
   }
-	else if (this->getType() == "rmsd"){
-		molin->select(this->getSel(0));
-		tmpmol=molin->copy();
-		this->addMol(tmpmol);
-	}
-	else if (this->getType() == "average"){
-		molin->select(this->getSel(0));
-		tmpmol=molin->copy();
-		this->addMol(tmpmol);
-	}
-	else{
-		for (i=0; i< this->getNSel(); i++){
-			molin->select(this->getSel(i));
-			tmpmol=molin->copy();
-			this->addMol(tmpmol);
-		}
-	}
+}
+
+void AnalyzeDihedral::setupMolSel(Molecule* molin){
+  unsigned int i;
+  Molecule* tmpmol;
+
+  for (i=0; i< this->getNSel(); i++){
+    molin->select(this->getSel(i));
+    tmpmol=molin->copy();
+    this->addMol(tmpmol);
+  }
 }
 
 Molecule* Analyze::getMol(const int& element){
@@ -83,127 +93,141 @@ unsigned int Analyze::getNMol(){
 	return this->mol.size();
 }
 
-
-void AnalyzeCOG::preAnalysis(){
-  std::cerr << "ACOG::preAnalysis()\n";
+void Analyze::setNData(const int& ndatain){
+	ndata=ndatain;
 }
 
-void AnalyzeRMSD::preAnalysis(){
-  std::cerr << "ARMSD::preAnalysis()\n";
+int& Analyze::getNData(){
+	return ndata;
 }
 
-void AnalyzeRMSF::preAnalysis(){
-  std::cerr << "ARMSF::preAnalysis()\n";
+std::vector<double>& Analyze::getTDataVec(){
+	return tdata;
 }
 
-void AnalyzeAverage::preAnalysis(){
-  std::cerr << "AAverage::preAnalysis()\n";
+//All preAnalysis Functions
+
+void Analyze::preAnalysis(Molecule* molin){
+	this->setupMolSel(molin);
 }
 
-void AnalyzeDistance::preAnalysis(){
-  std::cerr << "ADistance::preAnalysis()\n";
+void AnalyzeRMSD::preAnalysis(Molecule* molin){
+	this->setupMolSel(molin);
+	Molecule* refmol=molin->clone();
+	this->setupMolSel(refmol);
 }
 
-void AnalyzeAngle::preAnalysis(){
-	std::cerr << "AAngle::preAnalysis()\n";
+void AnalyzeRMSF::preAnalysis(Molecule* molin){
+  this->setupMolSel(molin);
+  Molecule* refmol=molin->clone();
+  this->setupMolSel(refmol);
 }
 
-void AnalyzeDihedral::preAnalysis(){
-	std::cerr << "ADihedral::preAnalysis()\n";
+void AnalyzeAverage::preAnalysis(Molecule* molin){
+  this->setupMolSel(molin);
+  Molecule* refmol=molin->clone();
+  this->setupMolSel(refmol);
 }
 
-void Analyze::runAnalysis(){
-	Vector xyz;
 
+//All runAnalysis Functions
+
+void AnalyzeCOG::runAnalysis(){
+  Vector xyz=Analyze::centerOfGeometry(this->getMol(0));
+  std::cout << std::fixed;
+  std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.x();
+  std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.y();
+  std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.z();
+}
+
+void AnalyzeRMSD::runAnalysis(){
+  std::cout << std::fixed;
+  if (this->getNMol() == 2){
+    std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::rmsd(this->getMol(0),this->getMol(1));
+  }
+  else{
+    std::cout << std::setw(9) << std::right << std::setprecision(3) << "NaN";
+  }
+}
+
+void AnalyzeRMSF::runAnalysis(){
+  std::vector<double> &tdata=this->getTDataVec();
+
+  //Resize and initialize if necessary
+  if (getNData() == 0){
+    tdata.resize(this->getMol(0)->getNAtomSelected(), 0);
+  }
+  Analyze::rmsf(this->getMol(0), this->getMol(1), tdata, getNData());
+}
+
+void AnalyzeAverage::runAnalysis(){
+  if (getNData() == 0){
+    this->getMol(1)->zeroCoor();
+  }
+  Analyze::averageMol(this->getMol(0), this->getMol(1), getNData());
+}
+
+void AnalyzeDistance::runAnalysis(){
 	std::cout << std::fixed;
-	//Process all analyses based on type
-	if (this->getType() == "newtype"){
-		
-	}
-	else if (this->getType() == "rmsf"){
-		//Resize and initialize if necessary
-		if (ndata == 0){
-			tdata.resize(this->getMol(0)->getNAtomSelected(), 0);
-		}
-		//No output during analysis. Only during post-analysis
-		Analyze::rmsf(this->getMol(0), this->getMol(1), tdata, ndata);
-	}
-	else if (this->getType() == "rmsd"){
-		if (this->getNMol() == 2){
-			std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::rmsd(this->getMol(0),this->getMol(1));
-		}
-		else{
-			std::cout << std::setw(9) << std::right << std::setprecision(3) << "NaN";
-		}
-	}
-	else if (this->getType() == "average"){
-		//No output during analysis. Only during post-analysis
-		if (ndata == 0){
-			this->getMol(1)->zeroCoor();
-		}
-		Analyze::averageMol(this->getMol(0), this->getMol(1), ndata);
-	}
-	else if(this->getType() == "quick"){
-		if (this->getNMol() == 1){
-			xyz=Analyze::centerOfGeometry(this->getMol(0));
-     	std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.x();
-			std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.y();
-			std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.z();
-		}
-		else if (this->getNMol() == 2){
-      std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::distance(Analyze::centerOfGeometry(mol.at(0)), Analyze::centerOfGeometry(mol.at(1)));
-		}
-		else if (this->getNMol() == 3){
-			std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::angle(Analyze::centerOfGeometry(this->getMol(0)), Analyze::centerOfGeometry(this->getMol(1)), Analyze::centerOfGeometry(this->getMol(2)));
-		}
-		else if (this->getNMol() == 4){
-			std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::dihedral(Analyze::centerOfGeometry(this->getMol(0)), Analyze::centerOfGeometry(this->getMol(1)), Analyze::centerOfGeometry(this->getMol(2)), Analyze::centerOfGeometry(this->getMol(3)));
-		}
-		else{
-			std::cout << std::fixed;
-      std::cout << std::setw(9) << "NaN";
-		}
-	}
-	else{
-		std::cerr << "Error: Skipping unrecognized analysis type \"" << type << "\"" << std::endl;
-	}
+	std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::distance(Analyze::centerOfGeometry(this->getMol(0)), Analyze::centerOfGeometry(this->getMol(1)));
 }
+
+void AnalyzeAngle::runAnalysis(){
+	std::cout << std::fixed;
+  std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::angle(Analyze::centerOfGeometry(this->getMol(0)), Analyze::centerOfGeometry(this->getMol(1)), Analyze::centerOfGeometry(this->getMol(2)));
+}
+
+void AnalyzeDihedral::runAnalysis(){
+	std::cout << std::fixed;
+  std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::dihedral(Analyze::centerOfGeometry(this->getMol(0)), Analyze::centerOfGeometry(this->getMol(1)), Analyze::centerOfGeometry(this->getMol(2)), Analyze::centerOfGeometry(this->getMol(3)));
+}
+
+//All postAnalysis functions
 
 void Analyze::postAnalysis(){
-	unsigned int i, j;
-	Atom *atm;
-
-	std::cout << std::fixed;
-	std::cout << std::endl << std::endl; //For using index in Gnuplot
-  //Process all analyses based on type
-  if (this->getType() == "rmsf"){
-		j=0;
-		for(i=0; i< this->getMol(0)->getNAtomSelected(); i++){
-			atm=this->getMol(0)->getAtom(i);
-			if (atm->getSel() == false){
-				continue;
-			}
-			tdata.at(j)=sqrt(tdata.at(j)/ndata);
-			std::cout << atm->getSummary();  
-			std::cout << std::setw(9) << std::right << std::setprecision(3) << tdata.at(j);
-			std::cout << std::endl;
-			j++;
-		}
-	}
-	else if (this->getType() == "average"){
-		for(i=0; i< this->getMol(1)->getNAtomSelected(); i++){
-			atm=this->getMol(1)->getAtom(i);
-      if (atm->getSel() == false){
-        continue;
-      }
-			atm->setCoor(atm->getCoor()/ndata);
-		}
-		this->getMol(1)->writePDB(true, true);
-	}
-	else{
-		//Do nothing
-	}
+	//Do nothing
 }
+
+void AnalyzeAverage::postAnalysis(){
+  unsigned int i;
+  Atom *atm;
+
+  std::cout << std::fixed;
+  std::cout << std::endl << std::endl; //For using index in Gnuplot
+  for(i=0; i< this->getMol(1)->getNAtomSelected(); i++){
+    atm=this->getMol(1)->getAtom(i);
+    if (atm->getSel() == false){
+      continue;
+    }
+    atm->setCoor(atm->getCoor()/getNData());
+  }
+  this->getMol(1)->writePDB(true, true);
+}
+
+void AnalyzeRMSF::postAnalysis(){
+  unsigned int i, j;
+  Atom *atm;
+  std::vector<double> &tdata=this->getTDataVec();
+
+  std::cout << std::fixed;
+  std::cout << std::endl << std::endl; //For using index in Gnuplot
+  j=0;
+  for(i=0; i< this->getMol(0)->getNAtomSelected(); i++){
+    atm=this->getMol(0)->getAtom(i);
+    if (atm->getSel() == false){
+      continue;
+    }
+    tdata.at(j)=sqrt(tdata.at(j)/getNData());
+    std::cout << atm->getSummary();
+    std::cout << std::setw(9) << std::right << std::setprecision(3) << tdata.at(j);
+    std::cout << std::endl;
+    j++;
+  }
+}
+
+
+
+//Basic analysis functions
 
 Vector Analyze::centerOfGeometry(Molecule *mol, bool selFlag){
 	Vector cog=Vector(0.0, 0.0, 0.0);
@@ -277,6 +301,7 @@ double Analyze::rmsd (Molecule *cmpmol, Molecule *refmol){
 }
 
 void Analyze::rmsf (Molecule* cmpmol, Molecule* refmol, std::vector<double> &tdataIO, int &ndataIO){
+
 	unsigned i,j;
 	Atom *atm;
 	std::vector<Vector> coor;
@@ -296,7 +321,7 @@ void Analyze::rmsf (Molecule* cmpmol, Molecule* refmol, std::vector<double> &tda
     	}
 			coor.push_back(atm->getCoor());
 		}
-
+		
 		j=0;
 		for (i=0; i< refmol->getNAtom(); i++){
 			atm=refmol->getAtom(i);

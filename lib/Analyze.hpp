@@ -21,17 +21,21 @@ class Analyze {
 		void addSel(const std::string& selin);
 		std::string getSel(const int& element);
 		unsigned int getNSel();
-		void setupMolSel(Molecule* molin);
     void addMol(Molecule* molin);
 		void setMol(const int element, Molecule* molin);
 		void resizeNMol(const int sizein);
 		Molecule* getMol(const int& element);
 		unsigned int getNMol();
+		void setNData(const int& ndatain);
+		int& getNData();
+		std::vector<double>& getTDataVec();
+		
 
-		//Pure virtual functions
-		virtual void preAnalysis() =0; //Setup
-		void runAnalysis();
-		void postAnalysis();
+		//Virtual functions
+		virtual void setupMolSel(Molecule* molin);
+		virtual void preAnalysis(Molecule* molin); 
+		virtual void runAnalysis() =0; //Pure virtual function
+		virtual void postAnalysis();
 
 		//Analysis functions
 		static Vector centerOfGeometry(Molecule* mol, bool selFlag=true);
@@ -50,35 +54,43 @@ class Analyze {
 
 class AnalyzeCOG: public Analyze {
 	public:
-		void preAnalysis();
+		void runAnalysis();
 };
 
 class AnalyzeRMSD: public Analyze {
 	public:
-		void preAnalysis();
+		void preAnalysis(Molecule* molin);
+		void runAnalysis();
 };
 
 class AnalyzeRMSF: public Analyze {
   public:
-    void preAnalysis();
+		void preAnalysis(Molecule* molin);
+    void runAnalysis();
+		void postAnalysis();
 };
 
 class AnalyzeAverage: public Analyze {
 	public:
-		void preAnalysis();
+		void preAnalysis(Molecule* molin);
+		void runAnalysis();
+		void postAnalysis();
 };
 
 class AnalyzeDistance: public Analyze {
   public:
-    void preAnalysis();
+		void setupMolSel(Molecule* molin);
+    void runAnalysis();
 };
 
 class AnalyzeAngle: public Analyze {
   public:
-    void preAnalysis();
+		void setupMolSel(Molecule* molin);
+    void runAnalysis();
 };
 
 class AnalyzeDihedral: public Analyze {
 	public:
-		void preAnalysis();
+		void setupMolSel(Molecule* molin);
+		void runAnalysis();
 };
