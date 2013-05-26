@@ -37,7 +37,6 @@ int main (int argc, char **argv){
   std::vector<std::string> trajs;
   Molecule *mol;
 	Molecule *fitmol; //For fitting only
-	Molecule *refmol; //For RMSD calculation only
   std::string pdb;
 	std::string refpdb;
 	std::string fitpdb;
@@ -62,7 +61,6 @@ int main (int argc, char **argv){
 	fitpdb.clear();
   mol=NULL;
 	fitmol=NULL;
-	refmol=NULL;
 	ftrjin=NULL;
 
 
