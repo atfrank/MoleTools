@@ -191,7 +191,7 @@ void AnalyzeAverage::postAnalysis(){
     }
     atm->setCoor(atm->getCoor()/getNData());
   }
-  this->getMol(1)->writePDB(true, true);
+  this->getMol(1)->writePDB();
 }
 
 void AnalyzeRMSF::postAnalysis(){

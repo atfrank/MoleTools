@@ -65,7 +65,7 @@ int main (int argc, char **argv){
 	r3c1=0.0;
 	r3c2=0.0;
 	r3c3=0.0;
-	format="UNFORMATTED";
+	format.clear();
 	chnFlag=false;
   
   for (i=1; i<argc; i++){
@@ -152,7 +152,7 @@ int main (int argc, char **argv){
     usage();
   }
 
-  mol=Molecule::readPDB(pdb, model);
+  mol=Molecule::readPDB(pdb, model, format);
   if (sel.length() >0){
     mol->select(sel);
 		mol=mol->clone(true, false); //Clone and delete original
@@ -202,7 +202,7 @@ int main (int argc, char **argv){
   if (outsel.length() >0){
     mol->select(outsel);
   }
-  mol->writePDB(true, true, chnFlag, format);
+  mol->writePDB(chnFlag);
 
 	if (mol != NULL){
 		delete mol;

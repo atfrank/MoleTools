@@ -17,9 +17,8 @@ class Mol2 {
 
   public:
     Mol2();
-    static void writeMol2Format (Molecule* mol, std::ostringstream &out, bool selFlag=true);
-    static Molecule* readMol2 (std::string ifile);
-    Atom* processAtomLine (std::string line, Atom* lastAtom);
+    static Molecule* readMol2 (const std::string ifile, const std::string format="");
+    Atom* processAtomLine (const std::string line, Atom* lastAtom);
 };
 
 #endif

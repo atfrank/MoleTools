@@ -6,99 +6,24 @@ Mol2::Mol2(){
   chnMap.clear();
 }
 
-void Mol2::writeMol2Format (Molecule* mol, std::ostringstream &out, bool selFlag){
-  Chain *chn;
-  Residue *res;
-  Atom *atm;
-  std::string lastChain="+";
-  int natom=0;
-  int catom=0;
-
-  out.clear();
-
-  for (unsigned int i=0; i< mol->getChnVecSize(); i++){
-    chn=mol->getChain(i);
-    catom=0;
-    //if(!chn->getSel()){continue;}
-    for (unsigned int j=0; j< chn->getResVecSize(); j++){
-      res=chn->getResidue(j);
-      //if(!res->getSel()){continue;}
-      for (unsigned int k=0; k< res->getAtmVecSize(); k++){
-        atm=res->getAtom(k);
-        if (selFlag == true && atm->getSel() == false){
-					continue;
-				}
-				if (atm->getAtmNum() <= 99999){
-					out << std::setw(6) << std::left << atm->getRecName();
-        	out << std::setw(5) << std::right << atm->getAtmNum(); //Mol2 format
-        	out << " "; //Mol2 format
-				}
-				else{
-					out << std::setw(5) << std::left << atm->getRecName();
-					out << std::setw(6) << std::right << atm->getAtmNum();
-					out << " ";
-				}
-        out << std::setw(4) << std::left << atm->getAtmName();
-        out << std::setw(1) << std::left << atm->getAlt();
-				if (atm->getResName().length() < 4){
-        	out << std::setw(3) << std::left << atm->getResName(); //Mol2 format
-        	out << " "; //Mol2 format
-				}
-				else{
-					out << std::setw(4) << std::left << atm->getResName();
-				}
-        out << std::setw(1) << std::left << atm->getChainId();
-				if (atm->getResId() <= 999){
-        	out << std::setw(4) << std::right << atm->getResId(); //Mol2 format
-        	out << std::setw(1) << std::left << atm->getICode(); //Mol2 format
-        	out << "   "; //Mol2 format
-				}
-//				else if (atm->getResId() <= 9999){
-//					out << std::setw(5) << std::right << atm->getResId();
-//          out << "   ";
-//				}
-				else if (atm->getResId() <= 99999){
-					out << std::setw(5) << std::right << atm->getResId();
-					out << "   ";
-				}
-				else{
-					out << std::setw(6) << std::left << atm->getResId();
-				}
-        out << std::fixed; //For setting precision
-        out << std::setw(8) << std::right << std::setprecision(3) << atm->getX();
-        out << std::setw(8) << std::right << std::setprecision(3) << atm->getY();
-        out << std::setw(8) << std::right << std::setprecision(3) << atm->getZ();
-        out << std::setw(6) << std::right << std::setprecision(2) << atm->getOccu();
-        out << std::setw(6) << std::right << std::setprecision(2) << atm->getBFac();
-        out << "      ";
-        out << std::setw(4) << std::left << atm->getSegId();
-        out << std::endl;
-        natom++;
-        catom++;
-      }
-    }
-    if (catom>0){
-      out << "TER" << std::endl;
-    }
-  }
-
-  if (natom > 0){
-    out << "END" << std::endl;
-  }
-
-}
-
-Molecule* Mol2::readMol2(std::string ifile){
+Molecule* Mol2::readMol2(std::string ifile, std::string format){
   std::ifstream mol2File;
   std::istream* inp;
   std::string line;
-  Molecule *mol=new Molecule;
+  Molecule *mol;
   Chain *chnEntry=new Chain;
   Residue *resEntry=new Residue;
   Atom *atmEntry; //Created in heap by processAtomLine
   Atom *lastAtom;
   Mol2 mol2;
 	bool readAtoms;
+
+	if (format == "CHARMM"){
+		mol=new MoleculeCHARMM;
+	}
+	else{
+		mol=new Molecule;
+	}
 
   atmEntry=NULL;
   lastAtom=NULL;

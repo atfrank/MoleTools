@@ -16,7 +16,7 @@
 void usage(){
   std::cerr << std::endl << std::endl;
   std::cerr << "Usage:   unitTest [-options] <file>" << std::endl;
-  std::cerr << "Options: " << std::endl;
+  std::cerr << "Options: [-format type]" << std::endl;
   exit(0);
 }
 
@@ -34,14 +34,21 @@ int main (int argc, char **argv){
   std::istream* inp;
   std::string line;
   std::vector<std::string> s;
+	std::string format;
 
   ifile.clear();
+	format.clear();
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
     if (currArg == "-h" || currArg == "-help"){
       usage();
     }
+		else if (currArg == "-format"){
+			currArg=argv[++i];
+			Misc::toupper(currArg);
+			format=currArg;
+		}
     else{
       ifile=currArg;
     }
@@ -77,12 +84,14 @@ int main (int argc, char **argv){
   }
 
 	Molecule* mol;
-	mol=Molecule::readPDB(ifile);
+	mol=Molecule::readPDB(ifile, format);
+	/*
 	mol->select("B:.CA");
 	mol->storeSel();
 	mol->selAll();
 	mol->recallSel();
-//	mol->writePDB();
+	*/
+	mol->writePDB();
 
 /*
 	Analyze* a;

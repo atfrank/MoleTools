@@ -14,6 +14,7 @@ void usage(){
   std::cerr << "Usage:   mol22PDB [-options] <MOL2file>" << std::endl;
   std::cerr << "Options: [-sel selection]" << std::endl;
 	std::cerr << "         [-format type] [-chains]" << std::endl;
+	std::cerr << "         [-warnings]" << std::endl;
   std::cerr << std::endl;
   exit(0);
 }
@@ -25,11 +26,13 @@ int main (int argc, char **argv){
   std::string mol2;
   std::string currArg;
   std::string sel;
-	std::string format="UNFORMATTED";
+	std::string format;
   bool chnFlag;
+	bool warnings;
 
   mol2.clear();
   chnFlag=false;
+	format.clear();
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -58,13 +61,13 @@ int main (int argc, char **argv){
     usage();
   }
 
-  Molecule *mol=Molecule::readMol2(mol2);
+  Molecule *mol=Molecule::readMol2(mol2, format);
 
   if (sel.length() >0){
     mol->select(sel);
   }
 
- 	mol->writePDB(true, true, chnFlag, format); 
+ 	mol->writePDB(chnFlag); 
 
   return 0;
 }

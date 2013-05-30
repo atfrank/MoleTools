@@ -17,8 +17,8 @@ class PDB {
 
   public:
     PDB();
-    static void writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag=true, bool chnFlag=false, std::string format="UNFORMATTED");
-    static Molecule* readPDB (std::string ifile, int model=0);
+    static void writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag=true, bool chnFlag=false);
+    static Molecule* readPDB (const std::string ifile, const int model=0, const std::string format="", const bool remFlag=false);
     Atom* processAtomLine (std::string line, Atom* lastAtom);
 		static std::string formatCHARMMResName (Atom* atmEntry);
 		static int formatCHARMMResId(Atom* atmEntry, Residue* lastRes, Residue* nextRes);

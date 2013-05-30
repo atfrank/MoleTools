@@ -14,6 +14,7 @@ Molecule::Molecule (){
 	atmVec.clear();
 	copyFlag=false;
 	storedSel.clear();
+	remarks.clear();
 }
 
 Molecule::~Molecule (){
@@ -38,21 +39,28 @@ Molecule::~Molecule (){
 	}
 }
 
-Molecule* Molecule::readPDB (std::string ifile, int model){
+Molecule* Molecule::readPDB (const std::string ifile, const int model, const std::string format){
   if (ifile.length() == 0){
     std::cerr << "Error: PDB file \"" << ifile << "\" cannot be found" << std::endl;
     return new Molecule;
   }
   else{
-    return PDB::readPDB(ifile, model);
+		Molecule* mol=PDB::readPDB(ifile, model, format);
+		mol->format();
+    return mol;
   }
 }
 
-std::string Molecule::writePDB(bool selFlag, bool print, bool chnFlag, std::string format){
+Molecule* Molecule::readPDB (const std::string ifile, const std::string format){
+	//Overloaded function
+	return Molecule::readPDB(ifile, 0, format);
+}
+
+std::string Molecule::writePDB(bool selFlag, bool print, bool chnFlag){
 
   std::ostringstream out;
 
-  PDB::writePDBFormat(this, out, selFlag, chnFlag, format);
+  PDB::writePDBFormat(this, out, selFlag, chnFlag);
 
 	if (print == true){
   	std::cout << out.str();
@@ -61,13 +69,28 @@ std::string Molecule::writePDB(bool selFlag, bool print, bool chnFlag, std::stri
 	return out.str();
 }
 
-Molecule* Molecule::readMol2 (std::string ifile){
+std::string Molecule::writePDB(bool selFlag, bool print){
+	return this->writePDB(selFlag, print);
+}
+
+std::string Molecule::writePDB(bool chnFlag){
+  return this->writePDB(true, true, chnFlag);
+}
+
+std::string Molecule::writePDB(){
+  return this->writePDB(true, true, false);
+}
+
+
+Molecule* Molecule::readMol2 (const std::string ifile, const std::string format){
   if (ifile.length() == 0){
     std::cerr << "Error: Mol2 file \"" << ifile << "\" cannot be found" << std::endl;
     return new Molecule;
   }
   else{
-    return Mol2::readMol2(ifile);
+		Molecule* mol=Mol2::readMol2(ifile, format);
+		mol->format();
+    return mol;
   }
 }
 
@@ -515,4 +538,102 @@ void Molecule::center (bool selFlag){
   for (unsigned int i=0; i< this->getNAtom(); i++){
     this->getAtom(i)->setCoor(this->getAtom(i)->getCoor()-cog);
   }
+}
+
+//Virtual Functions
+
+void Molecule::format(){
+	//Do nothing
+}
+
+void MoleculeCHARMM::format(){
+	Chain *chn;
+  Residue *res;
+  Atom *atm;
+  Residue *lastRes;
+  Residue *nextRes;
+	int nUNK; //Number of unknown residues
+	
+	lastRes=NULL;
+	nextRes=NULL;
+	nUNK=0;
+
+	for (unsigned int i=0; i< this->getChnVecSize(); i++){
+	  chn=this->getChain(i);
+		for (unsigned int j=0; j< chn->getResVecSize(); j++){
+			if (j>1){
+        lastRes=chn->getResidue(j-1);
+      }
+      else{
+        lastRes=NULL;
+      }
+      if (j< chn->getResVecSize()-1){
+        nextRes=chn->getResidue(j+1);
+      }
+      else{
+        nextRes=NULL;
+      }
+      res=chn->getResidue(j);
+      if (res->getResName() == "UNK"){
+        nUNK++;
+      }
+			for (unsigned int k=0; k< res->getAtmVecSize(); k++){
+        atm=res->getAtom(k);
+        //if (selFlag == true && atm->getSel() == false){
+        //  continue;
+        //}
+				//Perform Formatting
+				if (atm->getResName() == "HIE"){
+    			atm->setResName("HSE");
+  			}
+  			else if (atm->getResName() == "HID"){
+    			atm->setResName("HSD");
+  			}
+  			else if (atm->getResName() == "HIP"){
+    			atm->setResName("HSP");
+  			}
+				else if (atm->getResName() == "CYX"){
+          std::cerr << "Warning: " << atm->getSummary() << " has a disulfide bond" << std::endl;
+					this->addRemark("Warning: ");
+          atm->setResName("CYS");
+        }
+  			else if (atm->getResName() == "AHE" && lastRes != NULL){
+    			atm->setResName(lastRes->getResName());
+					atm->setResId(lastRes->getResId());
+  			}
+  			else if (atm->getResName() == "NME" && lastRes != NULL){
+    			atm->setResName(lastRes->getResName());
+					atm->setResId(lastRes->getResId());
+  			}
+				else if (atm->getResName() == "ACE" && nextRes != NULL){
+					atm->setResName(nextRes->getResName());
+          atm->setResId(nextRes->getResId());
+        }
+  			else if (atm->getResName() == "FOR" || atm->getResName() == "CSO" || atm->getResName() == "CME"){
+    			std::cerr << "Warning: " << atm->getSummary();
+					std::cerr << " has no matching residue name in CHARMM" << std::endl;
+					this->addRemark("Warning: ");
+					//Do nothing
+  			}
+  			else{
+    			//Do nothing
+  			}
+			}	
+		}
+	}
+	if (nUNK > 1){
+    std::cerr << "Warning: More than one (" << nUNK << ") UNK residues found" << std::endl;
+  }
+}
+
+void Molecule::addRemark(const std::string& remin){
+	this->remarks+=remin;
+}
+
+void Molecule::clearRemark(){
+	this->remarks.clear();
+}
+
+std::string Molecule::getRemark(){
+	return remarks;
 }

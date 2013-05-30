@@ -52,6 +52,7 @@ int main (int argc, char **argv){
   outmol=NULL;
 	ftrjin=NULL;
   npdb=1;
+	format.clear();
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -112,7 +113,7 @@ int main (int argc, char **argv){
     usage();
   }
   else {
-    mol=Molecule::readPDB(pdb);
+    mol=Molecule::readPDB(pdb, format);
     if (sel.length() > 0){
       mol->select(sel); //Selection should match trajectory
       mol=mol->clone(true, false); //Delete original molecule after cloning
@@ -150,7 +151,7 @@ int main (int argc, char **argv){
         		pdbout << outmol->writePDB(true, false);
       		}
       		else{
-        		pdbout << ftrjin->getMolecule()->writePDB(true, false, chnFlag, format);
+        		pdbout << ftrjin->getMolecule()->writePDB(chnFlag);
       		}
 					pdbout.close();
 					fout.str(std::string()); //Clear fout

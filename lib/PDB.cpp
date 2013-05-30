@@ -7,12 +7,10 @@ PDB::PDB(){
 	format.clear();
 }
 
-void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, bool chnFlag, std::string format){
+void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, bool chnFlag){
   Chain *chn;
   Residue *res;
   Atom *atm;
-	Residue *lastRes;
-	Residue *nextRes;
   std::string lastChain="+";
   int natom=0;
   int catom=0;
@@ -20,14 +18,10 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
 	std::map<char, int> mapIds;
 	char currId;
 	bool addIdFlag;
-	int nUNK; //Number of unknown residues
 
   out.clear();
-	lastRes=NULL;
-	nextRes=NULL;
 	currId='A';
 	addIdFlag=false;
-	nUNK=0;
 
 	//Create map of chainIds
 	for (i=0; i< mol->getChnVecSize(); i++){
@@ -42,22 +36,7 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
     catom=0;
     //if(!chn->getSel()){continue;}
     for (unsigned int j=0; j< chn->getResVecSize(); j++){
-			if (j>1){
-				lastRes=chn->getResidue(j-1);
-			}
-			else{
-				lastRes=NULL;
-			}
-			if (j< chn->getResVecSize()-1){
-				nextRes=chn->getResidue(j+1);
-			}
-			else{
-				nextRes=NULL;
-			}
-      res=chn->getResidue(j);
-			if (res->getResName() == "UNK"){
-				nUNK++;
-			}
+			res=chn->getResidue(j);
       //if(!res->getSel()){continue;}
       for (unsigned int k=0; k< res->getAtmVecSize(); k++){
         atm=res->getAtom(k);
@@ -77,21 +56,11 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
         out << std::setw(4) << std::left << atm->getAtmName();
         out << std::setw(1) << std::left << atm->getAlt();
 				if (atm->getResName().length() < 4){
-					if (format == "CHARMM"){
-						out << std::setw(3) << std::left << PDB::formatCHARMMResName(atm); //PDB format
-					}
-					else {
-        		out << std::setw(3) << std::left << atm->getResName(); //PDB format
-					}
+        	out << std::setw(3) << std::left << atm->getResName(); //PDB format
         	out << " "; //PDB format
 				}
 				else{
-					if (format == "CHARMM"){
-						out << std::setw(4) << std::left << PDB::formatCHARMMResName(atm);
-					}
-					else{
-						out << std::setw(4) << std::left << atm->getResName();
-					}
+					out << std::setw(4) << std::left << atm->getResName();
 				}
 				if (chnFlag == true && atm->getChainId() == " "){
 					while (mapIds.find(currId) != mapIds.end()){
@@ -104,40 +73,20 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
         	out << std::setw(1) << std::left << atm->getChainId();
 				}
 				if (atm->getResId() <= 999){
-					if (format == "CHARMM"){
-						out << std::setw(4) << std::right << PDB::formatCHARMMResId(atm, lastRes, nextRes); //PDB format
-					}
-					else{
-        		out << std::setw(4) << std::right << atm->getResId(); //PDB format
-					}
+        	out << std::setw(4) << std::right << atm->getResId(); //PDB format
         	out << std::setw(1) << std::left << atm->getICode(); //PDB format
         	out << "   "; //PDB format
 				}
 //				else if (atm->getResId() <= 9999){
-//					if (format == "CHARMM"){
-//						out << std::setw(5) << std::right << PDB::formatCHARMMResId(atm, lastRes, nextRes);	
-//					}
-//					else{
-//						out << std::setw(5) << std::right << atm->getResId();
-//					}
+//					out << std::setw(5) << std::right << atm->getResId();
 //          out << "   ";
 //				}
 				else if (atm->getResId() <= 99999){
-					if (format == "CHARMM"){
-						out << std::setw(5) << std::right << PDB::formatCHARMMResId(atm, lastRes, nextRes);
-					}
-					else{
-						out << std::setw(5) << std::right << atm->getResId();
-					}
+					out << std::setw(5) << std::right << atm->getResId();
 					out << "   ";
 				}
 				else{
-					if (format == "CHARMM"){
-						out << std::setw(6) << std::left << PDB::formatCHARMMResId(atm, lastRes, nextRes);
-					}
-					else{
-						out << std::setw(6) << std::left << atm->getResId();
-					}
+					out << std::setw(6) << std::left << atm->getResId();
 				}
         out << std::fixed; //For setting precision
         out << std::setw(8) << std::right << std::setprecision(3) << atm->getX();
@@ -164,23 +113,27 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
     out << "END" << std::endl;
   }
 
-	if (nUNK > 1){
-		std::cerr << "Warning: More than one (" << nUNK << ") UNK residues found" << std::endl;
-	}
-
 }
 
-Molecule* PDB::readPDB(std::string ifile, int model){
+Molecule* PDB::readPDB(const std::string ifile, const int model, const std::string format, const bool remFlag){
   std::ifstream pdbFile;
   std::istream* inp;
   std::string line;
   int currModel=0;
-  Molecule *mol=new Molecule;
+	bool modelFlag=true;
+  Molecule *mol;
   Chain *chnEntry=new Chain;
   Residue *resEntry=new Residue;
   Atom *atmEntry; //Created in heap by processAtomLine
   Atom *lastAtom;
   PDB pdb;
+
+	if (format == "CHARMM"){
+		mol=new MoleculeCHARMM;
+	}
+	else{
+		mol=new Molecule;
+	}
 
   atmEntry=NULL;
   lastAtom=NULL;
@@ -199,11 +152,17 @@ Molecule* PDB::readPDB(std::string ifile, int model){
     getline(*inp,line);
     if (line.size() > 6 && line.compare(0,6,"MODEL ")==0){
       std::stringstream(line.substr(10,4)) >> currModel;
-      if (model==0){
-        model=1; //Use first model if undefined
+      if ((model==0 && currModel == 1) || currModel==model){
+				modelFlag=true;
       }
+			else{
+				modelFlag=false;
+			}
     }
-    else if (currModel==model && line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0 || line.compare(0,5,"HETAT")==0)){
+		else if (line.size() > 6 && line.compare(0,6,"REMARK")==0 && remFlag == true){
+			mol->addRemark(line);
+		}
+    else if (modelFlag && line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0 || line.compare(0,5,"HETAT")==0)){
       //Atom
       atmEntry=pdb.processAtomLine(line, lastAtom);
       mol->addAtom(atmEntry);
