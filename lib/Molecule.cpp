@@ -70,7 +70,7 @@ std::string Molecule::writePDB(bool selFlag, bool print, bool chnFlag){
 }
 
 std::string Molecule::writePDB(bool selFlag, bool print){
-	return this->writePDB(selFlag, print);
+	return this->writePDB(selFlag, print, false);
 }
 
 std::string Molecule::writePDB(bool chnFlag){

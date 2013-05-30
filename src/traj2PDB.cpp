@@ -151,7 +151,7 @@ int main (int argc, char **argv){
         		pdbout << outmol->writePDB(true, false);
       		}
       		else{
-        		pdbout << ftrjin->getMolecule()->writePDB(chnFlag);
+        		pdbout << ftrjin->getMolecule()->writePDB(true, false, chnFlag);
       		}
 					pdbout.close();
 					fout.str(std::string()); //Clear fout
