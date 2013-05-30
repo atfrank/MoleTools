@@ -114,6 +114,9 @@ int main (int argc, char **argv){
     }
     else{
       Misc::splitStr(line, " \t", s, false); //Split on one or more consecutive whitespace
+      if (s.size() <= xcol || s.size() <= ycol ){
+        continue;
+      }
       std::stringstream(s.at(xcol)) >> xval;
       std::stringstream(s.at(ycol)) >> yval;
       xvals.push_back(xval);
