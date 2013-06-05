@@ -21,6 +21,7 @@ void usage(){
 	std::cerr << "         [-add distance] [-scale value]" << std::endl;
 	std::cerr << "         [-ref file]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame]" << std::endl;
+  std::cerr << "         [-prob]" << std::endl;
   exit(0);
 }
 
@@ -52,12 +53,19 @@ int main (int argc, char **argv){
 	double conCount;
 	std::string line;
 	std::vector<std::string> s;
+  bool probFlag;
+  std::vector<double> probs;
+  unsigned int ndata;
+  std::vector<std::string> sels;
+
 
   pdb.clear();
 	fcontact.clear();
   mol=NULL;
 	cmol=NULL;
 	ftrjin=NULL;
+  probFlag=false;
+  ndata=0;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -92,6 +100,9 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       std::stringstream(currArg) >> start;
       start--;
+    }
+    else if (currArg == "-prob"){
+      probFlag=true;
     }
     else{
       trajs.push_back(currArg);
@@ -132,6 +143,9 @@ int main (int argc, char **argv){
 	      p2.push_back(cmol);
 				std::stringstream(s.at(2)) >> minD;
 				d.push_back((minD+add)*scale);
+        if (probFlag == true){
+          sels.push_back(line);
+        }
 			}
 		}
 		mol->selAll(); //Select all
@@ -142,6 +156,10 @@ int main (int argc, char **argv){
 	else{
 		
 	}
+
+  if (probFlag == true){
+    probs.resize(p1.size(),0);
+  }
 
 	//Process Trajectories
 
@@ -166,6 +184,9 @@ int main (int argc, char **argv){
 						if (dist.at(j) <= d.at(j)){
 							conFlag.push_back(true);
 							conCount++;
+              if (probFlag == true){
+                probs.at(j)+=1.0;
+              }
 						}
 						else{
 							conFlag.push_back(false);
@@ -176,6 +197,9 @@ int main (int argc, char **argv){
 						std::cout << " " << conFlag.at(j) << " " << dist.at(j);
 					}
 					std::cout << std::endl;
+          if (probFlag == true){
+            ndata++;
+          }
 				}
 			}
 			else{
@@ -197,6 +221,12 @@ int main (int argc, char **argv){
 		delete p2.at(j);
   }
 	//delete mol;
+
+  if (probFlag == true){
+    for (j=0; j< probs.size(); j++){
+      std::cerr << sels.at(j) << " Probability = " << probs.at(j)/ndata << std::endl;
+    }
+  }
 
   return 0;
 }
