@@ -21,14 +21,15 @@ void usage(){
 	std::cerr << "         [-add distance] [-scale value]" << std::endl;
 	std::cerr << "         [-ref file]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame]" << std::endl;
-  std::cerr << "         [-prob]" << std::endl;
+  std::cerr << "         [-prob] [-silent]" << std::endl;
+	std::cerr << "         [-verbose]" << std::endl;
   exit(0);
 }
 
 int main (int argc, char **argv){
 
   int i;
-	unsigned int j;
+	unsigned int j, k;
   std::vector<std::string> trajs;
   Molecule *mol;
 	Molecule *cmol;
@@ -57,6 +58,8 @@ int main (int argc, char **argv){
   std::vector<double> probs;
   unsigned int ndata;
   std::vector<std::string> sels;
+	bool silentFlag;
+	bool verboseFlag;
 
 
   pdb.clear();
@@ -66,6 +69,8 @@ int main (int argc, char **argv){
 	ftrjin=NULL;
   probFlag=false;
   ndata=0;
+	silentFlag=false;
+	verboseFlag=false;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -104,6 +109,12 @@ int main (int argc, char **argv){
     else if (currArg == "-prob"){
       probFlag=true;
     }
+		else if (currArg == "-silent"){
+			silentFlag=true;		
+		}
+		else if (currArg == "-verbose"){
+			verboseFlag=true;
+		}
     else{
       trajs.push_back(currArg);
     }
@@ -162,15 +173,17 @@ int main (int argc, char **argv){
   }
 
 	//Process Trajectories
-
 	for (j=0; j< trajs.size(); j++){
 		trjin.open(trajs.at(j).c_str(), std::ios::binary);
 
 		if (trjin.is_open()){
 			ftrjin=new Trajectory;
       ftrjin->setMolecule(mol);
-
+			
       if (ftrjin->findFormat(trjin) == true){
+				if (verboseFlag == true){
+					std::cerr << "Processing file \"" << trajs.at(j).c_str() << "\"..." << std::endl;
+				}
 				ftrjin->readHeader(trjin);
         //Loop through desired frames
 				for (i=start; i< ftrjin->getNFrame(); i=i+1+skip){
@@ -179,24 +192,26 @@ int main (int argc, char **argv){
 					dist.clear();
 					conFlag.clear();
 					conCount=0;
-					for(j=0; j< p1.size(); j++){
-						dist.push_back(Analyze::distance(p1.at(j), p2.at(j)));
-						if (dist.at(j) <= d.at(j)){
+					for(k=0; k< p1.size(); k++){
+						dist.push_back(Analyze::distance(p1.at(k), p2.at(k)));
+						if (dist.at(k) <= d.at(k)){
 							conFlag.push_back(true);
 							conCount++;
               if (probFlag == true){
-                probs.at(j)+=1.0;
+                probs.at(k)+=1.0;
               }
 						}
 						else{
 							conFlag.push_back(false);
 						}
 					}
-					std::cout << conCount << " / " << conFlag.size();
-					for (j=0; j< p1.size(); j++){
-						std::cout << " " << conFlag.at(j) << " " << dist.at(j);
+					if (silentFlag == false){
+						std::cout << conCount << " / " << conFlag.size();
+						for (k=0; k< p1.size(); k++){
+							std::cout << " " << conFlag.at(k) << " " << dist.at(k);
+						}
+						std::cout << std::endl;
 					}
-					std::cout << std::endl;
           if (probFlag == true){
             ndata++;
           }
@@ -223,8 +238,8 @@ int main (int argc, char **argv){
 	//delete mol;
 
   if (probFlag == true){
-    for (j=0; j< probs.size(); j++){
-      std::cerr << sels.at(j) << " Probability = " << probs.at(j)/ndata << std::endl;
+    for (k=0; k< probs.size(); k++){
+      std::cerr << sels.at(k) << " Probability = " << probs.at(k)/ndata << std::endl;
     }
   }
 
