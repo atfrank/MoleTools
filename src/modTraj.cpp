@@ -22,6 +22,7 @@ void usage(){
 	std::cerr << "         [-center]" << std::endl;
 	std::cerr << "         [-translate dx dy dz]" << std::endl;
 	std::cerr << "         [-rotate r1c1 r1c2 r1c3 r2c1 r2c2 r2c3 r3c1 r3c2 r3c3]" << std::endl;
+  std::cerr << "         [-list file]" << std::endl;
 	std::cerr << "         [-show | -scan]" << std::endl;
   exit(0);
 }
@@ -62,6 +63,16 @@ int main (int argc, char **argv){
   int start=0;
   int stop=-1;
   bool startFlag=false; //Tracks if user set start value
+  std::string flist;
+  std::ifstream listFile;
+  std::istream* listinp;
+  std::vector<unsigned int> frameList;
+  unsigned int listinx;
+  std::string line;
+  unsigned int nline;
+  std::vector<unsigned int> s;
+  unsigned int nframe;
+  unsigned int lastFrame;
 
   pdb.clear();
 	fitpdb.clear();
@@ -83,6 +94,11 @@ int main (int argc, char **argv){
   r3c1=0.0;
   r3c2=0.0;
   r3c3=0.0;
+  flist.clear();
+  listinx=0;
+  nframe=0; //This is correct!
+  lastFrame=0;
+  nline=0;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -173,6 +189,10 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       std::stringstream(currArg) >> stop;
     }
+    else if (currArg == "-list"){
+      currArg=argv[++i];
+      flist=currArg;
+    }
     else if (currArg == "-show"){
       show=true;
 			scan=false;
@@ -238,6 +258,31 @@ int main (int argc, char **argv){
     //Do Nothing
   }
 
+  //Read reference file with list of frames in first column.
+  //The frames should be in sequential order and not the frame number
+  //for each trajectory.
+  //Thus, if you have two trajectories, each with 10, frames then your
+  //reference file list should contain numbers between 1-20 (not 1-10)!
+  if (flist.length() > 0){
+    listFile.open(flist.c_str(), std::ios::in);
+    listinp=&listFile;
+    while (listinp->good() && !(listinp->eof())){
+      getline(*listinp, line);
+      nline++;
+      Misc::splitNum(line, " \t", s, false);
+      if (s.size() >= 1 && s.at(0) > 0){
+        if (s.at(0) > lastFrame){
+          frameList.push_back(s.at(0));
+          lastFrame=s.at(0);
+        }
+        else{
+          std::cerr << std::endl << "Warning: List of frames were not sequential (line ";
+          std::cerr << nline << ")!" << std::endl << std::endl;
+        }
+      }
+    }
+  }
+
   if (out == true){
     trjout.open(fout.c_str(), std::ios::binary);
 		ftrjout=new Trajectory;
@@ -288,6 +333,7 @@ int main (int argc, char **argv){
         //Loop through desired frames
 				for (i=start; i< ftrjin->getNFrame() && i< stop; i=i+1+skip){
 					ftrjin->readFrame(trjin, i);
+          nframe++;
           if (pdb.length() >0){
 						//Transform molecule only if PDB is provided
             if (fit == true){
@@ -310,7 +356,18 @@ int main (int argc, char **argv){
             }
 					}
           if (out == true && trjout.is_open()){
-            ftrjout->writeFrame(trjout, ftrjin);
+            if (flist.length() > 0){
+              if (nframe == frameList.at(listinx)){
+                ftrjout->writeFrame(trjout, ftrjin);
+                listinx++;
+                if (listinx == frameList.size()){
+                  break;
+                }
+              }
+            }
+            else{
+              ftrjout->writeFrame(trjout, ftrjin);
+            }
           }
 				}
 			}
@@ -328,6 +385,9 @@ int main (int argc, char **argv){
 
   if (out == true && trjout.is_open()){
     //Re-write header in case of any changes
+    if (flist.length() > 0){
+      ftrjout->setNFrame(listinx);
+    }
     ftrjout->writeHeader(trjout);
     trjout.close();
 		if (ftrjout != NULL){

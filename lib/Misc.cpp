@@ -90,6 +90,8 @@ void Misc::splitNum (const std::string &str, const std::string &delim, SplitVec 
 
 template void Misc::splitNum<std::vector<int> > (const std::string&, const std::string&, std::vector<int>&, const bool);
 
+template void Misc::splitNum<std::vector<unsigned int> > (const std::string&, const std::string&, std::vector<unsigned int>&, const bool);
+
 template void Misc::splitNum<std::vector<double> > (const std::string&, const std::string&, std::vector<double>&, const bool);
 
 template void Misc::splitNum<std::vector<float> > (const std::string&, const std::string&, std::vector<float>&, const bool);
