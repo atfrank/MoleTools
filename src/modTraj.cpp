@@ -24,6 +24,7 @@ void usage(){
 	std::cerr << "         [-rotate r1c1 r1c2 r1c3 r2c1 r2c2 r2c3 r3c1 r3c2 r3c3]" << std::endl;
   std::cerr << "         [-list file]" << std::endl;
 	std::cerr << "         [-show | -scan]" << std::endl;
+  std::cerr << "         [-verbose]" << std::endl;
   exit(0);
 }
 
@@ -73,6 +74,7 @@ int main (int argc, char **argv){
   std::vector<unsigned int> s;
   unsigned int nframe;
   unsigned int lastFrame;
+  bool verbose;
 
   pdb.clear();
 	fitpdb.clear();
@@ -99,6 +101,7 @@ int main (int argc, char **argv){
   nframe=0; //This is correct!
   lastFrame=0;
   nline=0;
+  verbose=false;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -201,6 +204,9 @@ int main (int argc, char **argv){
 			scan=true;
 			show=false;
 		}
+    else if (currArg == "-verbose" || currArg == "-v"){
+      verbose=true;
+    }
     else{
       trajs.push_back(currArg);
     }
@@ -292,8 +298,11 @@ int main (int argc, char **argv){
   }
 
 	for (j=0; j< trajs.size(); j++){
+    if (verbose == true){
+      std::cerr << "Processing file \"" << trajs.at(j) << "\"..." << std::endl;
+    }
 		trjin.open(trajs.at(j).c_str(), std::ios::binary);
-
+    
 		if (trjin.is_open()){
 			ftrjin=new Trajectory;
       ftrjin->setShow(show);
