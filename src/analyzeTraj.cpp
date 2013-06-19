@@ -27,6 +27,7 @@ void usage(){
 	std::cerr << "         [-rmsf selection]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
 	std::cerr << "         [-average selection]" << std::endl;
+  std::cerr << "         [-verbose]" << std::endl;
 	exit(0);
 }
 
@@ -52,6 +53,7 @@ int main (int argc, char **argv){
 	std::string line;
 	std::vector<std::string> s;
 	Vector xyz;
+  bool verbose;
 
 	std::vector<Analyze *> analyses;
 	Analyze *anin;
@@ -62,6 +64,7 @@ int main (int argc, char **argv){
   mol=NULL;
 	fitmol=NULL;
 	ftrjin=NULL;
+  verbose=false;
 
 
   for (i=1; i<argc; i++){
@@ -152,6 +155,9 @@ int main (int argc, char **argv){
 			currArg=argv[++i];
 			std::stringstream(currArg) >> stop;
 		}
+    else if (currArg == "-verbose" || currArg == "-v"){
+      verbose=true;
+    }
     else{
       trajs.push_back(currArg);
     }
@@ -192,6 +198,9 @@ int main (int argc, char **argv){
 
 	for (itrj=0; itrj< trajs.size(); itrj++){
 		trjin.open(trajs.at(itrj).c_str(), std::ios::binary);
+    if (verbose == true){
+      std::cerr << "Processing file \"" << trajs.at(itrj) << "\"..." << std::endl;
+    }
 
 		if (trjin.is_open()){
 			ftrjin=new Trajectory;
