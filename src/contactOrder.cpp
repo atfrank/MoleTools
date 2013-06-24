@@ -45,6 +45,7 @@ int main (int argc, char **argv){
 	int stop;
 	int nrange;
 	bool lossFlag; //Disappearance of contacts
+  unsigned int avgTime; //Tracks average time needed for binding/unbinding after first contact is made/lost
 
 	ifiles.clear();
 	skip=0;
@@ -55,6 +56,7 @@ int main (int argc, char **argv){
 	trackFlag=false;
 	lastTime=-1;
 	lossFlag=false;
+  avgTime=0; 
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -161,6 +163,9 @@ int main (int argc, char **argv){
 
             	//Sort by time
 							std::sort(order.begin(), order.end(), Misc::sortPairSecond);
+
+              //Get accumulate time for later averaging
+              avgTime+=order.back().second-order.front().second;
 							
 							//Find range of contacts for each time and add to rank
 							lastTime=-1;
@@ -205,7 +210,7 @@ int main (int argc, char **argv){
 	//Normalize ranks by nevents
 	for (j=0; j< rank.size(); j++){ //Contact number
 		for (k=0; k< rank.size(); k++){ //Rank number (appearance/disappearance order)
-			std::cout << j+1 << "   " << k+1 << "   " << rank.at(j).at(k)/nevents << "   " << nevents << std::endl;
+			std::cout << j+1 << "   " << k+1 << "   " << rank.at(j).at(k)/nevents << "   " << nevents << "   " << (avgTime*1.0)/nevents << std::endl;
 		}
 		std::cout << std::endl;
 	}
