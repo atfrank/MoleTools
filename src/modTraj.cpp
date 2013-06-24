@@ -24,6 +24,9 @@ void usage(){
 	std::cerr << "         [-rotate r1c1 r1c2 r1c3 r2c1 r2c2 r2c3 r3c1 r3c2 r3c3]" << std::endl;
   std::cerr << "         [-list file]" << std::endl;
 	std::cerr << "         [-show | -scan]" << std::endl;
+	std::cerr << "         [-setnframe int] [-setnpriv int]" << std::endl;
+	std::cerr << "         [-setnsavc int] [-setnstep int]" << std::endl;
+	std::cerr << "         [-settstep picoseconds]"  << std::endl;
   std::cerr << "         [-verbose]" << std::endl;
   exit(0);
 }
@@ -74,6 +77,11 @@ int main (int argc, char **argv){
   std::vector<unsigned int> s;
   unsigned int nframe;
   unsigned int lastFrame;
+	int setnframe; //ICNTRL[1], Number of frames
+	int setnpriv; //ICNTRL[2], Number of previous integration steps
+	int setnsavc; //ICNTRL[3], Frequency for saving of frames
+	int setnstep; //ICNTRL[4],Number of steps in the run that created this file
+	double settstep;
   bool verbose;
 
   pdb.clear();
@@ -101,6 +109,11 @@ int main (int argc, char **argv){
   nframe=0; //This is correct!
   lastFrame=0;
   nline=0;
+	setnframe=0;
+	setnpriv=0;
+	setnsavc=0;
+	setnstep=0;
+	settstep=0.0;
   verbose=false;
 
   for (i=1; i<argc; i++){
@@ -397,6 +410,23 @@ int main (int argc, char **argv){
     if (flist.length() > 0){
       ftrjout->setNFrame(listinx);
     }
+		else{
+			if (setnframe > 0){
+				ftrjout->setNFrame(setnframe);
+			}
+			if (setnpriv > 0){
+				ftrjout->setNPriv(setnpriv);
+			}
+			if (setnsavc > 0){
+				ftrjout->setNSavc(setnsavc);
+			}
+			if (setnstep > 0){
+				ftrjout->setNStep(setnstep);
+			}
+			if (settstep > 0.0){
+				ftrjout->setTStep(settstep);
+			}
+		}
     ftrjout->writeHeader(trjout);
     trjout.close();
 		if (ftrjout != NULL){
