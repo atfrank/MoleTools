@@ -27,6 +27,7 @@ void usage(){
 	std::cerr << "         [-rmsf selection]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
 	std::cerr << "         [-average selection]" << std::endl;
+  std::cerr << "         [-list file]" << std::endl;
   std::cerr << "         [-verbose]" << std::endl;
 	exit(0);
 }
@@ -53,6 +54,15 @@ int main (int argc, char **argv){
 	std::string line;
 	std::vector<std::string> s;
 	Vector xyz;
+  std::string flist;
+  std::ifstream listFile;
+  std::istream* listinp;
+  std::vector<unsigned int> frameList;
+  unsigned int listinx;
+  unsigned int nline;
+  std::vector<unsigned int> sframes;
+  unsigned int lastFrame;
+  unsigned int nframe;
   bool verbose;
 
 	std::vector<Analyze *> analyses;
@@ -64,6 +74,10 @@ int main (int argc, char **argv){
   mol=NULL;
 	fitmol=NULL;
 	ftrjin=NULL;
+  flist.clear();
+  listinx=0;
+  lastFrame=0;
+  nframe=0;
   verbose=false;
 
 
@@ -155,6 +169,10 @@ int main (int argc, char **argv){
 			currArg=argv[++i];
 			std::stringstream(currArg) >> stop;
 		}
+    else if (currArg == "-list"){
+      currArg=argv[++i];
+      flist=currArg;
+    }
     else if (currArg == "-verbose" || currArg == "-v"){
       verbose=true;
     }
@@ -194,6 +212,31 @@ int main (int argc, char **argv){
 		mol->selAll();
   }
 
+  //Read reference file with list of frames in first column.
+  //The frames should be in sequential order and not the frame number
+  //for each trajectory.
+  //Thus, if you have two trajectories, each with 10, frames then your
+  //reference file list should contain numbers between 1-20 (not 1-10)!
+  if (flist.length() > 0){
+    listFile.open(flist.c_str(), std::ios::in);
+    listinp=&listFile;
+    while (listinp->good() && !(listinp->eof())){
+      getline(*listinp, line);
+      nline++;
+      Misc::splitNum(line, " \t", sframes, false);
+      if (sframes.size() >= 1 && sframes.at(0) > 0){
+        if (sframes.at(0) > lastFrame){
+          frameList.push_back(sframes.at(0));
+          lastFrame=sframes.at(0);
+        }
+        else{
+          std::cerr << std::endl << "Warning: List of frames were not sequential (line ";
+          std::cerr << nline << ")!" << std::endl << std::endl;
+        }
+      }
+    }
+  }  
+
 	//Process Trajectories
 
 	for (itrj=0; itrj< trajs.size(); itrj++){
@@ -217,6 +260,7 @@ int main (int argc, char **argv){
         //Loop through desired frames
 				for (i=start; i< ftrjin->getNFrame() && i< stop; i=i+1+skip){
 					ftrjin->readFrame(trjin, i);
+          nframe++;
 					//Fit if needed
 					if (fit == true){
 						ftrjin->getMolecule()->recallSel("fit");
@@ -224,13 +268,30 @@ int main (int argc, char **argv){
 						ftrjin->getMolecule()->selAll();
 					}
 					//Start analyses
-					std::cout << iline << "  ";
-					std::cout << ftrjin->getNPriv()*ftrjin->getTStepPS()/ftrjin->getNSavc()+i*ftrjin->getTStepPS();
-					for (ianalysis=0; ianalysis< analyses.size(); ianalysis++){
-						analyses.at(ianalysis)->runAnalysis();
-					}
-					std::cout << std::endl;
-					iline++;
+          if (flist.length() > 0){
+            if (nframe == frameList.at(listinx)){
+              std::cout << iline << "  ";
+              std::cout << ftrjin->getNPriv()*ftrjin->getTStepPS()/ftrjin->getNSavc()+i*ftrjin->getTStepPS();
+              for (ianalysis=0; ianalysis< analyses.size(); ianalysis++){
+                analyses.at(ianalysis)->runAnalysis();
+              }
+              std::cout << std::endl;
+              iline++;
+              listinx++;
+              if (listinx == frameList.size()){
+                break;
+              }
+            }
+          }
+          else{
+					  std::cout << iline << "  ";
+					  std::cout << ftrjin->getNPriv()*ftrjin->getTStepPS()/ftrjin->getNSavc()+i*ftrjin->getTStepPS();
+					  for (ianalysis=0; ianalysis< analyses.size(); ianalysis++){
+						  analyses.at(ianalysis)->runAnalysis();
+					  }
+					  std::cout << std::endl;
+					  iline++;
+          }
 				}
 			}
 			else{
