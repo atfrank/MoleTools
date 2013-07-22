@@ -202,6 +202,10 @@ int main (int argc, char **argv){
 	if (fit == true){
 		mol->select(fitsel);
     if (fitpdb.length() > 0){
+      if (fitpdb != pdb){
+        std::cerr << std::endl << "Warning: fitpdb (\"" << fitpdb;
+        std::cerr << "\") is different from pdb (\"" << pdb << "\")!" << std::endl;
+      }
       fitmol=Molecule::readPDB(fitpdb);
       fitmol->select(fitsel);
       fitmol=fitmol->clone(true, false); //Clone and delete original
