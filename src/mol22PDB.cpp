@@ -14,7 +14,7 @@ void usage(){
   std::cerr << "Usage:   mol22PDB [-options] <MOL2file>" << std::endl;
   std::cerr << "Options: [-sel selection]" << std::endl;
 	std::cerr << "         [-format type] [-chains]" << std::endl;
-	std::cerr << "         [-warnings]" << std::endl;
+//	std::cerr << "         [-warnings]" << std::endl;
   std::cerr << std::endl;
   exit(0);
 }
@@ -28,7 +28,7 @@ int main (int argc, char **argv){
   std::string sel;
 	std::string format;
   bool chnFlag;
-	bool warnings;
+//	bool warnings;
 
   mol2.clear();
   chnFlag=false;

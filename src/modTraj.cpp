@@ -217,6 +217,26 @@ int main (int argc, char **argv){
 			scan=true;
 			show=false;
 		}
+		else if (currArg == "-setnframe"){
+			currArg=argv[++i];
+		  std::stringstream(currArg) >> setnframe;
+		}
+		else if (currArg == "-setnpriv"){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> setnpriv;
+		}
+		else if (currArg == "-setnsavc"){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> setnsavc;
+		}
+		else if (currArg == "-setnstep"){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> setnstep;
+		}
+		else if (currArg == "-settstep"){
+			currArg=argv[++i];
+	    std::stringstream(currArg) >> settstep;
+		}
     else if (currArg == "-verbose" || currArg == "-v"){
       verbose=true;
     }

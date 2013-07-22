@@ -79,6 +79,7 @@ int main (int argc, char **argv){
   lastFrame=0;
   nframe=0;
   verbose=false;
+	nline=0;
 
 
   for (i=1; i<argc; i++){
