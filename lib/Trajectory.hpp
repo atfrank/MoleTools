@@ -154,6 +154,13 @@ class Trajectory {
     void setNAtom(const int &natomin);
 		void addFixInx(const int &elementin);
 		void clearFixInx();
+    void setCrystal(const double &pbxin, const double &pbyin, const double &pbzin, const double &pbalphain, const double &pbbetain, const double &pbgammain);
+    void setPbX(const double &pbxin);
+    void setPbY(const double &pbyin);
+    void setPbZ(const double &pbzin);
+    void setPbAlpha(const double &pbalphain);
+    void setPbBeta(const double &pbbetain);
+    void setPbGamma(const double &pbgammain);
 };
 
 

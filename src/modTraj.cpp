@@ -27,6 +27,7 @@ void usage(){
 	std::cerr << "         [-setnframe int] [-setnpriv int]" << std::endl;
 	std::cerr << "         [-setnsavc int] [-setnstep int]" << std::endl;
 	std::cerr << "         [-settstep picoseconds]"  << std::endl;
+  std::cerr << "         [-setpbsize x y z [-setpbangle alpha beta gamma]]" << std::endl;
   std::cerr << "         [-verbose]" << std::endl;
   exit(0);
 }
@@ -83,6 +84,12 @@ int main (int argc, char **argv){
 	int setnstep; //ICNTRL[4],Number of steps in the run that created this file
 	double settstep;
   bool verbose;
+  double setpbx;
+  double setpby;
+  double setpbz;
+  double setpbalpha;
+  double setpbbeta;
+  double setpbgamma;
 
   pdb.clear();
 	fitpdb.clear();
@@ -115,6 +122,12 @@ int main (int argc, char **argv){
 	setnstep=0;
 	settstep=0.0;
   verbose=false;
+  setpbx=0.0;
+  setpby=0.0;
+  setpbz=0.0;
+  setpbalpha=90.0;
+  setpbbeta=90.0;
+  setpbgamma=90.0;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -237,6 +250,22 @@ int main (int argc, char **argv){
 			currArg=argv[++i];
 	    std::stringstream(currArg) >> settstep;
 		}
+    else if (currArg == "-setpbsize"){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> setpbx;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> setpby;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> setpbz;
+    }
+    else if (currArg == "-setpbangle"){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> setpbalpha;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> setpbbeta;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> setpbgamma;
+    }
     else if (currArg == "-verbose" || currArg == "-v"){
       verbose=true;
     }
@@ -370,6 +399,11 @@ int main (int argc, char **argv){
           for (i=start; i< ftrjin->getNFrame() && i< stop; i=i+1+skip){
             ftrjout->setNFrame(ftrjout->getNFrame()+1);
           }
+          //Set periodic boundaries
+          if (setpbx > 0.0 && setpby > 0.0 && setpbz > 0.0){
+            ftrjout->setQCrystal(true);
+            ftrjout->setCrystal(setpbx, setpby, setpbz, setpbalpha, setpbbeta, setpbgamma);
+          } 
           ftrjout->writeHeader(trjout);
 				}
         //Loop through desired frames

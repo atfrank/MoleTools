@@ -811,3 +811,36 @@ void Trajectory::addFixInx(const int &elementin){
 void Trajectory::clearFixInx(){
 	fixinx.clear();
 }
+
+void Trajectory::setCrystal(const double &pbxin, const double &pbyin, const double &pbzin, const double &pbalphain, const double &pbbetain, const double &pbgammain){
+  this->setPbX(pbxin);
+  this->setPbY(pbyin);
+  this->setPbZ(pbzin);
+  this->setPbAlpha(pbalphain);
+  this->setPbBeta(pbbetain);
+  this->setPbGamma(pbgammain);
+}
+
+void Trajectory::setPbX(const double &pbxin){
+  pbx=pbxin;
+}
+
+void Trajectory::setPbY(const double &pbyin){
+  pby=pbyin;
+}
+
+void Trajectory::setPbZ(const double &pbzin){
+  pbz=pbzin;
+}
+
+void Trajectory::setPbAlpha(const double &pbalphain){
+  pbalpha=pbalphain;
+}
+
+void Trajectory::setPbBeta(const double &pbbetain){
+  pbbeta=pbbetain;
+}
+
+void Trajectory::setPbGamma(const double &pbgammain){
+  pbgamma=pbgammain;
+}
