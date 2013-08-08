@@ -15,7 +15,6 @@ void usage(){
   std::cerr << std::endl << std::endl;
   std::cerr << "Usage:   pdb2Traj [-options] <PDBfile(s)>" << std::endl;
   std::cerr << "         [-out TRAJname] [-outsel selection]" << std::endl;
-  std::cerr << "         [-ref Trajname]" << std::endl;
   exit(0);
 }
 
@@ -51,11 +50,6 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       outsel=currArg;
     }
-    else if (currArg == "-ref"){
-      currArg=argv[++i];
-      trjin.open(currArg.c_str(), std::ios::binary);
-      ftrjin=new Trajectory;
-    }
     else{
       pdbs.push_back(currArg);
     }
@@ -72,12 +66,8 @@ int main (int argc, char **argv){
 		trjout.open(fout.c_str(), std::ios::binary);
     ftrjout=new Trajectory;
     ftrjout->setDefaultHeader();
-    if (trjin.is_open() && ftrjin->findFormat(trjin) == true){
-      ftrjin->readHeader(trjin);
-      ftrjin->readFrame(trjin, 0);
-      ftrjout->setQCrystal(ftrjin->getQCrystal());
-    }
 		ftrjout->setNFrame(static_cast<int>(pdbs.size()));
+    ftrjout->setNStep(static_cast<int>(pdbs.size()));
 
 		for (j=0; j< pdbs.size(); j++){
 			mol=Molecule::readPDB(pdbs.at(j));
@@ -111,10 +101,6 @@ int main (int argc, char **argv){
 			delete mol;
 		}
 	}
-
-  if (trjin.is_open()){
-    trjin.close();
-  }
 
   if (trjout.is_open()){
     //Re-write header in case of any changes
