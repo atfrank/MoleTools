@@ -15,6 +15,7 @@ void usage(){
   std::cerr << std::endl << std::endl;
   std::cerr << "Usage:   pdb2Traj [-options] <PDBfile(s)>" << std::endl;
   std::cerr << "         [-out TRAJname] [-outsel selection]" << std::endl;
+  std::cerr << "         [-ref Trajname]" << std::endl;
   exit(0);
 }
 
@@ -28,11 +29,14 @@ int main (int argc, char **argv){
   std::string currArg;
   std::string outsel="";
   std::ofstream trjout;
+  std::ifstream trjin;
 	Trajectory *ftrjout;
+  Trajectory *ftrjin;
 
   pdbs.clear();
   mol=NULL;
 	ftrjout=NULL;
+  ftrjin=NULL;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -46,6 +50,11 @@ int main (int argc, char **argv){
     else if (currArg == "-outsel"){
       currArg=argv[++i];
       outsel=currArg;
+    }
+    else if (currArg == "-ref"){
+      currArg=argv[++i];
+      trjin.open(currArg.c_str(), std::ios::binary);
+      ftrjin=new Trajectory;
     }
     else{
       pdbs.push_back(currArg);
@@ -62,7 +71,12 @@ int main (int argc, char **argv){
 	else{
 		trjout.open(fout.c_str(), std::ios::binary);
     ftrjout=new Trajectory;
-		ftrjout->setDefaultHeader();
+    ftrjout->setDefaultHeader();
+    if (trjin.is_open() && ftrjin->findFormat(trjin) == true){
+      ftrjin->readHeader(trjin);
+      ftrjin->readFrame(trjin, 0);
+      ftrjout->setQCrystal(ftrjin->getQCrystal());
+    }
 		ftrjout->setNFrame(static_cast<int>(pdbs.size()));
 
 		for (j=0; j< pdbs.size(); j++){
@@ -81,7 +95,12 @@ int main (int argc, char **argv){
    			ftrjout->setMolecule(mol);
 	
 				if (trjout.is_open()){
-     			ftrjout->writeFrame(trjout);
+          if (trjin.is_open()){
+            ftrjout->writeFrame(trjout, ftrjin);
+          }
+          else{
+     			  ftrjout->writeFrame(trjout);
+          }
    			}
 			}
 			else{
@@ -92,6 +111,10 @@ int main (int argc, char **argv){
 			delete mol;
 		}
 	}
+
+  if (trjin.is_open()){
+    trjin.close();
+  }
 
   if (trjout.is_open()){
     //Re-write header in case of any changes
