@@ -1,5 +1,8 @@
 //Sean M. Law
 
+#ifndef ANALYZE_H
+#define ANALYZE_H
+
 #include "Molecule.hpp"
 #include "Vector.hpp"
 #include "Constants.hpp"
@@ -91,3 +94,5 @@ class AnalyzeDihedral: public Analyze {
 		void setupMolSel(Molecule* molin);
 		void runAnalysis();
 };
+
+#endif
