@@ -3,15 +3,12 @@
 #include "WHAM.hpp"
 
 WHAM::WHAM (){
-  nSims=0;
-  nData.clear();
   Fguess.clear();
-  energy.clear();
+  E.clear();
+	Ex.clear();
   bins=10;
   tol=1E-5;
   maxIter=100000;
-  extrapFlag=false;
-  guessFlag=false;
 }
 
 void WHAM::genWHAMInput(){
@@ -29,13 +26,17 @@ void WHAM::iterateWHAM (){
   std::vector<double> FnextInv;
   std::vector< std::vector<double> > denom;
   
+	//Notes
+	// E.size() = Number of simulations/windows
+	// E.at(i).size() = Number of datapoints in each simulation/window
 
-  Flast.resize(nSims);
-  FnextInv.resize(nSims);
-  denom.resize(nSims);
-  for (i=0; i< nSims; i++){
+  Flast.resize(E.size());
+  FnextInv.resize(E.size());
+  denom.resize(E.size());
+
+  for (i=0; i< E.size(); i++){
     //Initialize F
-    if (guessFlag == true){
+    if (Fguess.size() > 0 && Fguess.size() == E.size()){
       Flast.at(i)=Fguess.at(i);
     }
     else{
@@ -43,38 +44,34 @@ void WHAM::iterateWHAM (){
     }
     FnextInv.at(i)=0;
     
-    denom.at(i).resize(nData.at(i));
+    denom.at(i).resize(E.at(i).size());
   }
 
   for (niter=0; niter< maxIter; niter++){
-    //Clear denominators before each iteration
-    for (j=0; j< nSims; j++){
-      for (k=0; k< nData.at(j); k++){
-        
-      }
-    }
-
-    for (i=0; i< nSims; i++){ //For each F value I
-      for (j=0; j< nSims; j++){ //For each simulation J
-        for (k=0; k< nData.at(j); k++){ //Foreach datapoint K in simulation J
+    for (i=0; i< E.size(); i++){ //For each F value I
+			FnextInv.at(i)=0.0;
+      for (j=0; j< E.size(); j++){ //For each simulation J
+        for (k=0; k< E.at(j).size(); k++){ //Foreach datapoint K in simulation J
           if (i==0){ //Calculate (redundant) denominator once for each iteration
-            for (l=0; l< nSims; l++){ //Foreach simulation environment L
-              if (extrapFlag == true){ //WHAM Extrapolation
-              
-              }
-              else{ //Traditional WHAM
-              
-              }
+						denom.at(j).at(k)=0.0;
+            for (l=0; l< E.size(); l++){ //Foreach simulation environment L
+              //Calculate denom
+
             }
           }
-          FnextInv.at(i)+=energy.at(i).at(j).at(k);
+					if (Ex.size() == E.size()){ //WHAM Extrapolation
+						FnextInv.at(i)+=Ex.at(i).at(j).at(k)/denom.at(j).at(k);
+					} 
+					else{ //Traditional WHAM
+          	FnextInv.at(i)+=E.at(i).at(j).at(k)/denom.at(j).at(k);
+					}
         }
       }
     }
 
     //Update F values
 
-    for (i=0; i< nSims; i++){
+    for (i=0; i< E.size(); i++){
       Flast.at(i)=1.0/FnextInv.at(i);
       //Note that tolerance is in f but F is in exp(f)!!
     }

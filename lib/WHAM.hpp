@@ -10,15 +10,12 @@
 
 class WHAM {
   private:
-    unsigned int nSims;
-    std::vector<unsigned int> nData;
     std::vector<double> Fguess;
-    std::vector< std::vector< std::vector<double> > > energy; //Is dynamic and can be jagged
+    std::vector< std::vector< std::vector<double> > > E; //Is dynamic and can be jagged
+		std::vector< std::vector< std::vector<double> > > Ex; //Is dynamic and can be jagged
     unsigned int bins;
     double tol;
     unsigned int maxIter;
-    bool extrapFlag; //
-    bool guessFlag; //
 
   public:
     WHAM ();
