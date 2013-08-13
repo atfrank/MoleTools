@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 #include <cstdlib>
 
 #define MAXINPFILES 4096
@@ -14,7 +15,7 @@ void usage(){
   std::cerr << "Usage:   wham [-options] <metadatafile>" << std::endl;
   std::cerr << "Options: [-bins rcoor1[:rcoor2[:rcoor3]]]" << std::endl;
   std::cerr << "         [-iter value] [-tol value | -Ftol value]" << std::endl;
-  std::cerr << "         [-temp T1[:T2...[[:TN:Ttarget]]] | -temp T1=TN=[incr[=Ttarget]]]" << std::endl;
+  std::cerr << "         [-temp T1[:T2...[[:TN[:Ttarget]]]] | -temp T1=TN=[incr[=Ttarget]]]" << std::endl;
   std::cerr << "         [-factor value]" << std::endl;
   std::cerr << std::endl;
   exit(0);
@@ -35,6 +36,11 @@ int main (int argc, char **argv){
   maxIter=1E6;
   factor=1.0;
   wham=new WHAM;
+
+  //Copy original command
+  for (i=0; i<argc; i++){
+    wham->appendCmd(std::string(" ")+argv[i]);
+  }
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -95,11 +101,20 @@ int main (int argc, char **argv){
     usage();
   }
 
-  wham->processMeta();
+  wham->readMetadata();
+  wham->processVtot(); //Total biasing potential
+  wham->processEtot(); //Total potential energy
+  wham->processCoor(); //Reaction coordinates
 
-  for (j=0; j< wham->getTempSize(); j++){
-    std::cerr << wham->getTemp(j) << std::endl;
-  }
+//  for (j=0; j< wham->getTempSize(); j++){
+//    std::cerr << std::fixed << std::setprecision(6) << wham->getTemp(j) << std::endl;
+//  }
+
+//  std::cerr << "#" << wham->getCmd() << std::endl;
+  
+//  if (wham->iterateWHAM()){
+
+//  }
 
   return 0;
 }

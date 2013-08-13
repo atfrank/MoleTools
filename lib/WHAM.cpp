@@ -3,10 +3,12 @@
 #include "WHAM.hpp"
 
 WHAM::WHAM (){
+  cmd.clear();
   Fguess.clear();
   F.clear();
-  E.clear();
-	Ex.clear();
+  expBVE.clear();
+	expBVxEx.clear();
+  nWindow=0;
   fMeta.clear();
   metainp=NULL;
   bins.clear();
@@ -14,24 +16,25 @@ WHAM::WHAM (){
   maxIter=1E6;
   T.clear();
   T.push_back(300);
+  targetT=0;
   factor=1.0;
   factorFlag=false;
+}
+
+void WHAM::appendCmd(const std::string &str){
+  cmd+=str;
 }
 
 void WHAM::genWHAMInput(){
 
 }
 
-void WHAM::processMeta(){
+void WHAM::readMetadata(){
   std::string line;
   std::vector<std::string> s;
-  unsigned int nline;
-  double targetT;
 
   line.clear();
   s.clear();
-  nline=0;
-  targetT=300;
 
   metaFile.open(fMeta.c_str(), std::ios::in);
   metainp=&metaFile;
@@ -39,24 +42,47 @@ void WHAM::processMeta(){
     getline(*metainp, line);
     Misc::splitStr(line, " \t", s, false);
     if (s.size() == 3 && (s.at(0) != "!" || s.at(0) != "#")){
-      nline++;
+      inps.resize(this->getNWindow()+1);
+      inps.at(this->getNWindow()).resize(3);
+      inps.at(this->getNWindow())=s;
+      this->setNWindow(this->getNWindow()+1);
     }
   }
 
-  while (T.size() <= nline){
-    if (T.size() < nline){
-      std::cerr << "Warning: Simulation window " << T.size()+1 << " set to default temperature (";
-      std::cerr << targetT << " K)" << std::endl;
-    }
-    else{
-      std::cerr << "Warning: A default target temperature (300 K) has been set" << std::endl;
-    }
-    T.push_back(targetT);
-  }
-
+  this->fixTemp(); //Ensure the number of windows and temperatures match, assign targetT
 }
 
-void WHAM::iterateWHAM (){
+void WHAM::processVtot (){
+  unsigned int i;
+  unsigned int j;
+
+  j=0;
+  for(i=0; i< inps.size(); i++){
+
+  }
+}
+
+void WHAM::processEtot (){
+  unsigned int i;
+  unsigned int j;
+
+  j=1;
+  for(i=0; i< inps.size(); i++){
+    
+  }
+}
+
+void WHAM::processCoor (){
+  unsigned int i;
+  unsigned int j;
+
+  j=2;
+  for(i=0; i< inps.size(); i++){
+
+  }
+}
+
+bool WHAM::iterateWHAM (){
   unsigned int i,j,k,l;
   unsigned int niter;
   std::vector<double> nFlast;
@@ -75,45 +101,51 @@ void WHAM::iterateWHAM (){
   //  
 
   // Comments
-  // E.size() = Number of simulations/windows, S
-	// E.at(i).size() = Number of datapoints, N(i) in the ith simulation/window
-  // E.at(i).at(j).at(k) = exp(-B(i)V(i,jk))*exp[-(B(i)-B(0))E(i,jk)]
-  
+  // expBVE.size() = Number of simulations/windows, S = nWindow
+	// expBVE.at(i).size() = Number of datapoints, N(i) in the ith simulation/window
+  // expBVE.at(i).at(j).at(k) = exp(-B(i)V(i,jk))*exp[-(B(i)-B(0))E(i,jk)]
+ 
+  if (expBVE.size() != this->getNWindow() || (expBVxEx.size() > 0 && expBVxEx.size() != this->getNWindow())){
+    std::cerr << std::endl;
+    std::cerr << "Error: The number of simulation windows do not match!";
+    std::cerr << std::endl << std::endl;
+    return true;
+  }
 
-  nFlast.resize(E.size()); //n(i)*F(i)
-  FnextInv.resize(E.size());
-  denomInv.resize(E.size());
+  nFlast.resize(this->getNWindow()); //n(i)*F(i)
+  FnextInv.resize(this->getNWindow());
+  denomInv.resize(this->getNWindow());
 
-  for (i=0; i< E.size(); i++){
+  for (i=0; i< this->getNWindow(); i++){
     //Initialize F
-    nFlast.at(i)=E.at(i).size();
-    if (Fguess.size() > 0 && Fguess.size() == E.size()){
+    nFlast.at(i)=expBVE.at(i).size();
+    if (Fguess.size() > 0 && Fguess.size() == this->getNWindow()){
       nFlast.at(i)*=Fguess.at(i);
     }
     FnextInv.at(i)=0;
     
-    denomInv.at(i).resize(E.at(i).size());
+    denomInv.at(i).resize(expBVE.at(i).size());
   }
 
   //WHAM Iterations
   for (niter=0; niter< maxIter; niter++){
-    for (i=0; i< E.size(); i++){ //For each F value I
+    for (i=0; i< this->getNWindow(); i++){ //For each F value I
 			FnextInv.at(i)=0.0;
-      for (j=0; j< E.size(); j++){ //For each simulation J
-        for (k=0; k< E.at(j).size(); k++){ //Foreach datapoint K in simulation J
+      for (j=0; j< this->getNWindow(); j++){ //For each simulation J
+        for (k=0; k< expBVE.at(j).size(); k++){ //Foreach datapoint K in simulation J
           if (i==0){ //Calculate (redundant) denominator once for each iteration
 						denomInv.at(j).at(k)=0.0;
-            for (l=0; l< E.size(); l++){ //Foreach simulation environment L
+            for (l=0; l< this->getNWindow(); l++){ //Foreach simulation environment L
               //Calculate denom
-              denomInv.at(j).at(k)+=nFlast.at(l)*E.at(l).at(j).at(k);
+              denomInv.at(j).at(k)+=nFlast.at(l)*expBVE.at(l).at(j).at(k);
             }
             denomInv.at(j).at(k)=1.0/denomInv.at(j).at(k);
           }
-					if (Ex.size() == E.size()){ //WHAM Extrapolation
-						FnextInv.at(i)+=Ex.at(i).at(j).at(k)*denomInv.at(j).at(k);
+					if (expBVxEx.size() == expBVE.size()){ //WHAM Extrapolation
+						FnextInv.at(i)+=expBVxEx.at(i).at(j).at(k)*denomInv.at(j).at(k);
 					} 
 					else{ //Traditional WHAM
-          	FnextInv.at(i)+=E.at(i).at(j).at(k)*denomInv.at(j).at(k);
+          	FnextInv.at(i)+=expBVE.at(i).at(j).at(k)*denomInv.at(j).at(k);
 					}
         }
       }
@@ -124,20 +156,45 @@ void WHAM::iterateWHAM (){
 
     //Check tolerance (note that tolerance is in f but F is in exp(f))
     nextIter=false;
-    for (i=0; i< E.size(); i++){
-      dExpF=fabs(exp(1.0/FnextInv.at(i)) - exp(nFlast.at(i)/E.at(i).size()));
+    for (i=0; i< this->getNWindow(); i++){
+      dExpF=fabs(exp(1.0/FnextInv.at(i)) - exp(nFlast.at(i)/expBVE.at(i).size()));
       if (dExpF >= tol){
         nextIter=true;
       }
     }
 
     //Update F values for next iteration
-    for (i=0; i< E.size(); i++){
-      nFlast.at(i)=E.at(i).size()*(1.0/FnextInv.at(i)); //n(i)*F(i)
+    for (i=0; i< this->getNWindow(); i++){
+      nFlast.at(i)=expBVE.at(i).size()*(1.0/FnextInv.at(i)); //n(i)*F(i)
     }
   }
-
   
+  return false;
+}
+
+void WHAM::fixTemp(){
+  while (T.size() < this->getNWindow()){
+    std::cerr << "Warning: Simulation window " << T.size()+1 << " set to default temperature (";
+    std::cerr << targetT << " K)" << std::endl;
+    T.push_back(targetT);
+  }
+
+  if (T.size() > this->getNWindow()){
+    targetT=T.back();
+    T.pop_back();
+//    std::cerr << T.at(this->getNWindow()-1) << " " << targetT << std::endl;
+  }
+
+  if (targetT == 0.0){
+    std::cerr << "Warning: Target temperature has been set to its default (300 K)" << std::endl;
+    targetT=300;
+  }
+  
+  if (T.size() > this->getNWindow()){
+    std::cerr << "Warning: Extra temperature(s) provided were ignored" << std::endl;
+    T.resize(this->getNWindow());
+  }
+ 
 }
 
 void WHAM::setMeta(const std::string &metain){
@@ -198,7 +255,7 @@ bool WHAM::setTempRange(const std::string &tin){
       T.push_back(s.at(0)+i*s.at(2));
     }
     if (s.size() >=4){
-      T.push_back(s.at(4)); //Target
+      T.push_back(s.at(3)); //Target temp
     }
     return false;
   }
@@ -220,6 +277,14 @@ void WHAM::setFactor(const double &factorin){
   factor=factorin;
 }
 
+void WHAM::setNWindow(const unsigned int &nwin){
+  nWindow=nwin;
+}
+
+void WHAM::setNWindow(const int &nwin){
+  nWindow=static_cast<unsigned int>(nwin);
+}
+
 std::string WHAM::getMeta(){
   return fMeta;
 }
@@ -230,4 +295,12 @@ unsigned int WHAM::getTempSize(){
 
 double WHAM::getTemp(const int &element){
   return T.at(element);
+}
+
+std::string WHAM::getCmd(){
+  return cmd;
+}
+
+unsigned int WHAM::getNWindow(){
+  return nWindow;
 }
