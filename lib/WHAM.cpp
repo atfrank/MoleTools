@@ -8,16 +8,51 @@ WHAM::WHAM (){
   E.clear();
 	Ex.clear();
   fMeta.clear();
+  metainp=NULL;
   bins.clear();
   tol=1E-5;
   maxIter=1E6;
+  T.clear();
+  T.push_back(300);
+  factor=1.0;
+  factorFlag=false;
 }
 
 void WHAM::genWHAMInput(){
 
 }
 
-void WHAM::readWHAMInput(){
+void WHAM::processMeta(){
+  std::string line;
+  std::vector<std::string> s;
+  unsigned int nline;
+  double targetT;
+
+  line.clear();
+  s.clear();
+  nline=0;
+  targetT=300;
+
+  metaFile.open(fMeta.c_str(), std::ios::in);
+  metainp=&metaFile;
+  while (metainp->good() && !(metainp->eof())){
+    getline(*metainp, line);
+    Misc::splitStr(line, " \t", s, false);
+    if (s.size() == 3 && (s.at(0) != "!" || s.at(0) != "#")){
+      nline++;
+    }
+  }
+
+  while (T.size() <= nline){
+    if (T.size() < nline){
+      std::cerr << "Warning: Simulation window " << T.size()+1 << " set to default temperature (";
+      std::cerr << targetT << " K)" << std::endl;
+    }
+    else{
+      std::cerr << "Warning: A default target temperature (300 K) has been set" << std::endl;
+    }
+    T.push_back(targetT);
+  }
 
 }
 
@@ -82,6 +117,9 @@ void WHAM::iterateWHAM (){
 					}
         }
       }
+      if (factorFlag == true){ //For use with Molecular Transfer Model (MTM)
+        FnextInv.at(i)*=factor;
+      }
     }
 
     //Check tolerance (note that tolerance is in f but F is in exp(f))
@@ -128,4 +166,68 @@ void WHAM::setTol(const double &tolin){
 
 void WHAM::setMaxIter(const unsigned int &iterin){
   maxIter=iterin;
+}
+
+bool WHAM::setTemp(const std::string &tin){
+  T.clear();
+  Misc::splitNum(tin, ":", T);
+  if (T.size() <= 0){
+    std::cerr << std::endl << "Error: Unrecognized temperature format " << tin;
+    std::cerr << std::endl << std::endl;
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
+void WHAM::setTemp(const std::vector<double> &tin){
+  T.clear();
+  T=tin;
+}
+
+bool WHAM::setTempRange(const std::string &tin){
+  std::vector<double> s;
+  unsigned int i;
+
+  T.clear();
+  Misc::splitNum(tin, "=", s);
+
+  if (s.size() >= 3){
+    for (i=0; i<= static_cast<unsigned int>((s.at(1)-s.at(0))/s.at(2)); i++){
+      T.push_back(s.at(0)+i*s.at(2));
+    }
+    if (s.size() >=4){
+      T.push_back(s.at(4)); //Target
+    }
+    return false;
+  }
+  else if (s.size() == 2){
+    for (i=0; i<= static_cast<unsigned int>((s.at(1)-s.at(0))); i++){
+      T.push_back(s.at(0)+i);
+    }
+    return false;
+  }
+  else{
+    std::cerr << std::endl << "Error: Unrecognized temperature format " << tin;
+    std::cerr << std::endl << std::endl;
+    return true;
+  }
+}
+
+void WHAM::setFactor(const double &factorin){
+  factorFlag=true;
+  factor=factorin;
+}
+
+std::string WHAM::getMeta(){
+  return fMeta;
+}
+
+unsigned int WHAM::getTempSize(){
+  return T.size();
+}
+
+double WHAM::getTemp(const int &element){
+  return T.at(element);
 }

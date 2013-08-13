@@ -100,6 +100,39 @@ bool Misc::isdigit (const std::string &str){
   return str.find_first_not_of("0123456789") == std::string::npos;
 }
 
+bool Misc::isdouble (const std::string &str){
+  unsigned int nDecimals=0; 
+  unsigned int negPos=0;
+
+  for (unsigned int i=0; i< str.size(); i++){
+    switch (str[i]){
+      case '-': negPos=i;
+      case '.': nDecimals++;
+      case '0':
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+        continue;
+      default:
+        return false;
+    }
+  }
+  if (nDecimals > 1 || negPos != 0){
+    return false;
+  }
+  return true;
+}
+
+bool Misc::isfloat (const std::string &str){
+  return isdouble(str);
+}
+
 bool Misc::isalpha (const std::string &str){
   return str.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz") == std::string::npos;
 }

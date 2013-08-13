@@ -54,7 +54,7 @@ std::string Residue::getSegId(){
   return this->getAtom(0)->getSegId();
 }
 
-Atom* Residue::getAtom (int element){
+Atom* Residue::getAtom (const int &element){
   return atmVec.at(element);
 }
 
