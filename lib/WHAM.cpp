@@ -10,13 +10,12 @@ WHAM::WHAM (){
 	expBVxEx.clear();
   nWindow=0;
   fMeta.clear();
-  metainp=NULL;
   bins.clear();
   tol=1E-5;
   maxIter=1E6;
-  T.clear();
-  T.push_back(300);
-  targetT=0;
+  B.clear();
+  B.push_back(1.0/(kB*300));
+  B0=0;
   factor=1.0;
   factorFlag=false;
 }
@@ -32,9 +31,13 @@ void WHAM::genWHAMInput(){
 void WHAM::readMetadata(){
   std::string line;
   std::vector<std::string> s;
+  std::ifstream metaFile;
+  std::istream *metainp;
+
 
   line.clear();
   s.clear();
+  metainp=NULL;
 
   metaFile.open(fMeta.c_str(), std::ios::in);
   metainp=&metaFile;
@@ -43,43 +46,135 @@ void WHAM::readMetadata(){
     Misc::splitStr(line, " \t", s, false);
     if (s.size() == 3 && (s.at(0) != "!" || s.at(0) != "#")){
       inps.resize(this->getNWindow()+1);
-      inps.at(this->getNWindow()).resize(3);
       inps.at(this->getNWindow())=s;
       this->setNWindow(this->getNWindow()+1);
     }
   }
 
-  this->fixTemp(); //Ensure the number of windows and temperatures match, assign targetT
-}
-
-void WHAM::processVtot (){
-  unsigned int i;
-  unsigned int j;
-
-  j=0;
-  for(i=0; i< inps.size(); i++){
-
+  if (metaFile.is_open()){
+    metaFile.close();
   }
+
+  this->fixTemp(); //Ensure the number of windows and temperatures match, assign B0 
 }
 
-void WHAM::processEtot (){
-  unsigned int i;
-  unsigned int j;
+void WHAM::processEnergies(){
+  unsigned int i; //Simulation environment
+  unsigned int j; //Simulation window
+  unsigned int k; //Datapoint in simulation window j
+  std::string vline; //Biasing potential
+  std::string eline; //Total potential energy
+  std::vector<double> v;
+  std::vector<double> e;
+  std::ifstream fvin;
+  std::ifstream fein;
+  std::istream *fvinp;
+  std::istream *feinp;
+  unsigned int lastVSize;
 
-  j=1;
-  for(i=0; i< inps.size(); i++){
-    
+  fvinp=NULL;
+  feinp=NULL;
+  lastVSize=0;
+
+  expBVE.resize(inps.size());
+
+  for(j=0; j< inps.size(); j++){
+    fvin.open(inps.at(j).at(0).c_str(), std::ios::in);
+    fein.open(inps.at(j).at(1).c_str(), std::ios::in);
+    fvinp=&fvin;
+    feinp=&fein;
+    k=0; //Datapoint in simulation window j
+
+    if (fvinp->good() && feinp->good()){
+      //Read both files
+      while (fvinp->good() && !(fvinp->eof()) && feinp->good() && !(feinp->eof())){
+        getline(*fvinp, vline);
+        getline(*feinp, eline);
+        Misc::splitNum(vline, " \t", v, false);
+        Misc::splitNum(eline, " \t", e, false);
+        if (vline.length() ==0){
+          getline(*fvinp, vline);
+          if (fvinp->eof()){
+            continue;
+          }
+          else{
+            std::cerr << "Error: file contains too many lines" << std::endl;
+          }
+        }
+        if (eline.length() == 0){
+          getline(*feinp, eline);
+          if (feinp->eof()){
+            continue;
+          }
+          else{
+            std::cerr << "Error: file contains too many lines" << std::endl;
+          }
+        }
+        expBVE.at(j).resize(k+1);
+        if (k == 0){
+          lastVSize=v.size();
+        }
+        if (e.size() == 1 && this->getNWindow() == this->getTempSize()){
+          if (v.size() == this->getNWindow() && v.size() == lastVSize){
+            //Traditional WHAM
+            //Consider using std::transform instead
+            for (i=0; i< v.size(); i++){
+              v.at(i)=exp(-B.at(i)*v.at(i));
+            }
+            expBVE.at(j).at(k)=v;
+            for (i=0; i< e.size(); i++){
+              expBVE.at(j).at(k).at(i)*=exp(-(B.at(i)-B0)*e.at(i));
+            }
+          }
+          else if (v.size() == 2*this->getNWindow() && v.size() == lastVSize){
+          //WHAM Extrapolation
+
+          }
+          else{
+            std::cerr << "Warning: File \"???\" line "<< k+1;
+            std::cerr << " contains the wrong number of columns" << std::endl;
+            continue;
+          }
+        }
+        k++;
+      }
+    }
+    else if (fvinp->good()){
+      //Read biasing potential only
+      while (fvinp->good() && !(fvinp->eof())){
+        getline(*fvinp, vline);
+        Misc::splitNum(vline, " \t", v, false);
+        if (k == 0){
+          lastVSize=v.size();
+        }
+      }
+    }
+    else if (feinp->good()){
+      //Read total potential only
+      while (feinp->good() && !(feinp->eof())){
+        getline(*feinp, eline);
+        Misc::splitNum(eline, " \t", e, false);
+        
+      }
+    }
+    else{
+      std::cerr << "Warning: Files \"" << inps.at(i).at(0) << "\" and \"";
+      std::cerr << inps.at(i).at(1) << "\" could not be read" << std::endl;
+    }
+
+    if (fvin.is_open()){
+      fvin.close();
+    }
+    if (fein.is_open()){
+      fein.close();
+    }
   }
+
 }
+
 
 void WHAM::processCoor (){
-  unsigned int i;
-  unsigned int j;
-
-  j=2;
-  for(i=0; i< inps.size(); i++){
-
-  }
+  
 }
 
 bool WHAM::iterateWHAM (){
@@ -137,15 +232,15 @@ bool WHAM::iterateWHAM (){
 						denomInv.at(j).at(k)=0.0;
             for (l=0; l< this->getNWindow(); l++){ //Foreach simulation environment L
               //Calculate denom
-              denomInv.at(j).at(k)+=nFlast.at(l)*expBVE.at(l).at(j).at(k);
+              denomInv.at(j).at(k)+=nFlast.at(l)*expBVE.at(j).at(k).at(l);
             }
             denomInv.at(j).at(k)=1.0/denomInv.at(j).at(k);
           }
 					if (expBVxEx.size() == expBVE.size()){ //WHAM Extrapolation
-						FnextInv.at(i)+=expBVxEx.at(i).at(j).at(k)*denomInv.at(j).at(k);
+						FnextInv.at(i)+=expBVxEx.at(j).at(k).at(i)*denomInv.at(j).at(k);
 					} 
 					else{ //Traditional WHAM
-          	FnextInv.at(i)+=expBVE.at(i).at(j).at(k)*denomInv.at(j).at(k);
+          	FnextInv.at(i)+=expBVE.at(j).at(k).at(i)*denomInv.at(j).at(k);
 					}
         }
       }
@@ -173,26 +268,26 @@ bool WHAM::iterateWHAM (){
 }
 
 void WHAM::fixTemp(){
-  while (T.size() < this->getNWindow()){
-    std::cerr << "Warning: Simulation window " << T.size()+1 << " set to default temperature (";
-    std::cerr << targetT << " K)" << std::endl;
-    T.push_back(targetT);
+  while (B.size() < this->getNWindow()){
+    std::cerr << "Warning: Simulation window " << B.size()+1 << " set to default temperature (";
+    std::cerr << B0 << " K)" << std::endl;
+    B.push_back(B0);
   }
 
-  if (T.size() > this->getNWindow()){
-    targetT=T.back();
-    T.pop_back();
-//    std::cerr << T.at(this->getNWindow()-1) << " " << targetT << std::endl;
+  if (B.size() > this->getNWindow()){
+    B0=B.back();
+    B.pop_back();
+//    std::cerr << B.at(this->getNWindow()-1) << " " << B0 << std::endl;
   }
 
-  if (targetT == 0.0){
+  if (B0 == 0.0){
     std::cerr << "Warning: Target temperature has been set to its default (300 K)" << std::endl;
-    targetT=300;
+    B0=1.0/(kB*300);
   }
   
-  if (T.size() > this->getNWindow()){
+  if (B.size() > this->getNWindow()){
     std::cerr << "Warning: Extra temperature(s) provided were ignored" << std::endl;
-    T.resize(this->getNWindow());
+    B.resize(this->getNWindow());
   }
  
 }
@@ -226,42 +321,54 @@ void WHAM::setMaxIter(const unsigned int &iterin){
 }
 
 bool WHAM::setTemp(const std::string &tin){
-  T.clear();
-  Misc::splitNum(tin, ":", T);
-  if (T.size() <= 0){
+  B.clear();
+  Misc::splitNum(tin, ":", B);
+  if (B.size() <= 0){
     std::cerr << std::endl << "Error: Unrecognized temperature format " << tin;
     std::cerr << std::endl << std::endl;
     return true;
   }
   else{
+    for (unsigned int i=0; i< B.size(); i++){
+      B.at(i)=1.0/(kB*B.at(i));
+    }
     return false;
   }
 }
 
 void WHAM::setTemp(const std::vector<double> &tin){
-  T.clear();
-  T=tin;
+  B.clear();
+  B=tin;
+  for (unsigned int i=0; i< B.size(); i++){
+    B.at(i)=1.0/(kB*B.at(i));
+  }
 }
 
 bool WHAM::setTempRange(const std::string &tin){
   std::vector<double> s;
   unsigned int i;
 
-  T.clear();
+  B.clear();
   Misc::splitNum(tin, "=", s);
 
   if (s.size() >= 3){
     for (i=0; i<= static_cast<unsigned int>((s.at(1)-s.at(0))/s.at(2)); i++){
-      T.push_back(s.at(0)+i*s.at(2));
+      B.push_back(s.at(0)+i*s.at(2));
     }
     if (s.size() >=4){
-      T.push_back(s.at(3)); //Target temp
+      B.push_back(s.at(3)); //Target temp
+    }
+    for (i=0; i< B.size(); i++){
+      B.at(i)=1.0/(kB*B.at(i));
     }
     return false;
   }
   else if (s.size() == 2){
     for (i=0; i<= static_cast<unsigned int>((s.at(1)-s.at(0))); i++){
-      T.push_back(s.at(0)+i);
+      B.push_back(s.at(0)+i);
+    }
+    for (i=0; i< B.size(); i++){
+      B.at(i)=1.0/(kB*B.at(i));
     }
     return false;
   }
@@ -290,11 +397,11 @@ std::string WHAM::getMeta(){
 }
 
 unsigned int WHAM::getTempSize(){
-  return T.size();
+  return B.size();
 }
 
 double WHAM::getTemp(const int &element){
-  return T.at(element);
+  return 1.0/(kB*B.at(element));
 }
 
 std::string WHAM::getCmd(){

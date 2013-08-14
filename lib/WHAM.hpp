@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <stdexcept>
 
 class WHAM {
   private:
@@ -19,13 +20,11 @@ class WHAM {
 		std::vector< std::vector< std::vector<double> > > expBVxEx; //Is dynamic and can be jagged
     unsigned int nWindow;
     std::string fMeta;
-    std::ifstream metaFile;
-    std::istream *metainp;
     std::vector<unsigned int> bins;
     double tol;
     unsigned int maxIter;
-    std::vector<double> T; //Beta(i) = E.size() 
-    double targetT; //Target temp
+    std::vector<double> B; //Beta(i) = E.size() 
+    double B0; //Target temp, BetaZero
     bool factorFlag;
     double factor; //For use with Molecular Transfer Model (MTM)
     std::vector< std::vector<std::string> > inps;
@@ -35,8 +34,8 @@ class WHAM {
     void appendCmd(const std::string &str);
     void genWHAMInput();
     void readMetadata();
-    void processVtot(); //Total biasing potentials
-    void processEtot(); //Total potential (T-Rex)
+    void processMetadata(const std::string &metatype);
+    void processEnergies(); 
     void processCoor(); //Reaction coord
     bool iterateWHAM();
     void fixTemp();

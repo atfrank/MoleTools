@@ -102,9 +102,8 @@ int main (int argc, char **argv){
   }
 
   wham->readMetadata();
-  wham->processVtot(); //Total biasing potential
-  wham->processEtot(); //Total potential energy
-  wham->processCoor(); //Reaction coordinates
+  wham->processEnergies();
+//  wham->processCoor(); //Reaction coordinates
 
 //  for (j=0; j< wham->getTempSize(); j++){
 //    std::cerr << std::fixed << std::setprecision(6) << wham->getTemp(j) << std::endl;
