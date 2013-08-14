@@ -14,8 +14,9 @@ WHAM::WHAM (){
   tol=1E-5;
   maxIter=1E6;
   B.clear();
-  B.push_back(1.0/(kB*300));
-  B0=0;
+  defaultT=300;
+  B.push_back(1.0/(kB*defaultT));
+  B0=1.0/(kB*1E-6);
   factor=1.0;
   factorFlag=false;
 }
@@ -75,6 +76,7 @@ void WHAM::processEnergies(){
   fvinp=NULL;
   feinp=NULL;
   lastVSize=0;
+  i=0;
 
   expBVE.resize(inps.size());
 
@@ -270,8 +272,8 @@ bool WHAM::iterateWHAM (){
 void WHAM::fixTemp(){
   while (B.size() < this->getNWindow()){
     std::cerr << "Warning: Simulation window " << B.size()+1 << " set to default temperature (";
-    std::cerr << B0 << " K)" << std::endl;
-    B.push_back(B0);
+    std::cerr << defaultT << " K)" << std::endl;
+    B.push_back(1.0/(kB*defaultT));
   }
 
   if (B.size() > this->getNWindow()){
@@ -280,9 +282,9 @@ void WHAM::fixTemp(){
 //    std::cerr << B.at(this->getNWindow()-1) << " " << B0 << std::endl;
   }
 
-  if (B0 == 0.0){
-    std::cerr << "Warning: Target temperature has been set to its default (300 K)" << std::endl;
-    B0=1.0/(kB*300);
+  if (B0 == 1.0/(kB*1E-6)){
+    std::cerr << "Warning: Target temperature has been set to its default ("<< defaultT << " K)" << std::endl;
+    B0=1.0/(kB*defaultT);
   }
   
   if (B.size() > this->getNWindow()){

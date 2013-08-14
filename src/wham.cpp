@@ -36,6 +36,7 @@ int main (int argc, char **argv){
   maxIter=1E6;
   factor=1.0;
   wham=new WHAM;
+  j=0;
 
   //Copy original command
   for (i=0; i<argc; i++){

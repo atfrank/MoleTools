@@ -25,6 +25,7 @@ class WHAM {
     unsigned int maxIter;
     std::vector<double> B; //Beta(i) = E.size() 
     double B0; //Target temp, BetaZero
+    double defaultT;
     bool factorFlag;
     double factor; //For use with Molecular Transfer Model (MTM)
     std::vector< std::vector<std::string> > inps;
