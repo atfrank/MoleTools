@@ -80,6 +80,7 @@ void WHAM::processEnergies(){
   k=0; //Datapoint in simulation window j
 
   expBVE.resize(inps.size());
+  expBVxEx.resize(inps.size());
 
   for(j=0; j< inps.size(); j++){
     fvin.open(inps.at(j).at(0).c_str(), std::ios::in);
@@ -135,10 +136,8 @@ void WHAM::processEnergies(){
             expBVE.at(j).at(k).resize(this->getNWindow());
             expBVxEx.at(j).at(k).resize(this->getNWindow());
             for (i=0; i< this->getNWindow(); i++){
-              expBVE.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i)) * exp(-(B.at(i)-B0)*e.at(0));                                                   
-            }
-            for (i=this->getNWindow(); i< 2*this->getNWindow(); i++){
-              expBVxEx.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i)) * exp(-(B.at(i)-B0)*e.at(0));
+              expBVE.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i)) * exp(-(B.at(i)-B0)*e.at(0));                                                  
+              expBVxEx.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i+this->getNWindow())) * exp(-(B.at(i)-B0)*e.at(0));
             }
           }
           else{
@@ -156,7 +155,7 @@ void WHAM::processEnergies(){
       }
     }
     else if (fvinp->good()){
-      std::cerr << "Processing files \"" << inps.at(j).at(0) << "\"..." << std::endl;
+      std::cerr << "Processing file \"" << inps.at(j).at(0) << "\"..." << std::endl;
       k=0;
       //Read biasing potential only
       while (fvinp->good() && !(fvinp->eof())){
@@ -190,9 +189,7 @@ void WHAM::processEnergies(){
           expBVxEx.at(j).at(k).resize(this->getNWindow());
           for (i=0; i< this->getNWindow(); i++){
             expBVE.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i));
-          }
-          for (i=this->getNWindow(); i< 2*this->getNWindow(); i++){
-            expBVxEx.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i));
+            expBVxEx.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i+this->getNWindow()));
           }
         }
         else{
@@ -204,7 +201,7 @@ void WHAM::processEnergies(){
       }
     }
     else if (feinp->good()){
-      std::cerr << "Processing files \"" << inps.at(j).at(1) << "\"..." << std::endl;
+      std::cerr << "Processing file \"" << inps.at(j).at(1) << "\"..." << std::endl;
       k=0;
       //Read total potential only
       while (feinp->good() && !(feinp->eof())){
@@ -258,11 +255,13 @@ void WHAM::processCoor (){
 bool WHAM::iterateWHAM (){
   unsigned int i,j,k,l;
   unsigned int niter;
-  std::vector<double> nFlast;
-  std::vector<double> FnextInv;
+  std::vector<double> nFlast; //n(i)*exp(Bf(i))
+  std::vector<double> FnextInv; //exp(-Bf(i)) = 1.0/[exp(Bf(i))]
   std::vector< std::vector<double> > denomInv;
-  bool nextIter;
-  double dExpF; //exp(F)-exp(Flast)
+  bool breakFlag;
+  double fnext; //Temporary variable
+  double flast; //Temporary variable
+  double df; //fabs(f(i,next) - f(i,last))
  
   // WHAM Formalism (Adapted from Michael Andrec)
   //
@@ -285,24 +284,23 @@ bool WHAM::iterateWHAM (){
     return true;
   }
 
-  nFlast.resize(this->getNWindow()); //n(i)*F(i)
+  nFlast.resize(this->getNWindow()); //n(j)*F(j)
   FnextInv.resize(this->getNWindow());
   denomInv.resize(this->getNWindow());
 
-  for (i=0; i< this->getNWindow(); i++){
+  for (j=0; j< this->getNWindow(); j++){
     //Initialize F
-    nFlast.at(i)=expBVE.at(i).size();
+    nFlast.at(j)=expBVE.at(j).size();
     if (Fguess.size() > 0 && Fguess.size() == this->getNWindow()){
-      nFlast.at(i)*=Fguess.at(i);
+      nFlast.at(j)*=Fguess.at(j);
     }
-    FnextInv.at(i)=0;
     
-    denomInv.at(i).resize(expBVE.at(i).size());
+    denomInv.at(j).resize(expBVE.at(j).size());
   }
 
   //WHAM Iterations
-  for (niter=0; niter< maxIter; niter++){
-    for (i=0; i< this->getNWindow(); i++){ //For each F value I
+  for (niter=1; niter< maxIter; niter++){
+    for (i=0; i< this->getNWindow(); i++){ //For each F value I (simulation environment)
 			FnextInv.at(i)=0.0;
       for (j=0; j< this->getNWindow(); j++){ //For each simulation J
         for (k=0; k< expBVE.at(j).size(); k++){ //Foreach datapoint K in simulation J
@@ -328,17 +326,36 @@ bool WHAM::iterateWHAM (){
     }
 
     //Check tolerance (note that tolerance is in f but F is in exp(f))
-    nextIter=false;
+    breakFlag=true;
     for (i=0; i< this->getNWindow(); i++){
-      dExpF=fabs(exp(1.0/FnextInv.at(i)) - exp(nFlast.at(i)/expBVE.at(i).size()));
-      if (dExpF >= tol){
-        nextIter=true;
+      //Shift FnextInv(i) relative to FnextInv(0)
+      FnextInv.at(i)=FnextInv.at(i)/FnextInv.at(0);
+      fnext=B.at(i)*log(1.0/FnextInv.at(i));
+      flast=B.at(i)*log(nFlast.at(i)/expBVE.at(i).size());
+      df=fabs(fnext-flast);
+      if (df >= tol){
+        breakFlag=false;
       }
     }
 
     //Update F values for next iteration
     for (i=0; i< this->getNWindow(); i++){
       nFlast.at(i)=expBVE.at(i).size()*(1.0/FnextInv.at(i)); //n(i)*F(i)
+    }
+
+    if (breakFlag == true){
+      for (i=0; i< this->getNWindow(); i++){
+        flast=B.at(i)*log(nFlast.at(i)/expBVE.at(i).size());
+        std::cerr << "# f( " << i+1 << " ) = " << flast << std::endl;
+      }
+      break;
+    }
+    if (niter % 10 == 0){
+      std::cerr << "Iteration " << niter << std::endl;
+      for (i=0; i< this->getNWindow(); i++){
+        flast=B.at(i)*log(nFlast.at(i)/expBVE.at(i).size());
+        std::cerr << "# f( " << i+1 << " ) = " << flast << std::endl;
+      }
     }
   }
   
