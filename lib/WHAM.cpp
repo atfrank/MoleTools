@@ -77,6 +77,7 @@ void WHAM::processEnergies(){
   feinp=NULL;
   lastVSize=0;
   i=0;
+  k=0; //Datapoint in simulation window j
 
   expBVE.resize(inps.size());
 
@@ -85,9 +86,10 @@ void WHAM::processEnergies(){
     fein.open(inps.at(j).at(1).c_str(), std::ios::in);
     fvinp=&fvin;
     feinp=&fein;
-    k=0; //Datapoint in simulation window j
 
     if (fvinp->good() && feinp->good()){
+      std::cerr << "Processing files \"" << inps.at(j).at(0) << "\" and \"" << inps.at(j).at(1) << "\"..." << std::endl;
+      k=0;
       //Read both files
       while (fvinp->good() && !(fvinp->eof()) && feinp->good() && !(feinp->eof())){
         getline(*fvinp, vline);
@@ -100,7 +102,8 @@ void WHAM::processEnergies(){
             continue;
           }
           else{
-            std::cerr << "Error: file contains too many lines" << std::endl;
+            std::cerr << "Error: File \"" << inps.at(j).at(0) << "\" contains too many lines" << std::endl;
+            break;
           }
         }
         if (eline.length() == 0){
@@ -109,54 +112,127 @@ void WHAM::processEnergies(){
             continue;
           }
           else{
-            std::cerr << "Error: file contains too many lines" << std::endl;
+            std::cerr << "Error: File \"" << inps.at(j).at(1) << "\" contains too many lines" << std::endl;
+            break;
           }
         }
-        expBVE.at(j).resize(k+1);
         if (k == 0){
           lastVSize=v.size();
         }
         if (e.size() == 1 && this->getNWindow() == this->getTempSize()){
           if (v.size() == this->getNWindow() && v.size() == lastVSize){
             //Traditional WHAM
-            //Consider using std::transform instead
-            for (i=0; i< v.size(); i++){
-              v.at(i)=exp(-B.at(i)*v.at(i));
-            }
-            expBVE.at(j).at(k)=v;
-            for (i=0; i< e.size(); i++){
-              expBVE.at(j).at(k).at(i)*=exp(-(B.at(i)-B0)*e.at(i));
+            expBVE.at(j).resize(k+1);
+            expBVE.at(j).at(k).resize(this->getNWindow());
+            for (i=0; i< this->getNWindow(); i++){
+              expBVE.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i)) * exp(-(B.at(i)-B0)*e.at(0));
             }
           }
           else if (v.size() == 2*this->getNWindow() && v.size() == lastVSize){
-          //WHAM Extrapolation
-
+            //WHAM Extrapolation
+            expBVE.at(j).resize(k+1);
+            expBVxEx.at(j).resize(k+1);
+            expBVE.at(j).at(k).resize(this->getNWindow());
+            expBVxEx.at(j).at(k).resize(this->getNWindow());
+            for (i=0; i< this->getNWindow(); i++){
+              expBVE.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i)) * exp(-(B.at(i)-B0)*e.at(0));                                                   
+            }
+            for (i=this->getNWindow(); i< 2*this->getNWindow(); i++){
+              expBVxEx.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i)) * exp(-(B.at(i)-B0)*e.at(0));
+            }
           }
           else{
-            std::cerr << "Warning: File \"???\" line "<< k+1;
+            std::cerr << "Warning: File \"" << inps.at(j).at(0) << "\" line "<< k+1;
             std::cerr << " contains the wrong number of columns" << std::endl;
             continue;
           }
+        }
+        else{
+          std::cerr << "Warning: File \"" << inps.at(j).at(1) << "\" line "<< k+1;
+          std::cerr << " contains the wrong number of columns" << std::endl;
+          continue;
         }
         k++;
       }
     }
     else if (fvinp->good()){
+      std::cerr << "Processing files \"" << inps.at(j).at(0) << "\"..." << std::endl;
+      k=0;
       //Read biasing potential only
       while (fvinp->good() && !(fvinp->eof())){
         getline(*fvinp, vline);
         Misc::splitNum(vline, " \t", v, false);
+        if (vline.length() == 0){
+          if (fvinp->eof()){
+            continue;
+          }
+          else{
+            std::cerr << "Error: File \"" << inps.at(j).at(0) << "\" contains too many lines" << std::endl;
+            break;
+          }
+        }
         if (k == 0){
           lastVSize=v.size();
         }
+        if (v.size() == this->getNWindow() && v.size() == lastVSize){
+          //Traditional WHAM
+          expBVE.at(j).resize(k+1);
+          expBVE.at(j).at(k).resize(this->getNWindow());
+          for (i=0; i< this->getNWindow(); i++){
+            expBVE.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i));
+          }
+        }
+        else if (v.size() == 2*this->getNWindow() && v.size() == lastVSize){
+          //WHAM Extrapolation
+          expBVE.at(j).resize(k+1);
+          expBVxEx.at(j).resize(k+1);
+          expBVE.at(j).at(k).resize(this->getNWindow());
+          expBVxEx.at(j).at(k).resize(this->getNWindow());
+          for (i=0; i< this->getNWindow(); i++){
+            expBVE.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i));
+          }
+          for (i=this->getNWindow(); i< 2*this->getNWindow(); i++){
+            expBVxEx.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i));
+          }
+        }
+        else{
+          std::cerr << "Warning: File \"" << inps.at(j).at(0) << "\" line "<< k+1;
+          std::cerr << " contains the wrong number of columns" << std::endl;
+          continue;
+        }
+        k++; 
       }
     }
     else if (feinp->good()){
+      std::cerr << "Processing files \"" << inps.at(j).at(1) << "\"..." << std::endl;
+      k=0;
       //Read total potential only
       while (feinp->good() && !(feinp->eof())){
         getline(*feinp, eline);
         Misc::splitNum(eline, " \t", e, false);
-        
+        if (eline.length() == 0){
+          if (feinp->eof()){
+            continue;
+          }
+          else{
+            std::cerr << "Error: File \"" << inps.at(j).at(1) << "\" contains too many lines" << std::endl;
+            break;
+          }
+        }
+        if (e.size() == 1){
+          //Traditional WHAM
+          expBVE.at(j).resize(k+1);
+          expBVE.at(j).at(k).resize(this->getNWindow());
+          for (i=0; i< this->getNWindow(); i++){
+            expBVE.at(j).at(k).at(i)=exp(-(B.at(i)-B0)*e.at(0));
+          }
+        }
+        else{
+          std::cerr << "Warning: File \"" << inps.at(j).at(1) << "\" line "<< k+1;
+          std::cerr << " contains the wrong number of columns" << std::endl;
+          continue;
+        }
+        k++;
       }
     }
     else{

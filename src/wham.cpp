@@ -105,7 +105,7 @@ int main (int argc, char **argv){
   wham->readMetadata();
   wham->processEnergies();
 //  wham->processCoor(); //Reaction coordinates
-
+  wham->iterateWHAM();
 //  for (j=0; j< wham->getTempSize(); j++){
 //    std::cerr << std::fixed << std::setprecision(6) << wham->getTemp(j) << std::endl;
 //  }
