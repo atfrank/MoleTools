@@ -80,7 +80,6 @@ void WHAM::processEnergies(){
   k=0; //Datapoint in simulation window j
 
   expBVE.resize(inps.size());
-  expBVxEx.resize(inps.size());
 
   for(j=0; j< inps.size(); j++){
     fvin.open(inps.at(j).at(0).c_str(), std::ios::in);
@@ -131,6 +130,9 @@ void WHAM::processEnergies(){
           }
           else if (v.size() == 2*this->getNWindow() && v.size() == lastVSize){
             //WHAM Extrapolation
+            if (expBVxEx.size() == 0){
+              expBVxEx.resize(inps.size());
+            }
             expBVE.at(j).resize(k+1);
             expBVxEx.at(j).resize(k+1);
             expBVE.at(j).at(k).resize(this->getNWindow());
@@ -183,6 +185,9 @@ void WHAM::processEnergies(){
         }
         else if (v.size() == 2*this->getNWindow() && v.size() == lastVSize){
           //WHAM Extrapolation
+          if (expBVxEx.size() == 0){
+            expBVxEx.resize(inps.size());
+          }
           expBVE.at(j).resize(k+1);
           expBVxEx.at(j).resize(k+1);
           expBVE.at(j).at(k).resize(this->getNWindow());
@@ -329,7 +334,7 @@ bool WHAM::iterateWHAM (){
     breakFlag=true;
     for (i=0; i< this->getNWindow(); i++){
       //Shift FnextInv(i) relative to FnextInv(0)
-      FnextInv.at(i)=FnextInv.at(i)/FnextInv.at(0);
+      //FnextInv.at(i)=FnextInv.at(i)/FnextInv.at(0);
       fnext=B.at(i)*log(1.0/FnextInv.at(i));
       flast=B.at(i)*log(nFlast.at(i)/expBVE.at(i).size());
       df=fabs(fnext-flast);
