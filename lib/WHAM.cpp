@@ -266,6 +266,7 @@ bool WHAM::iterateWHAM (){
   bool breakFlag;
   double fnext; //Temporary variable
   double flast; //Temporary variable
+  double FnextInvZero; //Temporary variable
   double df; //fabs(f(i,next) - f(i,last))
  
   // WHAM Formalism (Adapted from Michael Andrec)
@@ -332,9 +333,10 @@ bool WHAM::iterateWHAM (){
 
     //Check tolerance (note that tolerance is in f but F is in exp(f))
     breakFlag=true;
+    FnextInvZero=FnextInv.at(0); //Need this as FnextInv(0) gets shifted first
     for (i=0; i< this->getNWindow(); i++){
       //Shift FnextInv(i) relative to FnextInv(0)
-      //FnextInv.at(i)=FnextInv.at(i)/FnextInv.at(0);
+      FnextInv.at(i)=FnextInv.at(i)/FnextInvZero;
       fnext=B.at(i)*log(1.0/FnextInv.at(i));
       flast=B.at(i)*log(nFlast.at(i)/expBVE.at(i).size());
       df=fabs(fnext-flast);
