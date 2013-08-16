@@ -16,7 +16,7 @@ class WHAM {
   private:
     std::string cmd;
     std::vector<double> Fguess;
-    std::vector<double> F;
+    std::vector<double> Finv; //Final exp(-B(i)*f(i))
     std::vector< std::vector< std::vector<double> > > expBVE; //Is dynamic and can be jagged
 		std::vector< std::vector< std::vector<double> > > expBVxEx; //Is dynamic and can be jagged
     unsigned int nWindow;

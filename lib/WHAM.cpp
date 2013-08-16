@@ -5,7 +5,7 @@
 WHAM::WHAM (){
   cmd.clear();
   Fguess.clear();
-  F.clear();
+  Finv.clear();
   expBVE.clear();
 	expBVxEx.clear();
   nWindow=0;
@@ -315,7 +315,6 @@ void WHAM::processCoor (){
   rCoor->printHISTOGRAM();
 
   std::cerr << std::endl;
-//  std::cerr << sizeof(int) << " " << sizeof(double) << std::endl;
 }
 
 bool WHAM::iterateWHAM (){
@@ -351,7 +350,7 @@ bool WHAM::iterateWHAM (){
     return true;
   }
 
-  F.resize(this->getNWindow());
+  Finv.resize(this->getNWindow());
   nFlast.resize(this->getNWindow()); //n(j)*F(j)
   FnextInv.resize(this->getNWindow());
   denomInv.resize(this->getNWindow());
@@ -414,8 +413,9 @@ bool WHAM::iterateWHAM (){
 
     if (breakFlag == true){
       for (i=0; i< this->getNWindow(); i++){
-        F.at(i)=log(nFlast.at(i)/expBVE.at(i).size())/B.at(i);
-        std::cerr << "# f( " << i+1 << " ) = " << F.at(i) << std::endl;
+        //Final exp(-B(i)*f(i))
+        Finv.at(i)=log(nFlast.at(i)/expBVE.at(i).size())/B.at(i);
+        std::cerr << "# f( " << i+1 << " ) = " << Finv.at(i) << std::endl;
       }
       break;
     }
