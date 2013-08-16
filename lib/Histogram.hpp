@@ -26,7 +26,7 @@ class Histogram {
     void setBins(const std::string &binsin);
     void setBins(const std::vector<unsigned int> &binsin);
     void setBins(const std::vector<int> &binsin);
-    void genHISTOGRAM(); //Global Histogram
+    void genHISTOGRAM(const bool reduceFlag=false); //Global Histogram
     void printHISTOGRAM(); //Global Histogram
 };
 

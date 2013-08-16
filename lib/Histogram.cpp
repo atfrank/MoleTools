@@ -48,7 +48,7 @@ void Histogram::setBins(const std::vector<int> &binsin){
   }
 }
 
-void Histogram::genHISTOGRAM(){
+void Histogram::genHISTOGRAM(const bool reduceFlag){
   unsigned int i;
   unsigned int j;
   unsigned int k;
@@ -105,6 +105,11 @@ void Histogram::genHISTOGRAM(){
         }
       }
       HISTO.at(b)=HISTO.at(b)+1;
+      if (reduceFlag == true){
+        //Reduce the dimensions to 1-D and store the bin
+        data.at(j).at(k).resize(1);
+        data.at(j).at(k).at(0)=b;
+      }
     }
   }
 }

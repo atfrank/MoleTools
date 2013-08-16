@@ -39,8 +39,8 @@ class WHAM {
     void readMetadata();
     void processMetadata(const std::string &metatype);
     void processEnergies(); 
-    void processCoor(); //Reaction coord
     bool iterateWHAM();
+    void processCoor(); //Reaction coord
     void fixTemp();
 
     void setMeta(const std::string &metain);

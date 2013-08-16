@@ -311,7 +311,7 @@ void WHAM::processCoor (){
   }
 
   rCoor->setBins(this->getBins());
-  rCoor->genHISTOGRAM();
+  rCoor->genHISTOGRAM(true);
   rCoor->printHISTOGRAM();
 
   std::cerr << std::endl;
