@@ -310,7 +310,9 @@ void WHAM::processCoor (){
     }
   }
 
-  rCoor->genHistogram();
+  rCoor->setBins(this->getBins());
+  rCoor->genHISTOGRAM();
+  rCoor->printHISTOGRAM();
 
   std::cerr << std::endl;
 //  std::cerr << sizeof(int) << " " << sizeof(double) << std::endl;
@@ -572,4 +574,8 @@ std::string WHAM::getCmd(){
 
 unsigned int WHAM::getNWindow(){
   return nWindow;
+}
+
+std::vector<unsigned int> WHAM::getBins(){
+  return bins;
 }

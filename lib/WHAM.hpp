@@ -61,6 +61,7 @@ class WHAM {
     double getTemp(const int &element);
     std::string getCmd();
     unsigned int getNWindow();
+    std::vector<unsigned int> getBins();
 };
 
 #endif
