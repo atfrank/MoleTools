@@ -116,7 +116,7 @@ void WHAM::processEnergies(){
             break;
           }
         }
-        if (k == 0){
+        if (j==0 && k == 0){
           lastVSize=v.size();
         }
         if (e.size() == 1 && this->getNWindow() == this->getTempSize()){
@@ -172,7 +172,7 @@ void WHAM::processEnergies(){
             break;
           }
         }
-        if (k == 0){
+        if (j==0 && k == 0){
           lastVSize=v.size();
         }
         if (v.size() == this->getNWindow() && v.size() == lastVSize){
@@ -231,7 +231,7 @@ void WHAM::processEnergies(){
         }
         else{
           std::cerr << "Warning: File \"" << inps.at(j).at(1) << "\" line "<< k+1;
-          std::cerr << " contains the wrong number of columns" << std::endl;
+          std::cerr << " contains more than one column" << std::endl;
           continue;
         }
         k++;
@@ -249,12 +249,71 @@ void WHAM::processEnergies(){
       fein.close();
     }
   }
+  std::cerr << std::endl;
 
 }
 
 
 void WHAM::processCoor (){
-  
+  unsigned int j;
+  unsigned int k;
+  std::string line;
+  std::vector<double> s;
+  std::ifstream coorFile;
+  std::istream *coorinp;
+  unsigned int nDim;
+
+  line.clear();
+  s.clear();
+  coorinp=NULL;
+  nDim=0;
+
+  for (j=0; j< this->getNWindow(); j++){
+    std::cerr << "Processing file \"" << inps.at(j).at(2) << "\"..." << std::endl;
+    k=0;
+    coorFile.open(inps.at(j).at(2).c_str(), std::ios::in);
+    coorinp=&coorFile;
+    while (coorinp->good() && !(coorinp->eof())){
+      getline(*coorinp, line);
+      Misc::splitNum(line, " \t", s, false);
+      if (line.length() ==0){
+        getline(*coorinp, line);
+        if (coorinp->eof()){
+          continue;
+        }
+        else{
+          std::cerr << "Error: File \"" << inps.at(j).at(2) << "\" contains too many lines" << std::endl;
+          break;
+        }
+      }
+      if (j==0 && k==0){
+        nDim=s.size();
+        rCoor=new Histogram(this->getNWindow(), nDim);
+      } 
+      if (s.size() == nDim){
+        if (nDim > 1){
+          std::cerr << "Warning: WHAM can only handle 1-D PMFs" << std::endl;
+        }
+        rCoor->appendData(s, j);
+        k++;
+      }
+      else{
+        std::cerr << s.size() << " " << nDim << std::endl;
+      }
+    } 
+    if (expBVE.at(j).size() != k){
+      std::cerr << "Error: The number of datapoints do not match!" << std::endl;
+      std::cerr << expBVE.at(j).size() << " " << k << std::endl;
+    }
+    if (coorFile.is_open()){
+      coorFile.close();
+    }
+  }
+
+  rCoor->genHistogram();
+
+  std::cerr << std::endl;
+//  std::cerr << sizeof(int) << " " << sizeof(double) << std::endl;
 }
 
 bool WHAM::iterateWHAM (){
@@ -290,6 +349,7 @@ bool WHAM::iterateWHAM (){
     return true;
   }
 
+  F.resize(this->getNWindow());
   nFlast.resize(this->getNWindow()); //n(j)*F(j)
   FnextInv.resize(this->getNWindow());
   denomInv.resize(this->getNWindow());
@@ -336,9 +396,9 @@ bool WHAM::iterateWHAM (){
     FnextInvZero=FnextInv.at(0); //Need this as FnextInv(0) gets shifted first
     for (i=0; i< this->getNWindow(); i++){
       //Shift FnextInv(i) relative to FnextInv(0)
-      FnextInv.at(i)=FnextInv.at(i)/FnextInvZero;
-      fnext=B.at(i)*log(1.0/FnextInv.at(i));
-      flast=B.at(i)*log(nFlast.at(i)/expBVE.at(i).size());
+      FnextInv.at(i)=FnextInv.at(i)/(pow(FnextInvZero, B.at(i)/B.at(0)));
+      fnext=log(FnextInv.at(i))/(-B.at(i)); //Negative Beta
+      flast=log(nFlast.at(i)/expBVE.at(i).size())/B.at(i); //Positive Beta
       df=fabs(fnext-flast);
       if (df >= tol){
         breakFlag=false;
@@ -352,15 +412,15 @@ bool WHAM::iterateWHAM (){
 
     if (breakFlag == true){
       for (i=0; i< this->getNWindow(); i++){
-        flast=B.at(i)*log(nFlast.at(i)/expBVE.at(i).size());
-        std::cerr << "# f( " << i+1 << " ) = " << flast << std::endl;
+        F.at(i)=log(nFlast.at(i)/expBVE.at(i).size())/B.at(i);
+        std::cerr << "# f( " << i+1 << " ) = " << F.at(i) << std::endl;
       }
       break;
     }
     if (niter % 10 == 0){
       std::cerr << "Iteration " << niter << std::endl;
       for (i=0; i< this->getNWindow(); i++){
-        flast=B.at(i)*log(nFlast.at(i)/expBVE.at(i).size());
+        flast=log(nFlast.at(i)/expBVE.at(i).size())/B.at(i);
         std::cerr << "# f( " << i+1 << " ) = " << flast << std::endl;
       }
     }

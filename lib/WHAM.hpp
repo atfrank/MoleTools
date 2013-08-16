@@ -5,6 +5,7 @@
 
 #include "Misc.hpp"
 #include "Constants.hpp"
+#include "Histogram.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -29,6 +30,7 @@ class WHAM {
     bool factorFlag;
     double factor; //For use with Molecular Transfer Model (MTM)
     std::vector< std::vector<std::string> > inps;
+    Histogram *rCoor; //Reaction coordinates
 
   public:
     WHAM ();
