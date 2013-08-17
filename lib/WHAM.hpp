@@ -31,6 +31,7 @@ class WHAM {
     bool factorFlag;
     double factor; //For use with Molecular Transfer Model (MTM)
     std::vector< std::vector<std::string> > inps;
+    std::vector< std::vector< double > > denomInv; //Inverse denominator for WHAM calculation
     Histogram *rCoor; //Reaction coordinates
 
   public:
@@ -58,6 +59,7 @@ class WHAM {
     void setNWindow(const int &nwin);
     void setFguess(const std::string &fin);
     void setFval(const std::string &fin);
+    void setDenomInv();
 
     std::string getMeta();
     unsigned int getTempSize();

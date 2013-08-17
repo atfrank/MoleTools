@@ -322,7 +322,6 @@ bool WHAM::iterateWHAM (){
   unsigned int niter;
   std::vector<double> nFlast; //n(i)*exp(Bf(i))
   std::vector<double> FnextInv; //exp(-Bf(i)) = 1.0/[exp(Bf(i))]
-  std::vector< std::vector<double> > denomInv;
   bool convergedFlag;
   double fnext; //Temporary variable
   double flast; //Temporary variable
@@ -654,6 +653,27 @@ void WHAM::setFval(const std::string &fin){
   if(fFile.is_open()){
     fFile.close();
   }
+}
+
+void WHAM::setDenomInv(){
+  unsigned int j;
+  unsigned int k;
+  unsigned int l;
+   
+  denomInv.resize(this->getNWindow());
+ 
+  for (j=0; j< this->getNWindow(); j++){ //For each simulation J
+    denomInv.at(j).resize(expBVE.at(j).size());
+    for (k=0; k< expBVE.at(j).size(); k++){ //Foreach datapoint K in simulation J
+      denomInv.at(j).at(k)=0.0;
+      for (l=0; l< this->getNWindow(); l++){ //Foreach simulation environment L
+        //Calculate denom
+        denomInv.at(j).at(k)+=expBVE.at(j).size()*(1.0/Finv.at(l))*expBVE.at(j).at(k).at(l);
+      }
+      denomInv.at(j).at(k)=1.0/denomInv.at(j).at(k);
+    }
+  }
+
 }
 
 std::string WHAM::getMeta(){

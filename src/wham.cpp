@@ -123,11 +123,12 @@ int main (int argc, char **argv){
     wham->setFguess(fguess);
   }
   if (fval.size() != 0){
-    wham->setFval(fval);
+    wham->setFval(fval); //No WHAM iteration needed
   }
   else{
     wham->iterateWHAM();
   }
+  wham->setDenomInv();
   wham->processCoor(); //Reaction coordinates
   
 //  for (j=0; j< wham->getTempSize(); j++){
