@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <stdexcept>
 
@@ -55,6 +56,8 @@ class WHAM {
     void setFactor(const double &factorin);
     void setNWindow(const unsigned int &nwin);
     void setNWindow(const int &nwin);
+    void setFguess(const std::string &fin);
+    void setFval(const std::string &fin);
 
     std::string getMeta();
     unsigned int getTempSize();

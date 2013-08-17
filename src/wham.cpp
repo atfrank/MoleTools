@@ -16,6 +16,7 @@ void usage(){
   std::cerr << "Options: [-bins rcoor1[:rcoor2[:rcoor3]]]" << std::endl;
   std::cerr << "         [-iter value] [-tol value | -Ftol value]" << std::endl;
   std::cerr << "         [-temp T1[:T2...[[:TN[:Ttarget]]]] | -temp T1=TN=[incr[=Ttarget]]]" << std::endl;
+  std::cerr << "         [-fguess file | -fval file]" << std::endl;
   std::cerr << "         [-factor value]" << std::endl;
   std::cerr << std::endl;
   exit(0);
@@ -31,12 +32,16 @@ int main (int argc, char **argv){
   unsigned int maxIter;
   double factor;
   WHAM *wham;
+  std::string fguess;
+  std::string fval;
  
   tol=1E-5;
   maxIter=1E6;
   factor=1.0;
   wham=new WHAM;
   j=0;
+  fguess.clear();
+  fval.clear();
 
   //Copy original command
   for (i=0; i<argc; i++){
@@ -70,7 +75,7 @@ int main (int argc, char **argv){
     }
     else if (currArg == "-temp" || currArg == "-temps"){
       currArg=argv[++i];
-      if (currArg.find(":") != std::string::npos || Misc::isfloat(currArg)){
+      if (currArg.find(":") != std::string::npos || Misc::isdouble(currArg)){
         if (wham->setTemp(currArg) == true){
           usage();
         }
@@ -85,6 +90,16 @@ int main (int argc, char **argv){
         std::cerr << std::endl << std::endl;
         usage();
       }
+    }
+    else if (currArg == "-fval"){
+      currArg=argv[++i];
+      fval=currArg;
+      fguess.clear();
+    }
+    else if (currArg == "-fguess"){
+      currArg=argv[++i];
+      fguess=currArg;
+      fval.clear();
     }
     else if (currArg == "-factor"){
       currArg=argv[++i];
@@ -104,7 +119,15 @@ int main (int argc, char **argv){
 
   wham->readMetadata();
   wham->processEnergies();
-//  wham->iterateWHAM();
+  if (fguess.size() != 0){
+    wham->setFguess(fguess);
+  }
+  if (fval.size() != 0){
+    wham->setFval(fval);
+  }
+  else{
+    wham->iterateWHAM();
+  }
   wham->processCoor(); //Reaction coordinates
   
 //  for (j=0; j< wham->getTempSize(); j++){

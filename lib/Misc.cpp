@@ -107,7 +107,9 @@ bool Misc::isdouble (const std::string &str){
   for (unsigned int i=0; i< str.size(); i++){
     switch (str[i]){
       case '-': negPos=i;
+        continue;
       case '.': nDecimals++;
+        continue;
       case '0':
       case '1':
       case '2':
