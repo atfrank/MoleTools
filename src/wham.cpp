@@ -127,18 +127,21 @@ int main (int argc, char **argv){
   }
   else{
     wham->iterateWHAM();
+    std::cout << "#" << wham->getCmd() << std::endl;
   }
+
   wham->setDenomInv();
-  wham->processCoor(); //Reaction coordinates
+
+  if (wham->processCoor() == true){ //Reaction coordinates
+     wham->binOnTheFly();
+     wham->printPMF();
+  }
+  else{
+    std::cerr << "Error: The number of datapoints did not match up" << std::endl;
+  }
   
 //  for (j=0; j< wham->getTempSize(); j++){
 //    std::cerr << std::fixed << std::setprecision(6) << wham->getTemp(j) << std::endl;
-//  }
-
-//  std::cerr << "#" << wham->getCmd() << std::endl;
-  
-//  if (wham->iterateWHAM()){
-
 //  }
 
   return 0;

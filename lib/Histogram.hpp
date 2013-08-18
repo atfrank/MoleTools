@@ -18,6 +18,8 @@ class Histogram {
     std::vector<unsigned int> bins;
     unsigned int nDim;
     unsigned int defaultBins;
+    std::vector<unsigned int> convDim;
+    std::vector<double> binwidth;
 
   public:
     Histogram(const unsigned &ninpin, const unsigned int &ndimin);
@@ -27,7 +29,10 @@ class Histogram {
     void setBins(const std::vector<unsigned int> &binsin);
     void setBins(const std::vector<int> &binsin);
     void genHISTOGRAM(const bool reduceFlag=false); //Global Histogram
+    unsigned int getBin(const unsigned int &nfilein, const unsigned int &ndatain); //For binning on the fly
     void printHISTOGRAM(); //Global Histogram
+    unsigned int getNFile();
+    unsigned int getNData(int element); 
 };
 
 #endif

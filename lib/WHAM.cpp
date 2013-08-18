@@ -254,7 +254,7 @@ void WHAM::processEnergies(){
 }
 
 
-void WHAM::processCoor (){
+bool WHAM::processCoor (){
   unsigned int j;
   unsigned int k;
   std::string line;
@@ -311,10 +311,22 @@ void WHAM::processCoor (){
   }
 
   rCoor->setBins(this->getBins());
-  rCoor->genHISTOGRAM(true);
-  //rCoor->printHISTOGRAM();
 
   std::cerr << std::endl;
+
+  //Compare data size from reaction coordinate and expBVE
+  if (expBVE.size() != rCoor->getNFile()){
+    return false;
+  }
+  else{
+    for (j=0; j< this->getNWindow(); j++){
+      if (expBVE.at(j).size() != rCoor->getNData(j)){
+        return false;
+      }
+    }
+  }
+
+  return true;
 }
 
 bool WHAM::iterateWHAM (){
@@ -698,4 +710,17 @@ unsigned int WHAM::getNWindow(){
 
 std::vector<unsigned int> WHAM::getBins(){
   return bins;
+}
+
+void WHAM::binOnTheFly(){
+  for (unsigned int j=0; j< this->getNWindow(); j++){
+    for (unsigned int k=0; k < expBVE.at(j).size(); k++){
+//      std::cerr << j << " " << k << " " << rCoor->getBin(j, k) << std::endl;
+      rCoor->getBin(j, k);
+    }
+  }
+}
+
+void WHAM::printPMF(){
+
 }

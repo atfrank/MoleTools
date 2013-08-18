@@ -42,7 +42,7 @@ class WHAM {
     void processMetadata(const std::string &metatype);
     void processEnergies(); 
     bool iterateWHAM();
-    void processCoor(); //Reaction coord
+    bool processCoor(); //Reaction coord
     void fixTemp();
 
     void setMeta(const std::string &metain);
@@ -67,6 +67,8 @@ class WHAM {
     std::string getCmd();
     unsigned int getNWindow();
     std::vector<unsigned int> getBins();
+    void binOnTheFly();
+    void printPMF();
 };
 
 #endif

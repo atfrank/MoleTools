@@ -13,6 +13,8 @@ Histogram::Histogram(const unsigned &ninpin, const unsigned int &ndimin){
   nDim=ndimin;
   bins.clear();
   defaultBins=25;
+  convDim.clear();
+  binwidth.clear();
 }
 
 void Histogram::updateMAXMIN(const std::vector<double> &sin){
@@ -53,9 +55,7 @@ void Histogram::genHISTOGRAM(const bool reduceFlag){
   unsigned int j;
   unsigned int k;
   unsigned int l;
-  std::vector<unsigned int> convDim;
   unsigned int b; //linearized histogram bin index
-  std::vector<double> binwidth;
 
   binwidth.resize(nDim);
 
@@ -71,13 +71,18 @@ void Histogram::genHISTOGRAM(const bool reduceFlag){
     binwidth.at(i)=(MAX.at(i)-MIN.at(i))/bins.at(i);
   }
 
-  HISTO.resize(j,0);
-  convDim.resize(nDim);
+  HISTO.resize(j,0); //Resize to j and initialize with zero
 
-  for (i=0; i< nDim; i++){
-    convDim.at(i)=1;
-    for (j=0; j< i; j++){
-      convDim.at(i)=convDim.at(i)*bins.at(j);
+  if (convDim.size() == 0){
+    //Only set this once globally
+    //May be a problem if new data gets read that has
+    //different dimensions and/or bins
+    convDim.resize(nDim);
+    for (i=0; i< nDim; i++){
+      convDim.at(i)=1;
+      for (j=0; j< i; j++){
+        convDim.at(i)=convDim.at(i)*bins.at(j);
+      }
     }
   }
 
@@ -112,6 +117,62 @@ void Histogram::genHISTOGRAM(const bool reduceFlag){
       }
     }
   }
+}
+
+unsigned int Histogram::getBin(const unsigned int &nfilein, const unsigned int &ndatain){
+  unsigned int i;
+  unsigned int j;
+  unsigned int b;
+
+  //nfilein = File index
+  //ndatain = Datapoint line index in file nfilein
+
+  b=0;
+
+  if (binwidth.size() == 0){
+    binwidth.resize(nDim);
+    for (i=0; i< nDim; i++){
+      if (i >= bins.size()){
+        bins.push_back(defaultBins);
+      }
+      binwidth.at(i)=(MAX.at(i)-MIN.at(i))/bins.at(i);
+    }
+  }
+
+  if (convDim.size() == 0){
+    //Only set this once globally
+    //May be a problem if new data gets read that has
+    //different dimensions and/or bins
+    convDim.resize(nDim);
+    for (i=0; i< nDim; i++){
+      convDim.at(i)=1;
+      for (j=0; j< i; j++){
+        convDim.at(i)=convDim.at(i)*bins.at(j);
+      }
+    }
+  } 
+
+  for (i=0; i< nDim; i++){ //Reaction coordinate I
+    if (data.at(nfilein).at(nfilein).at(i) == MAX.at(i)){
+      j=bins.at(i)-1;
+    }
+    else if (data.at(nfilein).at(ndatain).at(i) == MIN.at(i)){
+      j=0;
+    }
+    else{
+      j=static_cast<int>((data.at(nfilein).at(ndatain).at(i)-MIN.at(i))/binwidth.at(i));
+    }
+    //n-D to 1-D
+    //Use B = Xbin + Y * (Xnbins) + Z*(Xnbins*Ynbins) + ...
+    //Note that we are accumulating "b" as we pass through each dimension
+    if (i==0){
+      b=b+j;
+    }
+    else{
+      b=b+j*convDim.at(i); //Build up one dimension at a time
+    }
+  }
+  return b;
 }
 
 void Histogram::printHISTOGRAM (){
@@ -159,4 +220,12 @@ void Histogram::printHISTOGRAM (){
     std::cerr << HISTO.at(b) << std::endl;
   }
  
+}
+
+unsigned int Histogram::getNFile(){
+  return data.size();
+}
+
+unsigned int Histogram::getNData(int element){
+  return data.at(element).size();
 }
