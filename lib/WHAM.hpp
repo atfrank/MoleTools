@@ -11,13 +11,13 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <stdexcept>
+#include <map>
 
 class WHAM {
   private:
     std::string cmd;
     std::vector<double> Fguess;
-    std::vector<double> Finv; //Final exp(-B(i)*f(i))
+    std::vector<double> F; //Final exp(B(i)*f(i))
     std::vector< std::vector< std::vector<double> > > expBVE; //Is dynamic and can be jagged
 		std::vector< std::vector< std::vector<double> > > expBVxEx; //Is dynamic and can be jagged
     unsigned int nWindow;
@@ -32,6 +32,7 @@ class WHAM {
     double factor; //For use with Molecular Transfer Model (MTM)
     std::vector< std::vector<std::string> > inps;
     std::vector< std::vector< double > > denomInv; //Inverse denominator for WHAM calculation
+    std::map<unsigned int, double> Pun; //Unbiased probabilities
     Histogram *rCoor; //Reaction coordinates
 
   public:

@@ -5,7 +5,7 @@
 WHAM::WHAM (){
   cmd.clear();
   Fguess.clear();
-  Finv.clear();
+  F.clear();
   expBVE.clear();
 	expBVxEx.clear();
   nWindow=0;
@@ -19,6 +19,7 @@ WHAM::WHAM (){
   B0=1.0/(kB*1E-6);
   factor=1.0;
   factorFlag=false;
+  Pun.clear();
 }
 
 void WHAM::appendCmd(const std::string &str){
@@ -292,7 +293,7 @@ bool WHAM::processCoor (){
       } 
       if (s.size() == nDim){
         if (nDim > 1){
-          std::cerr << "Warning: WHAM can only handle 1-D PMFs" << std::endl;
+          //std::cerr << "Warning: WHAM can only handle 1-D PMFs" << std::endl;
         }
         rCoor->appendData(s, j);
         k++;
@@ -361,7 +362,7 @@ bool WHAM::iterateWHAM (){
     return true;
   }
 
-  Finv.resize(this->getNWindow());
+  F.resize(this->getNWindow());
   nFlast.resize(this->getNWindow()); //n(j)*F(j)
   FnextInv.resize(this->getNWindow());
   denomInv.resize(this->getNWindow());
@@ -425,9 +426,10 @@ bool WHAM::iterateWHAM (){
     if (convergedFlag == true){
       std::cout << "# Iteration = " << niter << std::endl;
       for (i=0; i< this->getNWindow(); i++){
-        //Final exp(-B(i)*f(i))
-        Finv.at(i)=log(nFlast.at(i)/expBVE.at(i).size())/B.at(i);
-        std::cout << "# f( " << i+1 << " ) = " << Finv.at(i) << std::endl;
+        //Final exp(B(i)*f(i))
+        F.at(i)=nFlast.at(i)/expBVE.at(i).size();
+        flast=log(nFlast.at(i)/expBVE.at(i).size())/B.at(i);
+        std::cout << "# f( " << i+1 << " ) = " << flast << std::endl;
       }
       break;
     }
@@ -588,7 +590,7 @@ void WHAM::setFguess(const std::string &fin){
   nline=0;
 
   Fguess.clear();
-  Finv.clear();
+  F.clear();
 
   guessFile.open(fin.c_str(), std::ios::in);
   guessinp=&guessFile;
@@ -634,7 +636,7 @@ void WHAM::setFval(const std::string &fin){
   nline=0;
 
   Fguess.clear();
-  Finv.clear();
+  F.clear();
 
   fFile.open(fin.c_str(), std::ios::in);
   finp=&fFile;
@@ -653,14 +655,14 @@ void WHAM::setFval(const std::string &fin){
     }
     if (Misc::isdouble(s.back())){
       std::stringstream(s.back()) >> f;
-      Finv.push_back(exp(-B.at(j)*f)); //Final Finv(i)=exp(-B*f(i))
+      F.push_back(exp(B.at(j)*f)); //Final F(i)=exp(B*f(i))
       j++;
     }
     nline++;
   }
-  while (Finv.size() < this->getNWindow()){
-    Finv.push_back(1);
-    std::cerr << "Warning: Missing f( "<< Finv.size() << " ) value was replaced with default (0)" << std::endl;
+  while (F.size() < this->getNWindow()){
+    F.push_back(1);
+    std::cerr << "Warning: Missing f( "<< F.size() << " ) value was replaced with default (0)" << std::endl;
   }
   if(fFile.is_open()){
     fFile.close();
@@ -680,7 +682,7 @@ void WHAM::setDenomInv(){
       denomInv.at(j).at(k)=0.0;
       for (l=0; l< this->getNWindow(); l++){ //Foreach simulation environment L
         //Calculate denom
-        denomInv.at(j).at(k)+=expBVE.at(j).size()*(1.0/Finv.at(l))*expBVE.at(j).at(k).at(l);
+        denomInv.at(j).at(k)+=expBVE.at(j).size()*(F.at(l))*expBVE.at(j).at(k).at(l);
       }
       denomInv.at(j).at(k)=1.0/denomInv.at(j).at(k);
     }
@@ -713,14 +715,58 @@ std::vector<unsigned int> WHAM::getBins(){
 }
 
 void WHAM::binOnTheFly(){
+  unsigned int b;
+  std::map<unsigned int, double>::iterator it;
+  double norm;
+
+  norm=0.0;
+
   for (unsigned int j=0; j< this->getNWindow(); j++){
     for (unsigned int k=0; k < expBVE.at(j).size(); k++){
-//      std::cerr << j << " " << k << " " << rCoor->getBin(j, k) << std::endl;
-      rCoor->getBin(j, k);
+      //Note that we are using an std::map for storing the sparse Punbiased
+      b=rCoor->getBin(j, k);
+      if (expBVxEx.size() != expBVE.size()){
+        //Traditional WHAM
+        if (Pun.find(b) != Pun.end()){
+          Pun[b]+=expBVE.at(j).at(k).at(j)*denomInv.at(j).at(k);
+        }
+        else{
+          Pun[b]=expBVE.at(j).at(k).at(j)*denomInv.at(j).at(k);
+        }
+      }
+      else{
+        //WHAM Extrapolation
+        if (Pun.find(b) != Pun.end()){
+          Pun[b]+=expBVxEx.at(j).at(k).at(j)*denomInv.at(j).at(k);
+        }
+        else{
+          Pun[b]=expBVxEx.at(j).at(k).at(j)*denomInv.at(j).at(k);
+        }
+      }
     }
+  }
+
+  for (it=Pun.begin(); it != Pun.end(); it++){
+    norm+=it->second;
+  }
+
+  for (it=Pun.begin(); it != Pun.end(); it++){
+    it->second=it->second/norm;
   }
 }
 
 void WHAM::printPMF(){
+  //Note that Pun has map keys that are already in sorted order
+  std::map<unsigned int, double>::iterator it;
+  std::vector<double> coor;
+  unsigned int i;
 
+  for (it=Pun.begin(); it != Pun.end(); it++){
+    coor=rCoor->getBinCoor(it->first);
+    for (i=0; i< coor.size(); i++){
+      std::cout << coor.at(i) << "   ";
+    }
+    std::cout << -kB*B0*log(it->second) << "   ";
+    std::cout << it->second << std::endl;
+  }
 }

@@ -34,6 +34,7 @@ int main (int argc, char **argv){
   std::istream* inp;
   std::string line;
   std::vector<std::string> s;
+  std::vector<double> d;
 	std::string format;
 
   ifile.clear();
@@ -73,6 +74,8 @@ int main (int argc, char **argv){
       continue;
     }
     Misc::splitStr(line, " \t", s, false); //Split on one or more consecutive whitespace
+    Misc::splitNum(line, " \t", d, false);
+//    Misc::splitNum(line, ":", d,true);  
     for (j=0; j< s.size(); j++){
   //    std::cerr << s.at(j) << ":";
     }
@@ -83,15 +86,15 @@ int main (int argc, char **argv){
     inpFile.close();
   }
 
-	Molecule* mol;
-	mol=Molecule::readPDB(ifile, format);
+	//Molecule* mol;
+	//mol=Molecule::readPDB(ifile, format);
 	/*
 	mol->select("B:.CA");
 	mol->storeSel();
 	mol->selAll();
 	mol->recallSel();
 	*/
-	mol->writePDB();
+	//mol->writePDB();
 
 /*
 	Analyze* a;
