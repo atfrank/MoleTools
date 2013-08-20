@@ -760,13 +760,16 @@ void WHAM::printPMF(){
   std::map<unsigned int, double>::iterator it;
   std::vector<double> coor;
   unsigned int i;
+  double T;
+
+  T=1.0/(B0*kB);
 
   for (it=Pun.begin(); it != Pun.end(); it++){
     coor=rCoor->getBinCoor(it->first);
     for (i=0; i< coor.size(); i++){
       std::cout << coor.at(i) << "   ";
     }
-    std::cout << -kB*B0*log(it->second) << "   ";
+    std::cout << -kB*T*log(it->second) << " kB = " << kB << " T = " << T << "  ln(Pun) = " << log(it->second) <<"   ";
     std::cout << it->second << std::endl;
   }
 }
