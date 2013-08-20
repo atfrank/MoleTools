@@ -404,7 +404,7 @@ bool WHAM::iterateWHAM (){
       }
     }
 
-    //Check tolerance (note that tolerance is in f but F is in exp(f))
+    //Check tolerance (note that tolerance is in f but F is in exp(Bf))
     convergedFlag=true;
     FnextInvZero=FnextInv.at(0); //Need this as FnextInv(0) gets shifted first
     for (i=0; i< this->getNWindow(); i++){
