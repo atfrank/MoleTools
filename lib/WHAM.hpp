@@ -6,6 +6,7 @@
 #include "Misc.hpp"
 #include "Constants.hpp"
 #include "Histogram.hpp"
+#include "Eigen/LU"
 
 #include <iostream>
 #include <fstream>

@@ -344,6 +344,7 @@ bool WHAM::iterateWHAM (){
   double df; //fabs(f(i,next) - f(i,last))
 	time_t start;
 	double stop;
+	double fraction;
  
   // WHAM Formalism (Adapted from Michael Andrec)
   //
@@ -404,17 +405,37 @@ bool WHAM::iterateWHAM (){
         denomInv.at(j).at(k)=1.0/denomInv.at(j).at(k);
 				for (i=0; i< this->getNWindow(); i++){ //For each F value I (simulation environment)
 					if (expBVxEx.size() == expBVE.size()){ //WHAM Extrapolation
-						FnextInv.at(i)+=expBVxEx.at(j).at(k).at(i)*denomInv.at(j).at(k);
+						fraction=expBVxEx.at(j).at(k).at(i)*denomInv.at(j).at(k);
+						FnextInv.at(i)+=fraction;
+						/*
+						fraction*=denomInv.at(j).at(k);
+						for (a=0; a< this->getNWindow(); a++){
+	            pdSum.at(i).at(a)+=expBVxEx.at(j).at(k).at(a)*fraction;
+	          }
+						*/
 					} 
 					else{ //Traditional WHAM
-         		FnextInv.at(i)+=expBVE.at(j).at(k).at(i)*denomInv.at(j).at(k);
+						fraction=expBVE.at(j).at(k).at(i)*denomInv.at(j).at(k);
+         		FnextInv.at(i)+=fraction;
+						/*
+						fraction*=denomInv.at(j).at(k);
+						for (a=0; a< this->getNWindow(); a++){
+							pdSum.at(i).at(a)+=expBVE.at(j).at(k).at(a)*fraction;
+						}	
+						*/
 					}
 				}
       }
    	}
-		for (i=0; i< this->getNWindow(); i++){
-    	if (factorFlag == true){ //For use with Molecular Transfer Model (MTM)
+
+   	if (factorFlag == true){ //For use with Molecular Transfer Model (MTM)
+			for (i=0; i< this->getNWindow(); i++){
       	FnextInv.at(i)*=factor;
+				/*
+				for (a=0; a< this->getNWindow(); a++){
+					pdSum.at(i).at(k)*=factor;
+				}
+				*/
      	}
 		}
 
