@@ -333,7 +333,7 @@ bool WHAM::processCoor (){
 }
 
 bool WHAM::iterateWHAM (){
-  unsigned int i,j,k,l;
+  unsigned int i,j,k,l,a;
   unsigned int niter;
   std::vector<double> nFlast; //n(i)*exp(Bf(i))
   std::vector<double> FnextInv; //exp(-Bf(i)) = 1.0/[exp(Bf(i))]
@@ -342,6 +342,8 @@ bool WHAM::iterateWHAM (){
   double flast; //Temporary variable
   double FnextInvZero; //Temporary variable
   double df; //fabs(f(i,next) - f(i,last))
+	time_t start;
+	double stop;
  
   // WHAM Formalism (Adapted from Michael Andrec)
   //
@@ -368,6 +370,7 @@ bool WHAM::iterateWHAM (){
   nFlast.resize(this->getNWindow()); //n(j)*F(j)
   FnextInv.resize(this->getNWindow());
   denomInv.resize(this->getNWindow());
+	pdSum.resize(this->getNWindow());
 
   for (j=0; j< this->getNWindow(); j++){
     //Initialize F
@@ -377,34 +380,43 @@ bool WHAM::iterateWHAM (){
     }
     
     denomInv.at(j).resize(expBVE.at(j).size());
+		pdSum.at(j).resize(this->getNWindow());
   }
 
   //WHAM Iterations
+	time(&start);
   for (niter=1; niter< maxIter; niter++){
-    for (i=0; i< this->getNWindow(); i++){ //For each F value I (simulation environment)
+		for (i=0; i< this->getNWindow(); i++){
 			FnextInv.at(i)=0.0;
-      for (j=0; j< this->getNWindow(); j++){ //For each simulation J
-        for (k=0; k< expBVE.at(j).size(); k++){ //Foreach datapoint K in simulation J
-          if (i==0){ //Calculate (redundant) denominator once for each iteration
-						denomInv.at(j).at(k)=0.0;
-            for (l=0; l< this->getNWindow(); l++){ //Foreach simulation environment L
-              //Calculate denom
-              denomInv.at(j).at(k)+=nFlast.at(l)*expBVE.at(j).at(k).at(l);
-            }
-            denomInv.at(j).at(k)=1.0/denomInv.at(j).at(k);
-          }
+			for (a=0; a< this->getNWindow(); a++){
+				pdSum.at(i).at(a)=0.0;
+			}
+		}
+
+    for (j=0; j< this->getNWindow(); j++){ //For each simulation J
+      for (k=0; k< expBVE.at(j).size(); k++){ //Foreach datapoint K in simulation J
+       	//Calculate (redundant) denominator once for each iteration
+				denomInv.at(j).at(k)=0.0;
+        for (l=0; l< this->getNWindow(); l++){ //Foreach simulation environment L
+          //Calculate denom
+          denomInv.at(j).at(k)+=nFlast.at(l)*expBVE.at(j).at(k).at(l);
+        }
+        denomInv.at(j).at(k)=1.0/denomInv.at(j).at(k);
+				for (i=0; i< this->getNWindow(); i++){ //For each F value I (simulation environment)
 					if (expBVxEx.size() == expBVE.size()){ //WHAM Extrapolation
 						FnextInv.at(i)+=expBVxEx.at(j).at(k).at(i)*denomInv.at(j).at(k);
 					} 
 					else{ //Traditional WHAM
-          	FnextInv.at(i)+=expBVE.at(j).at(k).at(i)*denomInv.at(j).at(k);
+         		FnextInv.at(i)+=expBVE.at(j).at(k).at(i)*denomInv.at(j).at(k);
 					}
-        }
+				}
       }
-      if (factorFlag == true){ //For use with Molecular Transfer Model (MTM)
-        FnextInv.at(i)*=factor;
-      }
-    }
+   	}
+		for (i=0; i< this->getNWindow(); i++){
+    	if (factorFlag == true){ //For use with Molecular Transfer Model (MTM)
+      	FnextInv.at(i)*=factor;
+     	}
+		}
 
     //Check tolerance (note that tolerance is in f but F is in exp(Bf))
     convergedFlag=true;
@@ -426,7 +438,8 @@ bool WHAM::iterateWHAM (){
     }
 
     if (convergedFlag == true){
-      std::cout << "# Iteration = " << niter << std::endl;
+			stop=difftime(time(0), start);
+      std::cout << "# Iteration = " << niter << " , Time = " << stop << " seconds " << std::endl;
       for (i=0; i< this->getNWindow(); i++){
         //Final exp(B(i)*f(i))
         F.at(i)=nFlast.at(i)/expBVE.at(i).size();
