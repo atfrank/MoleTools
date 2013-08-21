@@ -19,6 +19,8 @@ WHAM::WHAM (){
   B0=1.0/(kB*1E-6);
   factor=1.0;
   factorFlag=false;
+  denomInv.clear();
+  pdSum.clear();
   Pun.clear();
 }
 
@@ -769,7 +771,7 @@ void WHAM::printPMF(){
     for (i=0; i< coor.size(); i++){
       std::cout << coor.at(i) << "   ";
     }
-    std::cout << -kB*T*log(it->second) << " kB = " << kB << " T = " << T << "  ln(Pun) = " << log(it->second) <<"   ";
+    std::cout << -kB*T*log(it->second) << "   ";
     std::cout << it->second << std::endl;
   }
 }

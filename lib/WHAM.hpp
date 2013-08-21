@@ -31,7 +31,8 @@ class WHAM {
     bool factorFlag;
     double factor; //For use with Molecular Transfer Model (MTM)
     std::vector< std::vector<std::string> > inps;
-    std::vector< std::vector< double > > denomInv; //Inverse denominator for WHAM calculation
+    std::vector< std::vector<double> > denomInv; //Inverse denominator for WHAM calculation
+    std::vector< std::vector<double> > pdSum; //Partial Derivative for accelerated WHAM
     std::map<unsigned int, double> Pun; //Unbiased probabilities
     Histogram *rCoor; //Reaction coordinates
 
