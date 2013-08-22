@@ -17,7 +17,6 @@ void usage(){
   std::cerr << "         [-iter value] [-tol value | -Ftol value]" << std::endl;
   std::cerr << "         [-temp T1[:T2...[[:TN[:Ttarget]]]] | -temp T1=TN=[incr[=Ttarget]]]" << std::endl;
   std::cerr << "         [-fguess file | -fval file]" << std::endl;
-  std::cerr << "         [-factor value]" << std::endl;
   std::cerr << std::endl;
   exit(0);
 }
@@ -30,14 +29,12 @@ int main (int argc, char **argv){
   std::vector<unsigned int> bins;
   double tol;
   unsigned int maxIter;
-  double factor;
   WHAM *wham;
   std::string fguess;
   std::string fval;
  
   tol=1E-5;
   maxIter=1E6;
-  factor=1.0;
   wham=new WHAM;
   j=0;
   fguess.clear();
@@ -100,11 +97,6 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       fguess=currArg;
       fval.clear();
-    }
-    else if (currArg == "-factor"){
-      currArg=argv[++i];
-      std::stringstream(currArg) >> factor;
-      wham->setFactor(factor);
     }
     else{
       wham->setMeta(currArg);

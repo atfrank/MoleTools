@@ -393,7 +393,7 @@ bool WHAM::iterateWHAM (){
 				pdSum.at(i).at(a)=0.0;
 			}
 		}
-
+		
     for (j=0; j< this->getNWindow(); j++){ //For each simulation J
       for (k=0; k< expBVE.at(j).size(); k++){ //Foreach datapoint K in simulation J
        	//Calculate (redundant) denominator once for each iteration
@@ -427,17 +427,6 @@ bool WHAM::iterateWHAM (){
 				}
       }
    	}
-
-   	if (factorFlag == true){ //For use with Molecular Transfer Model (MTM)
-			for (i=0; i< this->getNWindow(); i++){
-      	FnextInv.at(i)*=factor;
-				/*
-				for (a=0; a< this->getNWindow(); a++){
-					pdSum.at(i).at(k)*=factor;
-				}
-				*/
-     	}
-		}
 
     //Check tolerance (note that tolerance is in f but F is in exp(Bf))
     convergedFlag=true;
@@ -718,7 +707,7 @@ void WHAM::setDenomInv(){
       denomInv.at(j).at(k)=0.0;
       for (l=0; l< this->getNWindow(); l++){ //Foreach simulation environment L
         //Calculate denom
-        denomInv.at(j).at(k)+=expBVE.at(j).size()*(F.at(l))*expBVE.at(j).at(k).at(l);
+        denomInv.at(j).at(k)+=expBVE.at(j).size()*F.at(l)*expBVE.at(j).at(k).at(l);
       }
       denomInv.at(j).at(k)=1.0/denomInv.at(j).at(k);
     }
