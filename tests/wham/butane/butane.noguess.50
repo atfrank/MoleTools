@@ -1,0 +1,1179 @@
+#Iteration 1, 3.033333 minutes
+#Iteration 2, 4.050000 minutes
+#Iteration 3, 3.916667 minutes
+#Iteration 4, 3.933333 minutes
+#Iteration 5, 3.916667 minutes
+#Iteration 6, 3.983333 minutes
+#Iteration 7, 3.916667 minutes
+#Iteration 8, 4.033333 minutes
+#Iteration 9, 3.900000 minutes
+#Iteration 10, 3.933333 minutes
+#Iteration 11, 3.933333 minutes
+#Iteration 12, 3.933333 minutes
+#Iteration 13, 3.933333 minutes
+#Iteration 14, 3.900000 minutes
+#Iteration 15, 3.916667 minutes
+#Iteration 16, 3.933333 minutes
+#Iteration 17, 3.933333 minutes
+#Iteration 18, 3.916667 minutes
+#Iteration 19, 3.933333 minutes
+#Iteration 20, 3.933333 minutes
+#Iteration 21, 3.950000 minutes
+#Iteration 22, 3.933333 minutes
+#Iteration 23, 3.916667 minutes
+#Iteration 24, 3.933333 minutes
+#Iteration 25, 3.933333 minutes
+#Iteration 26, 3.933333 minutes
+#Iteration 27, 3.950000 minutes
+#Iteration 28, 3.950000 minutes
+#Iteration 29, 3.950000 minutes
+#Iteration 30, 3.933333 minutes
+#Iteration 31, 3.950000 minutes
+#Iteration 32, 3.950000 minutes
+#Iteration 33, 3.933333 minutes
+#Iteration 34, 3.933333 minutes
+#Iteration 35, 3.933333 minutes
+#Iteration 36, 3.933333 minutes
+#Iteration 37, 3.916667 minutes
+#Iteration 38, 3.933333 minutes
+#Iteration 39, 3.933333 minutes
+#Iteration 40, 3.933333 minutes
+#Iteration 41, 3.933333 minutes
+#Iteration 42, 3.916667 minutes
+#Iteration 43, 3.933333 minutes
+#Iteration 44, 3.933333 minutes
+#Iteration 45, 3.933333 minutes
+#Iteration 46, 3.933333 minutes
+#Iteration 47, 3.933333 minutes
+#Iteration 48, 3.933333 minutes
+#Iteration 49, 3.933333 minutes
+#Iteration 50, 3.933333 minutes
+#Iteration 51, 3.950000 minutes
+#Iteration 52, 3.933333 minutes
+#Iteration 53, 3.933333 minutes
+#Iteration 54, 3.933333 minutes
+#Iteration 55, 3.933333 minutes
+#Iteration 56, 3.900000 minutes
+#Iteration 57, 3.916667 minutes
+#Iteration 58, 3.916667 minutes
+#Iteration 59, 3.933333 minutes
+#Iteration 60, 3.933333 minutes
+#Iteration 61, 3.933333 minutes
+#Iteration 62, 3.933333 minutes
+#Iteration 63, 3.916667 minutes
+#Iteration 64, 3.933333 minutes
+#Iteration 65, 3.916667 minutes
+#Iteration 66, 3.933333 minutes
+#Iteration 67, 3.933333 minutes
+#Iteration 68, 3.900000 minutes
+#Iteration 69, 3.933333 minutes
+#Iteration 70, 3.933333 minutes
+#Iteration 71, 3.916667 minutes
+#Iteration 72, 3.950000 minutes
+#Iteration 73, 3.933333 minutes
+#Iteration 74, 3.933333 minutes
+#Iteration 75, 3.900000 minutes
+#Iteration 76, 3.900000 minutes
+#Iteration 77, 3.900000 minutes
+#Iteration 78, 3.900000 minutes
+#Iteration 79, 3.900000 minutes
+#Iteration 80, 3.933333 minutes
+#Iteration 81, 3.933333 minutes
+#Iteration 82, 3.933333 minutes
+#Iteration 83, 3.916667 minutes
+#Iteration 84, 3.916667 minutes
+#Iteration 85, 3.933333 minutes
+#Iteration 86, 3.916667 minutes
+#Iteration 87, 3.933333 minutes
+#Iteration 88, 3.933333 minutes
+#Iteration 89, 3.916667 minutes
+#Iteration 90, 3.900000 minutes
+#Iteration 91, 3.900000 minutes
+#Iteration 92, 3.900000 minutes
+#Iteration 93, 3.900000 minutes
+#Iteration 94, 3.883333 minutes
+#Iteration 95, 3.900000 minutes
+#Iteration 96, 3.883333 minutes
+#Iteration 97, 3.883333 minutes
+#Iteration 98, 3.883333 minutes
+#Iteration 99, 3.900000 minutes
+#Iteration 100, 3.916667 minutes
+#Iteration 101, 3.916667 minutes
+#Iteration 102, 3.900000 minutes
+#Iteration 103, 3.916667 minutes
+#Iteration 104, 3.900000 minutes
+#Iteration 105, 3.900000 minutes
+#Iteration 106, 3.916667 minutes
+#Iteration 107, 3.883333 minutes
+#Iteration 108, 3.900000 minutes
+#Iteration 109, 3.916667 minutes
+#Iteration 110, 3.900000 minutes
+#Iteration 111, 3.900000 minutes
+#Iteration 112, 3.916667 minutes
+#Iteration 113, 3.900000 minutes
+#Iteration 114, 3.916667 minutes
+#Iteration 115, 3.916667 minutes
+#Iteration 116, 3.900000 minutes
+#Iteration 117, 3.916667 minutes
+#Iteration 118, 3.900000 minutes
+#Iteration 119, 3.900000 minutes
+#Iteration 120, 3.900000 minutes
+#Iteration 121, 3.883333 minutes
+#Iteration 122, 3.883333 minutes
+#Iteration 123, 3.900000 minutes
+#Iteration 124, 3.916667 minutes
+#Iteration 125, 3.900000 minutes
+#Iteration 126, 3.883333 minutes
+#Iteration 127, 3.916667 minutes
+#Iteration 128, 3.916667 minutes
+#Iteration 129, 3.916667 minutes
+#Iteration 130, 3.916667 minutes
+#Iteration 131, 3.916667 minutes
+#Iteration 132, 3.883333 minutes
+#Iteration 133, 3.900000 minutes
+#Iteration 134, 3.900000 minutes
+#Iteration 135, 3.883333 minutes
+#Iteration 136, 3.883333 minutes
+#Iteration 137, 3.900000 minutes
+#Iteration 138, 3.883333 minutes
+#Iteration 139, 3.900000 minutes
+#Iteration 140, 3.916667 minutes
+#Iteration 141, 3.916667 minutes
+#Iteration 142, 3.900000 minutes
+#Iteration 143, 3.933333 minutes
+#Iteration 144, 3.900000 minutes
+#Iteration 145, 3.933333 minutes
+#Iteration 146, 3.916667 minutes
+#Iteration 147, 3.916667 minutes
+#Iteration 148, 3.933333 minutes
+#Iteration 149, 3.916667 minutes
+#Iteration 150, 3.916667 minutes
+#Iteration 151, 3.916667 minutes
+#Iteration 152, 3.916667 minutes
+#Iteration 153, 3.916667 minutes
+#Iteration 154, 3.916667 minutes
+#Iteration 155, 3.916667 minutes
+#Iteration 156, 3.916667 minutes
+#Iteration 157, 3.916667 minutes
+#Iteration 158, 3.916667 minutes
+#Iteration 159, 3.916667 minutes
+#Iteration 160, 3.900000 minutes
+#Iteration 161, 3.916667 minutes
+#Iteration 162, 3.916667 minutes
+#Iteration 163, 3.916667 minutes
+#Iteration 164, 3.916667 minutes
+#Iteration 165, 3.933333 minutes
+#Iteration 166, 3.916667 minutes
+#Iteration 167, 3.900000 minutes
+#Iteration 168, 3.916667 minutes
+#Iteration 169, 3.916667 minutes
+#Iteration 170, 3.916667 minutes
+#Iteration 171, 3.916667 minutes
+#Iteration 172, 3.916667 minutes
+#Iteration 173, 3.933333 minutes
+#Iteration 174, 3.933333 minutes
+#Iteration 175, 3.900000 minutes
+#Iteration 176, 3.900000 minutes
+#Iteration 177, 3.900000 minutes
+#Iteration 178, 3.900000 minutes
+#Iteration 179, 3.883333 minutes
+#Iteration 180, 3.883333 minutes
+#Iteration 181, 3.883333 minutes
+#Iteration 182, 3.916667 minutes
+#Iteration 183, 3.933333 minutes
+#Iteration 184, 3.916667 minutes
+#Iteration 185, 3.933333 minutes
+#Iteration 186, 3.916667 minutes
+#Iteration 187, 3.916667 minutes
+#Iteration 188, 3.933333 minutes
+#Iteration 189, 3.900000 minutes
+#Iteration 190, 3.883333 minutes
+#Iteration 191, 3.883333 minutes
+#Iteration 192, 3.900000 minutes
+#Iteration 193, 3.933333 minutes
+#Iteration 194, 3.900000 minutes
+#Iteration 195, 3.900000 minutes
+#Iteration 196, 3.916667 minutes
+#Iteration 197, 3.916667 minutes
+#Iteration 198, 3.916667 minutes
+#Iteration 199, 3.916667 minutes
+#Iteration 200, 3.900000 minutes
+#Iteration 201, 3.916667 minutes
+#Iteration 202, 3.900000 minutes
+#Iteration 203, 3.916667 minutes
+#Iteration 204, 3.900000 minutes
+#Iteration 205, 3.900000 minutes
+#Iteration 206, 3.900000 minutes
+#Iteration 207, 3.900000 minutes
+#Iteration 208, 3.900000 minutes
+#Iteration 209, 3.916667 minutes
+#Iteration 210, 3.900000 minutes
+#Iteration 211, 3.916667 minutes
+#Iteration 212, 3.900000 minutes
+#Iteration 213, 3.916667 minutes
+#Iteration 214, 3.900000 minutes
+#Iteration 215, 3.916667 minutes
+#Iteration 216, 3.900000 minutes
+#Iteration 217, 3.916667 minutes
+#Iteration 218, 3.916667 minutes
+#Iteration 219, 3.900000 minutes
+#Iteration 220, 3.900000 minutes
+#Iteration 221, 3.916667 minutes
+#Iteration 222, 3.900000 minutes
+#Iteration 223, 3.916667 minutes
+#Iteration 224, 3.900000 minutes
+#Iteration 225, 3.916667 minutes
+#Iteration 226, 3.900000 minutes
+#Iteration 227, 3.900000 minutes
+#Iteration 228, 3.900000 minutes
+#Iteration 229, 4.983333 minutes
+#Iteration 230, 3.900000 minutes
+#Iteration 231, 3.883333 minutes
+#Iteration 232, 3.883333 minutes
+#Iteration 233, 3.900000 minutes
+#Iteration 234, 3.883333 minutes
+#Iteration 235, 3.883333 minutes
+#Iteration 236, 3.900000 minutes
+#Iteration 237, 3.900000 minutes
+#Iteration 238, 3.883333 minutes
+#Iteration 239, 3.900000 minutes
+#Iteration 240, 3.883333 minutes
+#Iteration 241, 3.900000 minutes
+#Iteration 242, 3.883333 minutes
+#Iteration 243, 3.900000 minutes
+#Iteration 244, 3.933333 minutes
+#Iteration 245, 3.933333 minutes
+#Iteration 246, 3.966667 minutes
+#Iteration 247, 3.933333 minutes
+#Iteration 248, 4.216667 minutes
+#Iteration 249, 3.950000 minutes
+#Iteration 250, 4.016667 minutes
+#Iteration 251, 3.983333 minutes
+#Iteration 252, 3.916667 minutes
+#Iteration 253, 3.933333 minutes
+#Iteration 254, 3.916667 minutes
+#Iteration 255, 3.916667 minutes
+#Iteration 256, 3.916667 minutes
+#Iteration 257, 3.966667 minutes
+#Iteration 258, 5.283333 minutes
+#Iteration 259, 3.916667 minutes
+#Iteration 260, 3.916667 minutes
+#Iteration 261, 3.916667 minutes
+#Iteration 262, 3.950000 minutes
+#Iteration 263, 4.000000 minutes
+#Iteration 264, 4.016667 minutes
+#Iteration 265, 5.366667 minutes
+#Iteration 266, 4.150000 minutes
+#Iteration 267, 5.633333 minutes
+#Iteration 268, 3.933333 minutes
+#Iteration 269, 3.933333 minutes
+#Iteration 270, 3.916667 minutes
+#Iteration 271, 4.166667 minutes
+#Iteration 272, 3.933333 minutes
+#Iteration 273, 3.983333 minutes
+#Iteration 274, 3.933333 minutes
+#Iteration 275, 3.933333 minutes
+#Iteration 276, 3.950000 minutes
+#Iteration 277, 4.000000 minutes
+#Iteration 278, 3.983333 minutes
+#Iteration 279, 3.916667 minutes
+#Iteration 280, 3.916667 minutes
+#Iteration 281, 3.916667 minutes
+#Iteration 282, 4.033333 minutes
+#Iteration 283, 3.950000 minutes
+#Iteration 284, 3.933333 minutes
+#Iteration 285, 3.933333 minutes
+#Iteration 286, 3.900000 minutes
+#Iteration 287, 3.883333 minutes
+#Iteration 288, 3.883333 minutes
+#Iteration 289, 3.933333 minutes
+#Iteration 290, 3.933333 minutes
+#Iteration 291, 3.933333 minutes
+#Iteration 292, 3.883333 minutes
+#Iteration 293, 3.883333 minutes
+#Iteration 294, 3.866667 minutes
+#Iteration 295, 3.916667 minutes
+#Iteration 296, 3.950000 minutes
+#Iteration 297, 4.250000 minutes
+#Iteration 298, 4.116667 minutes
+#Iteration 299, 3.900000 minutes
+#Iteration 300, 3.933333 minutes
+#Iteration 301, 4.000000 minutes
+#Iteration 302, 4.050000 minutes
+#Iteration 303, 4.016667 minutes
+#Iteration 304, 4.050000 minutes
+#Iteration 305, 3.900000 minutes
+#Iteration 306, 3.916667 minutes
+#Iteration 307, 3.883333 minutes
+#Iteration 308, 3.900000 minutes
+#Iteration 309, 3.883333 minutes
+#Iteration 310, 3.866667 minutes
+#Iteration 311, 3.883333 minutes
+#Iteration 312, 3.866667 minutes
+#Iteration 313, 3.866667 minutes
+#Iteration 314, 3.883333 minutes
+#Iteration 315, 3.900000 minutes
+#Iteration 316, 3.916667 minutes
+#Iteration 317, 3.933333 minutes
+#Iteration 318, 3.900000 minutes
+#Iteration 319, 3.933333 minutes
+#Iteration 320, 3.916667 minutes
+#Iteration 321, 3.866667 minutes
+#Iteration 322, 4.066667 minutes
+#Iteration 323, 4.000000 minutes
+#Iteration 324, 3.966667 minutes
+#Iteration 325, 4.000000 minutes
+#Iteration 326, 3.866667 minutes
+#Iteration 327, 3.850000 minutes
+#Iteration 328, 3.916667 minutes
+#Iteration 329, 3.900000 minutes
+#Iteration 330, 3.916667 minutes
+#Iteration 331, 3.916667 minutes
+#Iteration 332, 3.900000 minutes
+#Iteration 333, 3.916667 minutes
+#Iteration 334, 3.916667 minutes
+#Iteration 335, 3.916667 minutes
+#Iteration 336, 3.900000 minutes
+#Iteration 337, 3.916667 minutes
+#Iteration 338, 3.916667 minutes
+#Iteration 339, 3.916667 minutes
+#Iteration 340, 3.900000 minutes
+#Iteration 341, 3.916667 minutes
+#Iteration 342, 3.900000 minutes
+#Iteration 343, 3.900000 minutes
+#Iteration 344, 3.883333 minutes
+#Iteration 345, 3.900000 minutes
+#Iteration 346, 3.916667 minutes
+#Iteration 347, 3.900000 minutes
+#Iteration 348, 3.883333 minutes
+#Iteration 349, 3.916667 minutes
+#Iteration 350, 3.916667 minutes
+#Iteration 351, 3.916667 minutes
+#Iteration 352, 3.916667 minutes
+#Iteration 353, 3.916667 minutes
+#Iteration 354, 3.900000 minutes
+#Iteration 355, 3.900000 minutes
+#Iteration 356, 3.916667 minutes
+#Iteration 357, 3.916667 minutes
+#Iteration 358, 3.916667 minutes
+#Iteration 359, 3.916667 minutes
+#Iteration 360, 3.916667 minutes
+#Iteration 361, 3.900000 minutes
+#Iteration 362, 3.900000 minutes
+#Iteration 363, 3.900000 minutes
+#Iteration 364, 3.950000 minutes
+#Iteration 365, 3.866667 minutes
+#Iteration 366, 3.883333 minutes
+#Iteration 367, 3.866667 minutes
+#Iteration 368, 3.900000 minutes
+#Iteration 369, 3.900000 minutes
+#Iteration 370, 3.883333 minutes
+#Iteration 371, 3.900000 minutes
+#Iteration 372, 3.916667 minutes
+#Iteration 373, 3.900000 minutes
+#Iteration 374, 3.933333 minutes
+#Iteration 375, 3.900000 minutes
+#Iteration 376, 3.916667 minutes
+#Iteration 377, 3.933333 minutes
+#Iteration 378, 3.900000 minutes
+#Iteration 379, 3.916667 minutes
+#Iteration 380, 3.916667 minutes
+#Iteration 381, 3.916667 minutes
+#Iteration 382, 3.900000 minutes
+#Iteration 383, 3.916667 minutes
+#Iteration 384, 3.883333 minutes
+#Iteration 385, 3.900000 minutes
+#Iteration 386, 3.916667 minutes
+#Iteration 387, 3.916667 minutes
+#Iteration 388, 3.916667 minutes
+#Iteration 389, 3.916667 minutes
+#Iteration 390, 3.900000 minutes
+#Iteration 391, 3.916667 minutes
+#Iteration 392, 3.916667 minutes
+#Iteration 393, 3.916667 minutes
+#Iteration 394, 3.916667 minutes
+#Iteration 395, 3.900000 minutes
+#Iteration 396, 3.933333 minutes
+#Iteration 397, 3.916667 minutes
+#Iteration 398, 3.900000 minutes
+#Iteration 399, 3.916667 minutes
+#Iteration 400, 3.916667 minutes
+#Iteration 401, 3.916667 minutes
+#Iteration 402, 3.933333 minutes
+#Iteration 403, 3.916667 minutes
+#Iteration 404, 3.933333 minutes
+#Iteration 405, 3.933333 minutes
+#Iteration 406, 3.933333 minutes
+#Iteration 407, 3.916667 minutes
+#Iteration 408, 3.916667 minutes
+#Iteration 409, 3.916667 minutes
+#Iteration 410, 3.900000 minutes
+#Iteration 411, 3.916667 minutes
+#Iteration 412, 3.900000 minutes
+#Iteration 413, 3.900000 minutes
+#Iteration 414, 3.916667 minutes
+#Iteration 415, 3.916667 minutes
+#Iteration 416, 3.933333 minutes
+#Iteration 417, 3.916667 minutes
+#Iteration 418, 3.933333 minutes
+#Iteration 419, 3.916667 minutes
+#Iteration 420, 3.933333 minutes
+#Iteration 421, 3.916667 minutes
+#Iteration 422, 3.916667 minutes
+#Iteration 423, 3.900000 minutes
+#Iteration 424, 3.916667 minutes
+#Iteration 425, 3.916667 minutes
+#Iteration 426, 3.916667 minutes
+#Iteration 427, 3.916667 minutes
+#Iteration 428, 3.916667 minutes
+#Iteration 429, 3.933333 minutes
+#Iteration 430, 3.916667 minutes
+#Iteration 431, 3.933333 minutes
+#Iteration 432, 3.933333 minutes
+#Iteration 433, 3.933333 minutes
+#Iteration 434, 3.933333 minutes
+#Iteration 435, 3.933333 minutes
+#Iteration 436, 3.916667 minutes
+#Iteration 437, 3.933333 minutes
+#Iteration 438, 3.933333 minutes
+#Iteration 439, 3.916667 minutes
+#Iteration 440, 3.933333 minutes
+#Iteration 441, 3.933333 minutes
+#Iteration 442, 3.933333 minutes
+#Iteration 443, 3.916667 minutes
+#Iteration 444, 3.933333 minutes
+#Iteration 445, 3.916667 minutes
+#Iteration 446, 3.900000 minutes
+#Iteration 447, 3.866667 minutes
+#Iteration 448, 3.883333 minutes
+#Iteration 449, 3.866667 minutes
+#Iteration 450, 3.866667 minutes
+#Iteration 451, 3.883333 minutes
+#Iteration 452, 3.866667 minutes
+#Iteration 453, 3.883333 minutes
+#Iteration 454, 3.883333 minutes
+#Iteration 455, 3.883333 minutes
+#Iteration 456, 3.883333 minutes
+#Iteration 457, 3.883333 minutes
+#Iteration 458, 3.900000 minutes
+#Iteration 459, 3.916667 minutes
+#Iteration 460, 3.916667 minutes
+#Iteration 461, 3.900000 minutes
+#Iteration 462, 3.900000 minutes
+#Iteration 463, 3.900000 minutes
+#Iteration 464, 3.883333 minutes
+#Iteration 465, 3.883333 minutes
+#Iteration 466, 3.883333 minutes
+#Iteration 467, 3.900000 minutes
+#Iteration 468, 3.916667 minutes
+#Iteration 469, 3.916667 minutes
+#Iteration 470, 3.916667 minutes
+#Iteration 471, 3.916667 minutes
+#Iteration 472, 3.916667 minutes
+#Iteration 473, 3.883333 minutes
+#Iteration 474, 3.883333 minutes
+#Iteration 475, 3.933333 minutes
+#Iteration 476, 3.900000 minutes
+#Iteration 477, 3.900000 minutes
+#Iteration 478, 3.900000 minutes
+#Iteration 479, 3.916667 minutes
+#Iteration 480, 3.916667 minutes
+#Iteration 481, 3.916667 minutes
+#Iteration 482, 3.916667 minutes
+#Iteration 483, 3.916667 minutes
+#Iteration 484, 3.933333 minutes
+#Iteration 485, 3.916667 minutes
+#Iteration 486, 3.916667 minutes
+#Iteration 487, 3.933333 minutes
+#Iteration 488, 3.916667 minutes
+#Iteration 489, 3.916667 minutes
+#Iteration 490, 3.916667 minutes
+#Iteration 491, 3.916667 minutes
+#Iteration 492, 3.883333 minutes
+#Iteration 493, 3.866667 minutes
+#Iteration 494, 3.866667 minutes
+#Iteration 495, 3.900000 minutes
+#Iteration 496, 3.883333 minutes
+#Iteration 497, 3.883333 minutes
+#Iteration 498, 3.866667 minutes
+#Iteration 499, 3.916667 minutes
+#Iteration 500, 3.916667 minutes
+#Iteration 501, 3.916667 minutes
+#Iteration 502, 3.916667 minutes
+#Iteration 503, 3.916667 minutes
+#Iteration 504, 3.916667 minutes
+#Iteration 505, 3.933333 minutes
+#Iteration 506, 3.900000 minutes
+#Iteration 507, 3.916667 minutes
+#Iteration 508, 3.883333 minutes
+#Iteration 509, 3.883333 minutes
+#Iteration 510, 3.866667 minutes
+#Iteration 511, 3.866667 minutes
+#Iteration 512, 3.900000 minutes
+#Iteration 513, 3.900000 minutes
+#Iteration 514, 3.916667 minutes
+#Iteration 515, 3.900000 minutes
+#Iteration 516, 3.916667 minutes
+#Iteration 517, 3.916667 minutes
+#Iteration 518, 3.900000 minutes
+#Iteration 519, 3.916667 minutes
+#Iteration 520, 3.900000 minutes
+#Iteration 521, 3.933333 minutes
+#Iteration 522, 3.900000 minutes
+#Iteration 523, 3.916667 minutes
+#Iteration 524, 3.916667 minutes
+#Iteration 525, 3.900000 minutes
+#Iteration 526, 3.916667 minutes
+#Iteration 527, 3.916667 minutes
+#Iteration 528, 3.916667 minutes
+#Iteration 529, 3.916667 minutes
+#Iteration 530, 3.916667 minutes
+#Iteration 531, 3.916667 minutes
+#Iteration 532, 3.916667 minutes
+#Iteration 533, 3.916667 minutes
+#Iteration 534, 3.916667 minutes
+#Iteration 535, 3.933333 minutes
+#Iteration 536, 3.900000 minutes
+#Iteration 537, 3.933333 minutes
+#Iteration 538, 3.983333 minutes
+#Iteration 539, 3.916667 minutes
+#Iteration 540, 3.950000 minutes
+#Iteration 541, 3.916667 minutes
+#Iteration 542, 3.916667 minutes
+#Iteration 543, 3.916667 minutes
+#Iteration 544, 3.900000 minutes
+#Iteration 545, 3.916667 minutes
+#Iteration 546, 3.916667 minutes
+#Iteration 547, 3.916667 minutes
+#Iteration 548, 3.916667 minutes
+#Iteration 549, 3.916667 minutes
+#Iteration 550, 3.916667 minutes
+#Iteration 551, 3.916667 minutes
+#Iteration 552, 3.900000 minutes
+#Iteration 553, 3.916667 minutes
+#Iteration 554, 3.900000 minutes
+#Iteration 555, 3.900000 minutes
+#Iteration 556, 3.866667 minutes
+#Iteration 557, 3.883333 minutes
+#Iteration 558, 3.883333 minutes
+#Iteration 559, 3.900000 minutes
+#Iteration 560, 3.883333 minutes
+#Iteration 561, 3.916667 minutes
+#Iteration 562, 3.933333 minutes
+#Iteration 563, 3.916667 minutes
+#Iteration 564, 3.916667 minutes
+#Iteration 565, 3.933333 minutes
+#Iteration 566, 3.916667 minutes
+#Iteration 567, 3.933333 minutes
+#Iteration 568, 3.916667 minutes
+#Iteration 569, 3.916667 minutes
+#Iteration 570, 3.916667 minutes
+#Iteration 571, 3.933333 minutes
+#Iteration 572, 3.916667 minutes
+#Iteration 573, 3.933333 minutes
+#Iteration 574, 3.916667 minutes
+#Iteration 575, 3.933333 minutes
+#Iteration 576, 3.916667 minutes
+#Iteration 577, 3.916667 minutes
+#Iteration 578, 3.933333 minutes
+#Iteration 579, 3.916667 minutes
+#Iteration 580, 3.916667 minutes
+#Iteration 581, 3.916667 minutes
+#Iteration 582, 3.916667 minutes
+#Iteration 583, 3.933333 minutes
+#Iteration 584, 3.916667 minutes
+#Iteration 585, 3.916667 minutes
+#Iteration 586, 3.883333 minutes
+#Iteration 587, 3.883333 minutes
+#Iteration 588, 3.866667 minutes
+#Iteration 589, 3.883333 minutes
+#Iteration 590, 3.883333 minutes
+#Iteration 591, 3.933333 minutes
+#Iteration 592, 3.916667 minutes
+#Iteration 593, 3.916667 minutes
+#Iteration 594, 3.933333 minutes
+#Iteration 595, 3.933333 minutes
+#Iteration 596, 3.916667 minutes
+#Iteration 597, 3.933333 minutes
+#Iteration 598, 3.933333 minutes
+#Iteration 599, 3.916667 minutes
+#Iteration 600, 3.933333 minutes
+#Iteration 601, 3.933333 minutes
+#Iteration 602, 3.933333 minutes
+#Iteration 603, 3.933333 minutes
+#Iteration 604, 3.933333 minutes
+#Iteration 605, 3.933333 minutes
+#Iteration 606, 3.916667 minutes
+#Iteration 607, 3.933333 minutes
+#Iteration 608, 3.933333 minutes
+#Iteration 609, 3.916667 minutes
+#Iteration 610, 3.933333 minutes
+#Iteration 611, 3.933333 minutes
+#Iteration 612, 3.883333 minutes
+#Iteration 613, 3.900000 minutes
+#Iteration 614, 3.900000 minutes
+#Iteration 615, 3.883333 minutes
+#Iteration 616, 3.900000 minutes
+#Iteration 617, 3.900000 minutes
+#Iteration 618, 3.883333 minutes
+#Iteration 619, 3.933333 minutes
+#Iteration 620, 3.900000 minutes
+#Iteration 621, 3.933333 minutes
+#Iteration 622, 3.916667 minutes
+#Iteration 623, 3.933333 minutes
+#Iteration 624, 3.933333 minutes
+#Iteration 625, 3.883333 minutes
+#Iteration 626, 3.883333 minutes
+#Iteration 627, 3.900000 minutes
+#Iteration 628, 3.916667 minutes
+#Iteration 629, 3.933333 minutes
+#Iteration 630, 3.933333 minutes
+#Iteration 631, 3.900000 minutes
+#Iteration 632, 3.933333 minutes
+#Iteration 633, 3.916667 minutes
+#Iteration 634, 3.933333 minutes
+#Iteration 635, 3.900000 minutes
+#Iteration 636, 3.900000 minutes
+#Iteration 637, 3.916667 minutes
+#Iteration 638, 3.900000 minutes
+#Iteration 639, 3.883333 minutes
+#Iteration 640, 3.933333 minutes
+#Iteration 641, 3.933333 minutes
+#Iteration 642, 3.916667 minutes
+#Iteration 643, 3.916667 minutes
+#Iteration 644, 3.933333 minutes
+#Iteration 645, 3.916667 minutes
+#Iteration 646, 3.916667 minutes
+#Iteration 647, 3.933333 minutes
+#Iteration 648, 3.916667 minutes
+#Iteration 649, 3.933333 minutes
+#Iteration 650, 3.916667 minutes
+#Iteration 651, 3.916667 minutes
+#Iteration 652, 3.916667 minutes
+#Iteration 653, 3.883333 minutes
+#Iteration 654, 3.883333 minutes
+#Iteration 655, 3.900000 minutes
+#Iteration 656, 3.883333 minutes
+#Iteration 657, 3.933333 minutes
+#Iteration 658, 3.916667 minutes
+#Iteration 659, 3.933333 minutes
+#Iteration 660, 3.916667 minutes
+#Iteration 661, 3.916667 minutes
+#Iteration 662, 3.933333 minutes
+#Iteration 663, 3.916667 minutes
+#Iteration 664, 3.900000 minutes
+#Iteration 665, 3.900000 minutes
+#Iteration 666, 3.883333 minutes
+#Iteration 667, 3.883333 minutes
+#Iteration 668, 3.916667 minutes
+#Iteration 669, 3.916667 minutes
+#Iteration 670, 3.933333 minutes
+#Iteration 671, 3.916667 minutes
+#Iteration 672, 3.933333 minutes
+#Iteration 673, 3.933333 minutes
+#Iteration 674, 3.900000 minutes
+#Iteration 675, 3.933333 minutes
+#Iteration 676, 3.933333 minutes
+#Iteration 677, 3.916667 minutes
+#Iteration 678, 3.883333 minutes
+#Iteration 679, 3.900000 minutes
+#Iteration 680, 3.883333 minutes
+#Iteration 681, 3.883333 minutes
+#Iteration 682, 3.900000 minutes
+#Iteration 683, 3.916667 minutes
+#Iteration 684, 3.916667 minutes
+#Iteration 685, 3.933333 minutes
+#Iteration 686, 3.933333 minutes
+#Iteration 687, 3.916667 minutes
+#Iteration 688, 3.933333 minutes
+#Iteration 689, 3.933333 minutes
+#Iteration 690, 3.916667 minutes
+#Iteration 691, 3.916667 minutes
+#Iteration 692, 3.916667 minutes
+#Iteration 693, 3.933333 minutes
+#Iteration 694, 3.900000 minutes
+#Iteration 695, 3.900000 minutes
+#Iteration 696, 3.866667 minutes
+#Iteration 697, 3.883333 minutes
+#Iteration 698, 3.883333 minutes
+#Iteration 699, 3.883333 minutes
+#Iteration 700, 3.883333 minutes
+#Iteration 701, 3.883333 minutes
+#Iteration 702, 3.866667 minutes
+#Iteration 703, 3.883333 minutes
+#Iteration 704, 3.900000 minutes
+#Iteration 705, 3.916667 minutes
+#Iteration 706, 3.916667 minutes
+#Iteration 707, 3.916667 minutes
+#Iteration 708, 3.933333 minutes
+#Iteration 709, 3.916667 minutes
+#Iteration 710, 3.916667 minutes
+#Iteration 711, 3.916667 minutes
+#Iteration 712, 3.933333 minutes
+#Iteration 713, 3.916667 minutes
+#Iteration 714, 3.916667 minutes
+#Iteration 715, 3.916667 minutes
+#Iteration 716, 3.916667 minutes
+#Iteration 717, 3.916667 minutes
+#Iteration 718, 3.916667 minutes
+#Iteration 719, 3.916667 minutes
+#Iteration 720, 14.083333 minutes
+#Iteration 721, 3.916667 minutes
+#Iteration 722, 3.933333 minutes
+#Iteration 723, 3.900000 minutes
+#Iteration 724, 3.916667 minutes
+#Iteration 725, 3.933333 minutes
+#Iteration 726, 3.916667 minutes
+#Iteration 727, 3.933333 minutes
+#Iteration 728, 3.933333 minutes
+#Iteration 729, 3.916667 minutes
+#Iteration 730, 3.933333 minutes
+#Iteration 731, 3.933333 minutes
+#Iteration 732, 3.916667 minutes
+#Iteration 733, 3.933333 minutes
+#Iteration 734, 3.916667 minutes
+#Iteration 735, 3.883333 minutes
+#Iteration 736, 3.916667 minutes
+#Iteration 737, 3.916667 minutes
+#Iteration 738, 3.916667 minutes
+#Iteration 739, 3.916667 minutes
+#Iteration 740, 3.916667 minutes
+#Iteration 741, 3.916667 minutes
+#Iteration 742, 3.916667 minutes
+#Iteration 743, 3.933333 minutes
+#Iteration 744, 3.933333 minutes
+#Iteration 745, 3.916667 minutes
+#Iteration 746, 3.933333 minutes
+#Iteration 747, 3.933333 minutes
+#Iteration 748, 3.900000 minutes
+#Iteration 749, 3.883333 minutes
+#Iteration 750, 3.900000 minutes
+#Iteration 751, 3.883333 minutes
+#Iteration 752, 3.883333 minutes
+#Iteration 753, 3.900000 minutes
+#Iteration 754, 3.916667 minutes
+#Iteration 755, 3.916667 minutes
+#Iteration 756, 3.900000 minutes
+#Iteration 757, 3.883333 minutes
+#Iteration 758, 3.900000 minutes
+#Iteration 759, 3.933333 minutes
+#Iteration 760, 3.916667 minutes
+#Iteration 761, 3.933333 minutes
+#Iteration 762, 3.916667 minutes
+#Iteration 763, 3.933333 minutes
+#Iteration 764, 3.916667 minutes
+#Iteration 765, 3.916667 minutes
+#Iteration 766, 3.933333 minutes
+#Iteration 767, 3.916667 minutes
+#Iteration 768, 3.933333 minutes
+#Iteration 769, 3.916667 minutes
+#Iteration 770, 3.900000 minutes
+#Iteration 771, 3.900000 minutes
+#Iteration 772, 3.916667 minutes
+#Iteration 773, 3.916667 minutes
+#Iteration 774, 3.900000 minutes
+#Iteration 775, 3.933333 minutes
+#Iteration 776, 3.916667 minutes
+#Iteration 777, 3.916667 minutes
+#Iteration 778, 3.916667 minutes
+#Iteration 779, 3.933333 minutes
+#Iteration 780, 3.933333 minutes
+#Iteration 781, 3.916667 minutes
+#Iteration 782, 3.933333 minutes
+#Iteration 783, 3.916667 minutes
+#Iteration 784, 3.916667 minutes
+#Iteration 785, 3.933333 minutes
+#Iteration 786, 3.916667 minutes
+#Iteration 787, 3.916667 minutes
+#Iteration 788, 3.916667 minutes
+#Iteration 789, 3.900000 minutes
+#Iteration 790, 3.900000 minutes
+#Iteration 791, 3.900000 minutes
+#Iteration 792, 3.883333 minutes
+#Iteration 793, 3.900000 minutes
+#Iteration 794, 3.900000 minutes
+#Iteration 795, 3.900000 minutes
+#Iteration 796, 3.916667 minutes
+#Iteration 797, 3.916667 minutes
+#Iteration 798, 3.933333 minutes
+#Iteration 799, 3.916667 minutes
+#Iteration 800, 3.933333 minutes
+#Iteration 801, 3.900000 minutes
+#Iteration 802, 3.916667 minutes
+#Iteration 803, 3.916667 minutes
+#Iteration 804, 3.900000 minutes
+#Iteration 805, 3.933333 minutes
+#Iteration 806, 3.933333 minutes
+#Iteration 807, 3.933333 minutes
+#Iteration 808, 3.933333 minutes
+#Iteration 809, 3.916667 minutes
+#Iteration 810, 3.933333 minutes
+#Iteration 811, 3.916667 minutes
+#Iteration 812, 3.933333 minutes
+#Iteration 813, 3.916667 minutes
+#Iteration 814, 3.916667 minutes
+#Iteration 815, 3.933333 minutes
+#Iteration 816, 3.916667 minutes
+#Iteration 817, 3.933333 minutes
+#Iteration 818, 3.916667 minutes
+#Iteration 819, 3.933333 minutes
+#Iteration 820, 3.916667 minutes
+#Iteration 821, 3.916667 minutes
+#Iteration 822, 3.933333 minutes
+#Iteration 823, 3.933333 minutes
+#Iteration 824, 3.916667 minutes
+#Iteration 825, 3.916667 minutes
+#Iteration 826, 3.916667 minutes
+#Iteration 827, 3.933333 minutes
+#Iteration 828, 3.933333 minutes
+#Iteration 829, 3.916667 minutes
+#Iteration 830, 3.933333 minutes
+#Iteration 831, 3.916667 minutes
+#Iteration 832, 3.933333 minutes
+#Iteration 833, 3.916667 minutes
+#Iteration 834, 3.900000 minutes
+#Iteration 835, 3.883333 minutes
+#Iteration 836, 3.900000 minutes
+#Iteration 837, 3.916667 minutes
+#Iteration 838, 3.933333 minutes
+#Iteration 839, 3.916667 minutes
+#Iteration 840, 3.933333 minutes
+#Iteration 841, 3.933333 minutes
+#Iteration 842, 3.916667 minutes
+#Iteration 843, 3.933333 minutes
+#Iteration 844, 3.916667 minutes
+#Iteration 845, 3.916667 minutes
+#Iteration 846, 3.950000 minutes
+#Iteration 847, 3.900000 minutes
+#Iteration 848, 3.883333 minutes
+#Iteration 849, 3.900000 minutes
+#Iteration 850, 3.900000 minutes
+#Iteration 851, 3.900000 minutes
+#Iteration 852, 3.900000 minutes
+#Iteration 853, 3.933333 minutes
+#Iteration 854, 3.900000 minutes
+#Iteration 855, 3.900000 minutes
+#Iteration 856, 3.900000 minutes
+#Iteration 857, 3.900000 minutes
+#Iteration 858, 3.883333 minutes
+#Iteration 859, 3.883333 minutes
+#Iteration 860, 3.916667 minutes
+#Iteration 861, 3.916667 minutes
+#Iteration 862, 3.933333 minutes
+#Iteration 863, 3.916667 minutes
+#Iteration 864, 3.916667 minutes
+#Iteration 865, 3.933333 minutes
+#Iteration 866, 3.916667 minutes
+#Iteration 867, 3.933333 minutes
+#Iteration 868, 3.916667 minutes
+#Iteration 869, 3.916667 minutes
+#Iteration 870, 3.933333 minutes
+#Iteration 871, 3.916667 minutes
+#Iteration 872, 3.933333 minutes
+#Iteration 873, 3.933333 minutes
+#Iteration 874, 3.916667 minutes
+#Iteration 875, 3.916667 minutes
+#Iteration 876, 3.883333 minutes
+#Iteration 877, 3.883333 minutes
+#Iteration 878, 3.900000 minutes
+#Iteration 879, 3.916667 minutes
+#Iteration 880, 3.916667 minutes
+#Iteration 881, 3.933333 minutes
+#Iteration 882, 3.916667 minutes
+#Iteration 883, 3.916667 minutes
+#Iteration 884, 3.916667 minutes
+#Iteration 885, 3.933333 minutes
+#Iteration 886, 3.916667 minutes
+#Iteration 887, 3.916667 minutes
+#Iteration 888, 3.900000 minutes
+#Iteration 889, 3.916667 minutes
+#Iteration 890, 3.916667 minutes
+#Iteration 891, 3.916667 minutes
+#Iteration 892, 3.916667 minutes
+#Iteration 893, 3.933333 minutes
+#Iteration 894, 3.933333 minutes
+#Iteration 895, 3.900000 minutes
+#Iteration 896, 3.933333 minutes
+#Iteration 897, 3.900000 minutes
+#Iteration 898, 3.916667 minutes
+#Iteration 899, 3.916667 minutes
+#Iteration 900, 3.916667 minutes
+#Iteration 901, 3.916667 minutes
+#Iteration 902, 3.916667 minutes
+#Iteration 903, 3.916667 minutes
+#Iteration 904, 3.900000 minutes
+#Iteration 905, 3.933333 minutes
+#Iteration 906, 3.866667 minutes
+#Iteration 907, 3.933333 minutes
+#Iteration 908, 3.900000 minutes
+#Iteration 909, 3.916667 minutes
+#Iteration 910, 4.150000 minutes
+#Iteration 911, 4.283333 minutes
+#Iteration 912, 4.233333 minutes
+#Iteration 913, 3.933333 minutes
+#Iteration 914, 3.850000 minutes
+#Iteration 915, 3.883333 minutes
+#Iteration 916, 3.883333 minutes
+#Iteration 917, 3.900000 minutes
+#Iteration 918, 3.916667 minutes
+#Iteration 919, 3.900000 minutes
+#Iteration 920, 3.916667 minutes
+#Iteration 921, 3.916667 minutes
+#Iteration 922, 3.883333 minutes
+#Iteration 923, 3.883333 minutes
+#Iteration 924, 3.883333 minutes
+#Iteration 925, 3.883333 minutes
+#Iteration 926, 3.866667 minutes
+#Iteration 927, 3.883333 minutes
+#Iteration 928, 3.866667 minutes
+#Iteration 929, 3.866667 minutes
+#Iteration 930, 3.866667 minutes
+#Iteration 931, 3.883333 minutes
+#Iteration 932, 3.866667 minutes
+#Iteration 933, 3.900000 minutes
+#Iteration 934, 3.866667 minutes
+#Iteration 935, 3.866667 minutes
+#Iteration 936, 3.900000 minutes
+#Iteration 937, 3.916667 minutes
+#Iteration 938, 3.916667 minutes
+#Iteration 939, 3.916667 minutes
+#Iteration 940, 3.916667 minutes
+#Iteration 941, 3.900000 minutes
+#Iteration 942, 3.916667 minutes
+#Iteration 943, 3.916667 minutes
+#Iteration 944, 3.916667 minutes
+#Iteration 945, 3.900000 minutes
+#Iteration 946, 3.933333 minutes
+#Iteration 947, 3.916667 minutes
+#Iteration 948, 3.900000 minutes
+#Iteration 949, 3.900000 minutes
+#Iteration 950, 3.883333 minutes
+#Iteration 951, 3.900000 minutes
+#Iteration 952, 3.883333 minutes
+#Iteration 953, 3.900000 minutes
+#Iteration 954, 3.883333 minutes
+#Iteration 955, 3.883333 minutes
+#Iteration 956, 3.883333 minutes
+#Iteration 957, 3.883333 minutes
+#Iteration 958, 3.883333 minutes
+#Iteration 959, 3.866667 minutes
+#Iteration 960, 3.883333 minutes
+#Iteration 961, 3.883333 minutes
+#Iteration 962, 3.883333 minutes
+#Iteration 963, 3.883333 minutes
+#Iteration 964, 3.883333 minutes
+#Iteration 965, 3.866667 minutes
+#Iteration 966, 3.883333 minutes
+#Iteration 967, 3.883333 minutes
+#Iteration 968, 3.883333 minutes
+#Iteration 969, 3.866667 minutes
+#Iteration 970, 3.883333 minutes
+#Iteration 971, 3.883333 minutes
+#Iteration 972, 3.883333 minutes
+#Iteration 973, 3.883333 minutes
+#Iteration 974, 3.883333 minutes
+#Iteration 975, 3.900000 minutes
+#Iteration 976, 3.883333 minutes
+#Iteration 977, 3.883333 minutes
+#Iteration 978, 3.883333 minutes
+#Iteration 979, 3.883333 minutes
+#Iteration 980, 3.883333 minutes
+#Iteration 981, 3.900000 minutes
+#Iteration 982, 3.900000 minutes
+#Iteration 983, 3.883333 minutes
+#Iteration 984, 3.883333 minutes
+#Iteration 985, 3.900000 minutes
+#Iteration 986, 3.900000 minutes
+#Iteration 987, 3.883333 minutes
+#Iteration 988, 3.916667 minutes
+#Iteration 989, 3.883333 minutes
+#Iteration 990, 3.883333 minutes
+#Iteration 991, 3.883333 minutes
+#Iteration 992, 3.883333 minutes
+#Iteration 993, 3.883333 minutes
+#Iteration 994, 3.883333 minutes
+#Iteration 995, 3.866667 minutes
+#Iteration 996, 3.883333 minutes
+#Iteration 997, 3.883333 minutes
+#Iteration 998, 3.883333 minutes
+#Iteration 999, 3.866667 minutes
+#Iteration 1000, 3.883333 minutes
+#Iteration 1001, 3.900000 minutes
+#Iteration 1002, 3.916667 minutes
+#Iteration 1003, 3.916667 minutes
+#Iteration 1004, 3.916667 minutes
+#Iteration 1005, 3.933333 minutes
+#Iteration 1006, 3.900000 minutes
+#Iteration 1007, 3.883333 minutes
+#Iteration 1008, 3.883333 minutes
+#Iteration 1009, 3.883333 minutes
+#Iteration 1010, 3.866667 minutes
+#Iteration 1011, 3.883333 minutes
+#Iteration 1012, 3.883333 minutes
+#Iteration 1013, 3.883333 minutes
+#Iteration 1014, 3.883333 minutes
+#Iteration 1015, 3.900000 minutes
+#Iteration 1016, 3.916667 minutes
+#Iteration 1017, 3.916667 minutes
+#Iteration 1018, 3.916667 minutes
+#Iteration 1019, 3.900000 minutes
+#Iteration 1020, 3.883333 minutes
+#Iteration 1021, 3.883333 minutes
+#Iteration 1022, 3.900000 minutes
+#Iteration 1023, 3.866667 minutes
+#Iteration 1024, 3.916667 minutes
+#Iteration 1025, 3.916667 minutes
+#Iteration 1026, 3.916667 minutes
+#Iteration 1027, 3.916667 minutes
+#Iteration 1028, 3.883333 minutes
+#Iteration 1029, 3.900000 minutes
+#Iteration 1030, 3.883333 minutes
+#Iteration 1031, 4.100000 minutes
+#Iteration 1032, 4.183333 minutes
+#Iteration 1033, 4.183333 minutes
+#Iteration 1034, 4.516667 minutes
+#Iteration 1035, 4.783333 minutes
+#Iteration 1036, 3.883333 minutes
+#Iteration 1037, 3.883333 minutes
+#Iteration 1038, 3.916667 minutes
+#Iteration 1039, 3.883333 minutes
+#Iteration 1040, 3.883333 minutes
+#Iteration 1041, 3.883333 minutes
+#Iteration 1042, 3.883333 minutes
+#Iteration 1043, 3.883333 minutes
+#Iteration 1044, 3.900000 minutes
+#Iteration 1045, 3.866667 minutes
+#Iteration 1046, 3.883333 minutes
+#Iteration 1047, 3.866667 minutes
+#Iteration 1048, 3.883333 minutes
+#Iteration 1049, 3.866667 minutes
+#Iteration 1050, 3.883333 minutes
+#Iteration 1051, 3.866667 minutes
+#Iteration 1052, 3.883333 minutes
+#Iteration 1053, 3.900000 minutes
+#Iteration 1054, 3.916667 minutes
+#Iteration 1055, 3.916667 minutes
+#f[0] = -0.000005
+#f[1] = 0.044364
+#f[2] = 0.180426
+#f[3] = 0.416126
+#f[4] = 0.725517
+#f[5] = 1.087414
+#f[6] = 1.500947
+#f[7] = 1.920322
+#f[8] = 2.297171
+#f[9] = 2.650699
+#f[10] = 2.932948
+#f[11] = 3.144410
+#f[12] = 3.269713
+#f[13] = 3.277365
+#f[14] = 3.190408
+#f[15] = 3.005899
+#f[16] = 2.744954
+#f[17] = 2.421021
+#f[18] = 2.052172
+#f[19] = 1.688264
+#f[20] = 1.356290
+#f[21] = 1.081045
+#f[22] = 0.904533
+#f[23] = 0.837894
+#f[24] = 0.858527
+#f[25] = 0.989900
+#f[26] = 1.244528
+#f[27] = 1.612054
+#f[28] = 2.051662
+#f[29] = 2.550458
+#f[30] = 3.112821
+#f[31] = 3.696902
+#f[32] = 4.218538
+#f[33] = 4.668745
+#f[34] = 5.036608
+#f[35] = 5.293080
+#f[36] = 5.379778
+#f[37] = 5.278316
+#f[38] = 5.024143
+#f[39] = 4.663031
+#f[40] = 4.203210
+#f[41] = 3.658591
+#f[42] = 3.089209
+#f[43] = 2.538226
+#f[44] = 2.049568
+#f[45] = 1.626066
+#f[46] = 1.260156
+#f[47] = 0.995802
+#f[48] = 0.853618
+#f[49] = 0.834777
+#f[50] = 0.931340
+#f[51] = 1.111706
+#f[52] = 1.358069
+#f[53] = 1.693711
+#f[54] = 2.072143
+#f[55] = 2.424890
+#f[56] = 2.748315
+#f[57] = 3.024365
+#f[58] = 3.214257
+#f[59] = 3.292162
+#f[60] = 3.261416
+#f[61] = 3.151255
+#f[62] = 2.945707
+#f[63] = 2.653314
+#f[64] = 2.287678
+#f[65] = 1.878219
+#f[66] = 1.468577
+#f[67] = 1.077340
+#f[68] = 0.719298
+#f[69] = 0.420196
+#f[70] = 0.191594
+#f[71] = 0.048237
+#f[72] = -0.000003
+
+3.599990 5.377424 0.000018
+10.799970 5.043919 0.000032
+17.999950 4.490381 0.000080
+25.199930 3.805957 0.000253
+32.399910 2.937551 0.001084
+39.599890 2.148303 0.004070
+46.799870 1.507637 0.011914
+53.999850 1.023539 0.026827
+61.199830 0.818122 0.037856
+68.399810 0.850988 0.035827
+75.599790 1.116987 0.022936
+82.799770 1.566077 0.010802
+89.999750 2.100754 0.004408
+97.199730 2.624450 0.001832
+104.399710 3.009022 0.000961
+111.599690 3.249739 0.000642
+118.799670 3.309336 0.000581
+125.999650 3.137992 0.000774
+133.199630 2.814108 0.001333
+140.399610 2.310945 0.003098
+147.599590 1.782309 0.007517
+154.799570 1.142783 0.021965
+161.999550 0.621625 0.052628
+169.199530 0.205567 0.105722
+176.399510 0.004532 0.148098
+183.599490 0.000000 0.149227
+190.799470 0.223578 0.102577
+197.999450 0.610028 0.053661
+205.199430 1.140460 0.022051
+212.399410 1.721414 0.008326
+219.599390 2.321304 0.003045
+226.799370 2.806578 0.001350
+233.999350 3.155272 0.000752
+241.199330 3.290612 0.000600
+248.399310 3.280227 0.000610
+255.599290 3.034073 0.000922
+262.799270 2.614640 0.001862
+269.999250 2.125754 0.004227
+277.199230 1.567181 0.010782
+284.399210 1.140344 0.022055
+291.599190 0.869668 0.034722
+298.799170 0.808466 0.038474
+305.999150 1.034468 0.026340
+313.199130 1.525229 0.011568
+320.399110 2.145106 0.004092
+327.599090 2.933313 0.001091
+334.799070 3.757608 0.000274
+341.999050 4.488318 0.000080
+349.199030 5.028145 0.000033
+356.399010 5.363276 0.000019

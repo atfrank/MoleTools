@@ -1,0 +1,88 @@
+#!/usr/bin/env perl
+
+use warnings;
+use strict;
+
+my @inp;
+my $kB=(1.380650424E-23)*(1.44E20); #Boltzmann constant,Conversion from J/K to kcal/mol*K
+my $T=300;
+my $kBT=$kB*$T;
+my $tol=0.000001;
+
+while ($#ARGV>=0){
+    if ($ARGV[0] eq "-help"){
+
+    }
+    elsif ($ARGV[0] eq "-option"){
+	#DO SOMETHING
+    }
+    else{
+	push (@inp, shift @ARGV);
+    }
+}
+
+my $Nwind=$#inp;
+my $Niter=100000;
+my @nt=();
+my @ebf=();
+my @ebf2=();
+my @fact=();
+my @xi=();
+my @hist=();
+my @ebw=();
+my $i;
+my $j;
+my $k;
+my $l;
+if ($Nwind==-1){
+    die "Please provide at least one input file\n";
+}
+
+#Read data into memory
+#Get $nt[$k]
+for ($i=0; $i<=$#inp; $i++){
+    open (INP, "$inp[$i]") || die "Cannot open file \"$inp[$i]\"\n";
+    $l=0;
+    while (<INP>){
+	my @s=split/\s+/,$_;
+	$xi[$i][$l]=$s[1];
+	$ebw[$i][$l]=[splice(@s,2)]; #Splice out energies
+	$l++;
+    }
+    $nt[$i]=$l; #This is one more than the array size
+    close(INP);
+}
+
+#Initialize the array fact
+for ($k=0; $k<=$Nwind; $k++){
+    $fact[$k]=$nt[$k];
+    $ebf[$k]=1;
+}
+
+#Iterate
+for (my $n=1; $n<=$Niter; $n++){
+    for ($k=0; $k<=$Nwind; $k++){
+	my $ebfk=0.0;
+	for ($i=0; $i<=$Nwind; $i++){
+	    for ($l=0; $l<$nt[$i]; $l++){ #This is correct
+		my $bottom=0.0;
+		for ($j=0; $j<=$Nwind; $j++){
+		    $bottom+=$ebw[$i][$l][$j]*$fact[$j];
+		}
+		$ebfk+=$ebw[$i][$l][$k]/$bottom;
+	    }
+	}
+	$ebf2[$k]=$ebfk;
+	$ebf[$k]=1/($ebf[0]*$ebfk);
+	$fact[$k]=$nt[$k]*$ebf[$k];
+    }
+    my $conv=1;
+    for ($k=0; $k<=$Nwind; $k++){
+	my $delta=abs($kBT*log($ebf[$k]/$ebf2[$k]));
+	$conv=0 if ($delta>=$tol); 
+	$ebf[$k]=$ebf2[0]/$ebf2[$k];
+    }
+    last if ($conv>0);
+}
+
+
