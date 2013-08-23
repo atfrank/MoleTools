@@ -253,7 +253,6 @@ void WHAM::processEnergies(){
     }
   }
   std::cerr << std::endl;
-
 }
 
 
@@ -698,16 +697,18 @@ void WHAM::setDenomInv(){
   unsigned int j;
   unsigned int k;
   unsigned int l;
-   
+  
+	denomInv.clear();
   denomInv.resize(this->getNWindow());
  
   for (j=0; j< this->getNWindow(); j++){ //For each simulation J
     denomInv.at(j).resize(expBVE.at(j).size());
     for (k=0; k< expBVE.at(j).size(); k++){ //Foreach datapoint K in simulation J
+			
       denomInv.at(j).at(k)=0.0;
       for (l=0; l< this->getNWindow(); l++){ //Foreach simulation environment L
         //Calculate denom
-        denomInv.at(j).at(k)+=expBVE.at(j).size()*F.at(l)*expBVE.at(j).at(k).at(l);
+				denomInv.at(j).at(k)+=expBVE.at(j).size()*F.at(l)*expBVE.at(j).at(k).at(l);
       }
       denomInv.at(j).at(k)=1.0/denomInv.at(j).at(k);
     }
@@ -745,6 +746,25 @@ void WHAM::binOnTheFly(){
   double norm;
 
   norm=0.0;
+	Pun.clear();
+
+	//From Souaille & Roux, 2001
+	//
+	//				                                        
+	// Pun = 
+	//		                                                            N(j)
+	// SUM(j=1,....,S) SUM(k=1,...,N(j)----------------------------------------------------------------------- Pb(j)
+	//                                    SUM(l=1,...,S) N(l)*F(l)*exp(-B(l)V(l,jk))*exp[-(B(l)-B(0))E(l,jk)]
+	//
+	// But N(j)*Pb(j) = N(j)*[counts/N(j)] = Biased Histogram Counts, so
+	//
+	// Pun =
+	//                                                           Biased Histogram Counts
+	// SUM(j=1,....,S) SUM(k=1,...,N(j)-----------------------------------------------------------------------
+	//                                    SUM(l=1,...,S) N(l)*F(l)*exp(-B(l)V(l,jk))*exp[-(B(l)-B(0))E(l,jk)]
+	//
+	// Note that one needs to re-weight each biased histogram count(jk) by expBVxEx(j,jk) when doing WHAM extrapolation!
+	//
 
   for (unsigned int j=0; j< this->getNWindow(); j++){
     for (unsigned int k=0; k < expBVE.at(j).size(); k++){
@@ -752,15 +772,17 @@ void WHAM::binOnTheFly(){
       b=rCoor->getBin(j, k);
       if (expBVxEx.size() != expBVE.size()){
         //Traditional WHAM
+				//The numerator is simply the biased histogram count
         if (Pun.find(b) != Pun.end()){
-          Pun[b]+=expBVE.at(j).at(k).at(j)*denomInv.at(j).at(k);
+					Pun[b]+=denomInv.at(j).at(k);
         }
         else{
-          Pun[b]=expBVE.at(j).at(k).at(j)*denomInv.at(j).at(k);
+					Pun[b]=denomInv.at(j).at(k);
         }
       }
       else{
         //WHAM Extrapolation
+				//The numerator is the biased histogram count re-weighted by expBVxEx for that datapoint
         if (Pun.find(b) != Pun.end()){
           Pun[b]+=expBVxEx.at(j).at(k).at(j)*denomInv.at(j).at(k);
         }
