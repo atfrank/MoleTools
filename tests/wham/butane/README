@@ -1,0 +1,3 @@
+Butane test case for WHAM analysis.
+
+wham -bins 50 metadata > free.50

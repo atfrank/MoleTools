@@ -1,1 +1,0 @@
-plot "butane.all.50" us 1:($2-1.134208) w lines, "butane.noguess.50" w lines, "butane.guess.50" w lines, "freefile.50" w lines
