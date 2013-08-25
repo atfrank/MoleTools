@@ -13,6 +13,7 @@ WHAM::WHAM (){
   bins.clear();
   tol=1E-5;
   maxIter=1E6;
+  delay=0;
   B.clear();
   defaultT=300;
   B.push_back(1.0/(kB*defaultT));
@@ -410,22 +411,26 @@ bool WHAM::iterateWHAM (){
 					if (expBVxEx.size() == expBVE.size()){ //WHAM Extrapolation
 						fraction=expBVxEx.at(j).at(k).at(i)*denomInv.at(j).at(k);
 						FnextInv.at(i)+=fraction;
-						/*
-						fraction*=denomInv.at(j).at(k);
-						for (a=0; a< this->getNWindow(); a++){
-	            pdSum.at(i).at(a)+=expBVxEx.at(j).at(k).at(a)*fraction;
-	          }
-						*/
+            /*
+						if (delay > 0 && niter > delay){ //Accelerated WHAM
+						  fraction*=denomInv.at(j).at(k);
+						  for (a=0; a< this->getNWindow(); a++){
+	              pdSum.at(i).at(a)+=expBVxEx.at(j).at(k).at(a)*fraction;
+	            }
+            }
+            */
 					} 
 					else{ //Traditional WHAM
 						fraction=expBVE.at(j).at(k).at(i)*denomInv.at(j).at(k);
          		FnextInv.at(i)+=fraction;
-						/*
-						fraction*=denomInv.at(j).at(k);
-						for (a=0; a< this->getNWindow(); a++){
-							pdSum.at(i).at(a)+=expBVE.at(j).at(k).at(a)*fraction;
-						}	
-						*/
+            /*
+						if (delay > 0 && niter > delay){ //Accelerated WHAM
+						  fraction*=denomInv.at(j).at(k);
+						  for (a=0; a< this->getNWindow(); a++){
+							  pdSum.at(i).at(a)+=expBVE.at(j).at(k).at(a)*fraction;
+						  } 	
+            }
+            */
 					}
 				}
       }
@@ -472,7 +477,7 @@ bool WHAM::iterateWHAM (){
       std::cerr << "# Iteration = " << niter << std::endl;
     }
   }
-  
+
   return false;
 }
 
@@ -720,6 +725,10 @@ void WHAM::setDenomInv(){
 
 }
 
+void WHAM::setDelay(const unsigned int &delayin){
+  delay=delayin;
+}
+
 std::string WHAM::getMeta(){
   return fMeta;
 }
@@ -738,6 +747,10 @@ std::string WHAM::getCmd(){
 
 unsigned int WHAM::getNWindow(){
   return nWindow;
+}
+
+unsigned int WHAM::getDelay(){
+  return delay;
 }
 
 std::vector<unsigned int> WHAM::getBins(){

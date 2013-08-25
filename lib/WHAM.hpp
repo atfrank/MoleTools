@@ -35,6 +35,7 @@ class WHAM {
     std::vector< std::vector<std::string> > inps;
     std::vector< std::vector<double> > denomInv; //Inverse denominator for WHAM calculation
     std::vector< std::vector<double> > pdSum; //Partial Derivative for accelerated WHAM
+    unsigned int delay; //Delay for starting accelerated WHAM
     std::map<unsigned int, double> Pun; //Unbiased probabilities
     Histogram *rCoor; //Reaction coordinates
 
@@ -64,12 +65,14 @@ class WHAM {
     void setFguess(const std::string &fin);
     void setFval(const std::string &fin);
     void setDenomInv();
+    void setDelay(const unsigned int &delayin);
 
     std::string getMeta();
     unsigned int getTempSize();
     double getTemp(const int &element);
     std::string getCmd();
     unsigned int getNWindow();
+    unsigned int getDelay();
     std::vector<unsigned int> getBins();
     void binOnTheFly();
     void printPMF();
