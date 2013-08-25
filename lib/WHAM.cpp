@@ -511,7 +511,7 @@ void WHAM::setMeta(const std::string &metain){
 }
 
 void WHAM::setBins(const std::string &binsin){
-  Misc::splitNum(binsin, ":", bins);
+  Misc::splitNum(binsin, ":", bins, false);
 }
 
 void WHAM::setBins(const std::vector<unsigned int> &binsin){
@@ -536,7 +536,7 @@ void WHAM::setMaxIter(const unsigned int &iterin){
 
 bool WHAM::setTemp(const std::string &tin){
   B.clear();
-  Misc::splitNum(tin, ":", B);
+  Misc::splitNum(tin, ":", B, false);
   if (B.size() <= 0){
     std::cerr << std::endl << "Error: Unrecognized temperature format " << tin;
     std::cerr << std::endl << std::endl;
@@ -563,7 +563,7 @@ bool WHAM::setTempRange(const std::string &tin){
   unsigned int i;
 
   B.clear();
-  Misc::splitNum(tin, "=", s);
+  Misc::splitNum(tin, "=", s, false);
 
   if (s.size() >= 3){
     for (i=0; i<= static_cast<unsigned int>((s.at(1)-s.at(0))/s.at(2)); i++){

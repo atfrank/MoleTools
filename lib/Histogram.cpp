@@ -35,7 +35,7 @@ void Histogram::appendData(const std::vector<double> &sin, const unsigned int &n
 }
 
 void Histogram::setBins(const std::string &binsin){
-  Misc::splitNum(binsin, ":", bins);
+  Misc::splitNum(binsin, ":", bins, false);
 }
 
 void Histogram::setBins(const std::vector<unsigned int> &binsin){
