@@ -6,9 +6,6 @@
 #include <fstream>
 #include <cstdlib>
 
-#define MAXINPFILES 4096
-#define MAXLINESIZE 4096
-
 void usage(){
   exit(0);
 }

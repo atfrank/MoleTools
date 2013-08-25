@@ -8,9 +8,6 @@
 #include <iomanip>
 #include <cstdlib>
 
-#define MAXINPFILES 4096
-#define MAXLINESIZE 4096
-
 void usage(){
   std::cerr << "Usage:   wham [-options] <metadatafile>" << std::endl;
   std::cerr << "Options: [-bins rcoor1[:rcoor2[:rcoor3]]]" << std::endl;
@@ -109,32 +106,29 @@ int main (int argc, char **argv){
     usage();
   }
 
-  wham->readMetadata();
-  wham->processEnergies();
-  if (fguess.size() != 0){
-    wham->setFguess(fguess);
-  }
-  if (fval.size() != 0){
-    wham->setFval(fval); //No WHAM iteration needed
-  }
-  else{
-    wham->iterateWHAM();
-    std::cout << "#" << wham->getCmd() << std::endl;
-  }
+  if (wham->readMetadata() > 0){ //Check number of windows/files
+    wham->processEnergies();
+    if (fguess.size() != 0){
+      wham->setFguess(fguess);
+    }
+    if (fval.size() != 0){
+      wham->setFval(fval); //No WHAM iteration needed
+    }
+    else{
+      wham->iterateWHAM();
+      std::cout << "#" << wham->getCmd() << std::endl;
+    }
 
-  wham->setDenomInv();
+    wham->setDenomInv();
 
-  if (wham->processCoor() == true){ //Reaction coordinates
-     wham->binOnTheFly();
-     wham->printPMF();
-  }
-  else{
-    std::cerr << "Error: The number of datapoints did not match up" << std::endl;
+    if (wham->processCoor() == true){ //Reaction coordinates
+      wham->binOnTheFly();
+      wham->printPMF();
+    }
+    else{
+      std::cerr << "Error: The number of datapoints did not match up" << std::endl;
+    }
   }
   
-//  for (j=0; j< wham->getTempSize(); j++){
-//    std::cerr << std::fixed << std::setprecision(6) << wham->getTemp(j) << std::endl;
-//  }
-
   return 0;
 }

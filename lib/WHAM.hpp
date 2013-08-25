@@ -42,7 +42,7 @@ class WHAM {
     WHAM ();
     void appendCmd(const std::string &str);
     void genWHAMInput();
-    void readMetadata();
+    unsigned int readMetadata();
     void processMetadata(const std::string &metatype);
     void processEnergies(); 
     bool iterateWHAM();

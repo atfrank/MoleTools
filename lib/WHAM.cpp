@@ -32,7 +32,7 @@ void WHAM::genWHAMInput(){
 
 }
 
-void WHAM::readMetadata(){
+unsigned int WHAM::readMetadata(){
   std::string line;
   std::vector<std::string> s;
   std::ifstream metaFile;
@@ -59,7 +59,11 @@ void WHAM::readMetadata(){
     metaFile.close();
   }
 
-  this->fixTemp(); //Ensure the number of windows and temperatures match, assign B0 
+  if (this->getNWindow() > 0){
+    this->fixTemp(); //Ensure the number of windows and temperatures match, assign B0 
+  }
+
+  return this->getNWindow();
 }
 
 void WHAM::processEnergies(){

@@ -8,9 +8,6 @@
 #include <cstdlib>
 #include <cmath>
 
-#define MAXINPFILES 4096
-#define MAXLINESIZE 4096
-
 void usage(){
   std::cerr << std::endl << std::endl;
   std::cerr << "Usage:   correl [-options] <file>" << std::endl;

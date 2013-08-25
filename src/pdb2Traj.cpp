@@ -8,9 +8,6 @@
 #include <sstream>
 #include <cstdlib>
 
-#define MAXINPFILES 4096
-#define MAXLINESIZE 4096
-
 void usage(){
   std::cerr << std::endl << std::endl;
   std::cerr << "Usage:   pdb2Traj [-options] <PDBfile(s)>" << std::endl;

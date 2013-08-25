@@ -10,9 +10,6 @@
 #include <cstdlib>
 #include <cmath>
 
-#define MAXINPFILES 4096
-#define MAXLINESIZE 4096
-
 void usage(){
   std::cerr << std::endl << std::endl;
   std::cerr << "Usage:   unitTest [-options] <file>" << std::endl;
