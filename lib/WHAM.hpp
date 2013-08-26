@@ -6,6 +6,7 @@
 #include "Misc.hpp"
 #include "Constants.hpp"
 #include "Histogram.hpp"
+#include "Eigen/Dense"
 #include "Eigen/LU"
 
 #include <iostream>
@@ -47,6 +48,7 @@ class WHAM {
     void processMetadata(const std::string &metatype);
     void processEnergies(); 
     bool iterateWHAM();
+		void accelerateWHAM(std::vector<double> &FnextInv, const std::vector<double> &nFlast);
     bool processCoor(); //Reaction coord
     void fixTemp();
 

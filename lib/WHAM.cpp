@@ -345,6 +345,7 @@ bool WHAM::iterateWHAM (){
   double fnext; //Temporary variable
   double flast; //Temporary variable
   double FnextInvZero; //Temporary variable
+	double Ftmp;
   double df; //fabs(f(i,next) - f(i,last))
 	time_t start;
 	double stop;
@@ -411,30 +412,37 @@ bool WHAM::iterateWHAM (){
 					if (expBVxEx.size() == expBVE.size()){ //WHAM Extrapolation
 						fraction=expBVxEx.at(j).at(k).at(i)*denomInv.at(j).at(k);
 						FnextInv.at(i)+=fraction;
-            /*
 						if (delay > 0 && niter > delay){ //Accelerated WHAM
 						  fraction*=denomInv.at(j).at(k);
 						  for (a=0; a< this->getNWindow(); a++){
 	              pdSum.at(i).at(a)+=expBVxEx.at(j).at(k).at(a)*fraction;
 	            }
             }
-            */
 					} 
 					else{ //Traditional WHAM
 						fraction=expBVE.at(j).at(k).at(i)*denomInv.at(j).at(k);
          		FnextInv.at(i)+=fraction;
-            /*
 						if (delay > 0 && niter > delay){ //Accelerated WHAM
 						  fraction*=denomInv.at(j).at(k);
 						  for (a=0; a< this->getNWindow(); a++){
 							  pdSum.at(i).at(a)+=expBVE.at(j).at(k).at(a)*fraction;
 						  } 	
             }
-            */
 					}
 				}
       }
    	}
+
+		if (delay > 0 && niter > delay){
+			for (i=0; i< this->getNWindow(); i++){
+				Ftmp=1.0/FnextInv.at(i);
+				for (a=0; a< this->getNWindow(); a++){
+					pdSum.at(i).at(a)=nFlast.at(a)*(B.at(a)/B.at(i))*Ftmp*pdSum.at(i).at(a);
+				}
+			}
+			
+			this->accelerateWHAM(FnextInv, nFlast);
+		}
 
     //Check tolerance (note that tolerance is in f but F is in exp(Bf))
     convergedFlag=true;
@@ -479,6 +487,76 @@ bool WHAM::iterateWHAM (){
   }
 
   return false;
+}
+
+void WHAM::accelerateWHAM(std::vector<double> &FnextInv, const std::vector<double> &nFlast){
+	Eigen::MatrixXd A;
+	Eigen::VectorXd b;
+	Eigen::VectorXd x;
+	unsigned int i, a;
+
+	A.resize(this->getNWindow(), this->getNWindow());
+	b.resize(this->getNWindow());
+	x.resize(this->getNWindow());
+
+	for (i=0; i< this->getNWindow(); i++){
+		b(i)=log(FnextInv.at(i))/(-B.at(i)); //f(i)
+		for (a=0; a< this->getNWindow(); a++){
+			b(i)-=pdSum.at(i).at(a)*nFlast.at(a)/expBVE.at(i).size();
+			if (i != a){
+				A(i,a)=-pdSum.at(i).at(a);
+			}
+			else{
+				A(i,a)=1-pdSum.at(i).at(a);
+			}
+		}
+	}
+
+	/*
+	A.resize(4,4);
+	b.resize(4);
+	x.resize(4);
+
+	A(0,0)=0.18;
+	A(0,1)=0.60;
+	A(0,2)=0.57;
+	A(0,3)=0.96;
+	A(1,0)=0.41;
+	A(1,1)=0.24;
+	A(1,2)=0.99;
+	A(1,3)=0.58;
+	A(2,0)=0.14;
+	A(2,1)=0.30;
+	A(2,2)=0.97;
+	A(2,3)=0.66;
+	A(3,0)=0.51;
+	A(3,1)=0.13;
+	A(3,2)=0.19;
+	A(3,3)=0.85;
+
+	b(0)=1.0;
+	b(1)=2.0;
+	b(2)=3.0;
+	b(3)=4.0;
+
+	//x(0)=-4.05205
+	//x(1)=-12.6056
+	//x(2)=1.66091
+	//x(3)=8.69377
+
+	*/
+		
+	//LU Decomposition
+	x=A.fullPivLu().solve(b);
+
+	if ((A*x).isApprox(b)){
+		for (i=0; i< this->getNWindow(); i++){
+			FnextInv.at(i)=1.0/(exp(B.at(i)*x(i)));
+		}
+	}
+	else{
+		//Do not modify FnextInv
+	}
 }
 
 void WHAM::fixTemp(){
