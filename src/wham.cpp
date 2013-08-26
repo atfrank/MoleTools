@@ -14,7 +14,6 @@ void usage(){
   std::cerr << "         [-iter value] [-tol value | -Ftol value]" << std::endl;
   std::cerr << "         [-temp T1[:T2...[[:TN[:Ttarget]]]] | -temp T1=TN=[incr[=Ttarget]]]" << std::endl;
   std::cerr << "         [-fguess file | -fval file]" << std::endl;
-  std::cerr << "         [-delay step]" << std::endl;
   std::cerr << std::endl;
   exit(0);
 }
@@ -30,7 +29,6 @@ int main (int argc, char **argv){
   WHAM *wham;
   std::string fguess;
   std::string fval;
-  unsigned int delay;
  
   tol=1E-5;
   maxIter=1E6;
@@ -38,7 +36,6 @@ int main (int argc, char **argv){
   j=0;
   fguess.clear();
   fval.clear();
-  delay=0;
 
   //Copy original command
   for (i=0; i<argc; i++){
@@ -97,11 +94,6 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       fguess=currArg;
       fval.clear();
-    }
-    else if (currArg == "-delay"){
-      currArg=argv[++i];
-      std::stringstream(currArg) >> delay;
-      wham->setDelay(delay);
     }
     else{
       wham->setMeta(currArg);

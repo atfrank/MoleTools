@@ -13,7 +13,6 @@ WHAM::WHAM (){
   bins.clear();
   tol=1E-5;
   maxIter=1E6;
-  delay=0;
   B.clear();
   defaultT=300;
   B.push_back(1.0/(kB*defaultT));
@@ -21,7 +20,6 @@ WHAM::WHAM (){
   factor=1.0;
   factorFlag=false;
   denomInv.clear();
-  pdSum.clear();
   Pun.clear();
 }
 
@@ -337,7 +335,7 @@ bool WHAM::processCoor (){
 }
 
 bool WHAM::iterateWHAM (){
-  unsigned int i,j,k,l,a;
+  unsigned int i,j,k,l;
   unsigned int niter;
   std::vector<double> nFlast; //n(i)*exp(Bf(i))
   std::vector<double> FnextInv; //exp(-Bf(i)) = 1.0/[exp(Bf(i))]
@@ -345,11 +343,9 @@ bool WHAM::iterateWHAM (){
   double fnext; //Temporary variable
   double flast; //Temporary variable
   double FnextInvZero; //Temporary variable
-	double Ftmp;
   double df; //fabs(f(i,next) - f(i,last))
 	time_t start;
 	double stop;
-	double fraction;
  
   // WHAM Formalism (Adapted from Michael Andrec)
   //
@@ -376,7 +372,6 @@ bool WHAM::iterateWHAM (){
   nFlast.resize(this->getNWindow()); //n(j)*F(j)
   FnextInv.resize(this->getNWindow());
   denomInv.resize(this->getNWindow());
-	pdSum.resize(this->getNWindow());
 
   for (j=0; j< this->getNWindow(); j++){
     //Initialize F
@@ -386,7 +381,6 @@ bool WHAM::iterateWHAM (){
     }
     
     denomInv.at(j).resize(expBVE.at(j).size());
-		pdSum.at(j).resize(this->getNWindow());
   }
 
   //WHAM Iterations
@@ -394,9 +388,6 @@ bool WHAM::iterateWHAM (){
   for (niter=1; niter< maxIter; niter++){
 		for (i=0; i< this->getNWindow(); i++){
 			FnextInv.at(i)=0.0;
-			for (a=0; a< this->getNWindow(); a++){
-				pdSum.at(i).at(a)=0.0;
-			}
 		}
 		
     for (j=0; j< this->getNWindow(); j++){ //For each simulation J
@@ -410,39 +401,14 @@ bool WHAM::iterateWHAM (){
         denomInv.at(j).at(k)=1.0/denomInv.at(j).at(k);
 				for (i=0; i< this->getNWindow(); i++){ //For each F value I (simulation environment)
 					if (expBVxEx.size() == expBVE.size()){ //WHAM Extrapolation
-						fraction=expBVxEx.at(j).at(k).at(i)*denomInv.at(j).at(k);
-						FnextInv.at(i)+=fraction;
-						if (delay > 0 && niter > delay){ //Accelerated WHAM
-						  fraction*=denomInv.at(j).at(k);
-						  for (a=0; a< this->getNWindow(); a++){
-	              pdSum.at(i).at(a)+=expBVxEx.at(j).at(k).at(a)*fraction;
-	            }
-            }
+						FnextInv.at(i)+=expBVxEx.at(j).at(k).at(i)*denomInv.at(j).at(k);
 					} 
 					else{ //Traditional WHAM
-						fraction=expBVE.at(j).at(k).at(i)*denomInv.at(j).at(k);
-         		FnextInv.at(i)+=fraction;
-						if (delay > 0 && niter > delay){ //Accelerated WHAM
-						  fraction*=denomInv.at(j).at(k);
-						  for (a=0; a< this->getNWindow(); a++){
-							  pdSum.at(i).at(a)+=expBVE.at(j).at(k).at(a)*fraction;
-						  } 	
-            }
+         		FnextInv.at(i)+=expBVE.at(j).at(k).at(i)*denomInv.at(j).at(k);
 					}
 				}
       }
    	}
-
-		if (delay > 0 && niter > delay){
-			for (i=0; i< this->getNWindow(); i++){
-				Ftmp=1.0/FnextInv.at(i);
-				for (a=0; a< this->getNWindow(); a++){
-					pdSum.at(i).at(a)=nFlast.at(a)*(B.at(a)/B.at(i))*Ftmp*pdSum.at(i).at(a);
-				}
-			}
-			
-			this->accelerateWHAM(FnextInv, nFlast);
-		}
 
     //Check tolerance (note that tolerance is in f but F is in exp(Bf))
     convergedFlag=true;
@@ -487,76 +453,6 @@ bool WHAM::iterateWHAM (){
   }
 
   return false;
-}
-
-void WHAM::accelerateWHAM(std::vector<double> &FnextInv, const std::vector<double> &nFlast){
-	Eigen::MatrixXd A;
-	Eigen::VectorXd b;
-	Eigen::VectorXd x;
-	unsigned int i, a;
-
-	A.resize(this->getNWindow(), this->getNWindow());
-	b.resize(this->getNWindow());
-	x.resize(this->getNWindow());
-
-	for (i=0; i< this->getNWindow(); i++){
-		b(i)=log(FnextInv.at(i))/(-B.at(i)); //f(i)
-		for (a=0; a< this->getNWindow(); a++){
-			b(i)-=pdSum.at(i).at(a)*nFlast.at(a)/expBVE.at(i).size();
-			if (i != a){
-				A(i,a)=-pdSum.at(i).at(a);
-			}
-			else{
-				A(i,a)=1-pdSum.at(i).at(a);
-			}
-		}
-	}
-
-	/*
-	A.resize(4,4);
-	b.resize(4);
-	x.resize(4);
-
-	A(0,0)=0.18;
-	A(0,1)=0.60;
-	A(0,2)=0.57;
-	A(0,3)=0.96;
-	A(1,0)=0.41;
-	A(1,1)=0.24;
-	A(1,2)=0.99;
-	A(1,3)=0.58;
-	A(2,0)=0.14;
-	A(2,1)=0.30;
-	A(2,2)=0.97;
-	A(2,3)=0.66;
-	A(3,0)=0.51;
-	A(3,1)=0.13;
-	A(3,2)=0.19;
-	A(3,3)=0.85;
-
-	b(0)=1.0;
-	b(1)=2.0;
-	b(2)=3.0;
-	b(3)=4.0;
-
-	//x(0)=-4.05205
-	//x(1)=-12.6056
-	//x(2)=1.66091
-	//x(3)=8.69377
-
-	*/
-		
-	//LU Decomposition
-	x=A.fullPivLu().solve(b);
-
-	if ((A*x).isApprox(b)){
-		for (i=0; i< this->getNWindow(); i++){
-			FnextInv.at(i)=1.0/(exp(B.at(i)*x(i)));
-		}
-	}
-	else{
-		//Do not modify FnextInv
-	}
 }
 
 void WHAM::fixTemp(){
@@ -803,10 +699,6 @@ void WHAM::setDenomInv(){
 
 }
 
-void WHAM::setDelay(const unsigned int &delayin){
-  delay=delayin;
-}
-
 std::string WHAM::getMeta(){
   return fMeta;
 }
@@ -825,10 +717,6 @@ std::string WHAM::getCmd(){
 
 unsigned int WHAM::getNWindow(){
   return nWindow;
-}
-
-unsigned int WHAM::getDelay(){
-  return delay;
 }
 
 std::vector<unsigned int> WHAM::getBins(){
