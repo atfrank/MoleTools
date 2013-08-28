@@ -80,6 +80,7 @@ int main (int argc, char **argv){
 	int setnstep; //ICNTRL[4],Number of steps in the run that created this file
 	double settstep;
   bool verbose;
+	unsigned int totFrames;
 
   pdb.clear();
 	fitpdb.clear();
@@ -104,6 +105,7 @@ int main (int argc, char **argv){
   flist.clear();
   listinx=0;
   nframe=0; //This is correct!
+	currFrames=0;
   lastFrame=0;
   nline=0;
 	setnframe=0;
@@ -362,17 +364,13 @@ int main (int argc, char **argv){
             }
             ftrjout->setNSavc(ftrjout->getNSavc()*(skip+1));
           }
-          //Figure Nframe
-          ftrjout->setNFrame(0);
-          for (i=start; i< ftrjin->getNFrame() && i< stop; i=i+1+skip){
-            ftrjout->setNFrame(ftrjout->getNFrame()+1);
-          }
+          ftrjout->setNFrame(0); //Set nframe depending on number of frames written
           ftrjout->writeHeader(trjout);
 				}
         //Loop through desired frames
 				for (i=start; i< ftrjin->getNFrame() && i< stop; i=i+1+skip){
 					ftrjin->readFrame(trjin, i);
-          nframe++;
+          currFrames++;
           if (pdb.length() >0){
 						//Transform molecule only if PDB is provided
             if (fit == true){
@@ -396,7 +394,7 @@ int main (int argc, char **argv){
 					}
           if (out == true && trjout.is_open()){
             if (flist.length() > 0){
-              if (nframe == frameList.at(listinx)){
+              if (currFrames == frameList.at(listinx)){
                 ftrjout->writeFrame(trjout, ftrjin);
                 listinx++;
                 if (listinx == frameList.size()){
@@ -406,6 +404,7 @@ int main (int argc, char **argv){
             }
             else{
               ftrjout->writeFrame(trjout, ftrjin);
+							nframe++;
             }
           }
 				}
@@ -424,25 +423,23 @@ int main (int argc, char **argv){
 
   if (out == true && trjout.is_open()){
     //Re-write header in case of any changes
-    if (flist.length() > 0){
-      ftrjout->setNFrame(listinx);
-    }
+		if (setnframe > 0){
+			ftrjout->setNFrame(setnframe);
+		}
 		else{
-			if (setnframe > 0){
-				ftrjout->setNFrame(setnframe);
-			}
-			if (setnpriv > 0){
-				ftrjout->setNPriv(setnpriv);
-			}
-			if (setnsavc > 0){
-				ftrjout->setNSavc(setnsavc);
-			}
-			if (setnstep > 0){
-				ftrjout->setNStep(setnstep);
-			}
-			if (settstep > 0.0){
-				ftrjout->setTStep(settstep);
-			}
+			ftrjout->setNFrame(nframe);
+		}
+		if (setnpriv > 0){
+			ftrjout->setNPriv(setnpriv);
+		}
+		if (setnsavc > 0){
+			ftrjout->setNSavc(setnsavc);
+		}
+		if (setnstep > 0){
+			ftrjout->setNStep(setnstep);
+		}
+		if (settstep > 0.0){
+			ftrjout->setTStep(settstep);
 		}
     ftrjout->writeHeader(trjout);
     trjout.close();
