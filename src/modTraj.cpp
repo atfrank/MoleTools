@@ -80,7 +80,7 @@ int main (int argc, char **argv){
 	int setnstep; //ICNTRL[4],Number of steps in the run that created this file
 	double settstep;
   bool verbose;
-	unsigned int totFrames;
+	unsigned int currFrames;
 
   pdb.clear();
 	fitpdb.clear();

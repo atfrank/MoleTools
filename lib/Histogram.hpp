@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <iostream>
+#include <limits>
 
 class Histogram {
   private:
