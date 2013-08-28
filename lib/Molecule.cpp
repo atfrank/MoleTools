@@ -464,7 +464,7 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
     //Is a reflection!
     //Make third column negative
     //Untested
-    std::cerr << "Warning: LSQFIT Reflection Found!" << std::endl;
+    //std::cerr << "Warning: LSQFIT Reflection Found!" << std::endl;
     for (i=0; i< 3; i++){
       V(i,2)=-V(i,2); //Base zero
     }
