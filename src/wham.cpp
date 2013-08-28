@@ -21,7 +21,6 @@ void usage(){
 int main (int argc, char **argv){
 
   int i;
-  unsigned int j;
   std::string currArg;
   std::vector<unsigned int> bins;
   double tol;
