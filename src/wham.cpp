@@ -32,7 +32,6 @@ int main (int argc, char **argv){
   tol=1E-5;
   maxIter=1E6;
   wham=new WHAM;
-  j=0;
   fguess.clear();
   fval.clear();
 
