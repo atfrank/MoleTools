@@ -4,7 +4,7 @@ include ../makefile.defs
 
 OBJS = libtools.$(LIBEXT)
 
-all:	$(BINDIR) libtools.$(LIBEXT) unitTest contact modPDB modTraj pdb2Traj secondary traj2PDB correl analyzeTraj contactOrder mol22PDB wham
+all:	$(BINDIR) libtools.$(LIBEXT) unitTest contact modPDB modTraj pdb2Traj secondary traj2PDB correl analyzeTraj contactOrder mol22PDB wham pcasso
 
 clean:
 	rm -rf *.o
@@ -52,6 +52,9 @@ mol22PDB: mol22PDB.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
 
 wham: wham.o $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
+
+pcasso: pcasso.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
 
 %.o:	%.cpp
