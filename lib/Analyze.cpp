@@ -430,7 +430,7 @@ double Analyze::dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecu
 	return Analyze::dihedral(Analyze::centerOfGeometry(sel1,selFlag), Analyze::centerOfGeometry(sel2,selFlag), Analyze::centerOfGeometry(sel3,selFlag), Analyze::centerOfGeometry(sel4,selFlag));
 }
 
-void  Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector<std::pair<double, Atom*> > >& pdin){
+void Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector<std::pair<double, Atom*> > >& pdin){
 	unsigned int i, j;
 
 	//Note that for each pairwise distance i,j, the std::pair will contain
@@ -455,8 +455,89 @@ void  Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector<std::pair
   }
 }
 
+void Analyze::allAnglesDihedrals(Molecule *mol, std::vector<std::pair<double, double> > adin){
+	unsigned int i, j;
+	Chain *c;
+	Atom *atm1, *atm2, *atm3, *atm4;
+	unsigned int size;
+	double angle, dihedral;
+	unsigned int natom;
+
+	natom=0;
+	adin.resize(mol->getAtmVecSize());
+
+	for (i=0; i< mol->getChnVecSize(); i++){
+    c=mol->getChain(i);
+    size=c->getAtmVecSize();
+    for (j=0; j< c->getAtmVecSize(); j++){
+      atm1=c->getAtom(j);
+      atm2=NULL;
+      atm3=NULL;
+      atm4=NULL;
+
+			if (j+1 < size && atm1->getResId()+1 == c->getAtom(j+1)->getResId()){
+				atm2=c->getAtom(j+1);
+			}
+			else{
+				if (j+1 < size && atm1->getResId() == c->getAtom(j+1)->getResId() && atm1->getICode() != c->getAtom(j+1)->getICode()){
+					atm2=c->getAtom(j+1);
+				}
+			}
+
+			if (j+2 < size && atm1->getResId()+2 == c->getAtom(j+2)->getResId()){
+				atm3=c->getAtom(j+2);
+			}
+		 	else{
+        if (j+2 < size && atm1->getResId() == c->getAtom(j+2)->getResId() && atm1->getICode() != c->getAtom(j+2)->getICode()){
+          atm3=c->getAtom(j+2);
+        }
+      }
+
+			if (j+3 < size && atm1->getResId()+3 == c->getAtom(j+3)->getResId()){
+        atm4=c->getAtom(j+3);
+      }
+			else{
+        if (j+3 < size && atm1->getResId() == c->getAtom(j+3)->getResId() && atm1->getICode() != c->getAtom(j+3)->getICode()){
+          atm4=c->getAtom(j+3);
+        }
+      }
+
+			angle=9999.9;
+			dihedral=9999.9;
+			if (atm2 != NULL && atm3 != NULL){
+				//Get Angle
+				angle=Analyze::angle(atm1->getCoor(), atm2->getCoor(), atm3->getCoor());
+				if (atm4 != NULL){
+					//Get Dihedral
+					dihedral=Analyze::dihedral(atm1->getCoor(), atm2->getCoor(), atm3->getCoor(), atm4->getCoor());
+				}
+			}
+			adin.at(natom)=std::make_pair(angle, dihedral);
+			natom++;
+    }
+  }
+	if (natom != mol->getAtmVecSize()){
+		std::cerr << "Warning: Atom number mismatch in Analyze::allAnglesDihedrals" << std::endl;
+	}
+}
+
 void Analyze::pcasso(Molecule* mol){
-	std::vector<std::vector<std::pair<double, Atom*> > > p;
-	
-	Analyze::pairwiseDistance(mol, p);
+	std::vector<std::vector<std::pair<double, Atom*> > > caPairDist; //Ca-Ca Distances
+	std::vector<std::vector<std::pair<double, Atom*> > > paPairDist; //Pseudocenter-Pseudocenter Distances
+	std::vector<std::pair<double, double> > caAngDihe; //Ca-Ca Angle/Diehdral
+	std::vector<std::pair<double, double> > paAngDihe; //Pseudocenter-Pseudocenter Angle/Dihedral
+	Molecule* cmol;
+
+	mol->storeSel();
+	mol->select(":.CA");
+	cmol=mol->clone(true,true); //Copy selection, keep original
+	mol->recallSel(); //Restore original selection
+	mol->eraseSel();
+
+	//Analyze all C-alpha first
+	Analyze::pairwiseDistance(cmol, caPairDist);
+	Analyze::allAnglesDihedrals(cmol, caAngDihe);
+
+	//Analyze all pseudocenter
+	cmol->modPseudoCenter();	
 }

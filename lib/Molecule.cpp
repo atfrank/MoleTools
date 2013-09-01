@@ -545,6 +545,30 @@ void Molecule::center (bool selFlag){
   }
 }
 
+void Molecule::modPseudoCenter(){
+	Atom *atmEntry;
+	Atom *lastAtom;
+
+ 	for (unsigned int i=0; i< this->getChnVecSize(); i++){
+		atmEntry=NULL;
+		lastAtom=NULL;
+		for (unsigned int j=0; j< this->getChain(i)->getAtmVecSize(); j++){
+			atmEntry=this->getChain(i)->getAtom(j);
+
+			if(lastAtom !=NULL){
+				if (lastAtom->getResId()+1 == atmEntry->getResId()){
+					lastAtom->setCoor((lastAtom->getCoor()+atmEntry->getCoor())/2.0);
+				}
+				else{
+					lastAtom->setCoor(Vector(9999.9, 9999.9, 9999.9));
+				}
+			}
+			lastAtom=atmEntry;
+		}
+		lastAtom->setCoor(Vector(9999.9, 9999.9, 9999.9));
+	}
+}
+
 void Molecule::pcasso (){
 	Analyze::pcasso(this);
 }
