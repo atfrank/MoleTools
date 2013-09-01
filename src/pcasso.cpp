@@ -37,6 +37,13 @@ int main (int argc, char **argv){
 
 	for (j=0; j< pdbs.size(); j++){
   	Molecule *mol=Molecule::readPDB(pdbs.at(j));
+		mol->select(":.CA");
+		mol=mol->clone(true, false); //Clone and delete original
+		mol->pcasso();
+//		if (mol->getICodeFlag() == true){
+//			std::cerr << pdbs.at(j) << std::endl;
+//		}
+//		mol->writePDB();
 		delete mol;
 	}
 

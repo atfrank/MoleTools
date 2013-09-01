@@ -429,3 +429,34 @@ double Analyze::angle (Molecule* sel1, Molecule* sel2, Molecule* sel3, bool selF
 double Analyze::dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecule* sel4, bool selFlag){
 	return Analyze::dihedral(Analyze::centerOfGeometry(sel1,selFlag), Analyze::centerOfGeometry(sel2,selFlag), Analyze::centerOfGeometry(sel3,selFlag), Analyze::centerOfGeometry(sel4,selFlag));
 }
+
+void  Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector<std::pair<double, Atom*> > >& pdin){
+	unsigned int i, j;
+
+	//Note that for each pairwise distance i,j, the std::pair will contain
+	//distance between i and j and a pointer that points to atom j.
+	//pdin.at(i).at(j).first = distance between i and j
+	//pdin.at(i).at(j).second = pointer to atom j
+
+	pdin.clear();
+
+	pdin.resize(mol->getAtmVecSize());
+	for (i=0; i< mol->getAtmVecSize(); i++){
+		pdin.at(i).resize(mol->getAtmVecSize());
+		pdin.at(i).at(i)=std::make_pair(0.0, mol->getAtom(i)); //Zero diagonal
+	}
+
+  for (i=0; i< mol->getAtmVecSize(); i++){
+    for (j=i+1; j< mol->getAtmVecSize(); j++){
+      pdin.at(i).at(j)=std::make_pair(Analyze::distance(mol->getAtom(i)->getCoor(),mol->getAtom(j)->getCoor()), mol->getAtom(j));
+      pdin.at(j).at(i)=pdin.at(i).at(j);
+//      std::cerr << i << " " << j << " " << pdin.at(i).at(j).first << " " << pdin.at(i).at(j).second->getSummary() << std::endl;
+    }
+  }
+}
+
+void Analyze::pcasso(Molecule* mol){
+	std::vector<std::vector<std::pair<double, Atom*> > > p;
+	
+	Analyze::pairwiseDistance(mol, p);
+}

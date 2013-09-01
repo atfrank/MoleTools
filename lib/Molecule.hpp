@@ -19,6 +19,7 @@ class Molecule {
 		bool copyFlag; //This molecule is a copy if true
 		std::map< std::string, std::vector<bool> > storedSel;
 		std::string remarks;
+		bool iCodeFlag;
 
   public:
 		Molecule(); //Constructor
@@ -57,6 +58,9 @@ class Molecule {
 		void addRemark(const std::string& remin);
 		void clearRemark();
 		std::string getRemark();
+		bool checkICode();
+		void setICodeFlag(bool iCodeFlagIn=false);
+		bool getICodeFlag();
 
     double lsqfit (Molecule *refmol, bool transform=true);
 		double rmsd (Molecule *refmol);
@@ -65,6 +69,7 @@ class Molecule {
     void translate (const Vector &u);
     void rotate (const double &r1c1, const double &r1c2, const double &r1c3, const double &r2c1, const double &r2c2, const double &r2c3, const double &r3c1, const double &r3c2, const double &r3c3);
     void center (bool selFlag=true);
+		void pcasso ();
 
 		//Virtual functions
 		virtual void format();

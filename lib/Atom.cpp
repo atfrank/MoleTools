@@ -66,6 +66,7 @@ void Atom::clone(Atom* atmin){
   chainid=atmin->getChainId();
   realid=atmin->getRealId();
   resid=atmin->getResId();
+	icode=atmin->getICode();
   coor=atmin->getCoor();
   occu=atmin->getOccu();
   bfac=atmin->getBFac();

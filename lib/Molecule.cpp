@@ -15,6 +15,7 @@ Molecule::Molecule (){
 	copyFlag=false;
 	storedSel.clear();
 	remarks.clear();
+	iCodeFlag=false;
 }
 
 Molecule::~Molecule (){
@@ -158,6 +159,8 @@ Molecule* Molecule::clone (bool selFlag, bool keep){
     delete this;
   }
 
+	mol->setICodeFlag(mol->checkICode());
+
   return mol;
 }
 
@@ -212,6 +215,8 @@ Molecule* Molecule::copy (bool selFlag){
 			delete chnEntry;
 		}			
 	}	
+
+	mol->setICodeFlag(mol->checkICode());
 
   return mol;
 }
@@ -540,6 +545,10 @@ void Molecule::center (bool selFlag){
   }
 }
 
+void Molecule::pcasso (){
+	Analyze::pcasso(this);
+}
+
 //Virtual Functions
 
 void Molecule::format(){
@@ -636,4 +645,21 @@ void Molecule::clearRemark(){
 
 std::string Molecule::getRemark(){
 	return remarks;
+}
+
+bool Molecule::checkICode(){
+	for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+		if (this->getAtom(i)->getICode().length() != 0 && this->getAtom(i)->getICode().compare(0,1," ") != 0){
+			return true;
+		}
+	}
+	return false;
+}
+
+void Molecule::setICodeFlag(bool iCodeFlagIn){
+	iCodeFlag=iCodeFlagIn;
+}
+
+bool Molecule::getICodeFlag(){
+	return iCodeFlag;
 }

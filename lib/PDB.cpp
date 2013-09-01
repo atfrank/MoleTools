@@ -213,6 +213,8 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
     exit(1);
   }
 
+	mol->setICodeFlag(mol->checkICode());
+
   return mol;
 }
 
@@ -283,7 +285,7 @@ Atom* PDB::processAtomLine (std::string line, Atom* lastAtom){
   atmEntry->setSel(true);
   std::stringstream ss;
   ss << resid;
-  atmEntry->setSummary(chainid+":"+atmEntry->getResName()+ss.str()+"."+Misc::trim(atmEntry->getAtmName()));
+  atmEntry->setSummary(chainid+":"+atmEntry->getResName()+ss.str()+Misc::trim(atmEntry->getICode())+"."+Misc::trim(atmEntry->getAtmName()));
 
   return atmEntry;
 }
