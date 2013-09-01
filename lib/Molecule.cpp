@@ -557,14 +557,21 @@ void Molecule::modPseudoCenter(){
 
 			if(lastAtom !=NULL){
 				if (lastAtom->getResId()+1 == atmEntry->getResId()){
+					//Compute pseudocenter for last atom
 					lastAtom->setCoor((lastAtom->getCoor()+atmEntry->getCoor())/2.0);
 				}
+				else if (lastAtom->getResId() == atmEntry->getResId() && (lastAtom->getICode().compare(0,1,atmEntry->getICode(),0,1) != 0)){
+					//Compute pseudocenter for last atom
+	        lastAtom->setCoor((lastAtom->getCoor()+atmEntry->getCoor())/2.0);
+				}
 				else{
+					//No i+1 neighbor, modify coordinates
 					lastAtom->setCoor(Vector(9999.9, 9999.9, 9999.9));
 				}
 			}
 			lastAtom=atmEntry;
 		}
+		//No i+1 neighbor for last atom in chain, modify coordinates
 		lastAtom->setCoor(Vector(9999.9, 9999.9, 9999.9));
 	}
 }
@@ -607,7 +614,7 @@ void MoleculeCHARMM::format(){
         nextRes=NULL;
       }
       res=chn->getResidue(j);
-      if (res->getResName() == "UNK"){
+      if (res->getResName().compare(0,3,"UNK") == 0){
         nUNK++;
       }
 			for (unsigned int k=0; k< res->getAtmVecSize(); k++){
@@ -616,33 +623,33 @@ void MoleculeCHARMM::format(){
         //  continue;
         //}
 				//Perform Formatting
-				if (atm->getResName() == "HIE"){
+				if (atm->getResName().compare(0,3,"HIE") == 0){
     			atm->setResName("HSE");
   			}
-  			else if (atm->getResName() == "HID"){
+  			else if (atm->getResName().compare(0,3,"HID") == 0){
     			atm->setResName("HSD");
   			}
-  			else if (atm->getResName() == "HIP"){
+  			else if (atm->getResName().compare(0,3,"HIP") == 0){
     			atm->setResName("HSP");
   			}
-				else if (atm->getResName() == "CYX"){
+				else if (atm->getResName().compare(0,3,"CYX") == 0){
           std::cerr << "Warning: " << atm->getSummary() << " has a disulfide bond" << std::endl;
 					this->addRemark("Warning: ");
           atm->setResName("CYS");
         }
-  			else if (atm->getResName() == "AHE" && lastRes != NULL){
+  			else if (atm->getResName().compare(0,3,"AHE") == 0 && lastRes != NULL){
     			atm->setResName(lastRes->getResName());
 					atm->setResId(lastRes->getResId());
   			}
-  			else if (atm->getResName() == "NME" && lastRes != NULL){
+  			else if (atm->getResName().compare(0,3,"NME") == 0 && lastRes != NULL){
     			atm->setResName(lastRes->getResName());
 					atm->setResId(lastRes->getResId());
   			}
-				else if (atm->getResName() == "ACE" && nextRes != NULL){
+				else if (atm->getResName().compare(0,3,"ACE") == 0 && nextRes != NULL){
 					atm->setResName(nextRes->getResName());
           atm->setResId(nextRes->getResId());
         }
-  			else if (atm->getResName() == "FOR" || atm->getResName() == "CSO" || atm->getResName() == "CME"){
+  			else if (atm->getResName().compare(0,3,"FOR") == 0 || atm->getResName().compare(0,3,"CSO") == 0 || atm->getResName().compare(0,3,"CME") == 0){
     			std::cerr << "Warning: " << atm->getSummary();
 					std::cerr << " has no matching residue name in CHARMM" << std::endl;
 					this->addRemark("Warning: ");

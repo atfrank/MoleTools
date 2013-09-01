@@ -18,7 +18,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
   Mol2 mol2;
 	bool readAtoms;
 
-	if (format == "CHARMM"){
+	if (format.compare(0,6,"CHARMM") == 0){
 		mol=new MoleculeCHARMM;
 	}
 	else{
@@ -30,7 +30,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
 	mol->setCopyFlag(false);
 	readAtoms=false;
 
-  if (ifile == "-"){ //Input from pipe
+  if (ifile.compare(0,1,"-") == 0){ //Input from pipe
     inp=&std::cin;
   }
   else{ //Input from file
@@ -41,7 +41,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
   while (inp->good() && !(inp->eof())){
 
     getline(*inp,line);
-		if (line.size() >= 14 && line.compare(0,13,"@<TRIPOS>ATOM")==0){
+		if (line.size() >= 14 && line.compare(0,13,"@<TRIPOS>ATOM") == 0){
 			readAtoms=true;
     }
 		else if (line.compare(0,9,"@<TRIPOS>") == 0){
@@ -70,7 +70,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
         	chnEntry->addResidue(resEntry);
         	mol->addResidue(resEntry);
         	resEntry=new Residue;
-					if (lastAtom->getResName() == "NME" || lastAtom->getResName() == "AHE" || atmEntry->getResName() == "UNK"){
+					if (lastAtom->getResName().compare(0,3,"NME") == 0 || lastAtom->getResName().compare(0,3,"AHE") == 0 || atmEntry->getResName().compare(0,3,"UNK") == 0){
 						mol->addChain(chnEntry);
 						chnEntry=new Chain;
 					}

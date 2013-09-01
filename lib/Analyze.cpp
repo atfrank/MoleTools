@@ -432,6 +432,7 @@ double Analyze::dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecu
 
 void Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector<std::pair<double, Atom*> > >& pdin){
 	unsigned int i, j;
+	double distance;
 
 	//Note that for each pairwise distance i,j, the std::pair will contain
 	//distance between i and j and a pointer that points to atom j.
@@ -448,7 +449,11 @@ void Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector<std::pair<
 
   for (i=0; i< mol->getAtmVecSize(); i++){
     for (j=i+1; j< mol->getAtmVecSize(); j++){
-      pdin.at(i).at(j)=std::make_pair(Analyze::distance(mol->getAtom(i)->getCoor(),mol->getAtom(j)->getCoor()), mol->getAtom(j));
+			distance=9999.9;
+			if (mol->getAtom(i)->getX() < 9999.9 && mol->getAtom(j)->getX() < 9999.9){
+				distance=Analyze::distance(mol->getAtom(i)->getCoor(), mol->getAtom(j)->getCoor());
+			}
+      pdin.at(i).at(j)=std::make_pair(distance, mol->getAtom(j));
       pdin.at(j).at(i)=pdin.at(i).at(j);
 //      std::cerr << i << " " << j << " " << pdin.at(i).at(j).first << " " << pdin.at(i).at(j).second->getSummary() << std::endl;
     }
@@ -479,7 +484,7 @@ void Analyze::allAnglesDihedrals(Molecule *mol, std::vector<std::pair<double, do
 				atm2=c->getAtom(j+1);
 			}
 			else{
-				if (j+1 < size && atm1->getResId() == c->getAtom(j+1)->getResId() && atm1->getICode() != c->getAtom(j+1)->getICode()){
+				if (j+1 < size && atm1->getResId() == c->getAtom(j+1)->getResId() && (atm1->getICode().compare(0,1,c->getAtom(j+1)->getICode(),0,1) != 0)){
 					atm2=c->getAtom(j+1);
 				}
 			}
@@ -488,7 +493,7 @@ void Analyze::allAnglesDihedrals(Molecule *mol, std::vector<std::pair<double, do
 				atm3=c->getAtom(j+2);
 			}
 		 	else{
-        if (j+2 < size && atm1->getResId() == c->getAtom(j+2)->getResId() && atm1->getICode() != c->getAtom(j+2)->getICode()){
+        if (j+2 < size && atm1->getResId() == c->getAtom(j+2)->getResId() && (atm1->getICode().compare(0,1,c->getAtom(j+2)->getICode(),0,1) != 0)){
           atm3=c->getAtom(j+2);
         }
       }
@@ -497,7 +502,7 @@ void Analyze::allAnglesDihedrals(Molecule *mol, std::vector<std::pair<double, do
         atm4=c->getAtom(j+3);
       }
 			else{
-        if (j+3 < size && atm1->getResId() == c->getAtom(j+3)->getResId() && atm1->getICode() != c->getAtom(j+3)->getICode()){
+        if (j+3 < size && atm1->getResId() == c->getAtom(j+3)->getResId() && (atm1->getICode().compare(0,1,c->getAtom(j+3)->getICode(),0,1) !=0)){
           atm4=c->getAtom(j+3);
         }
       }
@@ -539,5 +544,7 @@ void Analyze::pcasso(Molecule* mol){
 	Analyze::allAnglesDihedrals(cmol, caAngDihe);
 
 	//Analyze all pseudocenter
-	cmol->modPseudoCenter();	
+	cmol->modPseudoCenter();
+	Analyze::pairwiseDistance(cmol, paPairDist);
+	Analyze::allAnglesDihedrals(cmol, paAngDihe);
 }

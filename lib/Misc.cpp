@@ -3,7 +3,7 @@
 #include "Misc.hpp"
 
 std::string Misc::single (const std::string &resnamein){
-	if (resnamein == "T"){
+	if (resnamein.compare(0,1,"T") == 0){
 
 	}
 	

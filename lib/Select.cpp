@@ -199,13 +199,13 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     out.clear();
     std::set_difference(ref.begin(), ref.end(), cmpCurr.begin(), cmpCurr.end(), back_inserter(out));
   }
-	else if (selKeysRes.find(str) != selKeysRes.end() && group == "residue"){
+	else if (selKeysRes.find(str) != selKeysRes.end() && group.compare(0,7,"residue") == 0){
 	  out.clear();
     if (selKeysRes[str].length() > 0){
 		  out=Select::recursiveDescentParser(selKeysRes[str], ref, group);
     }
 	}
-	else if (selKeysAtm.find(str) != selKeysAtm.end() && group == "atom"){
+	else if (selKeysAtm.find(str) != selKeysAtm.end() && group.compare(0,4,"atom") == 0){
 		out.clear();
     if (selKeysAtm[str].length() > 0){
 		  out=Select::recursiveDescentParser(selKeysAtm[str], ref, group);
@@ -214,7 +214,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
   else{
     out.clear();
     for (i=0; i< ref.size(); i++){
-      if (group == "chain"){
+      if (group.compare(0,5,"chain") == 0){
         if (str == ref.at(i)->getChainId()){
           out.push_back(ref.at(i));
         }
@@ -225,7 +225,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
           continue;
         }
       }
-      else if (group == "residue"){
+      else if (group.compare(0,7,"residue") == 0){
         int resnum;
         std::stringstream(str) >> resnum;
         if (Misc::isdigit(str) && resnum == ref.at(i)->getResId()){
@@ -241,7 +241,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
           continue;
         }
       }
-      else if (group == "atom"){
+      else if (group.compare(0,4,"atom") == 0){
         if (str == Misc::trim(ref.at(i)->getAtmName())){
           out.push_back(ref.at(i));
         }
@@ -410,7 +410,7 @@ bool Select::atom(const std::string &str, std::string typein, const std::vector<
 	pos=str.find_first_not_of("0123456789");
 	atmType=str.substr(pos,1);
 
-	if (typein == "heavy" && atmType != "H" && std::find(AtomVec.begin(),AtomVec.end(), str) == AtomVec.end()){
+	if (typein.compare(0,5,"heavy") == 0 && atmType != "H" && std::find(AtomVec.begin(),AtomVec.end(), str) == AtomVec.end()){
 		return true;
 	}
 	else if (atmType == typein && std::find(AtomVec.begin(),AtomVec.end(), str) == AtomVec.end()){

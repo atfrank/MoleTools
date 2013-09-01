@@ -62,7 +62,7 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
 				else{
 					out << std::setw(4) << std::left << atm->getResName();
 				}
-				if (chnFlag == true && atm->getChainId() == " "){
+				if (chnFlag == true && atm->getChainId().compare(0,1," ")==0){
 					while (mapIds.find(currId) != mapIds.end()){
 						currId++;
 					}
@@ -128,7 +128,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
   Atom *lastAtom;
   PDB pdb;
 
-	if (format == "CHARMM"){
+	if (format.compare(0,6,"CHARMM") == 0){
 		mol=new MoleculeCHARMM;
 	}
 	else{
@@ -139,7 +139,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
   lastAtom=NULL;
 	mol->setCopyFlag(false);
 
-  if (ifile == "-"){ //Input from pipe
+  if (ifile.compare(0,1,"-") == 0){ //Input from pipe
     inp=&std::cin;
   }
   else{ //Input from file
@@ -150,7 +150,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
   while (inp->good() && !(inp->eof())){
 
     getline(*inp,line);
-    if (line.size() > 6 && line.compare(0,6,"MODEL ")==0){
+    if (line.size() > 6 && line.compare(0,6,"MODEL ") == 0){
       std::stringstream(line.substr(10,4)) >> currModel;
       if ((model==0 && currModel == 1) || currModel==model){
 				modelFlag=true;
@@ -159,10 +159,10 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
 				modelFlag=false;
 			}
     }
-		else if (line.size() > 6 && line.compare(0,6,"REMARK")==0 && remFlag == true){
+		else if (line.size() > 6 && line.compare(0,6,"REMARK") == 0 && remFlag == true){
 			mol->addRemark(line);
 		}
-    else if (modelFlag && line.size() >= 54 && (line.compare(0,4,"ATOM")==0 || line.compare(0,6,"HETATM")==0 || line.compare(0,5,"HETAT")==0)){
+    else if (modelFlag && line.size() >= 54 && (line.compare(0,4,"ATOM") == 0 || line.compare(0,6,"HETATM") == 0 || line.compare(0,5,"HETAT") == 0)){
       //Atom
       atmEntry=pdb.processAtomLine(line, lastAtom);
       mol->addAtom(atmEntry);
@@ -291,26 +291,26 @@ Atom* PDB::processAtomLine (std::string line, Atom* lastAtom){
 }
 
 std::string PDB::formatCHARMMResName (Atom* atmEntry){
-	if (atmEntry->getResName() == "HIE"){
+	if (atmEntry->getResName().compare(0,3,"HIE") == 0){
 		return "HSE";
 	}
-	else if (atmEntry->getResName() == "HID"){
+	else if (atmEntry->getResName().compare(0,3,"HID") == 0){
 		return "HSD";
 	}
-	else if (atmEntry->getResName() == "HIP"){
+	else if (atmEntry->getResName().compare(0,3,"HIP") == 0){
 		return "HSP";
 	}
-	else if (atmEntry->getResName() == "AHE"){
+	else if (atmEntry->getResName().compare(0,3,"AHE") == 0){
 		return "CT2";
 	}
-	else if (atmEntry->getResName() == "NME"){
+	else if (atmEntry->getResName().compare(0,3,"NME") == 0){
 		return "CT3";
 	}
-	else if (atmEntry->getResName() == "CYX"){
+	else if (atmEntry->getResName().compare(0,3,"CYX") == 0){
 		std::cerr << "Warning: " << atmEntry->getSummary() << " has a disulfide bond" << std::endl;
 		return "CYS";
 	}
-	else if (atmEntry->getResName() == "FOR" || atmEntry->getResName() == "CSO" || atmEntry->getResName() == "CME"){
+	else if (atmEntry->getResName().compare(0,3,"FOR") == 0 || atmEntry->getResName().compare(0,3,"CSO") == 0 || atmEntry->getResName().compare(0,3,"CME") == 0 ){
 		std::cerr << "Warning: " << atmEntry->getSummary() << " has no matching residue name in CHARMM" << std::endl;
 		return atmEntry->getResName();
 	}
@@ -320,10 +320,10 @@ std::string PDB::formatCHARMMResName (Atom* atmEntry){
 }
 
 int PDB::formatCHARMMResId(Atom* atmEntry, Residue* lastRes, Residue* nextRes){
-	if (atmEntry->getResName() == "ACE" && nextRes != NULL){
+	if (atmEntry->getResName().compare(0,3,"ACE") == 0 && nextRes != NULL){
 		return nextRes->getResId();
 	}
-	else if ((atmEntry->getResName() == "AHE" || atmEntry->getResName() == "NME") && lastRes != NULL){
+	else if ((atmEntry->getResName().compare(0,3,"AHE") == 0 || atmEntry->getResName().compare(0,3,"NME") == 0) && lastRes != NULL){
 		return lastRes->getResId();
 	}
 	else{
