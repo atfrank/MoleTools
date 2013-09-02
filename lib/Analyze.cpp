@@ -524,6 +524,8 @@ void Analyze::allAnglesDihedrals(Molecule *mol, std::vector<std::pair<double, do
 }
 
 void Analyze::pcasso(Molecule* mol){
+	Chain *c;
+	Atom *a;
 	std::map<std::pair<Atom*, Atom*>, double> caPairDist; //Ca-Ca Distances
 	std::map<std::pair<Atom*, Atom*>, double> paPairDist; //Pseudocenter-Pseudocenter Distances
 	std::vector<std::pair<double, double> > caAngDihe; //Ca-Ca Angle/Diehdral
@@ -544,4 +546,14 @@ void Analyze::pcasso(Molecule* mol){
 	cmol->modPseudoCenter();
 	Analyze::pairwiseDistance(cmol, paPairDist);
 	Analyze::allAnglesDihedrals(cmol, paAngDihe);
+
+	for (unsigned int ichain=0; ichain < cmol->getChnVecSize(); ichain++){
+		c=cmol->getChain(ichain);
+		for (unsigned iatom=0; iatom < c->getAtmVecSize(); iatom++){
+			a=c->getAtom(iatom);
+			//std::cout << a->getPdbId() << " " << a->getChainId() << " " << a->getResId() << " ";
+
+			//std::cout << std::endl;
+		}
+	}
 }

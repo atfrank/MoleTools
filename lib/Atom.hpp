@@ -14,6 +14,7 @@
 
 class Atom {
   private:
+		std::string pdbid;
     std::string recname; //Record name: "ATOM  ", "HETATM"
     int  atmnum; //Atom serial number
     std::string atmname; //Atom name
@@ -40,6 +41,7 @@ class Atom {
     void clone(Atom* atmin);
 
     //Get atom info
+		std::string& getPdbId();
     std::string& getRecName();
     int& getAtmNum();
     std::string& getAtmName();
@@ -61,6 +63,7 @@ class Atom {
 		std::string& getSS();
 	
     //Set atom info
+		void setPdbId(const std::string& pdbidin);
     void setRecName(const std::string& recnamein);
     void setAtmNum(const int& atmnumin);
     void setAtmName(const std::string& atmnamein);

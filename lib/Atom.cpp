@@ -3,6 +3,7 @@
 #include "Atom.hpp"
 
 Atom::Atom(){
+	pdbid="NoID";
   recname="ATOM";
   atmnum=0;
   atmname="    ";
@@ -21,7 +22,7 @@ Atom::Atom(){
 }
 
 Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int residin, Vector coorin, std::string segidin){
-
+	pdbid="NoID";
   recname="ATOM";
   atmnum=atmnumin;
   atmname=atmnamein;
@@ -40,6 +41,7 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
 }
 
 void Atom::reset(){
+	pdbid="NoID";
   recname="ATOM";
   atmnum=0;
   atmname="    ";
@@ -58,6 +60,7 @@ void Atom::reset(){
 }
 
 void Atom::clone(Atom* atmin){
+	pdbid=atmin->getPdbId();
   recname=atmin->getRecName();
   atmnum=atmin->getAtmNum();
   atmname=atmin->getAtmName();
@@ -77,6 +80,10 @@ void Atom::clone(Atom* atmin){
 }
 
 //Get atom info
+std::string& Atom::getPdbId(){
+	return pdbid;
+}
+
 std::string& Atom::getRecName(){
   return recname;
 }
@@ -154,6 +161,10 @@ std::string& Atom::getSS(){
 }
 
 //Set atom info
+void Atom::setPdbId(const std::string& pdbidin){
+	pdbid=pdbidin;
+}
+
 void Atom::setRecName(const std::string& recnamein){
   recname=recnamein;
 }

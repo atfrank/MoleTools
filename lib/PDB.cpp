@@ -127,6 +127,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
   Atom *atmEntry; //Created in heap by processAtomLine
   Atom *lastAtom;
   PDB pdb;
+	std::string PDBID;
 
 	if (format.compare("CHARMM") == 0){
 		mol=new MoleculeCHARMM;
@@ -145,6 +146,8 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
   else{ //Input from file
     pdbFile.open((ifile).c_str());
     inp=&pdbFile;
+		PDBID=ifile.substr(0,4);
+		Misc::toupper(PDBID);
   }
 
   while (inp->good() && !(inp->eof())){
@@ -165,6 +168,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
     else if (modelFlag && line.size() >= 54 && (line.compare(0,4,"ATOM") == 0 || line.compare(0,6,"HETATM") == 0 || line.compare(0,5,"HETAT") == 0)){
       //Atom
       atmEntry=pdb.processAtomLine(line, lastAtom);
+			atmEntry->setPdbId(PDBID);
       mol->addAtom(atmEntry);
 
       //Residue/Chain
