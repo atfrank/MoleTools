@@ -53,47 +53,47 @@ int main (int argc, char **argv){
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
-    if (currArg == "-h" || currArg == "-help"){
+    if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
     }
-    else if (currArg == "-pdb"){
+    else if (currArg.compare("-pdb") == 0){
       currArg=argv[++i];
       pdb=currArg;
     }
-    else if (currArg == "-sel"){
+    else if (currArg.compare("-sel") == 0){
       currArg=argv[++i];
       sel=currArg;
     }
-    else if (currArg == "-out"){
+    else if (currArg.compare("-out") == 0){
       currArg=argv[++i];
       tag=currArg;
     }
-    else if (currArg == "-outsel"){
+    else if (currArg.compare("-outsel") == 0){
       currArg=argv[++i];
       outsel=currArg;
     }
-    else if (currArg == "-skip"){
+    else if (currArg.compare("-skip") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> skip;
     }
-    else if (currArg == "-start"){
+    else if (currArg.compare("-start") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> start;
       start--;
     }
-    else if (currArg == "-stop"){
+    else if (currArg.compare("-stop") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> stop;
     }
-    else if (currArg == "-show"){
+    else if (currArg.compare("-show") == 0){
       show=true;
     }
-    else if (currArg == "-format"){
+    else if (currArg.compare("-format") == 0){
       currArg=argv[++i];
       Misc::toupper(currArg);
       format=currArg;
     }
-    else if (currArg == "-chains"){
+    else if (currArg.compare("-chains") == 0){
       chnFlag=true;
     }
     else{

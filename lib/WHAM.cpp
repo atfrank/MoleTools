@@ -47,7 +47,7 @@ unsigned int WHAM::readMetadata(){
   while (metainp->good() && !(metainp->eof())){
     getline(*metainp, line);
     Misc::splitStr(line, " \t", s, false);
-    if (s.size() == 3 && (s.at(0) != "!" || s.at(0) != "#")){
+    if (s.size() == 3 && (s.at(0).compare("!") != 0 || s.at(0).compare("#") != 0)){
       inps.resize(this->getNWindow()+1);
       inps.at(this->getNWindow())=s;
       this->setNWindow(this->getNWindow()+1);

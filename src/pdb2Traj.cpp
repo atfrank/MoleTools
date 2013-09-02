@@ -36,14 +36,14 @@ int main (int argc, char **argv){
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
-    if (currArg == "-h" || currArg == "-help"){
+    if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
     }
-    else if (currArg == "-out"){
+    else if (currArg.compare("-out") == 0){
       currArg=argv[++i];
       fout=currArg;
     }
-    else if (currArg == "-outsel"){
+    else if (currArg.compare("-outsel") == 0){
       currArg=argv[++i];
       outsel=currArg;
     }

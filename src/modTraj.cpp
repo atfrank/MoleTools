@@ -117,39 +117,39 @@ int main (int argc, char **argv){
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
-    if (currArg == "-h" || currArg == "-help"){
+    if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
     }
-    else if (currArg == "-pdb"){
+    else if (currArg.compare("-pdb") == 0){
       currArg=argv[++i];
       pdb=currArg;
     }
-    else if (currArg == "-sel"){
+    else if (currArg.compare("-sel") == 0){
       currArg=argv[++i];
       sel=currArg;
     }
-    else if (currArg == "-fit"){
+    else if (currArg.compare("-fit") == 0){
 			currArg=argv[++i];
 			fitpdb=currArg;
       fit=true;
     }
-    else if (currArg == "-fitsel"){
+    else if (currArg.compare("-fitsel") == 0){
       currArg=argv[++i];
       fitsel=currArg;
       fit=true;
     }
-    else if (currArg == "-recenter"){
+    else if (currArg.compare("-recenter") == 0){
       recenter=true;
     }
-    else if (currArg == "recsel"){
+    else if (currArg.compare("recsel") == 0){
       currArg=argv[++i];
       recsel=currArg;
       recenter=true;
     }
-		else if (currArg == "-center"){
+		else if (currArg.compare("-center") == 0){
 			center=true;
 		}	
-		else if (currArg == "-translate"){
+		else if (currArg.compare("-translate") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> dx;
       currArg=argv[++i];
@@ -159,7 +159,7 @@ int main (int argc, char **argv){
       dxyz=Vector(dx, dy, dz);
       translate=true;
     }
-    else if (currArg == "-rotate"){
+    else if (currArg.compare("-rotate") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> r1c1;
       currArg=argv[++i];
@@ -180,63 +180,63 @@ int main (int argc, char **argv){
       std::stringstream(currArg) >> r3c3;
       rotate=true;
     }
-    else if (currArg == "-out"){
+    else if (currArg.compare("-out") == 0){
       currArg=argv[++i];
       fout=currArg;
 			out=true;
     }
-    else if (currArg == "-outsel"){
+    else if (currArg.compare("-outsel") == 0){
       currArg=argv[++i];
       outsel=currArg;
 			out=true;
     }
-    else if (currArg == "-skip"){
+    else if (currArg.compare("-skip") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> skip;
     }
-    else if (currArg == "-start"){
+    else if (currArg.compare("-start") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> start;
       start--;
       startFlag=true;
     }
-    else if (currArg == "-stop"){
+    else if (currArg.compare("-stop") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> stop;
     }
-    else if (currArg == "-list"){
+    else if (currArg.compare("-list") == 0){
       currArg=argv[++i];
       flist=currArg;
     }
-    else if (currArg == "-show"){
+    else if (currArg.compare("-show") == 0){
       show=true;
 			scan=false;
     }
-		else if (currArg == "-scan"){
+		else if (currArg.compare("-scan") == 0){
 			scan=true;
 			show=false;
 		}
-		else if (currArg == "-setnframe"){
+		else if (currArg.compare("-setnframe") == 0){
 			currArg=argv[++i];
 		  std::stringstream(currArg) >> setnframe;
 		}
-		else if (currArg == "-setnpriv"){
+		else if (currArg.compare("-setnpriv") == 0){
 			currArg=argv[++i];
 			std::stringstream(currArg) >> setnpriv;
 		}
-		else if (currArg == "-setnsavc"){
+		else if (currArg.compare("-setnsavc") == 0){
 			currArg=argv[++i];
 			std::stringstream(currArg) >> setnsavc;
 		}
-		else if (currArg == "-setnstep"){
+		else if (currArg.compare("-setnstep") == 0){
 			currArg=argv[++i];
 			std::stringstream(currArg) >> setnstep;
 		}
-		else if (currArg == "-settstep"){
+		else if (currArg.compare("-settstep") == 0){
 			currArg=argv[++i];
 	    std::stringstream(currArg) >> settstep;
 		}
-    else if (currArg == "-verbose" || currArg == "-v"){
+    else if (currArg.compare("-verbose") == 0 || currArg.compare("-v") == 0){
       verbose=true;
     }
     else{

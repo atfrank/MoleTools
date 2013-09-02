@@ -623,33 +623,33 @@ void MoleculeCHARMM::format(){
         //  continue;
         //}
 				//Perform Formatting
-				if (atm->getResName().compare(0,3,"HIE") == 0){
+				if (atm->getResName().compare("HIE") == 0){
     			atm->setResName("HSE");
   			}
-  			else if (atm->getResName().compare(0,3,"HID") == 0){
+  			else if (atm->getResName().compare("HID") == 0){
     			atm->setResName("HSD");
   			}
-  			else if (atm->getResName().compare(0,3,"HIP") == 0){
+  			else if (atm->getResName().compare("HIP") == 0){
     			atm->setResName("HSP");
   			}
-				else if (atm->getResName().compare(0,3,"CYX") == 0){
+				else if (atm->getResName().compare("CYX") == 0){
           std::cerr << "Warning: " << atm->getSummary() << " has a disulfide bond" << std::endl;
 					this->addRemark("Warning: ");
           atm->setResName("CYS");
         }
-  			else if (atm->getResName().compare(0,3,"AHE") == 0 && lastRes != NULL){
+  			else if (atm->getResName().compare("AHE") == 0 && lastRes != NULL){
     			atm->setResName(lastRes->getResName());
 					atm->setResId(lastRes->getResId());
   			}
-  			else if (atm->getResName().compare(0,3,"NME") == 0 && lastRes != NULL){
+  			else if (atm->getResName().compare("NME") == 0 && lastRes != NULL){
     			atm->setResName(lastRes->getResName());
 					atm->setResId(lastRes->getResId());
   			}
-				else if (atm->getResName().compare(0,3,"ACE") == 0 && nextRes != NULL){
+				else if (atm->getResName().compare("ACE") == 0 && nextRes != NULL){
 					atm->setResName(nextRes->getResName());
           atm->setResId(nextRes->getResId());
         }
-  			else if (atm->getResName().compare(0,3,"FOR") == 0 || atm->getResName().compare(0,3,"CSO") == 0 || atm->getResName().compare(0,3,"CME") == 0){
+  			else if (atm->getResName().compare("FOR") == 0 || atm->getResName().compare("CSO") == 0 || atm->getResName().compare("CME") == 0){
     			std::cerr << "Warning: " << atm->getSummary();
 					std::cerr << " has no matching residue name in CHARMM" << std::endl;
 					this->addRemark("Warning: ");

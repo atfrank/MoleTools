@@ -16,7 +16,6 @@ class Misc {
   private:
 
   public:
-		static std::string single (const std::string &resnamein);
     static void splitStr (const std::string &str, const std::string &delim, std::vector<std::string> &out, const bool repeat=true);
 		template <class SplitVec>
 			static void splitNum (const std::string &str, const std::string &delim, SplitVec &out, const bool repeat=true);

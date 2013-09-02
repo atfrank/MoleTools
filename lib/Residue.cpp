@@ -86,54 +86,54 @@ void Residue::deselAll(){
 
 std::string Residue::aa321(const std::string &aa){
 
-	if(aa.compare(0,3,"ALA") == 0){return "A";}
-	else if(aa.compare(0,3,"CYS") == 0){return "C";}
-	else if (aa.compare(0,3,"ASP") == 0){return "D";}
-	else if (aa.compare(0,3,"GLU") == 0){return "E";}
-	else if (aa.compare(0,3,"PHE") == 0){return "F";}
-	else if (aa.compare(0,3,"GLY") == 0){return "G";}
-	else if (aa.compare(0,3,"HIS") == 0 || aa.compare(0,3,"HSD") == 0 || aa.compare(0,3,"HSE") == 0 || aa.compare(0,3,"HSP") == 0){
+	if(aa.compare("ALA") == 0){return "A";}
+	else if(aa.compare("CYS") == 0){return "C";}
+	else if (aa.compare("ASP") == 0){return "D";}
+	else if (aa.compare("GLU") == 0){return "E";}
+	else if (aa.compare("PHE") == 0){return "F";}
+	else if (aa.compare("GLY") == 0){return "G";}
+	else if (aa.compare("HIS") == 0 || aa.compare("HSD") == 0 || aa.compare("HSE") == 0 || aa.compare("HSP") == 0){
 		return "H";
 	}
-	else if (aa.compare(0,3,"ILE") == 0){return "I";}
-	else if (aa.compare(0,3,"LYS") == 0){return "K";}
-	else if (aa.compare(0,3,"LEU") == 0){return "L";}
-	else if (aa.compare(0,3,"MET") == 0){return "M";}
-	else if (aa.compare(0,3,"ASN") == 0){return "N";}
-	else if (aa.compare(0,3,"PRO") == 0){return "P";}
-	else if (aa.compare(0,3,"GLN") == 0){return "Q";}
-	else if (aa.compare(0,3,"ARG") == 0){return "R";}
-	else if (aa.compare(0,3,"SER") == 0){return "S";}
-	else if (aa.compare(0,3,"THR") == 0){return "T";}
-	else if (aa.compare(0,3,"VAL") == 0){return "V";}
-	else if (aa.compare(0,3,"TRP") == 0){return "W";}
-	else if (aa.compare(0,3,"TYR") == 0){return "Y";}
+	else if (aa.compare("ILE") == 0){return "I";}
+	else if (aa.compare("LYS") == 0){return "K";}
+	else if (aa.compare("LEU") == 0){return "L";}
+	else if (aa.compare("MET") == 0){return "M";}
+	else if (aa.compare("ASN") == 0){return "N";}
+	else if (aa.compare("PRO") == 0){return "P";}
+	else if (aa.compare("GLN") == 0){return "Q";}
+	else if (aa.compare("ARG") == 0){return "R";}
+	else if (aa.compare("SER") == 0){return "S";}
+	else if (aa.compare("THR") == 0){return "T";}
+	else if (aa.compare("VAL") == 0){return "V";}
+	else if (aa.compare("TRP") == 0){return "W";}
+	else if (aa.compare("TYR") == 0){return "Y";}
 	else{
 		return "";
 	}
 }
 
 std::string Residue::aa123(const std::string &aa){
-	if(aa.compare(0,1,"A") == 0){return "A";}
-  else if(aa.compare(0,1,"C") == 0){return "CYS";} 
-  else if (aa.compare(0,1,"D") == 0){return "ASP";}
-  else if (aa.compare(0,1,"E") == 0){return "GLY";}
-  else if (aa.compare(0,1,"F") == 0){return "PHE";}
-  else if (aa.compare(0,1,"G") == 0){return "GLY";}
-  else if (aa.compare(0,1,"H") == 0){return "HIS";}
-  else if (aa.compare(0,1,"I") == 0){return "ILE";}
-  else if (aa.compare(0,1,"K") == 0){return "LYS";}
-  else if (aa.compare(0,1,"L") == 0){return "LEU";}
-  else if (aa.compare(0,1,"M") == 0){return "MET";}
-  else if (aa.compare(0,1,"N") == 0){return "ASN";}
-  else if (aa.compare(0,1,"P") == 0){return "PRO";}
-  else if (aa.compare(0,1,"Q") == 0){return "GLN";}
-  else if (aa.compare(0,1,"R") == 0){return "ARG";}
-  else if (aa.compare(0,1,"S") == 0){return "SER";}
-  else if (aa.compare(0,1,"T") == 0){return "THR";}
-  else if (aa.compare(0,1,"V") == 0){return "VAL";}
-  else if (aa.compare(0,1,"W") == 0){return "TRP";}
-  else if (aa.compare(0,1,"Y") == 0){return "TYR";}
+	if(aa.compare("A") == 0){return "A";}
+  else if(aa.compare("C") == 0){return "CYS";} 
+  else if (aa.compare("D") == 0){return "ASP";}
+  else if (aa.compare("E") == 0){return "GLY";}
+  else if (aa.compare("F") == 0){return "PHE";}
+  else if (aa.compare("G") == 0){return "GLY";}
+  else if (aa.compare("H") == 0){return "HIS";}
+  else if (aa.compare("I") == 0){return "ILE";}
+  else if (aa.compare("K") == 0){return "LYS";}
+  else if (aa.compare("L") == 0){return "LEU";}
+  else if (aa.compare("M") == 0){return "MET";}
+  else if (aa.compare("N") == 0){return "ASN";}
+  else if (aa.compare("P") == 0){return "PRO";}
+  else if (aa.compare("Q") == 0){return "GLN";}
+  else if (aa.compare("R") == 0){return "ARG";}
+  else if (aa.compare("S") == 0){return "SER";}
+  else if (aa.compare("T") == 0){return "THR";}
+  else if (aa.compare("V") == 0){return "VAL";}
+  else if (aa.compare("W") == 0){return "TRP";}
+  else if (aa.compare("Y") == 0){return "TYR";}
   else{
     return "";
   }	

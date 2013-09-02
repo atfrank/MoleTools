@@ -2,14 +2,6 @@
 
 #include "Misc.hpp"
 
-std::string Misc::single (const std::string &resnamein){
-	if (resnamein.compare(0,1,"T") == 0){
-
-	}
-	
-	return "";
-}
-
 void Misc::splitStr (const std::string &str, const std::string &delim, std::vector<std::string> &out, const bool repeat){
   size_t p0=0;
   size_t p1=std::string::npos;

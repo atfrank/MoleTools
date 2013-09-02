@@ -67,40 +67,40 @@ int main (int argc, char **argv){
   
   for (i=1; i<argc; i++){
     currArg=argv[i];
-    if (currArg == "-h" || currArg == "-help"){
+    if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
     }
-    else if (currArg == "-model"){
+    else if (currArg.compare("-model") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> model; //atoi
     }
-    else if (currArg == "-sel" || currArg == "-nsel"){
+    else if (currArg.compare("-sel") == 0 || currArg.compare("-nsel") == 0){
       currArg=argv[++i];
       sel=currArg;
     }
-    else if (currArg == "-outsel"){
+    else if (currArg.compare("-outsel") == 0){
       currArg=argv[++i];
       outsel=currArg;
     }
-		else if (currArg == "-fitsel"){
+		else if (currArg.compare("-fitsel") == 0){
 			currArg=argv[++i];
 			fitsel=currArg;
 			fit=true;
 		}
-		else if (currArg == "-fit"){
+		else if (currArg.compare("-fit") == 0){
 			currArg=argv[++i];
 			fitpdb=currArg;
 			fit=true;
 		}
-    else if (currArg == "-center"){
+    else if (currArg.compare("-center") == 0){
       center=true;
     }
-    else if (currArg == "-censel"){
+    else if (currArg.compare("-censel") == 0){
       currArg=argv[++i];
       censel=currArg;
       center=true;
     }
-    else if (currArg == "-translate"){
+    else if (currArg.compare("-translate") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> dx;
       currArg=argv[++i];
@@ -110,7 +110,7 @@ int main (int argc, char **argv){
       dxyz=Vector(dx, dy, dz);
       translate=true;
     }
-		else if (currArg == "-rotate"){
+		else if (currArg.compare("-rotate") == 0){
 			currArg=argv[++i];
       std::stringstream(currArg) >> r1c1;
       currArg=argv[++i];
@@ -131,12 +131,12 @@ int main (int argc, char **argv){
       std::stringstream(currArg) >> r3c3;
       rotate=true;
 		}
-		else if (currArg == "-format"){
+		else if (currArg.compare("-format") == 0){
 			currArg=argv[++i];
 			Misc::toupper(currArg);
 			format=currArg;
 		}
-		else if (currArg == "-chains"){
+		else if (currArg.compare("-chains") == 0){
 			chnFlag=true;
 		}
     else{

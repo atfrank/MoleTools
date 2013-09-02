@@ -42,30 +42,30 @@ int main (int argc, char **argv){
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
-    if (currArg == "-h" || currArg == "-help"){
+    if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
     }
-    else if (currArg == "-bins"){
+    else if (currArg.compare("-bins") == 0){
       currArg=argv[++i];
       wham->setBins(currArg);
     }
-    else if (currArg == "-iter" || currArg == "-maxiter"){
+    else if (currArg.compare("-iter") == 0 || currArg.compare("-maxiter") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> maxIter;
       wham->setMaxIter(maxIter);
     }
-    else if (currArg == "-tol" || currArg == "-ftol"){
+    else if (currArg.compare("-tol") == 0 || currArg.compare("-ftol") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> tol;
       wham->setTol(tol);
     }
-    else if (currArg == "-Ftol"){
+    else if (currArg.compare("-Ftol") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> tol;
       tol=log(tol);
       wham->setTol(tol);
     }
-    else if (currArg == "-temp" || currArg == "-temps"){
+    else if (currArg.compare("-temp") == 0 || currArg.compare("-temps") == 0){
       currArg=argv[++i];
       if (currArg.find(":") != std::string::npos || Misc::isdouble(currArg)){
         if (wham->setTemp(currArg) == true){
@@ -83,12 +83,12 @@ int main (int argc, char **argv){
         usage();
       }
     }
-    else if (currArg == "-fval"){
+    else if (currArg.compare("-fval") == 0){
       currArg=argv[++i];
       fval=currArg;
       fguess.clear();
     }
-    else if (currArg == "-fguess"){
+    else if (currArg.compare("-fguess") == 0){
       currArg=argv[++i];
       fguess=currArg;
       fval.clear();

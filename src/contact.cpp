@@ -71,45 +71,45 @@ int main (int argc, char **argv){
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
-    if (currArg == "-h" || currArg == "-help"){
+    if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
     }
-    else if (currArg == "-pdb"){
+    else if (currArg.compare("-pdb") == 0){
       currArg=argv[++i];
       pdb=currArg;
     }
-    else if (currArg == "-sel" || currArg == "-nsel"){
+    else if (currArg.compare("-sel") == 0 || currArg.compare("-nsel") == 0){
       currArg=argv[++i];
       sel=currArg;
     }
-		else if (currArg == "-add"){
+		else if (currArg.compare("-add") == 0){
 			currArg=argv[++i];
 			std::stringstream(currArg) >> add;
 		}
-		else if (currArg == "-scale"){
+		else if (currArg.compare("-scale") == 0){
 			currArg=argv[++i];
 			std::stringstream(currArg) >> scale;
 		}
-		else if (currArg == "-ref"){
+		else if (currArg.compare("-ref") == 0){
 			currArg=argv[++i];
 			fcontact=currArg;
 		}
-    else if (currArg == "-skip"){
+    else if (currArg.compare("-skip") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> skip;
     }
-    else if (currArg == "-start"){
+    else if (currArg.compare("-start") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> start;
       start--;
     }
-    else if (currArg == "-prob"){
+    else if (currArg.compare("-prob") == 0){
       probFlag=true;
     }
-		else if (currArg == "-silent"){
+		else if (currArg.compare("-silent") == 0){
 			silentFlag=true;		
 		}
-		else if (currArg == "-verbose"){
+		else if (currArg.compare("-verbose") == 0){
 			verboseFlag=true;
 		}
     else{

@@ -39,10 +39,10 @@ int main (int argc, char **argv){
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
-    if (currArg == "-h" || currArg == "-help"){
+    if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
     }
-		else if (currArg == "-format"){
+		else if (currArg.compare("-format") == 0){
 			currArg=argv[++i];
 			Misc::toupper(currArg);
 			format=currArg;

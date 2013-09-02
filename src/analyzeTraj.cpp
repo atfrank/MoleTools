@@ -81,21 +81,21 @@ int main (int argc, char **argv){
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
-    if (currArg == "-h" || currArg == "-help"){
+    if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
     }
-    else if (currArg == "-pdb"){
+    else if (currArg.compare("-pdb") == 0){
       currArg=argv[++i];
       pdb=currArg;
     }
-    else if (currArg == "-sel" || currArg == "-nsel" || currArg == "-cog"){
+    else if (currArg.compare("-sel") == 0 || currArg.compare("-nsel") == 0 || currArg.compare("-cog") == 0){
 			anin=new AnalyzeCOG;
       //anin->setType("quick");
       currArg=argv[++i];
 			anin->addSel(currArg);
 			analyses.push_back(anin);
     }
-    else if (currArg == "-dsel" || currArg == "-dist" || currArg == "-distance"){
+    else if (currArg.compare("-dsel") == 0 || currArg.compare("-dist") == 0 || currArg.compare("-distance") == 0){
 			anin=new AnalyzeDistance;
       currArg=argv[++i];
 			anin->addSel(currArg);
@@ -103,7 +103,7 @@ int main (int argc, char **argv){
 			anin->addSel(currArg);
 			analyses.push_back(anin);
     }
-		else if (currArg == "-tsel" || currArg == "-angle"){
+		else if (currArg.compare("-tsel") == 0 || currArg.compare("-angle") == 0){
 			anin=new AnalyzeAngle;
 			currArg=argv[++i];
 			anin->addSel(currArg);
@@ -113,7 +113,7 @@ int main (int argc, char **argv){
 			anin->addSel(currArg);
 			analyses.push_back(anin);
 		}
-		else if (currArg == "-qsel" || currArg == "-dihedral"){
+		else if (currArg.compare("-qsel") == 0 || currArg.compare("-dihedral") == 0){
 			anin=new AnalyzeDihedral;
       currArg=argv[++i];
 			anin->addSel(currArg);
@@ -125,53 +125,53 @@ int main (int argc, char **argv){
 			anin->addSel(currArg);
 			analyses.push_back(anin);
 		}
-		else if (currArg == "-fit"){
+		else if (currArg.compare("-fit") == 0){
 			fit=true;
 			currArg=argv[++i];
 			fitpdb=currArg;
 		}
-		else if (currArg == "-fitsel"){
+		else if (currArg.compare("-fitsel") == 0){
 			fit=true;
 			currArg=argv[++i];
 			fitsel=currArg;
 		}
-		else if (currArg == "-rmsd" || currArg == "-rms"){
+		else if (currArg.compare("-rmsd") == 0 || currArg.compare("-rms") == 0){
 			anin=new AnalyzeRMSD;
 			currArg=argv[++i];
 			anin->addSel(currArg);
       analyses.push_back(anin);
 		}
-		else if (currArg == "-rmsf"){
+		else if (currArg.compare("-rmsf") == 0){
 			anin=new AnalyzeRMSF;
 			currArg=argv[++i];
 			anin->addSel(currArg);
 			analyses.push_back(anin);
 		}
-		else if (currArg == "-average"){
+		else if (currArg.compare("-average") == 0){
 			anin=new AnalyzeAverage;
 			currArg=argv[++i];
 			anin->addSel(currArg);
 			analyses.push_back(anin);
 		}
-    else if (currArg == "-skip"){
+    else if (currArg.compare("-skip") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> skip;
     }
-    else if (currArg == "-start"){
+    else if (currArg.compare("-start") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> start;
       start--;
 			startFlag=true;
     }
-		else if (currArg == "-stop"){
+		else if (currArg.compare("-stop") == 0){
 			currArg=argv[++i];
 			std::stringstream(currArg) >> stop;
 		}
-    else if (currArg == "-list"){
+    else if (currArg.compare("-list") == 0){
       currArg=argv[++i];
       flist=currArg;
     }
-    else if (currArg == "-verbose" || currArg == "-v"){
+    else if (currArg.compare("-verbose") == 0 || currArg.compare("-v") == 0){
       verbose=true;
     }
     else{

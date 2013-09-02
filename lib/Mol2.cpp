@@ -18,7 +18,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
   Mol2 mol2;
 	bool readAtoms;
 
-	if (format.compare(0,6,"CHARMM") == 0){
+	if (format.compare("CHARMM") == 0){
 		mol=new MoleculeCHARMM;
 	}
 	else{
@@ -30,7 +30,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
 	mol->setCopyFlag(false);
 	readAtoms=false;
 
-  if (ifile.compare(0,1,"-") == 0){ //Input from pipe
+  if (ifile.compare("-") == 0){ //Input from pipe
     inp=&std::cin;
   }
   else{ //Input from file
@@ -57,7 +57,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
 
       //Residue/Chain
       if (lastAtom != NULL){
-				if(atmEntry->getChainId() != lastAtom->getChainId()){
+				if(atmEntry->getChainId().compare(lastAtom->getChainId()) != 0){
         	//Store last
         	chnEntry->addResidue(resEntry);
         	mol->addResidue(resEntry);
@@ -70,7 +70,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
         	chnEntry->addResidue(resEntry);
         	mol->addResidue(resEntry);
         	resEntry=new Residue;
-					if (lastAtom->getResName().compare(0,3,"NME") == 0 || lastAtom->getResName().compare(0,3,"AHE") == 0 || atmEntry->getResName().compare(0,3,"UNK") == 0){
+					if (lastAtom->getResName().compare("NME") == 0 || lastAtom->getResName().compare("AHE") == 0 || atmEntry->getResName().compare("UNK") == 0){
 						mol->addChain(chnEntry);
 						chnEntry=new Chain;
 					}
@@ -100,7 +100,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
     mol->addChain(chnEntry);
   }
   
-  if (ifile != "-"){
+  if (ifile.compare("-") != 0){
     mol2File.close();
   }
 

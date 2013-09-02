@@ -199,13 +199,13 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     out.clear();
     std::set_difference(ref.begin(), ref.end(), cmpCurr.begin(), cmpCurr.end(), back_inserter(out));
   }
-	else if (selKeysRes.find(str) != selKeysRes.end() && group.compare(0,7,"residue") == 0){
+	else if (selKeysRes.find(str) != selKeysRes.end() && group.compare("residue") == 0){
 	  out.clear();
     if (selKeysRes[str].length() > 0){
 		  out=Select::recursiveDescentParser(selKeysRes[str], ref, group);
     }
 	}
-	else if (selKeysAtm.find(str) != selKeysAtm.end() && group.compare(0,4,"atom") == 0){
+	else if (selKeysAtm.find(str) != selKeysAtm.end() && group.compare("atom") == 0){
 		out.clear();
     if (selKeysAtm[str].length() > 0){
 		  out=Select::recursiveDescentParser(selKeysAtm[str], ref, group);
@@ -214,35 +214,35 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
   else{
     out.clear();
     for (i=0; i< ref.size(); i++){
-      if (group.compare(0,5,"chain") == 0){
-        if (str == ref.at(i)->getChainId()){
+      if (group.compare("chain") == 0){
+        if (str.compare(ref.at(i)->getChainId()) == 0){
           out.push_back(ref.at(i));
         }
-        else if (str == ref.at(i)->getSegId()){
+        else if (str.compare(ref.at(i)->getSegId()) == 0){
           out.push_back(ref.at(i));
         }
         else{
           continue;
         }
       }
-      else if (group.compare(0,7,"residue") == 0){
+      else if (group.compare("residue") == 0){
         int resnum;
         std::stringstream(str) >> resnum;
         if (Misc::isdigit(str) && resnum == ref.at(i)->getResId()){
           out.push_back(ref.at(i));
         }
-        else if (str == ref.at(i)->getResName()){
+        else if (str.compare(ref.at(i)->getResName()) == 0){
           out.push_back(ref.at(i));
         }
-				else if (str == Misc::trim(ref.at(i)->getRecName())){
+				else if (str.compare(Misc::trim(ref.at(i)->getRecName())) == 0){
           out.push_back(ref.at(i));
         }
         else{
           continue;
         }
       }
-      else if (group.compare(0,4,"atom") == 0){
-        if (str == Misc::trim(ref.at(i)->getAtmName())){
+      else if (group.compare("atom") == 0){
+        if (str.compare(Misc::trim(ref.at(i)->getAtmName())) == 0){
           out.push_back(ref.at(i));
         }
         else{
@@ -410,10 +410,10 @@ bool Select::atom(const std::string &str, std::string typein, const std::vector<
 	pos=str.find_first_not_of("0123456789");
 	atmType=str.substr(pos,1);
 
-	if (typein.compare(0,5,"heavy") == 0 && atmType != "H" && std::find(AtomVec.begin(),AtomVec.end(), str) == AtomVec.end()){
+	if (typein.compare("heavy") == 0 && atmType.compare("H") != 0 && std::find(AtomVec.begin(),AtomVec.end(), str) == AtomVec.end()){
 		return true;
 	}
-	else if (atmType == typein && std::find(AtomVec.begin(),AtomVec.end(), str) == AtomVec.end()){
+	else if (atmType.compare(typein) == 0 && std::find(AtomVec.begin(),AtomVec.end(), str) == AtomVec.end()){
 		return true;
 	}
 	else{

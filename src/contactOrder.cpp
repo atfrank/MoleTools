@@ -57,13 +57,13 @@ int main (int argc, char **argv){
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
-    if (currArg == "-h" || currArg == "-help"){
+    if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
     }
-		else if (currArg == "-loss"){
+		else if (currArg.compare("-loss") == 0){
 			lossFlag=true;
 		}
-    else if (currArg == "-skip"){
+    else if (currArg.compare("-skip") == 0){
       currArg=argv[++i];
 			std::stringstream(currArg) >> skip;
 			if (skip > 0){
@@ -77,7 +77,7 @@ int main (int argc, char **argv){
 
 	//Loop through each file
 	for (j=0; j< ifiles.size(); j++){
-		if (ifiles.at(j) == "-"){
+		if (ifiles.at(j).compare("-") == 0){
     	inp=&std::cin;
   	}
   	else{

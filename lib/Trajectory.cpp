@@ -232,7 +232,7 @@ void Trajectory::readHeader(std::ifstream &trjin){
 }
 
 void Trajectory::writeHeader(std::ofstream &trjout){
-  if (format == "CHARMM"){
+  if (format.compare("CHARMM") == 0){
     trjout.seekp(0, std::ios::beg);
 
     binbuf icntrl[21];
