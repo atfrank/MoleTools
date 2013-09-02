@@ -430,7 +430,7 @@ double Analyze::dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecu
 	return Analyze::dihedral(Analyze::centerOfGeometry(sel1,selFlag), Analyze::centerOfGeometry(sel2,selFlag), Analyze::centerOfGeometry(sel3,selFlag), Analyze::centerOfGeometry(sel4,selFlag));
 }
 
-void Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector<std::pair<double, Atom*> > >& pdin){
+void Analyze::pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, double>& pdin){
 	unsigned int i, j;
 	double distance;
 
@@ -441,10 +441,8 @@ void Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector<std::pair<
 
 	pdin.clear();
 
-	pdin.resize(mol->getAtmVecSize());
 	for (i=0; i< mol->getAtmVecSize(); i++){
-		pdin.at(i).resize(mol->getAtmVecSize());
-		pdin.at(i).at(i)=std::make_pair(0.0, mol->getAtom(i)); //Zero diagonal
+		pdin.insert(std::make_pair(std::make_pair(mol->getAtom(i), mol->getAtom(i)), 0.0)); //Zero diagonal
 	}
 
   for (i=0; i< mol->getAtmVecSize(); i++){
@@ -453,9 +451,8 @@ void Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector<std::pair<
 			if (mol->getAtom(i)->getX() < 9999.9 && mol->getAtom(j)->getX() < 9999.9){
 				distance=Analyze::distance(mol->getAtom(i)->getCoor(), mol->getAtom(j)->getCoor());
 			}
-      pdin.at(i).at(j)=std::make_pair(distance, mol->getAtom(j));
-      pdin.at(j).at(i)=pdin.at(i).at(j);
-//      std::cerr << i << " " << j << " " << pdin.at(i).at(j).first << " " << pdin.at(i).at(j).second->getSummary() << std::endl;
+			 pdin.insert(std::make_pair(std::make_pair(mol->getAtom(i), mol->getAtom(j)), distance));
+			  pdin.insert(std::make_pair(std::make_pair(mol->getAtom(j), mol->getAtom(i)), 0.0));
     }
   }
 }
@@ -527,8 +524,8 @@ void Analyze::allAnglesDihedrals(Molecule *mol, std::vector<std::pair<double, do
 }
 
 void Analyze::pcasso(Molecule* mol){
-	std::vector<std::vector<std::pair<double, Atom*> > > caPairDist; //Ca-Ca Distances
-	std::vector<std::vector<std::pair<double, Atom*> > > paPairDist; //Pseudocenter-Pseudocenter Distances
+	std::map<std::pair<Atom*, Atom*>, double> caPairDist; //Ca-Ca Distances
+	std::map<std::pair<Atom*, Atom*>, double> paPairDist; //Pseudocenter-Pseudocenter Distances
 	std::vector<std::pair<double, double> > caAngDihe; //Ca-Ca Angle/Diehdral
 	std::vector<std::pair<double, double> > paAngDihe; //Pseudocenter-Pseudocenter Angle/Dihedral
 	Molecule* cmol;
