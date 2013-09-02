@@ -28,12 +28,22 @@ void Chain::addAtom(Atom* atmEntry){
   }
 }
 
-Atom* Chain::getAtom (int element){
-  return atmVec.at(element);
+Atom* Chain::getAtom (const unsigned int& element){
+	if (element < 0 || element >= atmVec.size()){
+		return NULL;
+	}
+	else{
+  	return atmVec.at(element);
+	}
 }
 
-Residue* Chain::getResidue (int element){
-  return resVec.at(element);
+Residue* Chain::getResidue (const unsigned int& element){
+	if (element < 0 || element >= resVec.size()){
+		return NULL;
+	}
+	else{
+  	return resVec.at(element);
+	}
 }
 
 std::string Chain::getChainId(){

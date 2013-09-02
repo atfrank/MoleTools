@@ -23,8 +23,8 @@ class Chain {
     void addAtom(Atom* atmEntry);
 
     //Get Chain info
-    Atom* getAtom(int element);
-    Residue* getResidue(int element);
+    Atom* getAtom(const unsigned int& element);
+    Residue* getResidue(const unsigned int& element);
     std::string getChainId();
     unsigned int getAtmVecSize();
     unsigned int getResVecSize();
