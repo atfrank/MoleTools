@@ -49,7 +49,7 @@ class Analyze {
 		static double angle (Molecule* sel1, Molecule* sel2, Molecule* sel3, bool selFlag=true);
 	  static double dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecule* sel4,bool selFlag=true);
 		static void pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, double>& pdin);
-		static void allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::pair<double, double> >& adin);
+		static void allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::vector<double> >& anglesin);
 		static void pcasso(Molecule* mol);
 };
 

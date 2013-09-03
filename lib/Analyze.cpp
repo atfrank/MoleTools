@@ -452,29 +452,39 @@ void Analyze::pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, 
   }
 }
 
-void Analyze::allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::pair<double, double> >& adin){
+void Analyze::allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::vector<double> >& angin){
 	unsigned int i, j;
 	Chain *c;
-	Atom *atmI, *iMinusOne, *iPlusOne, *iPlusTwo, *iPlusThree;
+	Atom *atmI, *iMinusTwo, *iMinusOne, *iPlusOne, *iPlusTwo, *iPlusThree;
 	unsigned int size;
-	double angle, dihedral;
+	std::vector<double> angles;
 
 	for (i=0; i< mol->getChnVecSize(); i++){
     c=mol->getChain(i);
     size=c->getAtmVecSize();
     for (j=0; j< c->getAtmVecSize(); j++){
       atmI=c->getAtom(j);
+			iMinusTwo=NULL;
 			iMinusOne=NULL;
       iPlusOne=NULL;
       iPlusTwo=NULL;
       iPlusThree=NULL;
+
+			if (j > 1 && atmI->getResId()-2 == c->getAtom(j-2)->getResId()){
+        iMinusTwo=c->getAtom(j-2);
+      }
+      else{
+        if (j > 1 && atmI->getResId() == c->getAtom(j-2)->getResId() && (atmI->getICode().compare(0,1,c->getAtom(j-1)->getICode(),0,1) != 0)){
+          iMinusTwo=c->getAtom(j-2);
+        }
+      }
 
 			if (j > 0 && atmI->getResId()-1 == c->getAtom(j-1)->getResId()){
         iMinusOne=c->getAtom(j-1);
       }
       else{
         if (j > 0 && atmI->getResId() == c->getAtom(j-1)->getResId() && (atmI->getICode().compare(0,1,c->getAtom(j-1)->getICode(),0,1) != 0)){
-          iPlusOne=c->getAtom(j-1);
+          iMinusOne=c->getAtom(j-1);
         }
       }
 
@@ -504,18 +514,22 @@ void Analyze::allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::pair<double
           iPlusThree=c->getAtom(j+3);
         }
       }
-
-			angle=9999.9;
-			dihedral=9999.9;
+			
+			angles.clear();
+			angles.resize(3, 9999.9);
 			if (iMinusOne != NULL && iPlusOne != NULL){
 				//Get Angle
-				angle=Analyze::angle(iMinusOne->getCoor(), atmI->getCoor(), iPlusOne->getCoor());
+				angles.at(0)=Analyze::angle(iMinusOne->getCoor(), atmI->getCoor(), iPlusOne->getCoor());
 			}
 			if (iPlusOne != NULL && iPlusTwo != NULL && iPlusThree != NULL){
 				//Get Dihedral
-				dihedral=Analyze::dihedral(atmI->getCoor(), iPlusOne->getCoor(), iPlusTwo->getCoor(), iPlusThree->getCoor());
+				angles.at(1)=Analyze::dihedral(atmI->getCoor(), iPlusOne->getCoor(), iPlusTwo->getCoor(), iPlusThree->getCoor());
 			}
-			adin.insert(std::make_pair(atmI, std::make_pair(angle, dihedral)));
+			if (iMinusTwo != NULL && iPlusTwo != NULL){
+				//Get Wide Angle (i-2, i, i+2)
+				angles.at(2)=Analyze::angle(iMinusTwo->getCoor(), atmI->getCoor(), iPlusTwo->getCoor());
+			}
+			angin.insert(std::make_pair(atmI, angles));
     }
   }
 }
@@ -531,12 +545,16 @@ void Analyze::pcasso(Molecule* mol){
 	int diffResId;
 	std::map<std::pair<Atom*, Atom*>, double> caPairDist; //Ca-Ca Distances
 	std::map<std::pair<Atom*, Atom*>, double> pcPairDist; //Pseudocenter-Pseudocenter Distances
-	std::map<Atom*, std::pair<double, double> > caAngDihe; //Ca-Ca Angle/Diehdral
-	std::map<Atom*, std::pair<double, double> > pcAngDihe; //Pseudocenter-Pseudocenter Angle/Dihedral
+	std::map<Atom*, std::vector<double> > caAngles; //Ca-Ca Angle/Diehdral
+	std::map<Atom*, std::vector<double> > pcAngles; //Pseudocenter-Pseudocenter Angle/Dihedral
 	Molecule* cmol;
+	std::vector<double> last;
+	std::vector<double> curr;
 
 	defVal=9999.9;
 	cmol=NULL;
+	last.clear();
+	curr.clear();
 
 	mol->storeSel();
 	mol->select(":.CA");
@@ -546,27 +564,29 @@ void Analyze::pcasso(Molecule* mol){
 
 	//Analyze all C-alpha first
 	Analyze::pairwiseDistance(cmol, caPairDist);
-	Analyze::allAnglesDihedrals(cmol, caAngDihe);
+	Analyze::allAnglesDihedrals(cmol, caAngles);
 
 	//Analyze all pseudocenter
 	cmol->modPseudoCenter();
 	Analyze::pairwiseDistance(cmol, pcPairDist);
-	Analyze::allAnglesDihedrals(cmol, pcAngDihe);
+	Analyze::allAnglesDihedrals(cmol, pcAngles);
 
 	for (unsigned int ichain=0; ichain < cmol->getChnVecSize(); ichain++){
 		c=cmol->getChain(ichain);
 		for (unsigned int iatom=0; iatom < c->getAtmVecSize(); iatom++){
 			ai=c->getAtom(iatom);
-			std::cout << ai->getPdbId() << " " << ai->getChainId() << " " << ai->getResId() << " ";
 			//i-2, i-1, i+1, i+2, i+3, i+4, i+5 Distances
 			for (icapc=0; icapc<=1; icapc++){
 				//Deal with unsigned int subtraction from zero
 				if (iatom == 0){
-					std::cout << defVal << " " << defVal << " ";
+					//std::cout << defVal << " " << defVal << " ";
+					curr.push_back(defVal);
+					curr.push_back(defVal);
 					start=iatom-0;
 				}
 				else if (iatom == 1){
-					std::cout << defVal << " ";
+					//std::cout << defVal << " ";
+					curr.push_back(defVal);
 					start=iatom-1;
 				}
 				else{
@@ -575,7 +595,8 @@ void Analyze::pcasso(Molecule* mol){
 				for (j=start; j<= iatom+5; j++){
 					aj=c->getAtom(j);
 					if (aj == NULL){
-						std::cout << defVal << " ";
+						//std::cout << defVal << " ";
+						curr.push_back(defVal);
 					}
 					else if (j == iatom){
 						//Distance == 0
@@ -583,10 +604,12 @@ void Analyze::pcasso(Molecule* mol){
 					}
 					else{
 						if (icapc == 0){ //Ca
-							std::cout << caPairDist.at(std::make_pair(ai, aj)) << " ";
+							//std::cout << caPairDist.at(std::make_pair(ai, aj)) << " ";
+							curr.push_back(caPairDist.at(std::make_pair(ai, aj)));
 						}
 						else{ //Pseudocenter
-							std::cout << pcPairDist.at(std::make_pair(ai, aj)) << " ";
+							//std::cout << pcPairDist.at(std::make_pair(ai, aj)) << " ";
+							curr.push_back(pcPairDist.at(std::make_pair(ai, aj)));
 						}
 					}
 				}
@@ -595,13 +618,19 @@ void Analyze::pcasso(Molecule* mol){
 			//Angles and Dihedrals
 			for (icapc=0; icapc<=1; icapc++){
 				if (icapc == 0){ //Ca
-					std::cout << caAngDihe.at(ai).first << " " << caAngDihe.at(ai).second << " ";
+					for (j=0; j< caAngles.at(ai).size(); j++){
+						//std::cout << caAngles.at(ai).at(j) << " ";
+						curr.push_back(caAngles.at(ai).at(j));
+					}
 				}
 				else{ //Pseudocenter
-					std::cout << pcAngDihe.at(ai).first << " " << pcAngDihe.at(ai).second << " ";
+					for (j=0; j< pcAngles.at(ai).size(); j++){
+            //std::cout << pcAngles.at(ai).at(j) << " ";
+						curr.push_back(pcAngles.at(ai).at(j));
+          }
 				}
 			}
-
+		
 			//Shortest non-local contact distance, >= i+6 and <= i-6
 			iPlus6.clear();
 			iMinus6.clear();
@@ -649,23 +678,68 @@ void Analyze::pcasso(Molecule* mol){
 			std::sort(iPlus6.begin(),iPlus6.end());
 			for (j=0; j< 3; j++){
 				if (j < iPlus6.size()){
-					std::cout << iPlus6.at(j) << " ";
+					//std::cout << iPlus6.at(j) << " ";
+					curr.push_back(iPlus6.at(j));
 				}
 				else{
-					std::cout << defVal << " ";
+					//std::cout << defVal << " ";
+					curr.push_back(defVal);
 				}
 			}
 			std::sort(iMinus6.begin(),iMinus6.end());
 			for (j=0; j< 3; j++){
         if (j < iMinus6.size()){
-          std::cout << iMinus6.at(j) << " ";
+          //std::cout << iMinus6.at(j) << " ";
+					curr.push_back(iMinus6.at(j));
         }
         else{
-          std::cout << defVal << " ";
+          //std::cout << defVal << " ";
+					curr.push_back(defVal);
         }
       }
 
-			std::cout << std::endl;
+			//Print output
+			if (iatom > 0){
+				//Not first atom of chain
+				//Print S(i+1) for last atom
+				for (j=0; j< curr.size(); j++){
+          std::cout << curr.at(j) << " ";
+        }
+				std::cout << std::endl;
+				
+				std::cout << ai->getPdbId() << " " << ai->getChainId() << " " << ai->getResId() << " ";
+				//Print S(i)
+				for (j=0; j< curr.size(); j++){
+          std::cout << curr.at(j) << " ";
+        }
+				//Print S(i-1) stored in std::vector "last"
+				for (j=0; j< last.size(); j++){
+					std::cout << last.at(j) << " ";
+				}
+				if (iatom+1 == c->getAtmVecSize()){
+					//Last atom of chain
+					//Print S(i+1) which is all default values
+					for (j=0; j< curr.size(); j++){
+	          std::cout << defVal << " ";
+	        }
+					std::cout << std::endl;
+				}
+			}
+			else{
+				//First atom in chain, last is empty
+				std::cout << ai->getPdbId() << " " << ai->getChainId() << " " << ai->getResId() << " ";
+				//Print S(i)
+				for (j=0; j< curr.size(); j++){
+          std::cout << curr.at(j) << " ";
+        }
+				//Print S(i-1) which is all default values
+				for (j=0; j< curr.size(); j++){
+          std::cout << defVal << " ";
+        }
+			}
+			last=curr;
+			curr.clear();
+
 		}
 	}
 
