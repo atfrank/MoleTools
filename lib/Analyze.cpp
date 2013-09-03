@@ -434,11 +434,6 @@ void Analyze::pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, 
 	unsigned int i, j;
 	double distance;
 
-	//Note that for each pairwise distance i,j, the std::pair will contain
-	//distance between i and j and a pointer that points to atom j.
-	//pdin.at(i).at(j).first = distance between i and j
-	//pdin.at(i).at(j).second = pointer to atom j
-
 	pdin.clear();
 
 	for (i=0; i< mol->getAtmVecSize(); i++){
@@ -452,21 +447,17 @@ void Analyze::pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, 
 				distance=Analyze::distance(mol->getAtom(i)->getCoor(), mol->getAtom(j)->getCoor());
 			}
 			 pdin.insert(std::make_pair(std::make_pair(mol->getAtom(i), mol->getAtom(j)), distance));
-			  pdin.insert(std::make_pair(std::make_pair(mol->getAtom(j), mol->getAtom(i)), 0.0));
+			  pdin.insert(std::make_pair(std::make_pair(mol->getAtom(j), mol->getAtom(i)), distance));
     }
   }
 }
 
-void Analyze::allAnglesDihedrals(Molecule *mol, std::vector<std::pair<double, double> > adin){
+void Analyze::allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::pair<double, double> >& adin){
 	unsigned int i, j;
 	Chain *c;
 	Atom *atm1, *atm2, *atm3, *atm4;
 	unsigned int size;
 	double angle, dihedral;
-	unsigned int natom;
-
-	natom=0;
-	adin.resize(mol->getAtmVecSize());
 
 	for (i=0; i< mol->getChnVecSize(); i++){
     c=mol->getChain(i);
@@ -514,23 +505,25 @@ void Analyze::allAnglesDihedrals(Molecule *mol, std::vector<std::pair<double, do
 					dihedral=Analyze::dihedral(atm1->getCoor(), atm2->getCoor(), atm3->getCoor(), atm4->getCoor());
 				}
 			}
-			adin.at(natom)=std::make_pair(angle, dihedral);
-			natom++;
+			adin.insert(std::make_pair(atm1, std::make_pair(angle, dihedral)));
     }
   }
-	if (natom != mol->getAtmVecSize()){
-		std::cerr << "Warning: Atom number mismatch in Analyze::allAnglesDihedrals" << std::endl;
-	}
 }
 
 void Analyze::pcasso(Molecule* mol){
 	Chain *c;
-	Atom *a;
+	Atom *ai, *aj;
+	unsigned int j, start;
+	double defVal;
+	unsigned int icapc; //Counter for Ca or pseudocenter (pc)
+	double iMinus6, iPlus6; //For shortest non-local contact
 	std::map<std::pair<Atom*, Atom*>, double> caPairDist; //Ca-Ca Distances
-	std::map<std::pair<Atom*, Atom*>, double> paPairDist; //Pseudocenter-Pseudocenter Distances
-	std::vector<std::pair<double, double> > caAngDihe; //Ca-Ca Angle/Diehdral
-	std::vector<std::pair<double, double> > paAngDihe; //Pseudocenter-Pseudocenter Angle/Dihedral
+	std::map<std::pair<Atom*, Atom*>, double> pcPairDist; //Pseudocenter-Pseudocenter Distances
+	std::map<Atom*, std::pair<double, double> > caAngDihe; //Ca-Ca Angle/Diehdral
+	std::map<Atom*, std::pair<double, double> > pcAngDihe; //Pseudocenter-Pseudocenter Angle/Dihedral
 	Molecule* cmol;
+
+	defVal=9999.9;
 
 	mol->storeSel();
 	mol->select(":.CA");
@@ -544,16 +537,89 @@ void Analyze::pcasso(Molecule* mol){
 
 	//Analyze all pseudocenter
 	cmol->modPseudoCenter();
-	Analyze::pairwiseDistance(cmol, paPairDist);
-	Analyze::allAnglesDihedrals(cmol, paAngDihe);
+	Analyze::pairwiseDistance(cmol, pcPairDist);
+	Analyze::allAnglesDihedrals(cmol, pcAngDihe);
 
 	for (unsigned int ichain=0; ichain < cmol->getChnVecSize(); ichain++){
 		c=cmol->getChain(ichain);
-		for (unsigned iatom=0; iatom < c->getAtmVecSize(); iatom++){
-			a=c->getAtom(iatom);
-			//std::cout << a->getPdbId() << " " << a->getChainId() << " " << a->getResId() << " ";
+		for (unsigned int iatom=0; iatom < c->getAtmVecSize(); iatom++){
+			ai=c->getAtom(iatom);
+			std::cout << ai->getPdbId() << " " << ai->getChainId() << " " << ai->getResId() << " ";
+			//i-2, i-1, i+1, i+2, i+3, i+4, i+5 Distances
+			for (icapc=0; icapc<=1; icapc++){
+				//Deal with unsigned int subtraction from zero
+				if (iatom == 0){
+					std::cout << defVal << " " << defVal << " ";
+					start=iatom-0;
+				}
+				else if (iatom == 1){
+					std::cout << defVal << " ";
+					start=iatom-1;
+				}
+				else{
+					start=iatom-2;
+				}
+				for (j=start; j<= iatom+5; j++){
+					aj=c->getAtom(j);
+					if (aj == NULL){
+						std::cout << defVal << " ";
+					}
+					else if (j == iatom){
+						//Distance == 0
+						continue;
+					}
+					else{
+						if (icapc == 0){ //Ca
+							std::cout << caPairDist.at(std::make_pair(ai, aj)) << " ";
+						}
+						else{ //Pseudocenter
+							std::cout << pcPairDist.at(std::make_pair(ai, aj)) << " ";
+						}
+					}
+				}
+			}
 
-			//std::cout << std::endl;
+			//Angles and Dihedrals
+			for (icapc=0; icapc<=1; icapc++){
+				if (icapc == 0){ //Ca
+					std::cout << caAngDihe.at(ai).first << " " << caAngDihe.at(ai).second << " ";
+				}
+				else{ //Pseudocenter
+					std::cout << pcAngDihe.at(ai).first << " " << pcAngDihe.at(ai).second << " ";
+				}
+			}
+
+			//Shortest non-local contact distance, > i+6 and < i-6
+			iPlus6=9999.9;
+			iMinus6=9999.9;
+			for (j=0; j< cmol->getAtmVecSize(); j++){
+				aj=cmol->getAtom(j);
+				if (ai == aj){
+					continue;
+				}
+				if (caPairDist.at(std::make_pair(ai, aj)) < iPlus6){
+					if (ai->getChainId().compare(aj->getChainId()) != 0)){
+						//atom i and atom j are on different chains
+						iPlus6=caPairDist.at(std::make_pair(ai, aj));
+					}
+					else{
+						//atom i and atom j are on the same chain
+						
+					}
+				}
+				if (caPairDist.at(std::make_pair(ai, aj)) < iMinus6){
+					if (ai->getChainId().compare(aj->getChainId()) != 0){
+						//atom i and atom j are on different chains
+						iMinus6=caPairDist.at(std::make_pair(ai, aj));
+					}
+					else{
+						//atom i and atom j are on the same chain
+
+					}
+				}
+			}
+			std::cout << iPlus6 << " " << iMinus6 << " ";
+			std::cout << std::endl;
 		}
 	}
 }
