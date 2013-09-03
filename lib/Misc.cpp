@@ -192,6 +192,19 @@ void Misc::toupper (std::string &str){
   std::transform(str.begin(), str.end(), str.begin(), ::toupper);
 }
 
+int Misc::atoi (std::string &str, const unsigned int offset){
+	int val;
+	const char *a;
+	val=0;
+
+	if (Misc::isalpha(str.substr(offset, 1))){
+		a=str.substr(offset,1).c_str();
+		val=static_cast<int>(a[0]-'A')+1; //A = 1, B = 2, etc
+		std::cerr << a << " " << val << std::endl;
+	}
+	return val;
+}
+
 double Misc::hypot (const double &a, const double &b){
 	if (a !=0){
 		return a*sqrt(1+(b/a)*(b/a));

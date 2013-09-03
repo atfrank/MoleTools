@@ -455,7 +455,7 @@ void Analyze::pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, 
 void Analyze::allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::pair<double, double> >& adin){
 	unsigned int i, j;
 	Chain *c;
-	Atom *atm1, *atm2, *atm3, *atm4;
+	Atom *atmI, *iMinusOne, *iPlusOne, *iPlusTwo, *iPlusThree;
 	unsigned int size;
 	double angle, dihedral;
 
@@ -463,49 +463,59 @@ void Analyze::allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::pair<double
     c=mol->getChain(i);
     size=c->getAtmVecSize();
     for (j=0; j< c->getAtmVecSize(); j++){
-      atm1=c->getAtom(j);
-      atm2=NULL;
-      atm3=NULL;
-      atm4=NULL;
+      atmI=c->getAtom(j);
+			iMinusOne=NULL;
+      iPlusOne=NULL;
+      iPlusTwo=NULL;
+      iPlusThree=NULL;
 
-			if (j+1 < size && atm1->getResId()+1 == c->getAtom(j+1)->getResId()){
-				atm2=c->getAtom(j+1);
-			}
-			else{
-				if (j+1 < size && atm1->getResId() == c->getAtom(j+1)->getResId() && (atm1->getICode().compare(0,1,c->getAtom(j+1)->getICode(),0,1) != 0)){
-					atm2=c->getAtom(j+1);
-				}
-			}
-
-			if (j+2 < size && atm1->getResId()+2 == c->getAtom(j+2)->getResId()){
-				atm3=c->getAtom(j+2);
-			}
-		 	else{
-        if (j+2 < size && atm1->getResId() == c->getAtom(j+2)->getResId() && (atm1->getICode().compare(0,1,c->getAtom(j+2)->getICode(),0,1) != 0)){
-          atm3=c->getAtom(j+2);
+			if (j > 0 && atmI->getResId()-1 == c->getAtom(j-1)->getResId()){
+        iMinusOne=c->getAtom(j-1);
+      }
+      else{
+        if (j > 0 && atmI->getResId() == c->getAtom(j-1)->getResId() && (atmI->getICode().compare(0,1,c->getAtom(j-1)->getICode(),0,1) != 0)){
+          iPlusOne=c->getAtom(j-1);
         }
       }
 
-			if (j+3 < size && atm1->getResId()+3 == c->getAtom(j+3)->getResId()){
-        atm4=c->getAtom(j+3);
+			if (j+1 < size && atmI->getResId()+1 == c->getAtom(j+1)->getResId()){
+				iPlusOne=c->getAtom(j+1);
+			}
+			else{
+				if (j+1 < size && atmI->getResId() == c->getAtom(j+1)->getResId() && (atmI->getICode().compare(0,1,c->getAtom(j+1)->getICode(),0,1) != 0)){
+					iPlusOne=c->getAtom(j+1);
+				}
+			}
+
+			if (j+2 < size && atmI->getResId()+2 == c->getAtom(j+2)->getResId()){
+				iPlusTwo=c->getAtom(j+2);
+			}
+		 	else{
+        if (j+2 < size && atmI->getResId() == c->getAtom(j+2)->getResId() && (atmI->getICode().compare(0,1,c->getAtom(j+2)->getICode(),0,1) != 0)){
+          iPlusTwo=c->getAtom(j+2);
+        }
+      }
+
+			if (j+3 < size && atmI->getResId()+3 == c->getAtom(j+3)->getResId()){
+        iPlusThree=c->getAtom(j+3);
       }
 			else{
-        if (j+3 < size && atm1->getResId() == c->getAtom(j+3)->getResId() && (atm1->getICode().compare(0,1,c->getAtom(j+3)->getICode(),0,1) !=0)){
-          atm4=c->getAtom(j+3);
+        if (j+3 < size && atmI->getResId() == c->getAtom(j+3)->getResId() && (atmI->getICode().compare(0,1,c->getAtom(j+3)->getICode(),0,1) !=0)){
+          iPlusThree=c->getAtom(j+3);
         }
       }
 
 			angle=9999.9;
 			dihedral=9999.9;
-			if (atm2 != NULL && atm3 != NULL){
+			if (iMinusOne != NULL && iPlusOne != NULL){
 				//Get Angle
-				angle=Analyze::angle(atm1->getCoor(), atm2->getCoor(), atm3->getCoor());
-				if (atm4 != NULL){
-					//Get Dihedral
-					dihedral=Analyze::dihedral(atm1->getCoor(), atm2->getCoor(), atm3->getCoor(), atm4->getCoor());
-				}
+				angle=Analyze::angle(iMinusOne->getCoor(), atmI->getCoor(), iPlusOne->getCoor());
 			}
-			adin.insert(std::make_pair(atm1, std::make_pair(angle, dihedral)));
+			if (iPlusOne != NULL && iPlusTwo != NULL && iPlusThree != NULL){
+				//Get Dihedral
+				dihedral=Analyze::dihedral(atmI->getCoor(), iPlusOne->getCoor(), iPlusTwo->getCoor(), iPlusThree->getCoor());
+			}
+			adin.insert(std::make_pair(atmI, std::make_pair(angle, dihedral)));
     }
   }
 }
@@ -517,6 +527,7 @@ void Analyze::pcasso(Molecule* mol){
 	double defVal;
 	unsigned int icapc; //Counter for Ca or pseudocenter (pc)
 	double iMinus6, iPlus6; //For shortest non-local contact
+	int diffResId;
 	std::map<std::pair<Atom*, Atom*>, double> caPairDist; //Ca-Ca Distances
 	std::map<std::pair<Atom*, Atom*>, double> pcPairDist; //Pseudocenter-Pseudocenter Distances
 	std::map<Atom*, std::pair<double, double> > caAngDihe; //Ca-Ca Angle/Diehdral
@@ -598,13 +609,21 @@ void Analyze::pcasso(Molecule* mol){
 					continue;
 				}
 				if (caPairDist.at(std::make_pair(ai, aj)) < iPlus6){
-					if (ai->getChainId().compare(aj->getChainId()) != 0)){
+					if (ai->getChainId().compare(aj->getChainId()) != 0){
 						//atom i and atom j are on different chains
 						iPlus6=caPairDist.at(std::make_pair(ai, aj));
 					}
 					else{
 						//atom i and atom j are on the same chain
-						
+						diffResId=aj->getResId() - ai->getResId();
+						if (diffResId >= 6){
+							iPlus6=caPairDist.at(std::make_pair(ai, aj));
+						}
+						else{
+							if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) >= 6)){
+								iPlus6=caPairDist.at(std::make_pair(ai, aj));
+							}
+						}
 					}
 				}
 				if (caPairDist.at(std::make_pair(ai, aj)) < iMinus6){
@@ -614,7 +633,15 @@ void Analyze::pcasso(Molecule* mol){
 					}
 					else{
 						//atom i and atom j are on the same chain
-
+						diffResId=aj->getResId() - ai->getResId();
+						if (diffResId <= -6){
+							iMinus6=caPairDist.at(std::make_pair(ai, aj));
+						}
+						else{
+							if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) <= -6)){
+								iMinus6=caPairDist.at(std::make_pair(ai, aj));
+							}
+						}
 					}
 				}
 			}
