@@ -536,6 +536,7 @@ void Analyze::pcasso(Molecule* mol){
 	Molecule* cmol;
 
 	defVal=9999.9;
+	cmol=NULL;
 
 	mol->storeSel();
 	mol->select(":.CA");
@@ -666,5 +667,9 @@ void Analyze::pcasso(Molecule* mol){
 
 			std::cout << std::endl;
 		}
+	}
+
+	if (cmol != NULL){
+		delete cmol;
 	}
 }

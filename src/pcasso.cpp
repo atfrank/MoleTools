@@ -37,6 +37,7 @@ int main (int argc, char **argv){
 
 	for (j=0; j< pdbs.size(); j++){
   	Molecule *mol=Molecule::readPDB(pdbs.at(j));
+		std::cerr << "Processing file \"" << pdbs.at(j) << "..." << std::endl;
 		mol->pcasso(); //Makes temporary clone with C-alpha only, and analyzes it
 		delete mol;
 	}
