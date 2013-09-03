@@ -526,7 +526,8 @@ void Analyze::pcasso(Molecule* mol){
 	unsigned int j, start;
 	double defVal;
 	unsigned int icapc; //Counter for Ca or pseudocenter (pc)
-	double iMinus6, iPlus6; //For shortest non-local contact
+	std::vector<double> iMinus6;//For non-local contacts
+	std::vector<double> iPlus6; //For non-local contacts
 	int diffResId;
 	std::map<std::pair<Atom*, Atom*>, double> caPairDist; //Ca-Ca Distances
 	std::map<std::pair<Atom*, Atom*>, double> pcPairDist; //Pseudocenter-Pseudocenter Distances
@@ -600,52 +601,69 @@ void Analyze::pcasso(Molecule* mol){
 				}
 			}
 
-			//Shortest non-local contact distance, > i+6 and < i-6
-			iPlus6=9999.9;
-			iMinus6=9999.9;
+			//Shortest non-local contact distance, >= i+6 and <= i-6
+			iPlus6.clear();
+			iMinus6.clear();
 			for (j=0; j< cmol->getAtmVecSize(); j++){
 				aj=cmol->getAtom(j);
 				if (ai == aj){
 					continue;
 				}
-				if (caPairDist.at(std::make_pair(ai, aj)) < iPlus6){
-					if (ai->getChainId().compare(aj->getChainId()) != 0){
-						//atom i and atom j are on different chains
-						iPlus6=caPairDist.at(std::make_pair(ai, aj));
+				//i+6
+				if (ai->getChainId().compare(aj->getChainId()) != 0){
+					//atom i and atom j are on different chains
+					iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+				}
+				else{
+					//atom i and atom j are on the same chain
+					diffResId=aj->getResId() - ai->getResId();
+					if (diffResId >= 6){
+						iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
 					}
 					else{
-						//atom i and atom j are on the same chain
-						diffResId=aj->getResId() - ai->getResId();
-						if (diffResId >= 6){
-							iPlus6=caPairDist.at(std::make_pair(ai, aj));
-						}
-						else{
-							if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) >= 6)){
-								iPlus6=caPairDist.at(std::make_pair(ai, aj));
-							}
+						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) >= 6)){
+							iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
 						}
 					}
 				}
-				if (caPairDist.at(std::make_pair(ai, aj)) < iMinus6){
-					if (ai->getChainId().compare(aj->getChainId()) != 0){
-						//atom i and atom j are on different chains
-						iMinus6=caPairDist.at(std::make_pair(ai, aj));
+
+				//i-6
+				if (ai->getChainId().compare(aj->getChainId()) != 0){
+					//atom i and atom j are on different chains
+					iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+				}
+				else{
+					//atom i and atom j are on the same chain
+					diffResId=aj->getResId() - ai->getResId();
+					if (diffResId <= -6){
+						iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
 					}
 					else{
-						//atom i and atom j are on the same chain
-						diffResId=aj->getResId() - ai->getResId();
-						if (diffResId <= -6){
-							iMinus6=caPairDist.at(std::make_pair(ai, aj));
-						}
-						else{
-							if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) <= -6)){
-								iMinus6=caPairDist.at(std::make_pair(ai, aj));
-							}
+						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) <= -6)){
+							iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
 						}
 					}
 				}
 			}
-			std::cout << iPlus6 << " " << iMinus6 << " ";
+			std::sort(iPlus6.begin(),iPlus6.end());
+			for (j=0; j< 3; j++){
+				if (j < iPlus6.size()){
+					std::cout << iPlus6.at(j) << " ";
+				}
+				else{
+					std::cout << defVal << " ";
+				}
+			}
+			std::sort(iMinus6.begin(),iMinus6.end());
+			for (j=0; j< 3; j++){
+        if (j < iMinus6.size()){
+          std::cout << iMinus6.at(j) << " ";
+        }
+        else{
+          std::cout << defVal << " ";
+        }
+      }
+
 			std::cout << std::endl;
 		}
 	}
