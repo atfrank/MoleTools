@@ -60,6 +60,7 @@ int main (int argc, char **argv){
   std::vector<unsigned int> sframes;
   unsigned int lastFrame;
   unsigned int nframe;
+  bool timeseries;
   bool verbose;
 
 	std::vector<Analyze *> analyses;
@@ -77,6 +78,7 @@ int main (int argc, char **argv){
   nframe=0;
   verbose=false;
 	nline=0;
+  timeseries=false;
 
 
   for (i=1; i<argc; i++){
@@ -90,10 +92,10 @@ int main (int argc, char **argv){
     }
     else if (currArg.compare("-sel") == 0 || currArg.compare("-nsel") == 0 || currArg.compare("-cog") == 0){
 			anin=new AnalyzeCOG;
-      //anin->setType("quick");
       currArg=argv[++i];
 			anin->addSel(currArg);
 			analyses.push_back(anin);
+      timeseries=true;
     }
     else if (currArg.compare("-dsel") == 0 || currArg.compare("-dist") == 0 || currArg.compare("-distance") == 0){
 			anin=new AnalyzeDistance;
@@ -102,6 +104,7 @@ int main (int argc, char **argv){
       currArg=argv[++i];
 			anin->addSel(currArg);
 			analyses.push_back(anin);
+      timeseries=true;
     }
 		else if (currArg.compare("-tsel") == 0 || currArg.compare("-angle") == 0){
 			anin=new AnalyzeAngle;
@@ -112,6 +115,7 @@ int main (int argc, char **argv){
 			currArg=argv[++i];
 			anin->addSel(currArg);
 			analyses.push_back(anin);
+      timeseries=true;
 		}
 		else if (currArg.compare("-qsel") == 0 || currArg.compare("-dihedral") == 0){
 			anin=new AnalyzeDihedral;
@@ -124,6 +128,7 @@ int main (int argc, char **argv){
 			currArg=argv[++i];
 			anin->addSel(currArg);
 			analyses.push_back(anin);
+      timeseries=true;
 		}
 		else if (currArg.compare("-fit") == 0){
 			fit=true;
@@ -140,6 +145,7 @@ int main (int argc, char **argv){
 			currArg=argv[++i];
 			anin->addSel(currArg);
       analyses.push_back(anin);
+      timeseries=true;
 		}
 		else if (currArg.compare("-rmsf") == 0){
 			anin=new AnalyzeRMSF;
@@ -272,12 +278,16 @@ int main (int argc, char **argv){
 					//Start analyses
           if (flist.length() > 0){
             if (nframe == frameList.at(listinx)){
-              std::cout << iline << "  ";
-              std::cout << ftrjin->getNPriv()*ftrjin->getTStepPS()/ftrjin->getNSavc()+i*ftrjin->getTStepPS();
+              if (timeseries == true){
+                std::cout << iline << "  ";
+                std::cout << ftrjin->getNPriv()*ftrjin->getTStepPS()/ftrjin->getNSavc()+i*ftrjin->getTStepPS();
+              }
               for (ianalysis=0; ianalysis< analyses.size(); ianalysis++){
                 analyses.at(ianalysis)->runAnalysis();
               }
-              std::cout << std::endl;
+              if (timeseries == true){
+                std::cout << std::endl;
+              }
               iline++;
               listinx++;
               if (listinx == frameList.size()){
@@ -286,12 +296,16 @@ int main (int argc, char **argv){
             }
           }
           else{
-					  std::cout << iline << "  ";
-					  std::cout << ftrjin->getNPriv()*ftrjin->getTStepPS()/ftrjin->getNSavc()+i*ftrjin->getTStepPS();
+            if (timeseries == true){
+					    std::cout << iline << "  ";
+					    std::cout << ftrjin->getNPriv()*ftrjin->getTStepPS()/ftrjin->getNSavc()+i*ftrjin->getTStepPS();
+            }
 					  for (ianalysis=0; ianalysis< analyses.size(); ianalysis++){
 						  analyses.at(ianalysis)->runAnalysis();
 					  }
-					  std::cout << std::endl;
+            if (timeseries == true){
+					    std::cout << std::endl;
+            }
 					  iline++;
           }
 				}

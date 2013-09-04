@@ -183,7 +183,6 @@ void AnalyzeAverage::postAnalysis(){
   Atom *atm;
 
   std::cout << std::fixed;
-  std::cout << std::endl << std::endl; //For using index in Gnuplot
   for(i=0; i< this->getMol(1)->getNAtomSelected(); i++){
     atm=this->getMol(1)->getAtom(i);
     if (atm->getSel() == false){
@@ -200,7 +199,7 @@ void AnalyzeRMSF::postAnalysis(){
   std::vector<double> &tdata=this->getTDataVec();
 
   std::cout << std::fixed;
-  std::cout << std::endl << std::endl; //For using index in Gnuplot
+
   j=0;
   for(i=0; i< this->getMol(0)->getNAtomSelected(); i++){
     atm=this->getMol(0)->getAtom(i);
