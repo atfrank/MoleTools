@@ -8,6 +8,7 @@ Analyze::Analyze (){
 	tdata.clear();
 	ndata=0;
 	resel=false;
+  avgCovar.resize(0,0);
 }
 
 void Analyze::addSel(const std::string& selin){
@@ -95,6 +96,14 @@ std::vector<double>& Analyze::getTDataVec(){
 	return tdata;
 }
 
+Eigen::MatrixXd& Analyze::getAvgCovar(){
+  return avgCovar;
+}
+
+void Analyze::initCovar(const unsigned int &xin, const unsigned int &yin){
+  avgCovar=Eigen::MatrixXd::Zero(xin, yin);
+}
+
 //All preAnalysis Functions
 
 void Analyze::preAnalysis(Molecule* molin){
@@ -117,6 +126,16 @@ void AnalyzeAverage::preAnalysis(Molecule* molin){
   this->setupMolSel(molin);
   Molecule* refmol=molin->clone();
   this->setupMolSel(refmol);
+  //Zero coordinates for future appending
+  this->getMol(1)->zeroCoor();
+}
+
+void AnalyzeEDA::preAnalysis(Molecule* molin){
+  this->setupMolSel(molin);
+  Molecule* refmol=molin->clone();
+  this->setupMolSel(refmol);
+  //Resize matrix to 3N x 3N and zero
+  this->initCovar(3*refmol->getNAtomSelected(), 3*refmol->getNAtomSelected());
 }
 
 
@@ -151,9 +170,6 @@ void AnalyzeRMSF::runAnalysis(){
 }
 
 void AnalyzeAverage::runAnalysis(){
-  if (getNData() == 0){
-    this->getMol(1)->zeroCoor();
-  }
   Analyze::averageMol(this->getMol(0), this->getMol(1), getNData());
 }
 
@@ -170,6 +186,10 @@ void AnalyzeAngle::runAnalysis(){
 void AnalyzeDihedral::runAnalysis(){
 	std::cout << std::fixed;
   std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::dihedral(Analyze::centerOfGeometry(this->getMol(0)), Analyze::centerOfGeometry(this->getMol(1)), Analyze::centerOfGeometry(this->getMol(2)), Analyze::centerOfGeometry(this->getMol(3)));
+}
+
+void AnalyzeEDA::runAnalysis(){
+  Analyze::averageCovariance(this->getMol(0), this->getMol(1), getAvgCovar(), getNData());
 }
 
 //All postAnalysis functions
@@ -214,6 +234,22 @@ void AnalyzeRMSF::postAnalysis(){
   }
 }
 
+void AnalyzeEDA::postAnalysis(){
+  /*
+  unsigned int i;
+  Atom *atm;
+
+  std::cout << std::fixed;
+  for(i=0; i< this->getMol(1)->getNAtomSelected(); i++){
+    atm=this->getMol(1)->getAtom(i);
+    if (atm->getSel() == false){
+      continue;
+    }
+    atm->setCoor(atm->getCoor()/getNData());
+  }
+  this->getMol(1)->writePDB();
+  */
+}
 
 
 //Basic analysis functions
@@ -291,7 +327,7 @@ double Analyze::rmsd (Molecule *cmpmol, Molecule *refmol){
 
 void Analyze::rmsf (Molecule* cmpmol, Molecule* refmol, std::vector<double> &tdataIO, int &ndataIO){
 
-	unsigned i,j;
+	unsigned int i,j;
 	Atom *atm;
 	std::vector<Vector> coor;
 	Vector d;
@@ -326,10 +362,9 @@ void Analyze::rmsf (Molecule* cmpmol, Molecule* refmol, std::vector<double> &tda
 }
 
 void Analyze::averageMol (Molecule* cmpmol, Molecule* refmol, int &ndataIO){
-  unsigned i,j;
+  unsigned int i,j;
   Atom *atm;
   std::vector<Vector> coor;
-  Vector d;
 
   //Check selection sizes and resize matrices
   if (cmpmol->getNAtomSelected() != refmol->getNAtomSelected()){
@@ -427,6 +462,72 @@ double Analyze::angle (Molecule* sel1, Molecule* sel2, Molecule* sel3, bool selF
 
 double Analyze::dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecule* sel4, bool selFlag){
 	return Analyze::dihedral(Analyze::centerOfGeometry(sel1,selFlag), Analyze::centerOfGeometry(sel2,selFlag), Analyze::centerOfGeometry(sel3,selFlag), Analyze::centerOfGeometry(sel4,selFlag));
+}
+
+void Analyze::averageCovariance (Molecule* cmpmol, Molecule* refmol, Eigen::MatrixXd& covarin, int& ndataIO){
+  unsigned int i,j,k;
+  Atom *atm;
+  Eigen::MatrixXd tCovar; //Covariance at some time, t
+
+  tCovar=Eigen::MatrixXd::Zero(3*refmol->getNAtomSelected(), 3*refmol->getNAtomSelected());
+
+  //Check selection sizes 
+  if (cmpmol->getNAtomSelected() != refmol->getNAtomSelected()){
+    std::cerr << std::endl << "Error: Atom number mismatch in RMSD calculation" << std::endl;
+    std::cerr << "CMP-NATOM: " << cmpmol->getNAtomSelected() << ", ";
+    std::cerr << "REF-NATOM: " << refmol->getNAtomSelected() << std::endl;
+  }
+  else{
+    j=0;
+    for (i=0; i< cmpmol->getNAtom(); i++){
+      atm=cmpmol->getAtom(i);
+      if (atm->getSel() == false){
+        continue;
+      }
+      //Store difference (x-xavg) along diagonal
+      tCovar(j,j)=atm->getX();
+      j++;
+      tCovar(j,j)=atm->getY();
+      j++;
+      tCovar(j,j)=atm->getZ();
+      j++;
+    }
+
+    k=0;
+    for (i=0; i< refmol->getNAtom(); i++){
+      atm=refmol->getAtom(i);
+      if (atm->getSel() == false){
+        continue;
+      }
+      //Store difference (x-xavg) along diagonal
+      tCovar(k,k)=tCovar(k,k)-atm->getX();
+      k++;
+      tCovar(k,k)=tCovar(k,k)-atm->getY();
+      k++;
+      tCovar(k,k)=tCovar(k,k)-atm->getZ();
+      k++;
+    }
+
+    if (j != k){
+      //No harm done, frame/structure is skipped
+      std::cerr << "Warning: Atom Number Mismatch in covariance matrix!" << std::endl;
+      return;
+    }
+
+    //Generate covariance matrix at time, t, and zero diagonal afterwards
+    for (i=0; i< 3*refmol->getNAtomSelected(); i++){
+      for (j=i+1; j< 3*refmol->getNAtomSelected(); j++){
+        
+      }
+    }
+
+    //Add to average covariance matrix "avgCovar"
+
+      //Check possible overflow, maybe find matrix max?
+      
+    ndataIO++;
+  }
+  
 }
 
 void Analyze::pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, double>& pdin){

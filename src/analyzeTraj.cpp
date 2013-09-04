@@ -24,6 +24,7 @@ void usage(){
 	std::cerr << "         [-rmsf selection]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
 	std::cerr << "         [-average selection]" << std::endl;
+  std::cerr << "         [-eda selection]" << std::endl;
   std::cerr << "         [-list file]" << std::endl;
   std::cerr << "         [-verbose]" << std::endl;
 	exit(0);
@@ -159,6 +160,12 @@ int main (int argc, char **argv){
 			anin->addSel(currArg);
 			analyses.push_back(anin);
 		}
+    else if (currArg.compare("-eda") == 0 || currArg.compare("-essential") == 0){
+      anin=new AnalyzeEDA;
+      currArg=argv[++i];
+      anin->addSel(currArg);
+      analyses.push_back(anin);
+    }
     else if (currArg.compare("-skip") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> skip;
