@@ -257,7 +257,9 @@ void AnalyzeRMSF::postAnalysis(){
 
 void AnalyzeEDA::postAnalysis(){
   //Take average
-  getAvgCovar()/=getNData();
+  if (getNData() > 1){
+    getAvgCovar()/=(getNData()-1);
+  }
   //Diagonalize
   this->diagonalizeCovar();
 }
