@@ -24,7 +24,7 @@ void usage(){
 	std::cerr << "         [-rmsf selection]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
 	std::cerr << "         [-average selection]" << std::endl;
-  std::cerr << "         [-eda selection]" << std::endl;
+  std::cerr << "         [-eda selection covarout | -project selection mode1[:mode2[:...:[modeN]]] covarin]" << std::endl;
   std::cerr << "         [-list file]" << std::endl;
   std::cerr << "         [-verbose]" << std::endl;
 	exit(0);
@@ -62,6 +62,7 @@ int main (int argc, char **argv){
   unsigned int lastFrame;
   unsigned int nframe;
   bool timeseries;
+  std::vector<unsigned int> modes;
   bool verbose;
 
 	std::vector<Analyze *> analyses;
@@ -80,6 +81,7 @@ int main (int argc, char **argv){
   verbose=false;
 	nline=0;
   timeseries=false;
+  modes.clear();
 
 
   for (i=1; i<argc; i++){
@@ -164,7 +166,21 @@ int main (int argc, char **argv){
       anin=new AnalyzeEDA;
       currArg=argv[++i];
       anin->addSel(currArg);
+      currArg=argv[++i];
+      anin->setOutput(currArg);
       analyses.push_back(anin);
+    }
+    else if (currArg.compare("-project") == 0 || currArg.compare("-projection") == 0){
+      anin=new AnalyzeProjection;
+      currArg=argv[++i];
+      anin->addSel(currArg);
+      currArg=argv[++i];
+      Misc::splitNum(currArg, ":", modes, false);
+      anin->addModes(modes);
+      currArg=argv[++i];
+      anin->setInput(currArg);
+      analyses.push_back(anin);
+    //  timeseries=true;
     }
     else if (currArg.compare("-skip") == 0){
       currArg=argv[++i];
@@ -249,6 +265,9 @@ int main (int argc, char **argv){
           std::cerr << nline << ")!" << std::endl << std::endl;
         }
       }
+    }
+    if (listFile.is_open()){
+      listFile.close();
     }
   }  
 

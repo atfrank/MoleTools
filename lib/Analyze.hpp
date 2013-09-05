@@ -8,6 +8,9 @@
 #include "Constants.hpp"
 #include "Eigen/Eigenvalues"
 
+#include <iostream>
+#include <fstream>
+
 //Abstract base class (cannot create instance of it!)
 class Analyze {
 	private:
@@ -18,8 +21,11 @@ class Analyze {
 		std::vector<Molecule*> mol;
 		std::vector<double> tdata; //Time dependent data, maybe for averaging
     Eigen::MatrixXd avgCovar;
+    std::vector<unsigned int> modes;
 		int ndata; //Total number of datapoints
 		bool resel; //Re-do selection for each analysis, not implemented yet
+    std::string ifile;
+    std::string ofile;
 
 	public:
 		Analyze ();
@@ -34,7 +40,12 @@ class Analyze {
 		void setNData(const int& ndatain);
 		int& getNData();
 		std::vector<double>& getTDataVec();
+    void setInput(const std::string& fin);
+    std::string getInput();
+    void setOutput (const std::string& fin);
+    std::string getOutput();
     Eigen::MatrixXd& getAvgCovar();
+    void addModes(const std::vector<unsigned int>& modesin);
     void initCovar(const unsigned int& xin, const unsigned int& yin);
     void diagonalizeCovar();
 		
@@ -56,6 +67,7 @@ class Analyze {
 		static double angle (Molecule* sel1, Molecule* sel2, Molecule* sel3, bool selFlag=true);
 	  static double dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecule* sel4,bool selFlag=true);
     static void averageCovariance (Molecule* cmpmol, Molecule* refmol, Eigen::MatrixXd& covarin, int &ndataIO);
+    static void projectModes(Molecule* cmpmol, Molecule* refmol, Eigen::MatrixXd& covarin);
 		static void pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, double>& pdin);
 		static void allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::vector<double> >& anglesin);
 		static void pcasso(Molecule* mol);
@@ -111,6 +123,13 @@ class AnalyzeEDA: public Analyze {
     void preAnalysis(Molecule* molin);
     void runAnalysis();
     void postAnalysis();
+};
+
+class AnalyzeProjection: public Analyze {
+  public:
+    void preAnalysis(Molecule* molin);
+    void runAnalysis();
+    //void postAnalysis();
 };
 
 #endif

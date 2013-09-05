@@ -9,6 +9,8 @@ Analyze::Analyze (){
 	ndata=0;
 	resel=false;
   avgCovar.resize(0,0);
+  ifile.clear();
+  ofile.clear();
 }
 
 void Analyze::addSel(const std::string& selin){
@@ -100,6 +102,10 @@ Eigen::MatrixXd& Analyze::getAvgCovar(){
   return avgCovar;
 }
 
+void Analyze::addModes(const std::vector<unsigned int>& modesin){
+  modes=modesin;
+}
+
 void Analyze::initCovar(const unsigned int &xin, const unsigned int &yin){
   avgCovar=Eigen::MatrixXd::Zero(xin, yin);
 }
@@ -124,6 +130,22 @@ void Analyze::diagonalizeCovar(){
   //std::cout << eigOut.eigenvalues()[pc2] << std::endl;
   //std::cout << eigOut.eigenvectors().col(pc2) << std::endl;
 }
+
+void Analyze::setInput(const std::string& fin){
+  ifile=fin;
+}
+
+std::string Analyze::getInput(){
+  return ifile;
+}
+
+void Analyze::setOutput (const std::string& fin){
+  ofile=fin;
+}
+std::string Analyze::getOutput(){
+  return ofile;
+}
+
 
 //All preAnalysis Functions
 
@@ -159,6 +181,59 @@ void AnalyzeEDA::preAnalysis(Molecule* molin){
   this->initCovar(3*refmol->getNAtomSelected(), 3*refmol->getNAtomSelected());
 }
 
+void AnalyzeProjection::preAnalysis(Molecule* molin){
+  std::ifstream inpFile;
+  std::istream* inp;
+  std::string line;
+  unsigned int nrow;
+  std::vector<double> tmp;
+  unsigned int N3;
+
+  this->setupMolSel(molin);
+  Molecule* refmol=molin->clone();
+  this->setupMolSel(refmol);
+
+  //Resize matrix to 3N x 3N and zero
+  N3=3*refmol->getNAtomSelected();
+  this->initCovar(N3, N3);
+
+  //Read covariance matrix
+  if (getInput().length() > 0){
+    nrow=0;
+
+    inpFile.open(getInput().c_str(), std::ios::in);
+    inp=&inpFile;
+
+    while (inp->good() && !(inp->eof())){
+      getline(*inp, line);
+      if (line.length() > 0){
+        Misc::splitNum(Misc::trim(line), " \t", tmp, false);
+        if (tmp.size() != N3){
+          std::cerr << "Warning: The number of columns in the covariance matrix (" << tmp.size();
+          std::cerr << ") does not match 3x the number of selected atoms (" << N3;
+          std::cerr << ")" << std::endl;
+        }
+        for (unsigned int ncol=0; ncol< N3 && ncol < tmp.size(); ncol++){
+          getAvgCovar()(nrow, ncol)=tmp.at(ncol);
+        }
+        nrow++;
+      }
+    }
+    if (nrow != N3){
+      std::cerr << "Warning: The number of rows in the covariance matrix (" << nrow;
+      std::cerr << ") does not match 3x the number of selected atoms (" << N3;
+      std::cerr << ")" << std::endl;
+    }
+
+    if (inpFile.is_open()){
+      inpFile.close();
+    }
+  }
+
+  std::cout << getAvgCovar() << std::endl;
+  //Diagonalize covariance matrix
+  diagonalizeCovar();
+}
 
 //All runAnalysis Functions
 
@@ -213,6 +288,11 @@ void AnalyzeEDA::runAnalysis(){
   Analyze::averageCovariance(this->getMol(0), this->getMol(1), getAvgCovar(), getNData());
 }
 
+void AnalyzeProjection::runAnalysis(){
+  Analyze::projectModes(this->getMol(0), this->getMol(1), getAvgCovar());
+}
+
+
 //All postAnalysis functions
 
 void Analyze::postAnalysis(){
@@ -259,6 +339,15 @@ void AnalyzeEDA::postAnalysis(){
   //Take average
   if (getNData() > 1){
     getAvgCovar()/=(getNData()-1);
+  }
+  if (getOutput().length() > 0){
+    std::ofstream out;
+    out.open(getOutput().c_str(), std::ios::out);
+    if (out.is_open()){
+      std::cerr << "Un-diagonalized covariance matrix written to \"" << getOutput() << "\"" << std::endl;
+      out << getAvgCovar() << std::endl;
+      out.close();
+    }
   }
   //Diagonalize
   this->diagonalizeCovar();
@@ -544,6 +633,10 @@ void Analyze::averageCovariance (Molecule* cmpmol, Molecule* refmol, Eigen::Matr
     ndataIO++;
   }
   
+}
+
+void Analyze::projectModes(Molecule* cmpmol, Molecule* refmol, Eigen::MatrixXd& covarin){
+
 }
 
 void Analyze::pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, double>& pdin){
