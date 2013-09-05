@@ -22,6 +22,7 @@ class Analyze {
 		std::vector<double> tdata; //Time dependent data, maybe for averaging
     Eigen::MatrixXd avgCovar;
     std::vector<unsigned int> modes;
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigen;
 		int ndata; //Total number of datapoints
 		bool resel; //Re-do selection for each analysis, not implemented yet
     std::string ifile;
@@ -46,8 +47,11 @@ class Analyze {
     std::string getOutput();
     Eigen::MatrixXd& getAvgCovar();
     void addModes(const std::vector<unsigned int>& modesin);
+    std::vector<unsigned int>& getModes();
     void initCovar(const unsigned int& xin, const unsigned int& yin);
-    void diagonalizeCovar();
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> diagonalizeCovar();
+    void setEigen(Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eiginin);
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& getEigen();
 		
 		//Virtual functions
 		virtual void setupMolSel(Molecule* molin);
@@ -67,7 +71,7 @@ class Analyze {
 		static double angle (Molecule* sel1, Molecule* sel2, Molecule* sel3, bool selFlag=true);
 	  static double dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecule* sel4,bool selFlag=true);
     static void averageCovariance (Molecule* cmpmol, Molecule* refmol, Eigen::MatrixXd& covarin, int &ndataIO);
-    static void projectModes(Molecule* cmpmol, Molecule* refmol, Eigen::MatrixXd& covarin);
+    static std::vector<double> projectModes(Molecule* cmpmol, Molecule* refmol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int>& modesin);
 		static void pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, double>& pdin);
 		static void allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::vector<double> >& anglesin);
 		static void pcasso(Molecule* mol);
@@ -118,7 +122,7 @@ class AnalyzeDihedral: public Analyze {
 		void runAnalysis();
 };
 
-class AnalyzeEDA: public Analyze {
+class AnalyzeCovariance: public Analyze {
   public:
     void preAnalysis(Molecule* molin);
     void runAnalysis();

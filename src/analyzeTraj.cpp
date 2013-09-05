@@ -24,7 +24,7 @@ void usage(){
 	std::cerr << "         [-rmsf selection]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
 	std::cerr << "         [-average selection]" << std::endl;
-  std::cerr << "         [-eda selection covarout | -project selection mode1[:mode2[:...:[modeN]]] covarin]" << std::endl;
+  std::cerr << "         [-covariance selection covarout | -project selection mode1[:mode2[:...:[modeN]]] covarin]" << std::endl;
   std::cerr << "         [-list file]" << std::endl;
   std::cerr << "         [-verbose]" << std::endl;
 	exit(0);
@@ -162,8 +162,8 @@ int main (int argc, char **argv){
 			anin->addSel(currArg);
 			analyses.push_back(anin);
 		}
-    else if (currArg.compare("-eda") == 0 || currArg.compare("-essential") == 0){
-      anin=new AnalyzeEDA;
+    else if (currArg.compare("-covar") == 0 || currArg.compare("-covariance") == 0){
+      anin=new AnalyzeCovariance;
       currArg=argv[++i];
       anin->addSel(currArg);
       currArg=argv[++i];
@@ -180,7 +180,7 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       anin->setInput(currArg);
       analyses.push_back(anin);
-    //  timeseries=true;
+      timeseries=true;
     }
     else if (currArg.compare("-skip") == 0){
       currArg=argv[++i];

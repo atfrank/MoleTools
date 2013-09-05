@@ -106,11 +106,15 @@ void Analyze::addModes(const std::vector<unsigned int>& modesin){
   modes=modesin;
 }
 
+std::vector<unsigned int>& Analyze::getModes(){
+  return modes;
+}
+
 void Analyze::initCovar(const unsigned int &xin, const unsigned int &yin){
   avgCovar=Eigen::MatrixXd::Zero(xin, yin);
 }
 
-void Analyze::diagonalizeCovar(){
+Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> Analyze::diagonalizeCovar(){
   //Diagonalize avg covariance matrix
   Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigOut(avgCovar);
   //Eigenvalues are already sorted in increasing order, largest at N
@@ -129,6 +133,8 @@ void Analyze::diagonalizeCovar(){
   //unsigned int pc2 = 3*this->getMol(1)->getNAtomSelected() - 2;
   //std::cout << eigOut.eigenvalues()[pc2] << std::endl;
   //std::cout << eigOut.eigenvectors().col(pc2) << std::endl;
+  
+  return eigOut;
 }
 
 void Analyze::setInput(const std::string& fin){
@@ -144,6 +150,14 @@ void Analyze::setOutput (const std::string& fin){
 }
 std::string Analyze::getOutput(){
   return ofile;
+}
+
+void Analyze::setEigen(Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigenin){
+  eigen=eigenin;
+}
+
+Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& Analyze::getEigen(){
+  return eigen;
 }
 
 
@@ -173,7 +187,7 @@ void AnalyzeAverage::preAnalysis(Molecule* molin){
   this->getMol(1)->zeroCoor();
 }
 
-void AnalyzeEDA::preAnalysis(Molecule* molin){
+void AnalyzeCovariance::preAnalysis(Molecule* molin){
   this->setupMolSel(molin);
   Molecule* refmol=molin->clone();
   this->setupMolSel(refmol);
@@ -230,9 +244,11 @@ void AnalyzeProjection::preAnalysis(Molecule* molin){
     }
   }
 
-  std::cout << getAvgCovar() << std::endl;
   //Diagonalize covariance matrix
-  diagonalizeCovar();
+  setEigen(diagonalizeCovar());
+
+  //std::cout << getEigen().eigenvalues() << std::endl;
+  //std::cout << getEigen().eigenvectors().col(N3-1) << std::endl;
 }
 
 //All runAnalysis Functions
@@ -284,12 +300,19 @@ void AnalyzeDihedral::runAnalysis(){
   std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::dihedral(Analyze::centerOfGeometry(this->getMol(0)), Analyze::centerOfGeometry(this->getMol(1)), Analyze::centerOfGeometry(this->getMol(2)), Analyze::centerOfGeometry(this->getMol(3)));
 }
 
-void AnalyzeEDA::runAnalysis(){
+void AnalyzeCovariance::runAnalysis(){
   Analyze::averageCovariance(this->getMol(0), this->getMol(1), getAvgCovar(), getNData());
 }
 
 void AnalyzeProjection::runAnalysis(){
-  Analyze::projectModes(this->getMol(0), this->getMol(1), getAvgCovar());
+  std::vector<double> pc;
+
+  pc=Analyze::projectModes(this->getMol(0), this->getMol(1), getEigen(), getModes());
+
+  for (unsigned int i=0; i< pc.size(); i++){
+    std::cout << std::fixed;
+    std::cout << std::setw(9) << std::right << std::setprecision(3) << pc.at(i);
+  }
 }
 
 
@@ -335,7 +358,7 @@ void AnalyzeRMSF::postAnalysis(){
   }
 }
 
-void AnalyzeEDA::postAnalysis(){
+void AnalyzeCovariance::postAnalysis(){
   //Take average
   if (getNData() > 1){
     getAvgCovar()/=(getNData()-1);
@@ -349,8 +372,6 @@ void AnalyzeEDA::postAnalysis(){
       out.close();
     }
   }
-  //Diagonalize
-  this->diagonalizeCovar();
 }
 
 
@@ -635,8 +656,75 @@ void Analyze::averageCovariance (Molecule* cmpmol, Molecule* refmol, Eigen::Matr
   
 }
 
-void Analyze::projectModes(Molecule* cmpmol, Molecule* refmol, Eigen::MatrixXd& covarin){
+std::vector<double> Analyze::projectModes(Molecule* cmpmol, Molecule* refmol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int>& modesin){
+  unsigned int i,j,k,m;
+  Atom *atm;
+  std::vector<double> proj;
+  double defVal;
+  Eigen::VectorXd dt; //Difference, (x(t)-xavg), at some time, t
 
+  dt=Eigen::VectorXd::Zero(eigenin.eigenvalues().rows());
+  proj.clear();
+  proj.resize(modesin.size(),0);
+  defVal=9999.9;
+
+  //Check selection sizes 
+  if (cmpmol->getNAtomSelected() != refmol->getNAtomSelected()){
+    std::cerr << std::endl << "Error: Atom number mismatch in RMSD calculation" << std::endl;
+    std::cerr << "CMP-NATOM: " << cmpmol->getNAtomSelected() << ", ";
+    std::cerr << "REF-NATOM: " << refmol->getNAtomSelected() << std::endl;
+  }
+  else{
+    j=0;
+    for (i=0; i< cmpmol->getNAtom(); i++){
+      atm=cmpmol->getAtom(i);
+      if (atm->getSel() == false){
+        continue;
+      }
+      //Store difference (x-xavg) along diagonal
+      dt(j)=atm->getX();
+      j++;
+      dt(j)=atm->getY();
+      j++;
+      dt(j)=atm->getZ();
+      j++;
+    }
+
+    k=0;
+    for (i=0; i< refmol->getNAtom(); i++){
+      atm=refmol->getAtom(i);
+      if (atm->getSel() == false){
+        continue;
+      }
+      //Store difference (x-xavg) along diagonal
+      dt(k)=dt(k)-atm->getX();
+      k++;
+      dt(k)=dt(k)-atm->getY();
+      k++;
+      dt(k)=dt(k)-atm->getZ();
+      k++;
+    }
+
+    if (j != k && j != eigenin.eigenvalues().rows()){
+      //No harm done, frame/structure is skipped
+      std::cerr << "Warning: Atom Number Mismatch in covariance matrix!" << std::endl;
+      return proj;
+    }
+  
+    //Perform dot product for each requested mode
+    for (m=0; m< modesin.size(); m++){
+      if (m >= eigenin.eigenvalues().rows()){
+        std::cerr << "Warning: Mode " << modesin.at(m) << " does not exist and projection was set to default " << defVal << std::endl;
+        proj.at(m)=defVal;
+      }
+      else{
+        //Note that mode 1 is the last eigenvector and modesin uses base one
+        proj.at(m)=eigenin.eigenvectors().col(eigenin.eigenvalues().rows()-modesin.at(m)).dot(dt);
+      }
+    }
+  }
+  
+  return proj;
 }
 
 void Analyze::pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, double>& pdin){
