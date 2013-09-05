@@ -98,7 +98,7 @@ std::vector<double>& Analyze::getTDataVec(){
 	return tdata;
 }
 
-Eigen::MatrixXd& Analyze::getAvgCovar(){
+Eigen::MatrixXd& Analyze::getCovar(){
   return avgCovar;
 }
 
@@ -162,6 +162,9 @@ Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& Analyze::getEigen(){
 
 
 //All preAnalysis Functions
+void Analyze::preAnalysis(){
+  //Do nothing
+}
 
 void Analyze::preAnalysis(Molecule* molin){
 	this->setupMolSel(molin);
@@ -193,6 +196,42 @@ void AnalyzeCovariance::preAnalysis(Molecule* molin){
   this->setupMolSel(refmol);
   //Resize matrix to 3N x 3N and zero
   this->initCovar(3*refmol->getNAtomSelected(), 3*refmol->getNAtomSelected());
+}
+
+void AnalyzeCovariance::preAnalysis(){
+  std::ifstream inpFile;
+  std::istream* inp;
+  std::string line;
+  unsigned int nrow;
+  std::vector<double> tmp;
+
+  //Read covariance matrix
+  if (getInput().length() > 0){
+    nrow=0;
+
+    inpFile.open(getInput().c_str(), std::ios::in);
+    inp=&inpFile;
+
+    while (inp->good() && !(inp->eof())){
+      getline(*inp, line);
+      if (line.length() > 0){
+        Misc::splitNum(Misc::trim(line), " \t", tmp, false);
+        if (nrow == 0){
+          this->initCovar(tmp.size(), tmp.size());
+        }
+        for (unsigned int ncol=0; ncol< tmp.size(); ncol++){
+          getCovar()(nrow, ncol)=tmp.at(ncol);
+        }
+        nrow++;
+      }
+    }
+    if (inpFile.is_open()){
+      inpFile.close();
+    }
+  }
+
+  //Diagonalize covariance matrix
+  setEigen(diagonalizeCovar());
 }
 
 void AnalyzeProjection::preAnalysis(Molecule* molin){
@@ -228,7 +267,7 @@ void AnalyzeProjection::preAnalysis(Molecule* molin){
           std::cerr << ")" << std::endl;
         }
         for (unsigned int ncol=0; ncol< N3 && ncol < tmp.size(); ncol++){
-          getAvgCovar()(nrow, ncol)=tmp.at(ncol);
+          getCovar()(nrow, ncol)=tmp.at(ncol);
         }
         nrow++;
       }
@@ -301,7 +340,7 @@ void AnalyzeDihedral::runAnalysis(){
 }
 
 void AnalyzeCovariance::runAnalysis(){
-  Analyze::averageCovariance(this->getMol(0), this->getMol(1), getAvgCovar(), getNData());
+  Analyze::averageCovariance(this->getMol(0), this->getMol(1), getCovar(), getNData());
 }
 
 void AnalyzeProjection::runAnalysis(){
@@ -361,14 +400,14 @@ void AnalyzeRMSF::postAnalysis(){
 void AnalyzeCovariance::postAnalysis(){
   //Take average
   if (getNData() > 1){
-    getAvgCovar()/=(getNData()-1);
+    getCovar()/=(getNData()-1);
   }
   if (getOutput().length() > 0){
     std::ofstream out;
     out.open(getOutput().c_str(), std::ios::out);
     if (out.is_open()){
       std::cerr << "Un-diagonalized covariance matrix written to \"" << getOutput() << "\"" << std::endl;
-      out << getAvgCovar() << std::endl;
+      out << getCovar() << std::endl;
       out.close();
     }
   }

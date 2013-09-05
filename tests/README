@@ -12,3 +12,5 @@ analyzeTraj -rmsf :.CA -pdb tests/file.avg.pdb -fit tests/file.avg.pdb -fitsel :
 
 Average
 analyzeTraj -average :.CA -pdb tests/file.pdb t.dcd | grep ATOM > avg2.pdb
+
+analyzeTraj -covariance :1-5.CA covar.out -pdb tests/file.pdb tests/file.dcd tests/file.dcd tests/file.dcd tests/file.dcd tests/file.dcd

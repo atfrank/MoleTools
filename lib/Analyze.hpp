@@ -45,7 +45,7 @@ class Analyze {
     std::string getInput();
     void setOutput (const std::string& fin);
     std::string getOutput();
-    Eigen::MatrixXd& getAvgCovar();
+    Eigen::MatrixXd& getCovar();
     void addModes(const std::vector<unsigned int>& modesin);
     std::vector<unsigned int>& getModes();
     void initCovar(const unsigned int& xin, const unsigned int& yin);
@@ -56,6 +56,7 @@ class Analyze {
 		//Virtual functions
 		virtual void setupMolSel(Molecule* molin);
 		virtual void preAnalysis(Molecule* molin); 
+    virtual void preAnalysis();
 		virtual void runAnalysis() =0; //Pure virtual function
 		virtual void postAnalysis();
 
@@ -125,6 +126,7 @@ class AnalyzeDihedral: public Analyze {
 class AnalyzeCovariance: public Analyze {
   public:
     void preAnalysis(Molecule* molin);
+    void preAnalysis();
     void runAnalysis();
     void postAnalysis();
 };
@@ -133,7 +135,6 @@ class AnalyzeProjection: public Analyze {
   public:
     void preAnalysis(Molecule* molin);
     void runAnalysis();
-    //void postAnalysis();
 };
 
 #endif
