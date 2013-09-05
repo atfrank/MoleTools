@@ -677,13 +677,13 @@ void Analyze::averageCovariance (Molecule* cmpmol, Molecule* refmol, Eigen::Matr
     }
 
     //Generate covariance matrix at time, t, for all off-diagonal elements
-    //and zero diagonal afterwards
+    //Note that the diganonal is NOT zero!
     for (i=0; i< tCovar.rows(); i++){
       for (j=i+1; j< tCovar.cols(); j++){
         tCovar(i,j)=tCovar(i,i)*tCovar(j,j);
         tCovar(j,i)=tCovar(i,j);
       }
-      tCovar(i,i)=0.0;
+      tCovar(i,i)=tCovar(i,i)*tCovar(i,i);
     }
 
     //Add to average covariance matrix covarin="avgCovar"
