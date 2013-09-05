@@ -480,7 +480,7 @@ void Analyze::averageCovariance (Molecule* cmpmol, Molecule* refmol, Eigen::Matr
   Atom *atm;
   Eigen::MatrixXd tCovar; //Covariance at some time, t
 
-  tCovar=Eigen::MatrixXd::Zero(3*refmol->getNAtomSelected(), 3*refmol->getNAtomSelected());
+  tCovar=Eigen::MatrixXd::Zero(covarin.rows(), covarin.cols());
 
   //Check selection sizes 
   if (cmpmol->getNAtomSelected() != refmol->getNAtomSelected()){
@@ -519,7 +519,7 @@ void Analyze::averageCovariance (Molecule* cmpmol, Molecule* refmol, Eigen::Matr
       k++;
     }
 
-    if (j != k){
+    if (j != k && j != covarin.rows()){
       //No harm done, frame/structure is skipped
       std::cerr << "Warning: Atom Number Mismatch in covariance matrix!" << std::endl;
       return;
@@ -527,8 +527,8 @@ void Analyze::averageCovariance (Molecule* cmpmol, Molecule* refmol, Eigen::Matr
 
     //Generate covariance matrix at time, t, for all off-diagonal elements
     //and zero diagonal afterwards
-    for (i=0; i< 3*refmol->getNAtomSelected(); i++){
-      for (j=i+1; j< 3*refmol->getNAtomSelected(); j++){
+    for (i=0; i< tCovar.rows(); i++){
+      for (j=i+1; j< tCovar.cols(); j++){
         tCovar(i,j)=tCovar(i,i)*tCovar(j,j);
         tCovar(j,i)=tCovar(i,j);
       }
