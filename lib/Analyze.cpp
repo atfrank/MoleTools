@@ -104,6 +104,27 @@ void Analyze::initCovar(const unsigned int &xin, const unsigned int &yin){
   avgCovar=Eigen::MatrixXd::Zero(xin, yin);
 }
 
+void Analyze::diagonalizeCovar(){
+  //Diagonalize avg covariance matrix
+  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigOut(avgCovar);
+  //Eigenvalues are already sorted in increasing order, largest at N
+  //std::cout << eigOut.eigenvalues() << std::endl;
+
+  //Eigenvectors are stored in columns, starting with
+  //(x1, y1, z1, x2, y2, z2, ..., xN, yN, zN)
+  //std::cout << eigOut.eigenvectors() << std::endl;
+
+  //Output PC1
+  //unsigned int pc1 = 3*this->getMol(1)->getNAtomSelected() - 1;
+  //std::cout << eigOut.eigenvalues()[pc1] << std::endl;
+  //std::cout << eigOut.eigenvectors().col(pc1) << std::endl;
+
+  //Output PC2
+  //unsigned int pc2 = 3*this->getMol(1)->getNAtomSelected() - 2;
+  //std::cout << eigOut.eigenvalues()[pc2] << std::endl;
+  //std::cout << eigOut.eigenvectors().col(pc2) << std::endl;
+}
+
 //All preAnalysis Functions
 
 void Analyze::preAnalysis(Molecule* molin){
@@ -235,20 +256,10 @@ void AnalyzeRMSF::postAnalysis(){
 }
 
 void AnalyzeEDA::postAnalysis(){
-  /*
-  unsigned int i;
-  Atom *atm;
-
-  std::cout << std::fixed;
-  for(i=0; i< this->getMol(1)->getNAtomSelected(); i++){
-    atm=this->getMol(1)->getAtom(i);
-    if (atm->getSel() == false){
-      continue;
-    }
-    atm->setCoor(atm->getCoor()/getNData());
-  }
-  this->getMol(1)->writePDB();
-  */
+  //Take average
+  getAvgCovar()/=getNData();
+  //Diagonalize
+  this->diagonalizeCovar();
 }
 
 
@@ -514,16 +525,19 @@ void Analyze::averageCovariance (Molecule* cmpmol, Molecule* refmol, Eigen::Matr
       return;
     }
 
-    //Generate covariance matrix at time, t, and zero diagonal afterwards
+    //Generate covariance matrix at time, t, for all off-diagonal elements
+    //and zero diagonal afterwards
     for (i=0; i< 3*refmol->getNAtomSelected(); i++){
       for (j=i+1; j< 3*refmol->getNAtomSelected(); j++){
-        
+        tCovar(i,j)=tCovar(i,i)*tCovar(j,j);
+        tCovar(j,i)=tCovar(i,j);
       }
+      tCovar(i,i)=0.0;
     }
 
-    //Add to average covariance matrix "avgCovar"
-
-      //Check possible overflow, maybe find matrix max?
+    //Add to average covariance matrix covarin="avgCovar"
+    covarin+=tCovar;
+    //Check possible overflow, maybe find matrix max?
       
     ndataIO++;
   }

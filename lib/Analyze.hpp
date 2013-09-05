@@ -36,6 +36,7 @@ class Analyze {
 		std::vector<double>& getTDataVec();
     Eigen::MatrixXd& getAvgCovar();
     void initCovar(const unsigned int& xin, const unsigned int& yin);
+    void diagonalizeCovar();
 		
 		//Virtual functions
 		virtual void setupMolSel(Molecule* molin);
