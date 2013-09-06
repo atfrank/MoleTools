@@ -670,7 +670,7 @@ void Analyze::averageCovariance (Molecule* cmpmol, Molecule* refmol, Eigen::Matr
       k++;
     }
 
-    if (j != k && j != covarin.rows()){
+    if (j != k && j != static_cast<unsigned int>(covarin.rows())){
       //No harm done, frame/structure is skipped
       std::cerr << "Warning: Atom Number Mismatch in covariance matrix!" << std::endl;
       return;
@@ -678,8 +678,8 @@ void Analyze::averageCovariance (Molecule* cmpmol, Molecule* refmol, Eigen::Matr
 
     //Generate covariance matrix at time, t, for all off-diagonal elements
     //Note that the diganonal is NOT zero!
-    for (i=0; i< tCovar.rows(); i++){
-      for (j=i+1; j< tCovar.cols(); j++){
+    for (i=0; i< static_cast<unsigned int>(tCovar.rows()); i++){
+      for (j=i+1; j< static_cast<unsigned int>(tCovar.cols()); j++){
         tCovar(i,j)=tCovar(i,i)*tCovar(j,j);
         tCovar(j,i)=tCovar(i,j);
       }
@@ -744,7 +744,7 @@ std::vector<double> Analyze::projectModes(Molecule* cmpmol, Molecule* refmol, co
       k++;
     }
 
-    if (j != k && j != eigenin.eigenvalues().rows()){
+    if (j != k && j != static_cast<unsigned int>(eigenin.eigenvalues().rows())){
       //No harm done, frame/structure is skipped
       std::cerr << "Warning: Atom Number Mismatch in covariance matrix!" << std::endl;
       return proj;
@@ -752,7 +752,7 @@ std::vector<double> Analyze::projectModes(Molecule* cmpmol, Molecule* refmol, co
   
     //Perform dot product for each requested mode
     for (m=0; m< modesin.size(); m++){
-      if (m >= eigenin.eigenvalues().rows()){
+      if (m >= static_cast<unsigned int>(eigenin.eigenvalues().rows())){
         std::cerr << "Warning: Mode " << modesin.at(m) << " does not exist and projection was set to default " << defVal << std::endl;
         proj.at(m)=defVal;
       }
