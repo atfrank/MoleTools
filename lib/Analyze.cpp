@@ -870,7 +870,7 @@ void Analyze::allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::vector<doub
   }
 }
 
-void Analyze::pcasso(Molecule* mol){
+void Analyze::pcasso(Molecule* mol, std::string dsspin){
 	Chain *c;
 	Atom *ai, *aj;
 	unsigned int j, start;
@@ -886,11 +886,34 @@ void Analyze::pcasso(Molecule* mol){
 	Molecule* cmol;
 	std::vector<double> last;
 	std::vector<double> curr;
+  std::ifstream dsspFile;
+  std::istream* dsspinp;
+  std::string line;
+  std::vector<std::string> dssp;
+  std::vector<std::string> s;
+  unsigned int natom;
 
 	defVal=9999.9;
 	cmol=NULL;
 	last.clear();
 	curr.clear();
+  natom=0;
+
+  //Read DSSP file first
+  if (dsspin.length() > 0){
+    dsspFile.open(dsspin.c_str(), std::ios::in);
+    dsspinp=&dsspFile;
+    while (dsspinp->good() && !(dsspinp->eof())){
+      getline(*dsspinp, line);
+      Misc::splitStr(line, " \t", s, false);
+      if (s.size() > 0){
+        dssp.push_back(s.back());
+      }
+    }
+    if (dsspFile.is_open()){
+      dsspFile.close();
+    }
+  }
 
 	mol->storeSel();
 	mol->select(":.CA");
@@ -1041,6 +1064,14 @@ void Analyze::pcasso(Molecule* mol){
 				for (j=0; j< curr.size(); j++){
           std::cout << curr.at(j) << " ";
         }
+        if (dsspin.length() > 0){
+          if (natom < dssp.size()){
+            std::cout << dssp.at(natom) << " ";
+          }
+          else{
+            std::cout << "0" << " ";
+          }
+        }
 				std::cout << std::endl;
 				
 				std::cout << ai->getPdbId() << " " << ai->getChainId() << " " << ai->getResId() << " ";
@@ -1058,6 +1089,14 @@ void Analyze::pcasso(Molecule* mol){
 					for (j=0; j< curr.size(); j++){
 	          std::cout << defVal << " ";
 	        }
+          if (dsspin.length() > 0){
+            if (natom < dssp.size()){
+              std::cout << dssp.at(natom) << " ";
+            }
+            else{
+              std::cout << "0" << " ";
+            }
+          }
 					std::cout << std::endl;
 				}
 			}
@@ -1075,9 +1114,9 @@ void Analyze::pcasso(Molecule* mol){
 			}
 			last=curr;
 			curr.clear();
-
-		}
-	}
+      natom++;
+		} //Loop through atoms
+	}//Loop through chains
 
 	if (cmol != NULL){
 		delete cmol;

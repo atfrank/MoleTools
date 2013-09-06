@@ -9,6 +9,9 @@
 #include <cstdlib>
 
 void usage(){
+  std::cerr << "Usage:   pcasso [-options] <pdbFile>" << std::endl;
+  std::cerr << "Options: [-dssp dsspFile]" << std::endl;
+  std::cerr << std::endl;
   exit(0);
 }
 
@@ -19,11 +22,18 @@ int main (int argc, char **argv){
 	unsigned int j;
   std::vector<std::string> pdbs;
   std::string currArg;
+  std::string dssp;
+
+  dssp.clear();
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
     if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
+    }
+    else if (currArg.compare("-dssp")){
+      currArg=argv[++i];
+      dssp=currArg;
     }
     else{
       pdbs.push_back(currArg);
@@ -35,11 +45,26 @@ int main (int argc, char **argv){
     usage();
   }
 
-	for (j=0; j< pdbs.size(); j++){
-  	Molecule *mol=Molecule::readPDB(pdbs.at(j));
-		std::cerr << "Processing file \"" << pdbs.at(j) << "..." << std::endl;
-		mol->pcasso(); //Makes temporary clone with C-alpha only, and analyzes it
-		delete mol;
+  if (dssp.length() > 0){
+    if (pdbs.size() > 1){
+      std::cerr << "Warning: \"-dssp\" option can only be used with a single PDB input" << std::endl;
+      std::cerr << "Warning: Only the first PDB structure was processed" << std::endl;
+    }
+    if (pdbs.size() > 0){
+      //Only process first structure!
+      Molecule *mol=Molecule::readPDB(pdbs.at(0));
+      std::cerr << "Processing file \"" << pdbs.at(0) << "..." << std::endl;
+      mol->pcasso(dssp); //Makes temporary clone with C-alpha only, and analyzes it
+      delete mol;
+    }
+  }
+  else{
+	  for (j=0; j< pdbs.size(); j++){
+  	  Molecule *mol=Molecule::readPDB(pdbs.at(j));
+		  std::cerr << "Processing file \"" << pdbs.at(j) << "..." << std::endl;
+		  mol->pcasso(); //Makes temporary clone with C-alpha only, and analyzes it
+		  delete mol;
+    }
 	}
 
   return 0;

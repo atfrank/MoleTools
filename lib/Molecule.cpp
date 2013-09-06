@@ -576,8 +576,13 @@ void Molecule::modPseudoCenter(){
 	}
 }
 
-void Molecule::pcasso (){
-	Analyze::pcasso(this);
+void Molecule::pcasso (std::string dsspin){
+  if (dsspin.length() > 0){
+	  Analyze::pcasso(this, dsspin);
+  }
+  else{
+    Analyze::pcasso(this);
+  }
 }
 
 //Virtual Functions

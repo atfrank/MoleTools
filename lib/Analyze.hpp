@@ -75,7 +75,7 @@ class Analyze {
     static std::vector<double> projectModes(Molecule* cmpmol, Molecule* refmol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int>& modesin);
 		static void pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, double>& pdin);
 		static void allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::vector<double> >& anglesin);
-		static void pcasso(Molecule* mol);
+		static void pcasso(Molecule* mol, std::string dsspin="");
 };
 
 //Derived classes
