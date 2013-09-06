@@ -31,7 +31,7 @@ int main (int argc, char **argv){
     if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
     }
-    else if (currArg.compare("-dssp")){
+    else if (currArg.compare("-dssp") == 0){
       currArg=argv[++i];
       dssp=currArg;
     }
