@@ -77,7 +77,7 @@ int main (int argc, char **argv){
       if (mvec.size() == 1 && mvec.at(0) == 0){
         //If mode = 0 then print all eigenvectors
         mvec.clear();
-        for (j=0; static_cast<unsigned int>(j< anin->getEigen().eigenvectors().cols()); j++){
+        for (j=0; j< static_cast<unsigned int>(anin->getEigen().eigenvectors().cols()); j++){
           mvec.push_back(j+1);
         }
       }
@@ -87,7 +87,7 @@ int main (int argc, char **argv){
           std::cerr << "Warning: Skipping unknown Mode " << mvec.at(j) << std::endl;
         }
         else{
-          std::cout << anin->getEigen().eigenvectors().col(ncol-mvec.at(j)) << std::endl;
+          std::cout << anin->getEigen().eigenvectors().col(ncol-mvec.at(j)) << std::endl << std::endl;
         }
       }
     }
