@@ -389,7 +389,7 @@ void AnalyzeRMSF::postAnalysis(){
     if (atm->getSel() == false){
       continue;
     }
-    tdata.at(j)=sqrt(tdata.at(j)/getNData());
+    tdata.at(j)=sqrt(tdata.at(j)/(getNData()-1));
     std::cout << atm->getSummary();
     std::cout << std::setw(9) << std::right << std::setprecision(3) << tdata.at(j);
     std::cout << std::endl;
