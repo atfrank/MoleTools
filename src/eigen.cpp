@@ -98,7 +98,7 @@ int main (int argc, char **argv){
       }
       for (j=0; j< mode.size(); j++){
         if (mode.at(j) > nrow){
-          std::cerr << "Warning: Skipping unknown Mode " << mval.at(j) << std::endl;
+          std::cerr << "Warning: Skipping unknown Mode " << mode.at(j) << std::endl;
         }
         else{
           std::cout << std::endl << "MODEL " << nmodel << std::endl;
