@@ -137,6 +137,42 @@ Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> Analyze::diagonalizeCovar(){
   return eigOut;
 }
 
+void Analyze::setEigenMode(unsigned int modein){
+  //Sets the molecule to the first mode
+  double eigval;
+  Eigen::MatrixXd eigvec;
+  unsigned int nrow;
+  unsigned int i, j;
+  Atom* a;
+
+  if (this->getNMol() > 1){
+    this->setMol(1, this->getMol(0)->clone());
+  }
+  else{
+    this->setupMolSel(this->getMol(0)->clone());
+  }
+  
+  nrow=this->getEigen().eigenvalues().rows();
+  eigval=this->getEigen().eigenvalues()[nrow-modein];
+  eigvec=this->getEigen().eigenvectors().col(nrow-modein)*eigval;
+  if (nrow != 3*this->getMol(1)->getAtmVecSize()){
+    std::cerr << "Warning: The number of 3N coordinates (" << 3*this->getMol(1)->getAtmVecSize();
+    std::cerr << ") and the number of elements in the covariance matrix (" << nrow << ") do not match!" << std::endl;
+  }
+  else{
+    i=0;
+    for (j=0; j< this->getMol(1)->getAtmVecSize(); j++){
+      a=this->getMol(1)->getAtom(j);
+      a->setX(a->getX()+eigvec(i));
+      i++;
+      a->setY(a->getY()+eigvec(i));
+      i++;
+      a->setZ(a->getZ()+eigvec(i));
+      i++;
+    }
+  }
+}
+
 void Analyze::setInput(const std::string& fin){
   ifile=fin;
 }
@@ -158,6 +194,42 @@ void Analyze::setEigen(Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigenin){
 
 Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& Analyze::getEigen(){
   return eigen;
+}
+
+void Analyze::readCovariance(){
+  std::ifstream inpFile;
+  std::istream* inp;
+  std::string line;
+  unsigned int nrow;
+  std::vector<double> tmp;
+
+  //Read covariance matrix
+  if (getInput().length() > 0){
+    nrow=0;
+
+    inpFile.open(getInput().c_str(), std::ios::in);
+    inp=&inpFile;
+
+    while (inp->good() && !(inp->eof())){
+      getline(*inp, line);
+      if (line.length() > 0){
+        Misc::splitNum(Misc::trim(line), " \t", tmp, false);
+        if (nrow == 0){
+          this->initCovar(tmp.size(), tmp.size());
+        }
+        for (unsigned int ncol=0; ncol< tmp.size(); ncol++){
+          getCovar()(nrow, ncol)=tmp.at(ncol);
+        }
+        nrow++;
+      }
+    }
+    if (inpFile.is_open()){
+      inpFile.close();
+    }
+  }
+  else{
+    std::cerr << "Warning: A covariance matrix was not provided" << std::endl;
+  }
 }
 
 
@@ -194,41 +266,22 @@ void AnalyzeCovariance::preAnalysis(Molecule* molin){
   this->setupMolSel(molin);
   Molecule* refmol=molin->clone();
   this->setupMolSel(refmol);
-  //Resize matrix to 3N x 3N and zero
-  this->initCovar(3*refmol->getNAtomSelected(), 3*refmol->getNAtomSelected());
+
+  if (getInput().length() != 0){
+    readCovariance();
+
+    //Diagonalize covariance matrix
+    setEigen(diagonalizeCovar());
+  }
+  else{
+    //Resize matrix to 3N x 3N and zero
+    this->initCovar(3*refmol->getNAtomSelected(), 3*refmol->getNAtomSelected());
+  }
 }
 
 void AnalyzeCovariance::preAnalysis(){
-  std::ifstream inpFile;
-  std::istream* inp;
-  std::string line;
-  unsigned int nrow;
-  std::vector<double> tmp;
 
-  //Read covariance matrix
-  if (getInput().length() > 0){
-    nrow=0;
-
-    inpFile.open(getInput().c_str(), std::ios::in);
-    inp=&inpFile;
-
-    while (inp->good() && !(inp->eof())){
-      getline(*inp, line);
-      if (line.length() > 0){
-        Misc::splitNum(Misc::trim(line), " \t", tmp, false);
-        if (nrow == 0){
-          this->initCovar(tmp.size(), tmp.size());
-        }
-        for (unsigned int ncol=0; ncol< tmp.size(); ncol++){
-          getCovar()(nrow, ncol)=tmp.at(ncol);
-        }
-        nrow++;
-      }
-    }
-    if (inpFile.is_open()){
-      inpFile.close();
-    }
-  }
+  readCovariance();
 
   //Diagonalize covariance matrix
   setEigen(diagonalizeCovar());

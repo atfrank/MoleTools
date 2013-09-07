@@ -11,14 +11,15 @@
 void usage(){
   std::cerr << "Usage:   eigen [-options] <covarFILE>" << std::endl;
   std::cerr << "Options: [-vector mode1[:mode2[...[:modeN]]] | -value mode1[:mode2[...[:modeN]]]]" << std::endl;
-  std::cerr << "         [-pdb pdbFile mode1[:mode2[:...[:modeN]]]]" << std::endl; 
+  std::cerr << "         [-pdb pdbFile mode1[:mode2[:...[:modeN]]]] [-sel selection]" << std::endl; 
+  std::cerr << "         [-comp covarFile]" << std::endl;
   exit(0);
 }
 
 int main (int argc, char **argv){
 
   int i;
-  unsigned int j, k, l;
+  unsigned int j;
   std::string covar;
   std::string currArg;
   Analyze *anin;
@@ -28,11 +29,8 @@ int main (int argc, char **argv){
   std::string pdb;
   unsigned int nrow, ncol;
   Molecule* avgmol;
-  Molecule* eigmol;
-  double eigval;
-  Eigen::MatrixXd eigvec;
-  Atom* a;
   unsigned int nmodel;
+  std::string sel;
 
   covar.clear();
   mvec.clear();
@@ -40,8 +38,8 @@ int main (int argc, char **argv){
   mode.clear();
   pdb.clear();
   avgmol=NULL;
-  eigmol=NULL;
   nmodel=1;
+  sel=":.";
 
 
   for (i=1; i<argc; i++){
@@ -56,6 +54,10 @@ int main (int argc, char **argv){
       Misc::splitNum(currArg, ":", mode, false);
       mval.clear();
       mvec.clear();
+    }
+    else if (currArg.compare("-sel") == 0){
+      currArg=argv[++i];
+      sel=currArg;
     }
     else if (currArg.compare("-vector") == 0){
       currArg=argv[++i];
@@ -77,48 +79,33 @@ int main (int argc, char **argv){
   if (covar.length() > 0){
     anin=new AnalyzeCovariance;
     anin->setInput(covar);
-    anin->preAnalysis(); //Reads covariance matrix and diagonalizes it
-    //std::cout << anin->getEigen().eigenvalues() << std::endl;
-    //std::cout << anin->getEigen().eigenvectors().col(anin->getEigen().eigenvalues().rows()-1) << std::endl;
 
     //Extract PDBs
     if (mode.size() > 0 && pdb.length() > 0){
+      anin->addSel(sel);
+      anin->preAnalysis(Molecule::readPDB(pdb)); //Reads covariance matrix and diagonalizes it
       nrow=anin->getEigen().eigenvalues().rows();
-      avgmol=Molecule::readPDB(pdb);
       std::cout << std::endl << "MODEL " << nmodel << std::endl;
-      avgmol->writePDB();
+      anin->getMol(0)->writePDB(); //write input PDB
       std::cout << "ENDMDL" << std::endl;
       nmodel++;
+      if (mode.size() == 1 && mode.at(0) == 0){
+        //If mode = 0 then print all models
+        mode.clear();
+        for (j=0; j< static_cast<unsigned int>(anin->getEigen().eigenvalues().rows()); j++){
+          mode.push_back(j+1);
+        }
+      }
       for (j=0; j< mode.size(); j++){
         if (mode.at(j) > nrow){
           std::cerr << "Warning: Skipping unknown Mode " << mval.at(j) << std::endl;
         }
         else{
-          eigmol=avgmol->clone(true,true);
-          eigval=anin->getEigen().eigenvalues()[nrow-mode.at(j)];
-          eigvec=anin->getEigen().eigenvectors().col(nrow-mode.at(j))*eigval;
-          k=0;
-          for (l=0; l< eigmol->getAtmVecSize(); l++){
-            a=eigmol->getAtom(l);
-            a->setX(a->getX()+eigvec(k));
-            k++;
-            a->setY(a->getY()+eigvec(k));
-            k++;
-            a->setZ(a->getZ()+eigvec(k));
-            k++;
-          }
           std::cout << std::endl << "MODEL " << nmodel << std::endl;
-          eigmol->writePDB();
+          anin->setEigenMode(mode.at(j));
+          anin->getMol(1)->writePDB();
           std::cout << "ENDMDL" << std::endl;
           nmodel++;
-          if (k != 3*eigmol->getAtmVecSize()){
-            std::cerr << "Warning: The number of atoms in the PDB file (" << eigmol->getAtmVecSize();
-            std::cerr << ") and covariance matrix " << k << " do not match!" << std::endl;
-          }
-          if (eigmol != NULL){
-            delete eigmol;
-            eigmol=NULL;
-          }
         }
       }
       if (avgmol != NULL){
@@ -128,6 +115,7 @@ int main (int argc, char **argv){
 
     //Extract eigenvalues
     if (mval.size() > 0){
+      anin->preAnalysis();
       if (mval.size() == 1 && mval.at(0) == 0){
         //If mode = 0 then print all eigenvalues
         mval.clear();
@@ -148,6 +136,7 @@ int main (int argc, char **argv){
 
     //Extract eigenvectors
     if (mvec.size() > 0){
+      anin->preAnalysis();
       if (mvec.size() == 1 && mvec.at(0) == 0){
         //If mode = 0 then print all eigenvectors
         mvec.clear();

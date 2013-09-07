@@ -52,6 +52,8 @@ class Analyze {
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> diagonalizeCovar();
     void setEigen(Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eiginin);
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& getEigen();
+    void setEigenMode(unsigned int modein);
+    void readCovariance();
 		
 		//Virtual functions
 		virtual void setupMolSel(Molecule* molin);
