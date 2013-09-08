@@ -34,7 +34,7 @@ class Analyze {
 		std::string getSel(const int& element);
 		unsigned int getNSel();
     void addMol(Molecule* molin);
-		void setMol(const int element, Molecule* molin);
+		void setMol(const int& element, Molecule* molin);
 		void resizeNMol(const int sizein);
 		Molecule* getMol(const int& element);
 		unsigned int getNMol();
@@ -52,8 +52,9 @@ class Analyze {
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> diagonalizeCovar();
     void setEigen(Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eiginin);
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& getEigen();
-    void setEigenMode(unsigned int modein);
+    void setEigenMode(const unsigned int& modein);
     void readCovariance();
+    void writeEigenOverlap(Analyze* cmpin);
 		
 		//Virtual functions
 		virtual void setupMolSel(Molecule* molin);

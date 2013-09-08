@@ -21,8 +21,10 @@ int main (int argc, char **argv){
   int i;
   unsigned int j;
   std::string covar;
+  std::string cmpcovar;
   std::string currArg;
   Analyze *anin;
+  Analyze *ancmp;
   std::vector<unsigned int> mvec;
   std::vector<unsigned int> mval;
   std::vector<unsigned int> mode; 
@@ -33,6 +35,9 @@ int main (int argc, char **argv){
   std::string sel;
 
   covar.clear();
+  cmpcovar.clear();
+  anin=NULL;
+  ancmp=NULL;
   mvec.clear();
   mval.clear();
   mode.clear();
@@ -54,22 +59,32 @@ int main (int argc, char **argv){
       Misc::splitNum(currArg, ":", mode, false);
       mval.clear();
       mvec.clear();
+      cmpcovar.clear();
     }
     else if (currArg.compare("-sel") == 0){
       currArg=argv[++i];
       sel=currArg;
+    }
+    else if (currArg.compare("-comp") == 0){
+      currArg=argv[++i];
+      cmpcovar=currArg;
+      mval.clear();
+      mvec.clear();
+      mode.clear();
     }
     else if (currArg.compare("-vector") == 0){
       currArg=argv[++i];
       Misc::splitNum(currArg, ":", mvec, false);
       mval.clear();
       mode.clear();
+      cmpcovar.clear();
     }
     else if (currArg.compare("-value") == 0){
       currArg=argv[++i];
       Misc::splitNum(currArg, ":", mval, false);
       mvec.clear();
       mode.clear();
+      cmpcovar.clear();
     }
     else{
       covar=currArg;
@@ -153,6 +168,14 @@ int main (int argc, char **argv){
           std::cout << anin->getEigen().eigenvectors().col(ncol-mvec.at(j)) << std::endl << std::endl;
         }
       }
+    }
+
+    if (cmpcovar.length() > 0){
+      anin->preAnalysis();
+      ancmp=new AnalyzeCovariance;
+      ancmp->setInput(cmpcovar);
+      ancmp->preAnalysis();
+      anin->writeEigenOverlap(ancmp);
     }
   }
 

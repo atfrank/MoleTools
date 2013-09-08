@@ -29,7 +29,7 @@ void Analyze::addMol(Molecule* molin){
 	this->mol.push_back(molin);
 }
 
-void Analyze::setMol(const int element, Molecule* molin){
+void Analyze::setMol(const int& element, Molecule* molin){
 	this->mol.at(element)=molin;
 }
 
@@ -137,7 +137,7 @@ Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> Analyze::diagonalizeCovar(){
   return eigOut;
 }
 
-void Analyze::setEigenMode(unsigned int modein){
+void Analyze::setEigenMode(const unsigned int& modein){
   //Sets the molecule to the first mode
   double eigval;
   Eigen::MatrixXd eigvec;
@@ -169,6 +169,26 @@ void Analyze::setEigenMode(unsigned int modein){
       i++;
       a->setZ(a->getZ()+eigvec(i));
       i++;
+    }
+  }
+}
+
+void Analyze::writeEigenOverlap(Analyze* cmpin){
+  Eigen::MatrixXd refvec;
+  Eigen::MatrixXd cmpvec;
+  double overlap;
+
+  refvec=this->getEigen().eigenvectors();
+  cmpvec=cmpin->getEigen().eigenvectors();
+  if (refvec.cols() > 0 && refvec.cols() == cmpvec.cols()){
+    if (refvec.col(1).rows() == cmpvec.col(1).rows()){
+      for (unsigned int i=0; i< refvec.cols(); i++){
+        for (unsigned int j=0; j< cmpvec.cols(); j++){
+          overlap=refvec.col(i).dot(cmpvec.col(j));
+          std::cout << i+1 << "  " << j+1 << "  " << overlap << std::endl;
+        }
+        std::cout << std::endl;
+      }
     }
   }
 }
