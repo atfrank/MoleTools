@@ -40,19 +40,19 @@ Molecule::~Molecule (){
 	}
 }
 
-Molecule* Molecule::readPDB (const std::string ifile, const int model, const std::string format){
+Molecule* Molecule::readPDB (const std::string ifile, const int model, const std::string format, const bool hetFlag){
   if (ifile.length() == 0){
     std::cerr << "Error: PDB file \"" << ifile << "\" cannot be found" << std::endl;
     return new Molecule;
   }
   else{
-		Molecule* mol=PDB::readPDB(ifile, model, format);
+		Molecule* mol=PDB::readPDB(ifile, model, format, hetFlag);
 		mol->format();
     return mol;
   }
 }
 
-Molecule* Molecule::readPDB (const std::string ifile, const std::string format){
+Molecule* Molecule::readPDB (const std::string ifile, const std::string format, const bool hetFlag){
 	//Overloaded function
 	return Molecule::readPDB(ifile, 0, format);
 }

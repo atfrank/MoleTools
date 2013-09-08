@@ -24,8 +24,8 @@ class Molecule {
   public:
 		Molecule(); //Constructor
 		~Molecule();
-    static Molecule* readPDB (const std::string ifile, const int model=0, const std::string format="");
-		static Molecule* readPDB (const std::string ifile, const std::string format);
+    static Molecule* readPDB (const std::string ifile, const int model=0, const std::string format="", const bool hetFlag=true);
+		static Molecule* readPDB (const std::string ifile, const std::string format, const bool hetFlag=true);
 //    std::string writePDB (bool selFlag=true, bool print=true, bool chnFlag=false);
 		std::string writePDB (bool selFlag, bool print, bool chnFlag);
 		std::string writePDB (bool selFlag, bool print);

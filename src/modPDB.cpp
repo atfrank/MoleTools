@@ -20,6 +20,7 @@ void usage (){
 	std::cerr << "         [-rotate r1c1 r1c2 r1c3 r2c1 r2c2 r2c3 r3c1 r3c2 r3c3]" << std::endl;
   std::cerr << "         [-center] [-censel selection]" << std::endl;
 	std::cerr << "         [-format type] [-chains]" << std::endl;
+  std::cerr << "         [-nohetero]" << std::endl;
   std::cerr << std::endl << std::endl;
   exit(0);
 }
@@ -46,6 +47,7 @@ int main (int argc, char **argv){
 	Molecule *fitmol;
 	std::string format;
 	bool chnFlag;
+  bool hetFlag;
 
   pdb.clear();
 	mol=NULL;
@@ -64,6 +66,7 @@ int main (int argc, char **argv){
 	r3c3=0.0;
 	format.clear();
 	chnFlag=false;
+  hetFlag=true; //Keep hetero atoms
   
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -139,6 +142,9 @@ int main (int argc, char **argv){
 		else if (currArg.compare("-chains") == 0){
 			chnFlag=true;
 		}
+    else if (currArg.compare("-nohetero") == 0){
+      hetFlag=false;
+    } 
     else{
       pdb=currArg;
     }
@@ -149,7 +155,7 @@ int main (int argc, char **argv){
     usage();
   }
 
-  mol=Molecule::readPDB(pdb, model, format);
+  mol=Molecule::readPDB(pdb, model, format, hetFlag);
   if (sel.length() >0){
     mol->select(sel);
 		mol=mol->clone(true, false); //Clone and delete original
@@ -157,7 +163,7 @@ int main (int argc, char **argv){
 
 	if (fit == true){
 		if (fitpdb.length() > 0){
-			fitmol=Molecule::readPDB(fitpdb, model);
+			fitmol=Molecule::readPDB(fitpdb, model, format, hetFlag);
       if (fitsel.length() > 0){
 			  fitmol->select(fitsel);
 			  mol->select(fitsel);
