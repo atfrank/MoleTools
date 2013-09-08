@@ -11,8 +11,10 @@
 
 void usage(){
   std::cerr << "Usage:   eigen [-options] <covarFILE>" << std::endl;
-  std::cerr << "Options: [-vector mode1[:mode2[...[:modeN]]] | -value mode1[:mode2[...[:modeN]]]]" << std::endl;
-  std::cerr << "         [-pdb PDBfile mode1[:mode2[:...[:modeN]]]] [-sel selection] [-out TRAJfile]" << std::endl; 
+  std::cerr << "Options: [-vector mode1[:mode2[...[:modeN]]] | -vector modestart=modestop[=modeincr]]" << std::endl;
+  std::cerr << "         [-value mode1[:mode2[...[:modeN]]] | -value modestart=modestop[=modeincr]]" << std::endl;
+  std::cerr << "         [-pdb PDBfile mode1[:mode2[:...[:modeN]]]] [-sel selection]" << std::endl;
+  std::cerr << "         [-out TRAJfile]" << std::endl; 
   std::cerr << "         [-overlap covarFile]" << std::endl;
   exit(0);
 }
@@ -29,6 +31,8 @@ int main (int argc, char **argv){
   std::vector<unsigned int> mvec;
   std::vector<unsigned int> mval;
   std::vector<unsigned int> mode; 
+  std::vector<unsigned int> range;
+  unsigned int incr;
   std::string pdb;
   unsigned int nrow, ncol;
   Molecule* avgmol;
@@ -62,9 +66,6 @@ int main (int argc, char **argv){
       pdb=currArg;
       currArg=argv[++i];
       Misc::splitNum(currArg, ":", mode, false);
-      mval.clear();
-      mvec.clear();
-      cmpcovar.clear();
     }
     else if (currArg.compare("-sel") == 0){
       currArg=argv[++i];
@@ -77,23 +78,52 @@ int main (int argc, char **argv){
     else if (currArg.compare("-overlap") == 0){
       currArg=argv[++i];
       cmpcovar=currArg;
-      mval.clear();
-      mvec.clear();
-      mode.clear();
     }
     else if (currArg.compare("-vector") == 0){
       currArg=argv[++i];
-      Misc::splitNum(currArg, ":", mvec, false);
-      mval.clear();
-      mode.clear();
-      cmpcovar.clear();
+      if (currArg.find(":") != std::string::npos || Misc::isdigit(currArg)){
+        Misc::splitNum(currArg, ":", mvec, false);
+      }
+      else if (currArg.find("=") != std::string::npos){
+        Misc::splitNum(currArg, "=", range, false);
+        incr=1;
+        if (range.size() >= 2){
+          if (range.size() >= 3){
+            incr=range.at(2);
+          }
+          for (j=range.at(0); j<= range.at(1); j=j+incr){
+            mvec.push_back(j);
+          }
+        }
+      }
+      else{
+        std::cerr << std::endl << "Error: Unrecongized mode format";
+        std::cerr << std::endl << std::endl;
+        usage();
+      }
     }
     else if (currArg.compare("-value") == 0){
       currArg=argv[++i];
-      Misc::splitNum(currArg, ":", mval, false);
-      mvec.clear();
-      mode.clear();
-      cmpcovar.clear();
+      if (currArg.find(":") != std::string::npos || Misc::isdigit(currArg)){
+        Misc::splitNum(currArg, ":", mval, false);
+      }
+      else if (currArg.find("=") != std::string::npos){
+        Misc::splitNum(currArg, "=", range, false);
+        incr=1;
+        if (range.size() >= 2){
+          if (range.size() >= 3){
+            incr=range.at(2);
+          }
+          for (j=range.at(0); j<= range.at(1); j=j+incr){
+            mval.push_back(j);
+          }
+        }
+      }
+      else{
+        std::cerr << std::endl << "Error: Unrecongized mode format";
+        std::cerr << std::endl << std::endl;
+        usage();
+      }
     }
     else{
       covar=currArg;
@@ -104,8 +134,8 @@ int main (int argc, char **argv){
     anin=new AnalyzeCovariance;
     anin->setInput(covar);
 
-    //Extract PDBs
     if (mode.size() > 0 && pdb.length() > 0){
+      //Extract mode structures
       anin->addSel(sel);
       anin->preAnalysis(Molecule::readPDB(pdb)); //Reads covariance matrix and diagonalizes it
       nrow=anin->getEigen().eigenvalues().rows();
@@ -162,9 +192,16 @@ int main (int argc, char **argv){
         }
       }
     }
-
-    //Extract eigenvalues
-    if (mval.size() > 0){
+    else if (cmpcovar.length() > 0){
+      //Eigenvector Overlap
+      anin->preAnalysis();
+      ancmp=new AnalyzeCovariance;
+      ancmp->setInput(cmpcovar);
+      ancmp->preAnalysis();
+      anin->writeEigenOverlap(ancmp, mvec);
+    }
+    else if (mval.size() > 0){
+      //Extract Eigenvalues
       anin->preAnalysis();
       if (mval.size() == 1 && mval.at(0) == 0){
         //If mode = 0 then print all eigenvalues
@@ -183,9 +220,8 @@ int main (int argc, char **argv){
         }
       }
     }
-
-    //Extract eigenvectors
-    if (mvec.size() > 0){
+    else if (mvec.size() > 0){
+      //Extract eigenvectors
       anin->preAnalysis();
       if (mvec.size() == 1 && mvec.at(0) == 0){
         //If mode = 0 then print all eigenvectors
@@ -204,14 +240,8 @@ int main (int argc, char **argv){
         }
       }
     }
-
-    //Eigenvector Overlap
-    if (cmpcovar.length() > 0){
-      anin->preAnalysis();
-      ancmp=new AnalyzeCovariance;
-      ancmp->setInput(cmpcovar);
-      ancmp->preAnalysis();
-      anin->writeEigenOverlap(ancmp);
+    else{
+      //Do nothing
     }
   }
 

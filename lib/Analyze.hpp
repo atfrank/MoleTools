@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 //Abstract base class (cannot create instance of it!)
 class Analyze {
@@ -54,7 +55,7 @@ class Analyze {
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& getEigen();
     void setEigenMode(const unsigned int& modein);
     void readCovariance();
-    void writeEigenOverlap(Analyze* cmpin);
+    void writeEigenOverlap(Analyze* cmpin, std::vector<unsigned int>& mvecin);
 		
 		//Virtual functions
 		virtual void setupMolSel(Molecule* molin);
