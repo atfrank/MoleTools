@@ -191,6 +191,7 @@ void Analyze::writeEigenOverlap(Analyze* cmpin, std::vector<unsigned int>& mveci
     }
   }
 
+  std::cout << "#" << this->getInput() << "  " << cmpin->getInput() << "  " << "-1 <= Overlap <= 1" << std::endl;
   if (refvec.cols() > 0 && refvec.cols() == cmpvec.cols()){
     if (refvec.col(1).rows() == cmpvec.col(1).rows()){
       for (i=0; i< refvec.cols(); i++){
