@@ -13,7 +13,7 @@ void usage(){
   std::cerr << "Usage:   eigen [-options] <covarFILE>" << std::endl;
   std::cerr << "Options: [-vector mode1[:mode2[...[:modeN]]] | -vector modestart=modestop[=modeincr]]" << std::endl;
   std::cerr << "         [-value mode1[:mode2[...[:modeN]]] | -value modestart=modestop[=modeincr]]" << std::endl;
-  std::cerr << "         [-pdb PDBfile mode1[:mode2[:...[:modeN]]]] [-sel selection]" << std::endl;
+  std::cerr << "         [-pdb PDBfile] [-sel selection]" << std::endl;
   std::cerr << "         [-out TRAJfile]" << std::endl; 
   std::cerr << "         [-overlap covarFile]" << std::endl;
   exit(0);
@@ -30,7 +30,6 @@ int main (int argc, char **argv){
   Analyze *ancmp;
   std::vector<unsigned int> mvec;
   std::vector<unsigned int> mval;
-  std::vector<unsigned int> mode; 
   std::vector<unsigned int> range;
   unsigned int incr;
   std::string pdb;
@@ -48,7 +47,6 @@ int main (int argc, char **argv){
   ancmp=NULL;
   mvec.clear();
   mval.clear();
-  mode.clear();
   pdb.clear();
   avgmol=NULL;
   nmodel=0;
@@ -64,8 +62,6 @@ int main (int argc, char **argv){
     else if (currArg.compare("-pdb") == 0){
       currArg=argv[++i];
       pdb=currArg;
-      currArg=argv[++i];
-      Misc::splitNum(currArg, ":", mode, false);
     }
     else if (currArg.compare("-sel") == 0){
       currArg=argv[++i];
@@ -134,7 +130,7 @@ int main (int argc, char **argv){
     anin=new AnalyzeCovariance;
     anin->setInput(covar);
 
-    if (mode.size() > 0 && pdb.length() > 0){
+    if (pdb.length() > 0){
       //Extract mode structures
       anin->addSel(sel);
       anin->preAnalysis(Molecule::readPDB(pdb)); //Reads covariance matrix and diagonalizes it
@@ -154,19 +150,19 @@ int main (int argc, char **argv){
         std::cout << "ENDMDL" << std::endl;
       }
       nmodel++;
-      if (mode.size() == 1 && mode.at(0) == 0){
+      if (mvec.size() == 0 || (mvec.size() == 1 && mvec.at(0) == 0)){
         //If mode = 0 then print all models
-        mode.clear();
+        mvec.clear();
         for (j=0; j< static_cast<unsigned int>(anin->getEigen().eigenvalues().rows()); j++){
-          mode.push_back(j+1);
+          mvec.push_back(j+1);
         }
       }
-      for (j=0; j< mode.size(); j++){
-        if (mode.at(j) > nrow){
-          std::cerr << "Warning: Skipping unknown Mode " << mode.at(j) << std::endl;
+      for (j=0; j< mvec.size(); j++){
+        if (mvec.at(j) > nrow){
+          std::cerr << "Warning: Skipping unknown Mode " << mvec.at(j) << std::endl;
         }
         else{
-          anin->setEigenMode(mode.at(j));
+          anin->setEigenMode(mvec.at(j));
           if (trjout.is_open()){
             ftrjout->setMolecule(anin->getMol(1));
             ftrjout->writeFrame(trjout);
