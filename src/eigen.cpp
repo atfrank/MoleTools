@@ -3,6 +3,7 @@
 #include "Molecule.hpp"
 #include "Analyze.hpp"
 #include "Misc.hpp"
+#include "Trajectory.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -11,8 +12,8 @@
 void usage(){
   std::cerr << "Usage:   eigen [-options] <covarFILE>" << std::endl;
   std::cerr << "Options: [-vector mode1[:mode2[...[:modeN]]] | -value mode1[:mode2[...[:modeN]]]]" << std::endl;
-  std::cerr << "         [-pdb pdbFile mode1[:mode2[:...[:modeN]]]] [-sel selection]" << std::endl; 
-  std::cerr << "         [-comp covarFile]" << std::endl;
+  std::cerr << "         [-pdb PDBfile mode1[:mode2[:...[:modeN]]]] [-sel selection] [-out TRAJfile]" << std::endl; 
+  std::cerr << "         [-overlap covarFile]" << std::endl;
   exit(0);
 }
 
@@ -33,6 +34,9 @@ int main (int argc, char **argv){
   Molecule* avgmol;
   unsigned int nmodel;
   std::string sel;
+  std::string fout;
+  std::ofstream trjout;
+  Trajectory *ftrjout;
 
   covar.clear();
   cmpcovar.clear();
@@ -43,8 +47,9 @@ int main (int argc, char **argv){
   mode.clear();
   pdb.clear();
   avgmol=NULL;
-  nmodel=1;
+  nmodel=0;
   sel=":.";
+  ftrjout=NULL;
 
 
   for (i=1; i<argc; i++){
@@ -65,7 +70,11 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       sel=currArg;
     }
-    else if (currArg.compare("-comp") == 0){
+    else if (currArg.compare("-out") == 0){
+      currArg=argv[++i];
+      fout=currArg;
+    }
+    else if (currArg.compare("-overlap") == 0){
       currArg=argv[++i];
       cmpcovar=currArg;
       mval.clear();
@@ -100,9 +109,20 @@ int main (int argc, char **argv){
       anin->addSel(sel);
       anin->preAnalysis(Molecule::readPDB(pdb)); //Reads covariance matrix and diagonalizes it
       nrow=anin->getEigen().eigenvalues().rows();
-      std::cout << std::endl << "MODEL " << nmodel << std::endl;
-      anin->getMol(0)->writePDB(); //write input PDB
-      std::cout << "ENDMDL" << std::endl;
+      if (fout.length() > 0){
+        trjout.open(fout.c_str(), std::ios::binary);
+        ftrjout=new Trajectory;
+        ftrjout->setDefaultHeader();
+        ftrjout->setMolecule(anin->getMol(0));
+        ftrjout->setNAtom(static_cast<int>(anin->getMol(0)->getNAtomSelected()));
+        ftrjout->writeHeader(trjout);
+        ftrjout->writeFrame(trjout); //write input PDB
+      } 
+      else{
+        std::cout << std::endl << "MODEL " << nmodel+1 << std::endl;
+        anin->getMol(0)->writePDB(); //write input PDB
+        std::cout << "ENDMDL" << std::endl;
+      }
       nmodel++;
       if (mode.size() == 1 && mode.at(0) == 0){
         //If mode = 0 then print all models
@@ -116,15 +136,30 @@ int main (int argc, char **argv){
           std::cerr << "Warning: Skipping unknown Mode " << mode.at(j) << std::endl;
         }
         else{
-          std::cout << std::endl << "MODEL " << nmodel << std::endl;
           anin->setEigenMode(mode.at(j));
-          anin->getMol(1)->writePDB();
-          std::cout << "ENDMDL" << std::endl;
+          if (trjout.is_open()){
+            ftrjout->setMolecule(anin->getMol(1));
+            ftrjout->writeFrame(trjout);
+          }
+          else{
+            std::cout << std::endl << "MODEL " << nmodel+1 << std::endl;
+            anin->getMol(1)->writePDB();
+            std::cout << "ENDMDL" << std::endl;
+          }
           nmodel++;
         }
       }
       if (avgmol != NULL){
         delete avgmol;
+      }
+      if (trjout.is_open()){
+        ftrjout->setNFrame(nmodel);
+        ftrjout->setNStep(nmodel);
+        ftrjout->writeHeader(trjout);
+        trjout.close();
+        if (ftrjout != NULL){
+          delete ftrjout;
+        }
       }
     }
 
@@ -170,6 +205,7 @@ int main (int argc, char **argv){
       }
     }
 
+    //Eigenvector Overlap
     if (cmpcovar.length() > 0){
       anin->preAnalysis();
       ancmp=new AnalyzeCovariance;
