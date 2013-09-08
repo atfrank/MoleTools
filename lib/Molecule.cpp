@@ -54,7 +54,7 @@ Molecule* Molecule::readPDB (const std::string ifile, const int model, const std
 
 Molecule* Molecule::readPDB (const std::string ifile, const std::string format, const bool hetFlag){
 	//Overloaded function
-	return Molecule::readPDB(ifile, 0, format);
+	return Molecule::readPDB(ifile, 0, format, hetFlag);
 }
 
 std::string Molecule::writePDB(bool selFlag, bool print, bool chnFlag){

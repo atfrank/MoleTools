@@ -115,7 +115,7 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
 
 }
 
-Molecule* PDB::readPDB(const std::string ifile, const int model, const std::string format, const bool remFlag){
+Molecule* PDB::readPDB(const std::string ifile, const int model, const std::string format, const bool hetFlag, const bool remFlag){
   std::ifstream pdbFile;
   std::istream* inp;
   std::string line;
@@ -165,7 +165,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
 		else if (line.size() > 6 && line.compare(0,6,"REMARK") == 0 && remFlag == true){
 			mol->addRemark(line);
 		}
-    else if (modelFlag && line.size() >= 54 && (line.compare(0,4,"ATOM") == 0 || line.compare(0,6,"HETATM") == 0 || line.compare(0,5,"HETAT") == 0)){
+    else if (modelFlag && line.size() >= 54 && (line.compare(0,4,"ATOM") == 0 || (line.compare(0,6,"HETATM") == 0 && hetFlag == true) || (line.compare(0,5,"HETAT") == 0 && hetFlag == true))){
       //Atom
       atmEntry=pdb.processAtomLine(line, lastAtom);
 			atmEntry->setPdbId(PDBID);

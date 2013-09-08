@@ -156,6 +156,7 @@ int main (int argc, char **argv){
   }
 
   mol=Molecule::readPDB(pdb, model, format, hetFlag);
+	
   if (sel.length() >0){
     mol->select(sel);
 		mol=mol->clone(true, false); //Clone and delete original
