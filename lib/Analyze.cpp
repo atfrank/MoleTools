@@ -173,7 +173,7 @@ void Analyze::setEigenMode(const unsigned int& modein){
   }
 }
 
-void Analyze::writeEigenOverlap(Analyze* cmpin, std::vector<unsigned int>& mvecin){
+void Analyze::writeEigenOverlap(Analyze* cmpin, std::vector<unsigned int>& modein){
   unsigned int i, j;
   Eigen::MatrixXd refvec;
   Eigen::MatrixXd cmpvec;
@@ -183,11 +183,11 @@ void Analyze::writeEigenOverlap(Analyze* cmpin, std::vector<unsigned int>& mveci
   cmpvec=cmpin->getEigen().eigenvectors();
 
 
-  if (mvecin.size() == 0 || (mvecin.size() == 1 && mvecin.at(0) == 0)){
+  if (modein.size() == 0 || (modein.size() == 1 && modein.at(0) == 0)){
     //If mode = 0 then print all eigenvector overlaps
-    mvecin.clear();
+    modein.clear();
     for (j=0; j< static_cast<unsigned int>(refvec.cols()); j++){
-       mvecin.push_back(j+1);
+       modein.push_back(j+1);
     }
   }
 
@@ -195,11 +195,11 @@ void Analyze::writeEigenOverlap(Analyze* cmpin, std::vector<unsigned int>& mveci
   if (refvec.cols() > 0 && refvec.cols() == cmpvec.cols()){
     if (refvec.col(1).rows() == cmpvec.col(1).rows()){
       for (i=0; i< refvec.cols(); i++){
-        if (std::find(mvecin.begin(), mvecin.end(), i+1) == mvecin.end()){
+        if (std::find(modein.begin(), modein.end(), i+1) == modein.end()){
           continue;
         }
         for (j=0; j< cmpvec.cols(); j++){
-          if (std::find(mvecin.begin(), mvecin.end(), j+1) == mvecin.end()){
+          if (std::find(modein.begin(), modein.end(), j+1) == modein.end()){
             continue;
           }
           overlap=refvec.col(i).dot(cmpvec.col(j));

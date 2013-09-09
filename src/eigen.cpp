@@ -11,8 +11,8 @@
 
 void usage(){
   std::cerr << "Usage:   eigen [-options] <covarFILE>" << std::endl;
-  std::cerr << "Options: [-vector mode1[:mode2[...[:modeN]]] | -vector modestart=modestop[=modeincr]]" << std::endl;
-  std::cerr << "         [-value mode1[:mode2[...[:modeN]]] | -value modestart=modestop[=modeincr]]" << std::endl;
+  std::cerr << "Options: [-vector] [-value]" << std::endl;
+  std::cerr << "         [-mode mode1[:mode2[...[:modeN]]] | -mode modestart=modestop[=modeincr]]" << std::endl;
   std::cerr << "         [-pdb PDBfile] [-sel selection]" << std::endl;
   std::cerr << "         [-out TRAJfile]" << std::endl; 
   std::cerr << "         [-overlap covarFile]" << std::endl;
@@ -28,8 +28,9 @@ int main (int argc, char **argv){
   std::string currArg;
   Analyze *anin;
   Analyze *ancmp;
-  std::vector<unsigned int> mvec;
-  std::vector<unsigned int> mval;
+  bool vector;
+  bool value;
+  std::vector<unsigned int> modes;
   std::vector<unsigned int> range;
   unsigned int incr;
   std::string pdb;
@@ -45,8 +46,9 @@ int main (int argc, char **argv){
   cmpcovar.clear();
   anin=NULL;
   ancmp=NULL;
-  mvec.clear();
-  mval.clear();
+  vector=false;
+  value=false;
+  modes.clear();
   pdb.clear();
   avgmol=NULL;
   nmodel=0;
@@ -75,33 +77,16 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       cmpcovar=currArg;
     }
-    else if (currArg.compare("-vector") == 0){
-      currArg=argv[++i];
-      if (currArg.find(":") != std::string::npos || Misc::isdigit(currArg)){
-        Misc::splitNum(currArg, ":", mvec, false);
-      }
-      else if (currArg.find("=") != std::string::npos){
-        Misc::splitNum(currArg, "=", range, false);
-        incr=1;
-        if (range.size() >= 2){
-          if (range.size() >= 3){
-            incr=range.at(2);
-          }
-          for (j=range.at(0); j<= range.at(1); j=j+incr){
-            mvec.push_back(j);
-          }
-        }
-      }
-      else{
-        std::cerr << std::endl << "Error: Unrecongized mode format";
-        std::cerr << std::endl << std::endl;
-        usage();
-      }
+    else if (currArg.compare("-vector") == 0 || currArg.compare("-vectors") == 0){
+      vector=true;
     }
-    else if (currArg.compare("-value") == 0){
+    else if (currArg.compare("-value") == 0 || currArg.compare("-values") == 0){
+      value=true;
+    }
+    else if (currArg.compare("-mode") == 0 || currArg.compare("-modes") == 0){
       currArg=argv[++i];
       if (currArg.find(":") != std::string::npos || Misc::isdigit(currArg)){
-        Misc::splitNum(currArg, ":", mval, false);
+        Misc::splitNum(currArg, ":", modes, false);
       }
       else if (currArg.find("=") != std::string::npos){
         Misc::splitNum(currArg, "=", range, false);
@@ -111,7 +96,7 @@ int main (int argc, char **argv){
             incr=range.at(2);
           }
           for (j=range.at(0); j<= range.at(1); j=j+incr){
-            mval.push_back(j);
+            modes.push_back(j);
           }
         }
       }
@@ -150,19 +135,19 @@ int main (int argc, char **argv){
         std::cout << "ENDMDL" << std::endl;
       }
       nmodel++;
-      if (mvec.size() == 0 || (mvec.size() == 1 && mvec.at(0) == 0)){
-        //If mode = 0 then print all models
-        mvec.clear();
+      if (modes.size() == 0 || (modes.size() == 1 && modes.at(0) == 0)){
+        //If modes = 0 then print all models
+        modes.clear();
         for (j=0; j< static_cast<unsigned int>(anin->getEigen().eigenvalues().rows()); j++){
-          mvec.push_back(j+1);
+          modes.push_back(j+1);
         }
       }
-      for (j=0; j< mvec.size(); j++){
-        if (mvec.at(j) > nrow){
-          std::cerr << "Warning: Skipping unknown Mode " << mvec.at(j) << std::endl;
+      for (j=0; j< modes.size(); j++){
+        if (modes.at(j) > nrow){
+          std::cerr << "Warning: Skipping unknown Mode " << modes.at(j) << std::endl;
         }
         else{
-          anin->setEigenMode(mvec.at(j));
+          anin->setEigenMode(modes.at(j));
           if (trjout.is_open()){
             ftrjout->setMolecule(anin->getMol(1));
             ftrjout->writeFrame(trjout);
@@ -194,45 +179,45 @@ int main (int argc, char **argv){
       ancmp=new AnalyzeCovariance;
       ancmp->setInput(cmpcovar);
       ancmp->preAnalysis();
-      anin->writeEigenOverlap(ancmp, mvec);
+      anin->writeEigenOverlap(ancmp, modes);
     }
-    else if (mval.size() > 0){
+    else if (value == true){
       //Extract Eigenvalues
       anin->preAnalysis();
-      if (mval.size() == 1 && mval.at(0) == 0){
+      if (modes.size() == 1 && modes.at(0) == 0){
         //If mode = 0 then print all eigenvalues
-        mval.clear();
+        modes.clear();
         for (j=0; j< static_cast<unsigned int>(anin->getEigen().eigenvalues().rows()); j++){
-          mval.push_back(j+1);
+          modes.push_back(j+1);
         }
       }
       nrow=anin->getEigen().eigenvalues().rows();
-      for (j=0; j< mval.size(); j++){
-        if (mval.at(j) > nrow){
-          std::cerr << "Warning: Skipping unknown Mode " << mval.at(j) << std::endl;
+      for (j=0; j< modes.size(); j++){
+        if (modes.at(j) > nrow){
+          std::cerr << "Warning: Skipping unknown Mode " << modes.at(j) << std::endl;
         }
         else{
-          std::cout << anin->getEigen().eigenvalues().row(nrow-mval.at(j)) << std::endl;
+          std::cout << anin->getEigen().eigenvalues().row(nrow-modes.at(j)) << std::endl;
         }
       }
     }
-    else if (mvec.size() > 0){
+    else if (vector == true){
       //Extract eigenvectors
       anin->preAnalysis();
-      if (mvec.size() == 1 && mvec.at(0) == 0){
+      if (modes.size() == 1 && modes.at(0) == 0){
         //If mode = 0 then print all eigenvectors
-        mvec.clear();
+        modes.clear();
         for (j=0; j< static_cast<unsigned int>(anin->getEigen().eigenvectors().cols()); j++){
-          mvec.push_back(j+1);
+          modes.push_back(j+1);
         }
       }
       ncol=anin->getEigen().eigenvectors().cols();
-      for (j=0; j< mvec.size(); j++){
-        if (mvec.at(j) > ncol){
-          std::cerr << "Warning: Skipping unknown Mode " << mvec.at(j) << std::endl;
+      for (j=0; j< modes.size(); j++){
+        if (modes.at(j) > ncol){
+          std::cerr << "Warning: Skipping unknown Mode " << modes.at(j) << std::endl;
         }
         else{
-          std::cout << anin->getEigen().eigenvectors().col(ncol-mvec.at(j)) << std::endl << std::endl;
+          std::cout << anin->getEigen().eigenvectors().col(ncol-modes.at(j)) << std::endl << std::endl;
         }
       }
     }

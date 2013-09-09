@@ -55,7 +55,7 @@ class Analyze {
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& getEigen();
     void setEigenMode(const unsigned int& modein);
     void readCovariance();
-    void writeEigenOverlap(Analyze* cmpin, std::vector<unsigned int>& mvecin);
+    void writeEigenOverlap(Analyze* cmpin, std::vector<unsigned int>& modein);
 		
 		//Virtual functions
 		virtual void setupMolSel(Molecule* molin);
