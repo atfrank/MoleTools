@@ -202,7 +202,7 @@ void Analyze::writeEigenOverlap(Analyze* cmpin, std::vector<unsigned int>& modei
           if (std::find(modein.begin(), modein.end(), j+1) == modein.end()){
             continue;
           }
-          overlap=refvec.col(i).dot(cmpvec.col(j));
+          overlap=refvec.col(refvec.cols()-(i+1)).dot(cmpvec.col(cmpvec.cols()-(j+1)));
           std::cout << i+1 << "  " << j+1 << "  " << overlap << std::endl;
         }
         std::cout << std::endl;
