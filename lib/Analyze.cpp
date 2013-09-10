@@ -154,7 +154,10 @@ void Analyze::setEigenMode(const unsigned int& modein){
   
   nrow=this->getEigen().eigenvalues().rows();
   eigval=this->getEigen().eigenvalues()[nrow-modein];
-  eigvec=this->getEigen().eigenvectors().col(nrow-modein)*eigval;
+  //Note that the amplitude is SQRT(Eigenvalue) since the eigenvalue
+  //is a measure of the variance while the amplitude is a measure of
+  //the standard deviation!
+  eigvec=this->getEigen().eigenvectors().col(nrow-modein)*sqrt(eigval);
   if (nrow != 3*this->getMol(1)->getAtmVecSize()){
     std::cerr << "Warning: The number of 3N coordinates (" << 3*this->getMol(1)->getAtmVecSize();
     std::cerr << ") and the number of elements in the covariance matrix (" << nrow << ") do not match!" << std::endl;
