@@ -194,11 +194,11 @@ void Analyze::writeEigenOverlap(Analyze* cmpin, std::vector<unsigned int>& modei
   std::cout << "#" << this->getInput() << "  " << cmpin->getInput() << "  " << "-1 <= Overlap <= 1" << std::endl;
   if (refvec.cols() > 0 && refvec.cols() == cmpvec.cols()){
     if (refvec.col(1).rows() == cmpvec.col(1).rows()){
-      for (i=0; i< refvec.cols(); i++){
+      for (i=0; i< static_cast<unsigned int>(refvec.cols()); i++){
         if (std::find(modein.begin(), modein.end(), i+1) == modein.end()){
           continue;
         }
-        for (j=0; j< cmpvec.cols(); j++){
+        for (j=0; j< static_cast<unsigned int>(cmpvec.cols()); j++){
           if (std::find(modein.begin(), modein.end(), j+1) == modein.end()){
             continue;
           }
