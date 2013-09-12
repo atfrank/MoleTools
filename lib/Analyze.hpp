@@ -80,6 +80,8 @@ class Analyze {
 		static void pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, double>& pdin);
 		static void allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::vector<double> >& anglesin);
 		static void pcasso(Molecule* mol, std::string dsspin="");
+    //static std::vector<double> gyration(Molecule* mol);
+    Eigen::Matrix3d gyrationTensor(Molecule* mol);
 };
 
 //Derived classes
@@ -138,6 +140,21 @@ class AnalyzeCovariance: public Analyze {
 class AnalyzeProjection: public Analyze {
   public:
     void preAnalysis(Molecule* molin);
+    void runAnalysis();
+};
+
+class AnalyzeGyrationTensor: public Analyze {
+  public:
+    void runAnalysis();
+};
+
+class AnalyzeRadiusOfGyration: public Analyze {
+  public:
+    void runAnalysis();
+};
+
+class AnalyzeEllipsoid: public Analyze {
+  public:
     void runAnalysis();
 };
 

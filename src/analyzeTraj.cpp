@@ -25,6 +25,7 @@ void usage(){
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
 	std::cerr << "         [-average selection]" << std::endl;
   std::cerr << "         [-covariance selection covarout | -project selection mode1[:mode2[:...:[modeN]]] covarin]" << std::endl;
+  std::cerr << "         [-gyrtensor selection] [-rgyr selection] [-ellipsoid selection]" << std::endl;
   std::cerr << "         [-list file]" << std::endl;
   std::cerr << "         [-verbose]" << std::endl;
 	exit(0);
@@ -179,6 +180,27 @@ int main (int argc, char **argv){
       anin->addModes(modes);
       currArg=argv[++i];
       anin->setInput(currArg);
+      analyses.push_back(anin);
+      timeseries=true;
+    }
+    else if (currArg.compare("-gyrtensor") == 0 || currArg.compare("-gyrationtensor") == 0){
+      anin=new AnalyzeGyrationTensor;
+      currArg=argv[++i];
+      anin->addSel(currArg);
+      analyses.push_back(anin);
+      timeseries=true;
+    }
+    else if (currArg.compare("-rgyr") == 0 || currArg.compare("-rgyration") == 0){
+      anin=new AnalyzeRadiusOfGyration;
+      currArg=argv[++i];
+      anin->addSel(currArg);
+      analyses.push_back(anin);
+      timeseries=true;
+    }
+    else if (currArg.compare("-ellipsoid") == 0){
+      anin=new AnalyzeEllipsoid;
+      currArg=argv[++i];
+      anin->addSel(currArg);
       analyses.push_back(anin);
       timeseries=true;
     }

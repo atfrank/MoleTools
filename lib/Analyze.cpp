@@ -448,6 +448,66 @@ void AnalyzeProjection::runAnalysis(){
   }
 }
 
+void AnalyzeGyrationTensor::runAnalysis(){
+  Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigVal;
+  unsigned int nrow;
+
+  eigVal.compute(Analyze::gyrationTensor(this->getMol(0)));
+  nrow=eigVal.eigenvalues().rows();
+
+  for (unsigned int i=1; i<= 3; i++){
+    std::cout << std::fixed;
+    std::cout << std::setw(9) << std::right << std::setprecision(3) << sqrt(eigVal.eigenvalues()[nrow-i]);
+  }
+}
+
+void AnalyzeRadiusOfGyration::runAnalysis(){
+  Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigVal;
+
+  eigVal.compute(Analyze::gyrationTensor(this->getMol(0)));
+
+  std::cout << std::fixed;
+  std::cout << std::setw(9) << std::right << std::setprecision(3) << sqrt(eigVal.eigenvalues()[0]+eigVal.eigenvalues()[1]+eigVal.eigenvalues()[2]);
+  //Rgyr = sqrt(Lambda1 + Lambda2 +Lambda3)
+
+  std::cerr << std::endl << "Warning: The radius of gyration is not mass-weighted!" << std::endl;
+}
+
+void AnalyzeEllipsoid::runAnalysis(){
+  Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigVal;
+  unsigned int nrow;
+  Vector xyz;
+    
+  xyz=Analyze::centerOfGeometry(this->getMol(0));
+
+  std::cout << std::fixed;
+  std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.x();
+  std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.y();
+  std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.z();
+
+  eigVal.compute(Analyze::gyrationTensor(this->getMol(0)));
+  nrow=eigVal.eigenvalues().rows();
+
+  for (unsigned int i=1; i<= 3; i++){
+    std::cout << std::fixed;
+    std::cout << std::setw(9) << std::right << std::setprecision(3) << sqrt(eigVal.eigenvalues()[nrow-i]);
+  }
+
+  /*
+  Eigen::Matrix3d tensor;
+
+  tensor=Analyze::gyrationTensor(this->getMol(0));
+
+  for (unsigned int i=0; i< 3; i++){
+    for (unsigned int j=i; j< 3; j++){
+      //Outputs in the order of U[0,0], U[0,1], U[0,2], U[1,1], U[1,2], U[2,2]
+      std::cout << std::fixed;
+      std::cout << std::setw(9) << std::right << std::setprecision(3) << tensor(i,j);
+    }
+  }
+  */
+}
+
 
 //All postAnalysis functions
 
@@ -1216,3 +1276,39 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 		delete cmol;
 	}
 }
+
+Eigen::Matrix3d Analyze::gyrationTensor(Molecule* mol){
+  Eigen::Matrix3d S;
+  Atom* a;
+  Vector xyz;
+  double dx, dy, dz;
+
+  S=Eigen::Matrix3d::Zero();
+
+  xyz=Analyze::centerOfGeometry(mol);
+
+  for (unsigned int i=0; i< mol->getAtmVecSize(); i++){
+    a=mol->getAtom(i);
+    dx=a->getX()-xyz.x(); //x(i) - xcog
+    dy=a->getY()-xyz.y(); //y(i) - ycog
+    dz=a->getZ()-xyz.z(); //z(i) - zcog
+    
+    S(0,0)+=dx*dx;
+    S(0,1)+=dx*dy;
+    S(0,2)+=dx*dz;
+
+    S(1,0)+=dy*dx;
+    S(1,1)+=dy*dy;
+    S(1,2)+=dy*dz;
+
+    S(2,0)+=dz*dx;
+    S(2,1)+=dz*dy;
+    S(2,2)+=dz*dz;
+  }
+
+  S=S/mol->getAtmVecSize();
+
+  return S;
+}
+
+
