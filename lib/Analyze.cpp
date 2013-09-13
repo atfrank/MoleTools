@@ -480,6 +480,7 @@ void AnalyzeEllipsoid::runAnalysis(){
     
   xyz=Analyze::centerOfGeometry(this->getMol(0));
 
+  //Output COG
   std::cout << std::fixed;
   std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.x();
   std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.y();
@@ -488,6 +489,7 @@ void AnalyzeEllipsoid::runAnalysis(){
   eigVal.compute(Analyze::gyrationTensor(this->getMol(0)));
   nrow=eigVal.eigenvalues().rows();
 
+  //Output displacement from COG (sqrt(eigval))
   for (unsigned int i=1; i<= 3; i++){
     std::cout << std::fixed;
     std::cout << std::setw(9) << std::right << std::setprecision(3) << sqrt(eigVal.eigenvalues()[nrow-i]);
@@ -1286,6 +1288,10 @@ Eigen::Matrix3d Analyze::gyrationTensor(Molecule* mol){
   S=Eigen::Matrix3d::Zero();
 
   xyz=Analyze::centerOfGeometry(mol);
+
+  //        [SUM(xi-xcog)(xi-xcog) SUM(xi-xcog)*(yi-ycog) SUM(xi-xcog)(zi-zcog)]
+  //S=(1/N) [SUM(xi-xcog)(yi-ycog) SUM(yi-ycog)*(yi-ycog) SUM(yi-ycog)(zi-zcog)]
+  //        [SUM(xi-xcog)(zi-zcog) SUM(yi-ycog)*(zi-zcog) SUM(zi-zcog)(zi-zcog)]
 
   for (unsigned int i=0; i< mol->getAtmVecSize(); i++){
     a=mol->getAtom(i);
