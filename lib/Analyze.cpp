@@ -521,8 +521,8 @@ void AnalyzePairwiseDistance::runAnalysis(){
     ai=this->getMol(0)->getAtom(i);
     for (unsigned int j=i+1; j< this->getMol(0)->getAtmVecSize(); j++){
       aj=this->getMol(0)->getAtom(j);
+      std::cout << "  " << ai->getSummary() << "-" << aj->getSummary();
       std::cout << std::fixed;
-      std::cout << std::setw(12) << std::right << ai->getSummary() << "-" << aj->getSummary();
       std::cout << std::setw(9) << std::right << std::setprecision(3) << pdist.at(std::make_pair(ai, aj));
     }
   }
