@@ -158,4 +158,9 @@ class AnalyzeEllipsoid: public Analyze {
     void runAnalysis();
 };
 
+class AnalyzePairwiseDistance: public Analyze {
+  public:
+    void runAnalysis();
+};
+
 #endif

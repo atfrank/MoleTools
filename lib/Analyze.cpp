@@ -510,6 +510,24 @@ void AnalyzeEllipsoid::runAnalysis(){
   */
 }
 
+void AnalyzePairwiseDistance::runAnalysis(){
+  std::map<std::pair<Atom*, Atom*>, double> pdist;
+  Atom* ai;
+  Atom* aj;
+  
+  Analyze::pairwiseDistance(this->getMol(0), pdist);
+
+  for (unsigned int i=0; i< this->getMol(0)->getAtmVecSize(); i++){
+    ai=this->getMol(0)->getAtom(i);
+    for (unsigned int j=i+1; j< this->getMol(0)->getAtmVecSize(); j++){
+      aj=this->getMol(0)->getAtom(j);
+      std::cout << std::fixed;
+      std::cout << std::setw(12) << std::right << ai->getSummary() << "-" << aj->getSummary();
+      std::cout << std::setw(9) << std::right << std::setprecision(3) << pdist.at(std::make_pair(ai, aj));
+    }
+  }
+}
+
 
 //All postAnalysis functions
 
@@ -938,8 +956,8 @@ void Analyze::pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, 
 			if (mol->getAtom(i)->getX() < 9999.9 && mol->getAtom(j)->getX() < 9999.9){
 				distance=Analyze::distance(mol->getAtom(i)->getCoor(), mol->getAtom(j)->getCoor());
 			}
-			 pdin.insert(std::make_pair(std::make_pair(mol->getAtom(i), mol->getAtom(j)), distance));
-			  pdin.insert(std::make_pair(std::make_pair(mol->getAtom(j), mol->getAtom(i)), distance));
+		  pdin.insert(std::make_pair(std::make_pair(mol->getAtom(i), mol->getAtom(j)), distance));
+		  pdin.insert(std::make_pair(std::make_pair(mol->getAtom(j), mol->getAtom(i)), distance));
     }
   }
 }

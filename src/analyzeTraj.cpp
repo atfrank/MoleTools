@@ -26,6 +26,7 @@ void usage(){
 	std::cerr << "         [-average selection]" << std::endl;
   std::cerr << "         [-covariance selection covarout | -project selection mode1[:mode2[:...:[modeN]]] covarin]" << std::endl;
   std::cerr << "         [-gyrtensor selection] [-rgyr selection] [-ellipsoid selection]" << std::endl;
+  std::cerr << "         [-pairdist selection]" << std::endl;
   std::cerr << "         [-list file]" << std::endl;
   std::cerr << "         [-verbose]" << std::endl;
 	exit(0);
@@ -199,6 +200,13 @@ int main (int argc, char **argv){
     }
     else if (currArg.compare("-ellipsoid") == 0){
       anin=new AnalyzeEllipsoid;
+      currArg=argv[++i];
+      anin->addSel(currArg);
+      analyses.push_back(anin);
+      timeseries=true;
+    }
+    else if (currArg.compare("-pairdist") == 0){
+      anin=new AnalyzePairwiseDistance;
       currArg=argv[++i];
       anin->addSel(currArg);
       analyses.push_back(anin);
