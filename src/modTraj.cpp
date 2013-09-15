@@ -62,7 +62,7 @@ int main (int argc, char **argv){
 	bool scan=false;
   int skip=0;
   int start=0;
-  int stop=-1;
+  int stop=std::numeric_limits<int>::max();
   bool startFlag=false; //Tracks if user set start value
   std::string flist;
   std::ifstream listFile;
@@ -349,9 +349,6 @@ int main (int argc, char **argv){
 
       if (ftrjin->findFormat(trjin) == true){
 				ftrjin->readHeader(trjin);
-        if (stop < 0){
-          stop=ftrjin->getNFrame();
-        }
 				if (j == 0 && out == true && trjout.is_open()){
 					ftrjout->cloneHeader(ftrjin);
           if (start > 0){

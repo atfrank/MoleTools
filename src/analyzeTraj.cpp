@@ -49,7 +49,7 @@ int main (int argc, char **argv){
 	Trajectory *ftrjin;
   int skip=0;
   int start=0;
-	int stop=-1;
+	int stop=std::numeric_limits<int>::max();
 	bool startFlag=false;
 	std::string line;
 	std::vector<std::string> s;
@@ -315,9 +315,6 @@ int main (int argc, char **argv){
 
       if (ftrjin->findFormat(trjin) == true){
 				ftrjin->readHeader(trjin);
-				if (stop < 0){
-					stop=ftrjin->getNFrame();
-				}
 				if (skip > 0 && startFlag == false){
 					start=skip;
 				}

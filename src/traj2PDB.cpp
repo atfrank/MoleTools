@@ -39,7 +39,7 @@ int main (int argc, char **argv){
   bool show=false;
 	int skip=0;
 	int start=0;
-  int stop=-1;
+  int stop=std::numeric_limits<int>::max();
   unsigned int npdb;
   std::string format;
   bool chnFlag;
@@ -134,9 +134,6 @@ int main (int argc, char **argv){
 
       if (ftrjin->findFormat(trjin) == true){
 				ftrjin->readHeader(trjin);
-        if (stop < 0){
-          stop=ftrjin->getNFrame();
-        }
         //Loop through desired frames
 				for (i=start; i< ftrjin->getNFrame() && i< stop; i=i+1+skip){
 					ftrjin->readFrame(trjin, i);

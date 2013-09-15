@@ -12,6 +12,7 @@ void usage(){
   std::cerr << "Options: [-bins bA[:bB[:...[bN]]] | -res rA:[:rB[:...[rN]]]]" << std::endl;
   std::cerr << "         [-verbose] [-delimiter expression] [-separate]" << std::endl;
   std::cerr << "         [-prob | -density] [-energy temp]" << std::endl;
+  std::cerr << "         [-start line] [-stop line] [-skip nlines]" << std::endl;
   std::cerr << std::endl;
   exit(0);
 }
@@ -37,6 +38,10 @@ int main (int argc, char **argv){
   bool separate;
   HistoFormatEnum format;
   double temp;
+  unsigned int start;
+  unsigned int stop;
+  unsigned int skip;
+  unsigned int nline;
 
   histos.clear();
   inps.clear();
@@ -50,6 +55,10 @@ int main (int argc, char **argv){
   res.clear();
   format=COUNT;
   temp=300;
+  start=0;
+  stop=std::numeric_limits<unsigned int>::max();
+  skip=0;
+  nline=0;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -106,6 +115,18 @@ int main (int argc, char **argv){
         usage();
       }
     }
+    else if (currArg.compare("-start") == 0){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> start;
+    }
+    else if (currArg.compare("-stop") == 0){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> stop;
+    }
+    else if (currArg.compare("-skip") == 0){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> skip;
+    }
     else{
       inps.push_back(currArg);
     }
@@ -128,25 +149,35 @@ int main (int argc, char **argv){
       inpFile.open(inps.at(j).c_str(), std::ios::in);
       finp=&inpFile;
     }
+    nline=0;
     while (finp->good() && !(finp->eof())){
       getline(*finp, line);
       if (line.length() > 0){
-        Misc::splitNum(line, delim, s, false);
-        for (k=0; k< histos.size(); k++){
-          data.clear();
-          data.resize(cols.at(k).size(),0);
-          for (m=0; m< cols.at(k).size(); m++){
-            if (cols.at(k).at(m) < s.size()){
-              data.at(m)=s.at(cols.at(k).at(m));
+        nline++;
+        if (nline < start || nline > stop){
+          continue;
+        }
+        else if (skip > 0 && nline % (skip+1) != 0){
+          continue;
+        }
+        else{
+          Misc::splitNum(line, delim, s, false);
+          for (k=0; k< histos.size(); k++){
+            data.clear();
+            data.resize(cols.at(k).size(),0);
+            for (m=0; m< cols.at(k).size(); m++){
+              if (cols.at(k).at(m) < s.size()){
+                data.at(m)=s.at(cols.at(k).at(m));
+              }
+              else{
+                std::cerr << std::endl << "Error: Missing data in column ";
+                std::cerr << cols.at(k).at(m) << std::endl;
+                exit(1);
+              }
             }
-            else{
-              std::cerr << std::endl << "Error: Missing data in column ";
-              std::cerr << cols.at(k).at(m) << std::endl;
-              exit(1);
-            }
+            //Append vector of data into to zeroth window of kth histogram
+            histos.at(k)->appendData(data, 0);
           }
-          //Append vector of data into to zeroth window of kth histogram
-          histos.at(k)->appendData(data, 0);
         }
       }
     }
