@@ -4,10 +4,13 @@
 #define HISTOGRAM_H
 
 #include "Misc.hpp"
+#include "Constants.hpp"
 
 #include <vector>
 #include <iostream>
 #include <limits>
+
+enum HistoFormatEnum {COUNT, PROBABILITY, DENSITY, ENERGY};
 
 class Histogram {
   private:
@@ -20,6 +23,7 @@ class Histogram {
     unsigned int defaultBins;
     std::vector<unsigned int> convDim;
     std::vector<double> binwidth;
+    unsigned int TOTAL;
 
   public:
     Histogram(const unsigned &ninpin, const unsigned int &ndimin);
@@ -30,10 +34,7 @@ class Histogram {
     void setBins(const std::vector<int> &binsin);
     void genHisto(const bool reduceFlag=false); //Global Histogram
     unsigned int getBin(const unsigned int &nfilein, const unsigned int &ndatain); //For binning on the fly
-    void printHisto(); //Global Histogram
-    void printProbability();
-    void printEnergy();
-    void printDensity();
+    void printHisto(HistoFormatEnum format=COUNT, double temp=300); //Global Histogram
     std::vector<double> getBinCoor(const unsigned int &bin);
     unsigned int getNFile();
     unsigned int getNData(int element);

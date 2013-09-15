@@ -15,6 +15,7 @@ Histogram::Histogram(const unsigned &ninpin, const unsigned int &ndimin){
   defaultBins=25;
   convDim.clear();
   binwidth.clear();
+  TOTAL=0;
 }
 
 void Histogram::updateMaxMin(const std::vector<double> &sin){
@@ -89,6 +90,7 @@ void Histogram::genHisto(const bool reduceFlag){
     for (k=0; k< data.at(j).size(); k++){ //Each datapoint K in J
       b=this->getBin(j, k);
       HISTO.at(b)=HISTO.at(b)+1;
+      TOTAL++;
       if (reduceFlag == true){
         //Reduce the dimensions to 1-D and store the bin
         data.at(j).at(k).resize(1);
@@ -154,15 +156,19 @@ unsigned int Histogram::getBin(const unsigned int &nfilein, const unsigned int &
   return b;
 }
 
-void Histogram::printHisto (){
+void Histogram::printHisto (HistoFormatEnum format, double temp){
   unsigned int i;
   unsigned int j;
   unsigned int b;
   std::vector<unsigned int> convDim;
   std::vector<double> binwidth;
+  double norm;
   std::vector<double> s;
+  double kBT;
 
   binwidth.resize(nDim);
+  kBT=kB*temp;
+  norm=1.0;
 
   j=1; //Track total number of bins
   for (i=0; i< nDim; i++){
@@ -174,6 +180,7 @@ void Histogram::printHisto (){
       bins.push_back(defaultBins);
     }
     binwidth.at(i)=(MAX.at(i)-MIN.at(i))/bins.at(i);
+    norm*=binwidth.at(i);
   }
 
   HISTO.resize(j,0);
@@ -186,16 +193,31 @@ void Histogram::printHisto (){
     }
   }
 
-
   //1-D to n-D
   for(b=0; b< HISTO.size(); b++){
     s=this->getBinCoor(b);
     for (i=0; i< s.size(); i++){
-      std::cerr << s.at(i) << " ";
+      std::cout << s.at(i) << "  ";
     }
-    std::cerr << HISTO.at(b) << std::endl;
+    if (format == PROBABILITY){
+      std::cout << static_cast<double>(HISTO.at(b))/TOTAL << std::endl;
+    }
+    else if (format == DENSITY){
+      //Normalized probability, normalized by the bin width(s) (dx*dy*dz)
+      //The area under the curve sums to one
+      //The probability density is the height of the point (no width)
+      //Use this when comparing shifts in the population (shifts in the area under the curve)
+      std::cout << static_cast<double>(HISTO.at(b))/(TOTAL*norm) << std::endl;
+    }
+    else if (format == ENERGY){
+      //Free energy from the probability, not probability density!
+      std::cout << -kBT*log(static_cast<double>(HISTO.at(b))/TOTAL) << std::endl;
+    }
+    else{
+      //Raw Histogram Count
+      std::cout << HISTO.at(b) << std::endl;
+    }
   }
- 
 }
 
 std::vector<double> Histogram::getBinCoor(const unsigned int &bin){
