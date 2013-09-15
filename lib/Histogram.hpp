@@ -31,6 +31,9 @@ class Histogram {
     void genHisto(const bool reduceFlag=false); //Global Histogram
     unsigned int getBin(const unsigned int &nfilein, const unsigned int &ndatain); //For binning on the fly
     void printHisto(); //Global Histogram
+    void printProbability();
+    void printEnergy();
+    void printDensity();
     std::vector<double> getBinCoor(const unsigned int &bin);
     unsigned int getNFile();
     unsigned int getNData(int element);

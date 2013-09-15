@@ -1,6 +1,7 @@
 //Sean M. Law
 
 #include "Histogram.hpp"
+#include "Constants.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -10,8 +11,8 @@ void usage(){
   std::cerr << std::endl;
   std::cerr << "Usage:   histo [-options] <-col colA[:colB[:...[:colN]]]> <inpFile(s)>" << std::endl;
   std::cerr << "Options: [-bins bA[:bB[:...[bN]]] | -res rA:[:rB[:...[rN]]]]" << std::endl;
-  std::cerr << "         [-verbose] [-delimiter expression]" << std::endl;
-  std::cerr << "         [-separate]" << std::endl;
+  std::cerr << "         [-verbose] [-delimiter expression] [-separate]" << std::endl;
+  std::cerr << "         [-prob | -energy temp | -density]" << std::endl;
   std::cerr << std::endl;
   exit(0);
 }
@@ -35,6 +36,10 @@ int main (int argc, char **argv){
   std::string delim;
   std::string line;
   bool separate;
+  bool prob;
+  bool energy;
+  bool density;
+  double temp;
 
   histos.clear();
   inps.clear();
@@ -46,6 +51,10 @@ int main (int argc, char **argv){
   separate=false;
   bins.clear();
   res.clear();
+  prob=false;
+  energy=false;
+  temp=300;
+  density=false;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -82,6 +91,21 @@ int main (int argc, char **argv){
     }
     else if (currArg.compare("-separate") == 0){
       separate=true;
+    }
+    else if (currArg.compare("-prob") == 0 || currArg.compare("-probability") == 0){
+      prob=true;
+      energy=false;
+    }
+    else if (currArg.compare("-energy") == 0){
+      energy=true;
+      currArg=argv[++i];
+      std::stringstream(currArg) >> temp;
+      prob=false;
+    }
+    else if (currArg.compare("-density") == 0){
+      density=true;
+      energy=false;
+      prob=false;
     }
     else{
       inps.push_back(currArg);
@@ -136,7 +160,18 @@ int main (int argc, char **argv){
       for (k=0; k< histos.size(); k++){
         histos.at(k)->setBins(bins);
         histos.at(k)->genHisto();
-        histos.at(k)->printHisto();
+        if (prob == true){
+
+        }
+        else if (density == true){
+
+        }
+        else if (energy == true){
+
+        }
+        else{
+          histos.at(k)->printHisto();
+        }
         std::cout << std::endl << std::endl;
         delete histos.at(k);
         histos.at(k) = new Histogram (1, cols.at(k).size());
@@ -149,7 +184,18 @@ int main (int argc, char **argv){
     for (k=0; k< histos.size(); k++){
       histos.at(k)->setBins(bins);
       histos.at(k)->genHisto();
-      histos.at(k)->printHisto();
+      if (prob == true){
+
+      }
+      else if (density == true){
+
+      }
+      else if (energy == true){
+
+      }
+      else{
+        histos.at(k)->printHisto();
+      }
       std::cout << std::endl << std::endl;
     }
   }
