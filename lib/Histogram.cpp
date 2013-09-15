@@ -210,7 +210,9 @@ void Histogram::printHisto (HistoFormatEnum format, double temp){
       std::cout << static_cast<double>(HISTO.at(b))/(TOTAL*norm) << std::endl;
     }
     else if (format == ENERGY){
-      //Free energy from the probability, not probability density!
+      //Free energy from the probability
+      //This is identical to the free energy calculated from the probability density
+      //but shifted by a constant that is proportional to the bin width(s) (dx*dy*dz)
       std::cout << -kBT*log(static_cast<double>(HISTO.at(b))/TOTAL) << std::endl;
     }
     else{
