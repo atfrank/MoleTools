@@ -218,7 +218,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
     mol->addChain(chnEntry);
   }
   
-  if (ifile.compare("-") != 0){
+  if (ifile.compare("-") != 0 && pdbFile.is_open()){
     pdbFile.close();
   }
 
