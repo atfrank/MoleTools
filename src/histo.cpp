@@ -9,9 +9,9 @@
 void usage(){
   std::cerr << std::endl;
   std::cerr << "Usage:   histo [-options] <-col colA[:colB[:...[:colN]]]> <inpFile(s)>" << std::endl;
-  std::cerr << "Options: [-bins number | -res number]" << std::endl;
-  std::cerr << "[-verbose] [-delimiter expression]" << std::endl;
-  std::cerr << "[-separate]" << std::endl;
+  std::cerr << "Options: [-bins bA[:bB[:...[bN]]] | -res rA:[:rB[:...[rN]]]]" << std::endl;
+  std::cerr << "         [-verbose] [-delimiter expression]" << std::endl;
+  std::cerr << "         [-separate]" << std::endl;
   std::cerr << std::endl;
   exit(0);
 }
@@ -29,6 +29,8 @@ int main (int argc, char **argv){
   std::ifstream inpFile;
   std::istream *finp;
   std::vector<std::vector<unsigned int> > cols;
+  std::vector<unsigned int> bins;
+  std::vector<double> res;
   bool verbose;
   std::string delim;
   std::string line;
@@ -42,6 +44,8 @@ int main (int argc, char **argv){
   delim=" \t";
   line.clear();
   separate=false;
+  bins.clear();
+  res.clear();
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -50,10 +54,12 @@ int main (int argc, char **argv){
     }
     else if (currArg.compare("-bins") == 0){
       currArg=argv[++i];
+      Misc::splitNum(currArg, ":", bins, false);
     }
     else if (currArg.compare("-res") == 0){
       //Resolution/Bin spacing
-
+      Misc::splitNum(currArg, ":", res, false);
+      bins.clear();
     }
     else if (currArg.compare("-delimiter") == 0 || currArg.compare("-delimit") == 0){
       currArg=argv[++i];
@@ -63,6 +69,10 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       cols.resize(cols.size()+1); //Expand vector
       Misc::splitNum(currArg, ":", cols.at(cols.size()-1), false);
+      for (j=0; j< cols.at(cols.size()-1).size(); j++){
+        //Shift columns by one to match vector reference
+        cols.at(cols.size()-1).at(j)--;
+      }
       //Create histogram with one window and nDim = number of columns
       histos.push_back(new Histogram(1, cols.at(cols.size()-1).size()));
     }
@@ -71,7 +81,6 @@ int main (int argc, char **argv){
       verbose=true;
     }
     else if (currArg.compare("-separate") == 0){
-      currArg=argv[++i];
       separate=true;
     }
     else{
@@ -108,12 +117,12 @@ int main (int argc, char **argv){
               data.at(m)=s.at(cols.at(k).at(m));
             }
             else{
-              std::cerr << "Error: Missing data in column ";
+              std::cerr << std::endl << "Error: Missing data in column ";
               std::cerr << cols.at(k).at(m) << std::endl;
-              usage();
+              exit(1);
             }
           }
-          //Append vector of data into to zeroth window
+          //Append vector of data into to zeroth window of kth histogram
           histos.at(k)->appendData(data, 0);
         }
       }
@@ -125,7 +134,12 @@ int main (int argc, char **argv){
     if (separate == true){
       //Output histograms for this file and clear data
       for (k=0; k< histos.size(); k++){
-        //histos.setBins(???);
+        histos.at(k)->setBins(bins);
+        histos.at(k)->genHisto();
+        histos.at(k)->printHisto();
+        std::cout << std::endl << std::endl;
+        delete histos.at(k);
+        histos.at(k) = new Histogram (1, cols.at(k).size());
       }
     }
   }
@@ -133,7 +147,10 @@ int main (int argc, char **argv){
   if (separate == false){
     //Output histograms
     for (k=0; k< histos.size(); k++){
-      //histos.setBins(???);
+      histos.at(k)->setBins(bins);
+      histos.at(k)->genHisto();
+      histos.at(k)->printHisto();
+      std::cout << std::endl << std::endl;
     }
   }
 

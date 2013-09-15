@@ -17,7 +17,7 @@ Histogram::Histogram(const unsigned &ninpin, const unsigned int &ndimin){
   binwidth.clear();
 }
 
-void Histogram::updateMAXMIN(const std::vector<double> &sin){
+void Histogram::updateMaxMin(const std::vector<double> &sin){
   //Global Max/Min
   for (unsigned int i=0; i< MIN.size(); i++){
     if (sin.at(i) < MIN.at(i)){
@@ -30,7 +30,7 @@ void Histogram::updateMAXMIN(const std::vector<double> &sin){
 }
 
 void Histogram::appendData(const std::vector<double> &sin, const unsigned int &nfilein){
-  this->updateMAXMIN(sin);
+  this->updateMaxMin(sin);
   data.at(nfilein).push_back(sin);
 }
 
@@ -50,7 +50,7 @@ void Histogram::setBins(const std::vector<int> &binsin){
   }
 }
 
-void Histogram::genHISTO(const bool reduceFlag){
+void Histogram::genHisto(const bool reduceFlag){
   unsigned int i;
   unsigned int j;
   unsigned int k;
@@ -154,7 +154,7 @@ unsigned int Histogram::getBin(const unsigned int &nfilein, const unsigned int &
   return b;
 }
 
-void Histogram::printHISTO (){
+void Histogram::printHisto (){
   unsigned int i;
   unsigned int j;
   unsigned int b;
@@ -220,4 +220,12 @@ unsigned int Histogram::getNFile(){
 
 unsigned int Histogram::getNData(int element){
   return data.at(element).size();
+}
+
+std::vector<unsigned int>& Histogram::getHisto(){
+  return HISTO;
+}
+
+unsigned int Histogram::getHistoSize(){
+  return HISTO.size();
 }
