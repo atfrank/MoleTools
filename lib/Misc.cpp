@@ -47,6 +47,8 @@ void Misc::splitNum (const std::string &str, const std::string &delim, std::vect
   size_t plast=std::string::npos;
   SplitVec tmp;
 
+  //Only use this if all columns are needed as a number!
+
   //"repeat" = true means that a blank string is added when there are
   //back-to-back delimiters. Otherwise, repeat=false ignores back-to-back delimiters.
 

@@ -26,7 +26,7 @@ int main (int argc, char **argv){
   std::vector<Histogram*> histos;
   std::vector<std::string> inps;
   std::string currArg;
-  std::vector<double> s;
+  std::vector<std::string> s;
   std::vector<std::vector<double> > data;
   std::ifstream inpFile;
   std::istream *finp;
@@ -169,11 +169,13 @@ int main (int argc, char **argv){
           continue;
         }
         else{
-          Misc::splitNum(line, delim, s, false);
+          //Don't use splitNum, str->double conversion too costly
+          Misc::splitStr(line, delim, s, false);
           for (k=0; k< histos.size(); k++){
             for (m=0; m< cols.at(k).size(); m++){
               if (cols.at(k).at(m) < s.size()){
-                data.at(k).at(m)=s.at(cols.at(k).at(m));
+                //Only convert necessary columns from string to double
+                std::stringstream(s.at(cols.at(k).at(m))) >> data.at(k).at(m);
               }
               else{
                 std::cerr << std::endl << "Error: Missing data in column ";
