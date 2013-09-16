@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <ctime>
 
 void usage(){
   std::cerr << std::endl;
@@ -26,7 +27,7 @@ int main (int argc, char **argv){
   std::vector<std::string> inps;
   std::string currArg;
   std::vector<double> s;
-  std::vector<double> data;
+  std::vector<std::vector<double> > data;
   std::ifstream inpFile;
   std::istream *finp;
   std::vector<std::vector<unsigned int> > cols;
@@ -132,7 +133,14 @@ int main (int argc, char **argv){
     }
   }
 
+  data.resize(histos.size());
+  for (k=0; k< histos.size(); k++){
+    data.at(k).resize(cols.at(k).size());
+  }
 
+  //time_t begin;
+  //double end;
+  //time(&begin);
   for (j=0; j< inps.size(); j++){
     if (verbose == true){
       if (inps.at(j).compare("-") == 0){
@@ -163,11 +171,9 @@ int main (int argc, char **argv){
         else{
           Misc::splitNum(line, delim, s, false);
           for (k=0; k< histos.size(); k++){
-            data.clear();
-            data.resize(cols.at(k).size(),0);
             for (m=0; m< cols.at(k).size(); m++){
               if (cols.at(k).at(m) < s.size()){
-                data.at(m)=s.at(cols.at(k).at(m));
+                data.at(k).at(m)=s.at(cols.at(k).at(m));
               }
               else{
                 std::cerr << std::endl << "Error: Missing data in column ";
@@ -176,7 +182,7 @@ int main (int argc, char **argv){
               }
             }
             //Append vector of data into to zeroth window of kth histogram
-            histos.at(k)->appendData(data, 0);
+            histos.at(k)->appendData(data.at(k), 0);
           }
         }
       }
@@ -197,6 +203,8 @@ int main (int argc, char **argv){
       }
     }
   }
+  //end=difftime(time(0), begin);
+  //std::cout << "Time = " << end << " seconds " << std::endl;
 
   if (separate == false){
     //Output histograms

@@ -17,8 +17,8 @@ class Misc {
 
   public:
     static void splitStr (const std::string &str, const std::string &delim, std::vector<std::string> &out, const bool repeat=true);
-		template <class SplitVec>
-			static void splitNum (const std::string &str, const std::string &delim, SplitVec &out, const bool repeat=true);
+    template <class SplitVec>
+    static void splitNum (const std::string &str, const std::string &delim, std::vector<SplitVec> &out, const bool repeat=true);
     static bool isdigit (const std::string &str);
     static bool isdouble (const std::string &str);
     static bool isfloat (const std::string &str);
