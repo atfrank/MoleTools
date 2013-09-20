@@ -261,19 +261,29 @@ Residue* Molecule::getResidue(const int& element){
   return resVec.at(element);
 }
 
-void Molecule::setMass(Prmtop* prmtopin){
+void Molecule::readTopology(const std::string& topin){
+  this->toppar.readTopology(topin);
+  this->setMass();
+  this->setCharge();
+}
+
+void Molecule::readParameter(const std::string& prmin){
+  std::cerr << "Warning: Molecule::readParameter() has not been implemented yet!" << std::endl;
+}
+
+void Molecule::setMass(){
   Atom* a;
   for (unsigned int i=0; i< this->getAtmVecSize(); i++){
     a=this->getAtom(i);
-    a->setMass(prmtopin->getMass(Misc::trim(a->getResName()), Misc::trim(a->getAtmName())));
+    a->setMass(this->toppar.getMass(Misc::trim(a->getResName()), Misc::trim(a->getAtmName())));
   }
 }
 
-void Molecule::setCharge(Prmtop* prmtopin){
+void Molecule::setCharge(){
   Atom* a;
   for (unsigned int i=0; i< this->getAtmVecSize(); i++){
     a=this->getAtom(i);
-    a->setCharge(prmtopin->getCharge(Misc::trim(a->getResName()), Misc::trim(a->getAtmName())));
+    a->setCharge(this->toppar.getCharge(Misc::trim(a->getResName()), Misc::trim(a->getAtmName())));
   }
 }
 

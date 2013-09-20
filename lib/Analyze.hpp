@@ -58,8 +58,9 @@ class Analyze {
     void writeEigenOverlap(Analyze* cmpin, std::vector<unsigned int>& modein);
 		
 		//Virtual functions
+    virtual void readTopology(Molecule* molin, std::string topin="");
 		virtual void setupMolSel(Molecule* molin);
-		virtual void preAnalysis(Molecule* molin); 
+		virtual void preAnalysis(Molecule* molin, std::string topin=""); 
     virtual void preAnalysis();
 		virtual void runAnalysis() =0; //Pure virtual function
 		virtual void postAnalysis();
@@ -93,20 +94,20 @@ class AnalyzeCOG: public Analyze {
 
 class AnalyzeRMSD: public Analyze {
 	public:
-		void preAnalysis(Molecule* molin);
+		void preAnalysis(Molecule* molin, std::string topin="");
 		void runAnalysis();
 };
 
 class AnalyzeRMSF: public Analyze {
   public:
-		void preAnalysis(Molecule* molin);
+		void preAnalysis(Molecule* molin, std::string topin="");
     void runAnalysis();
 		void postAnalysis();
 };
 
 class AnalyzeAverage: public Analyze {
 	public:
-		void preAnalysis(Molecule* molin);
+		void preAnalysis(Molecule* molin, std::string topin="");
 		void runAnalysis();
 		void postAnalysis();
 };
@@ -131,7 +132,7 @@ class AnalyzeDihedral: public Analyze {
 
 class AnalyzeCovariance: public Analyze {
   public:
-    void preAnalysis(Molecule* molin);
+    void preAnalysis(Molecule* molin, std::string topin="");
     void preAnalysis();
     void runAnalysis();
     void postAnalysis();
@@ -139,7 +140,7 @@ class AnalyzeCovariance: public Analyze {
 
 class AnalyzeProjection: public Analyze {
   public:
-    void preAnalysis(Molecule* molin);
+    void preAnalysis(Molecule* molin, std::string topin="");
     void runAnalysis();
 };
 

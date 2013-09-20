@@ -37,6 +37,14 @@ void Analyze::resizeNMol(const int sizein){
   this->mol.resize(sizein);
 }
 
+void Analyze::readTopology(Molecule* molin, std::string topin){
+  if (topin.length() > 0){
+    molin->readTopology(topin);
+    molin->setMass();
+    molin->setCharge();
+  }
+}
+
 void Analyze::setupMolSel(Molecule* molin){
 	Molecule* tmpmol;
 
@@ -274,38 +282,49 @@ void Analyze::readCovariance(){
 }
 
 
+
+
 //All preAnalysis Functions
 void Analyze::preAnalysis(){
   //Do nothing
 }
 
-void Analyze::preAnalysis(Molecule* molin){
+void Analyze::preAnalysis(Molecule* molin, std::string topin){
+  this->readTopology(molin, topin);
 	this->setupMolSel(molin);
 }
 
-void AnalyzeRMSD::preAnalysis(Molecule* molin){
+void AnalyzeRMSD::preAnalysis(Molecule* molin, std::string topin){
+  this->readTopology(molin, topin);
 	this->setupMolSel(molin);
 	Molecule* refmol=molin->clone();
+  this->readTopology(refmol, topin);
 	this->setupMolSel(refmol);
 }
 
-void AnalyzeRMSF::preAnalysis(Molecule* molin){
+void AnalyzeRMSF::preAnalysis(Molecule* molin, std::string topin){
+  this->readTopology(molin, topin);
   this->setupMolSel(molin);
   Molecule* refmol=molin->clone();
+  this->readTopology(refmol, topin);
   this->setupMolSel(refmol);
 }
 
-void AnalyzeAverage::preAnalysis(Molecule* molin){
+void AnalyzeAverage::preAnalysis(Molecule* molin, std::string topin){
+  this->readTopology(molin, topin);
   this->setupMolSel(molin);
   Molecule* refmol=molin->clone();
+  this->readTopology(refmol, topin);
   this->setupMolSel(refmol);
   //Zero coordinates for future appending
   this->getMol(1)->zeroCoor();
 }
 
-void AnalyzeCovariance::preAnalysis(Molecule* molin){
+void AnalyzeCovariance::preAnalysis(Molecule* molin, std::string topin){
+  this->readTopology(molin, topin);
   this->setupMolSel(molin);
   Molecule* refmol=molin->clone();
+  this->readTopology(refmol, topin);
   this->setupMolSel(refmol);
 
   if (getInput().length() != 0){
@@ -328,7 +347,7 @@ void AnalyzeCovariance::preAnalysis(){
   setEigen(diagonalizeCovar());
 }
 
-void AnalyzeProjection::preAnalysis(Molecule* molin){
+void AnalyzeProjection::preAnalysis(Molecule* molin, std::string topin){
   std::ifstream inpFile;
   std::istream* inp;
   std::string line;
@@ -336,8 +355,10 @@ void AnalyzeProjection::preAnalysis(Molecule* molin){
   std::vector<double> tmp;
   unsigned int N3;
 
+  this->readTopology(molin, topin);
   this->setupMolSel(molin);
   Molecule* refmol=molin->clone();
+  this->readTopology(refmol, topin);
   this->setupMolSel(refmol);
 
   //Resize matrix to 3N x 3N and zero

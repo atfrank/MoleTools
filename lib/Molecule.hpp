@@ -46,8 +46,10 @@ class Molecule {
     unsigned int getAtmVecSize();
     std::vector<Atom*> getAtmVec();
     Residue* getResidue(const int& element);
-    void setMass(Prmtop* prmtopin);
-    void setCharge(Prmtop* prmtopin);
+    void readTopology(const std::string& topin);
+    void readParameter(const std::string& prmin);
+    void setMass();
+    void setCharge();
     void selAll();
     void deselAll();
     void select(std::string sel);

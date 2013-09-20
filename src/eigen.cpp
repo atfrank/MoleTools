@@ -14,7 +14,8 @@ void usage(){
   std::cerr << "Options: [-vector] [-value]" << std::endl;
   std::cerr << "         [-mode mode1[:mode2[...[:modeN]]] | -mode modestart=modestop[=modeincr]]" << std::endl;
   std::cerr << "         [-pdb PDBfile] [-sel selection]" << std::endl;
-  std::cerr << "         [-out TRAJfile]" << std::endl; 
+  std::cerr << "         [-out TRAJfile]" << std::endl;
+  std::cerr << "         [-top file]" << std::endl;
   std::cerr << "         [-overlap covarFile]" << std::endl;
   exit(0);
 }
@@ -41,6 +42,7 @@ int main (int argc, char **argv){
   std::string fout;
   std::ofstream trjout;
   Trajectory *ftrjout;
+  std::string top;
 
   covar.clear();
   cmpcovar.clear();
@@ -54,6 +56,7 @@ int main (int argc, char **argv){
   nmodel=0;
   sel=":.";
   ftrjout=NULL;
+  top.clear();
 
 
   for (i=1; i<argc; i++){
@@ -106,6 +109,10 @@ int main (int argc, char **argv){
         usage();
       }
     }
+    else if (currArg.compare("-top") == 0){
+      currArg=argv[++i];
+      top=currArg;
+    }
     else{
       covar=currArg;
     }
@@ -118,7 +125,7 @@ int main (int argc, char **argv){
     if (pdb.length() > 0){
       //Extract mode structures
       anin->addSel(sel);
-      anin->preAnalysis(Molecule::readPDB(pdb)); //Reads covariance matrix and diagonalizes it
+      anin->preAnalysis(Molecule::readPDB(pdb), top); //Reads covariance matrix and diagonalizes it
       nrow=anin->getEigen().eigenvalues().rows();
       if (fout.length() > 0){
         trjout.open(fout.c_str(), std::ios::binary);

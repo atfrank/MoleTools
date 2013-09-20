@@ -96,11 +96,7 @@ int main (int argc, char **argv){
 
 	Molecule* mol;
 	mol=Molecule::readPDB(ifile, format);
-  Prmtop* t;
-  t=new Prmtop;
-  t->readTopology(top);
-  mol->setMass(t);
-  mol->setCharge(t);
+  mol->readTopology(top);
   for (unsigned int k=0; k< mol->getAtmVecSize(); k++){
     Atom* a;
     a=mol->getAtom(k);
