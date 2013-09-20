@@ -5,6 +5,7 @@
 
 #include "Chain.hpp"
 #include "LinAlg.hpp"
+#include "Prmtop.hpp"
 #include "Eigen/Dense"
 
 #include <vector>
@@ -20,6 +21,7 @@ class Molecule {
 		std::map< std::string, std::vector<bool> > storedSel;
 		std::string remarks;
 		bool iCodeFlag;
+    Prmtop toppar;
 
   public:
 		Molecule(); //Constructor
@@ -43,7 +45,9 @@ class Molecule {
     unsigned int getResVecSize();
     unsigned int getAtmVecSize();
     std::vector<Atom*> getAtmVec();
-    Residue* getResidue(int element);
+    Residue* getResidue(const int& element);
+    void setMass(Prmtop* prmtopin);
+    void setCharge(Prmtop* prmtopin);
     void selAll();
     void deselAll();
     void select(std::string sel);

@@ -144,7 +144,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
     inp=&std::cin;
   }
   else{ //Input from file
-    pdbFile.open((ifile).c_str());
+    pdbFile.open((ifile).c_str(), std::ios::in);
     inp=&pdbFile;
 		PDBID=ifile.substr(0,4);
 		Misc::toupper(PDBID);

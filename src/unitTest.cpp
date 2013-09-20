@@ -3,6 +3,7 @@
 #include "Misc.hpp"
 #include "Molecule.hpp"
 #include "Analyze.hpp"
+#include "Prmtop.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -14,6 +15,7 @@ void usage(){
   std::cerr << std::endl << std::endl;
   std::cerr << "Usage:   unitTest [-options] <file>" << std::endl;
   std::cerr << "Options: [-format type]" << std::endl;
+  std::cerr << "         [-top file] [-prm file]" << std::endl;
   exit(0);
 }
 
@@ -33,6 +35,8 @@ int main (int argc, char **argv){
   std::vector<std::string> s;
   std::vector<double> d;
 	std::string format;
+//  std::string prm;
+  std::string top;
 
   ifile.clear();
 	format.clear();
@@ -47,6 +51,10 @@ int main (int argc, char **argv){
 			Misc::toupper(currArg);
 			format=currArg;
 		}
+    else if (currArg.compare("-top") == 0){
+      currArg=argv[++i];
+      top=currArg;
+    }
     else{
       ifile=currArg;
     }
@@ -56,7 +64,7 @@ int main (int argc, char **argv){
     std::cerr << std::endl << "Error: Please provide an input file" << std::endl << std::endl;
     usage();
   }
-
+/*
   if (ifile == "-"){
     inp=&std::cin; 
   }
@@ -82,9 +90,20 @@ int main (int argc, char **argv){
   if (ifile != "-"){
     inpFile.close();
   }
+*/
 
-	//Molecule* mol;
-	//mol=Molecule::readPDB(ifile, format);
+	Molecule* mol;
+	mol=Molecule::readPDB(ifile, format);
+  Prmtop* t;
+  t=new Prmtop;
+  t->readTopology(top);
+  mol->setMass(t);
+  mol->setCharge(t);
+  for (unsigned int k=0; k< mol->getAtmVecSize(); k++){
+    Atom* a;
+    a=mol->getAtom(k);
+//    std::cerr << a->getSummary() << " " << a->getMass() << " " << a->getCharge() << std::endl;
+  }
 	/*
 	mol->select("B:.CA");
 	mol->storeSel();

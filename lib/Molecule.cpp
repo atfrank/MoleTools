@@ -257,8 +257,24 @@ unsigned int Molecule::getResVecSize(){
   return resVec.size();
 }
 
-Residue* Molecule::getResidue(int element){
+Residue* Molecule::getResidue(const int& element){
   return resVec.at(element);
+}
+
+void Molecule::setMass(Prmtop* prmtopin){
+  Atom* a;
+  for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+    a=this->getAtom(i);
+    a->setMass(prmtopin->getMass(Misc::trim(a->getResName()), Misc::trim(a->getAtmName())));
+  }
+}
+
+void Molecule::setCharge(Prmtop* prmtopin){
+  Atom* a;
+  for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+    a=this->getAtom(i);
+    a->setCharge(prmtopin->getCharge(Misc::trim(a->getResName()), Misc::trim(a->getAtmName())));
+  }
 }
 
 void Molecule::selAll(){

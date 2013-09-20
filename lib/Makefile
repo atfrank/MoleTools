@@ -2,7 +2,7 @@
 
 include ../makefile.defs
 
-LIBOBJS = LinAlg.o Analyze.o Atom.o Chain.o Constants.o Misc.o Molecule.o PDB.o Residue.o SABA.o Select.o Trajectory.o Vector.o Mol2.o WHAM.o Histogram.o
+LIBOBJS = Analyze.o Atom.o Chain.o Constants.o Histogram.o LinAlg.o Misc.o Molecule.o PDB.o Prmtop.o Residue.o SABA.o Select.o Trajectory.o Vector.o Mol2.o WHAM.o
 
 all:	libtools.$(LIBEXT)
 

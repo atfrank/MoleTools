@@ -3,6 +3,7 @@
 #define ATOM_H
 
 #include "Vector.hpp"
+#include "Constants.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -31,6 +32,8 @@ class Atom {
     bool sel; //Selection flag
     std::string summary; //A:GLY1.CA style summary
 		std::string ss; //Secondary structure
+    double mass;
+    double charge;
     //All additional fields must also be added to Atom::clone() function!!
 
   public:
@@ -61,6 +64,8 @@ class Atom {
     bool& getSel();
     std::string& getSummary();
 		std::string& getSS();
+    double& getMass();
+    double& getCharge();
 	
     //Set atom info
 		void setPdbId(const std::string& pdbidin);
@@ -90,6 +95,8 @@ class Atom {
     void setSel(const bool selin);
     void setSummary(const std::string& summaryin);
 		void setSS(const std::string& ssin);
+    void setMass(const double& massin);
+    void setCharge(const double& chargein);
 };
 
 #endif
