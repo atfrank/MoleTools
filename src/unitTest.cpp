@@ -40,6 +40,8 @@ int main (int argc, char **argv){
 
   ifile.clear();
 	format.clear();
+  inp=NULL;
+  j=0;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
