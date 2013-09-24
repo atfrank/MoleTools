@@ -15,6 +15,7 @@ void usage(){
   std::cerr << "         [-mode mode1[:mode2[...[:modeN]]] | -mode modestart=modestop[=modeincr]]" << std::endl;
   std::cerr << "         [-pdb PDBfile] [-sel selection]" << std::endl;
   std::cerr << "         [-out TRAJfile]" << std::endl;
+  std::cerr << "         [-entropy]" << std::endl;
   std::cerr << "         [-top file]" << std::endl;
   std::cerr << "         [-overlap covarFile]" << std::endl;
   exit(0);
@@ -43,6 +44,7 @@ int main (int argc, char **argv){
   std::ofstream trjout;
   Trajectory *ftrjout;
   std::string top;
+  bool entropy;
 
   covar.clear();
   cmpcovar.clear();
@@ -57,6 +59,7 @@ int main (int argc, char **argv){
   sel=":.";
   ftrjout=NULL;
   top.clear();
+  entropy=false;
 
 
   for (i=1; i<argc; i++){
@@ -109,6 +112,9 @@ int main (int argc, char **argv){
         usage();
       }
     }
+    else if (currArg.compare("-entropy") == 0){
+      entropy=true;
+    }
     else if (currArg.compare("-top") == 0){
       currArg=argv[++i];
       top=currArg;
@@ -116,6 +122,11 @@ int main (int argc, char **argv){
     else{
       covar=currArg;
     }
+  }
+
+  if (entropy == true && pdb.length() == 0){
+    std::cerr << "Error: Please provide a PDB file via \"-pdb\" for entropy calculations" << std::endl;
+    usage();
   }
 
   if (covar.length() > 0){
@@ -127,56 +138,61 @@ int main (int argc, char **argv){
       anin->addSel(sel);
       anin->preAnalysis(Molecule::readPDB(pdb), top); //Reads covariance matrix and diagonalizes it
       nrow=anin->getEigen().eigenvalues().rows();
-      if (fout.length() > 0){
-        trjout.open(fout.c_str(), std::ios::binary);
-        ftrjout=new Trajectory;
-        ftrjout->setDefaultHeader();
-        ftrjout->setMolecule(anin->getMol(0));
-        ftrjout->setNAtom(static_cast<int>(anin->getMol(0)->getNAtomSelected()));
-        ftrjout->writeHeader(trjout);
-        ftrjout->writeFrame(trjout); //write input PDB
-      } 
+      if (entropy == true){
+        
+      }
       else{
-        std::cout << std::endl << "MODEL " << nmodel+1 << std::endl;
-        anin->getMol(0)->writePDB(); //write input PDB
-        std::cout << "ENDMDL" << std::endl;
-      }
-      nmodel++;
-      if (modes.size() == 0 || (modes.size() == 1 && modes.at(0) == 0)){
-        //If modes = 0 then print all models
-        modes.clear();
-        for (j=0; j< static_cast<unsigned int>(anin->getEigen().eigenvalues().rows()); j++){
-          modes.push_back(j+1);
-        }
-      }
-      for (j=0; j< modes.size(); j++){
-        if (modes.at(j) > nrow){
-          std::cerr << "Warning: Skipping unknown Mode " << modes.at(j) << std::endl;
-        }
+        if (fout.length() > 0){
+          trjout.open(fout.c_str(), std::ios::binary);
+          ftrjout=new Trajectory;
+          ftrjout->setDefaultHeader();
+          ftrjout->setMolecule(anin->getMol(0));
+          ftrjout->setNAtom(static_cast<int>(anin->getMol(0)->getNAtomSelected()));
+          ftrjout->writeHeader(trjout);
+          ftrjout->writeFrame(trjout); //write input PDB
+        } 
         else{
-          anin->setEigenMode(modes.at(j));
-          if (trjout.is_open()){
-            ftrjout->setMolecule(anin->getMol(1));
-            ftrjout->writeFrame(trjout);
+          std::cout << std::endl << "MODEL " << nmodel+1 << std::endl;
+          anin->getMol(0)->writePDB(); //write input PDB
+          std::cout << "ENDMDL" << std::endl;
+        }
+        nmodel++;
+        if (modes.size() == 0 || (modes.size() == 1 && modes.at(0) == 0)){
+          //If modes = 0 then print all models
+          modes.clear();
+          for (j=0; j< static_cast<unsigned int>(anin->getEigen().eigenvalues().rows()); j++){
+            modes.push_back(j+1);
+          }
+        }
+        for (j=0; j< modes.size(); j++){
+          if (modes.at(j) > nrow){
+            std::cerr << "Warning: Skipping unknown Mode " << modes.at(j) << std::endl;
           }
           else{
-            std::cout << std::endl << "MODEL " << nmodel+1 << std::endl;
-            anin->getMol(1)->writePDB();
-            std::cout << "ENDMDL" << std::endl;
+            anin->setEigenMode(modes.at(j));
+            if (trjout.is_open()){
+              ftrjout->setMolecule(anin->getMol(1));
+              ftrjout->writeFrame(trjout);
+            }
+            else{
+              std::cout << std::endl << "MODEL " << nmodel+1 << std::endl;
+              anin->getMol(1)->writePDB();
+              std::cout << "ENDMDL" << std::endl;
+            }
+            nmodel++;
           }
-          nmodel++;
         }
-      }
-      if (avgmol != NULL){
-        delete avgmol;
-      }
-      if (trjout.is_open()){
-        ftrjout->setNFrame(nmodel);
-        ftrjout->setNStep(nmodel);
-        ftrjout->writeHeader(trjout);
-        trjout.close();
-        if (ftrjout != NULL){
-          delete ftrjout;
+        if (avgmol != NULL){
+          delete avgmol;
+        }
+        if (trjout.is_open()){
+          ftrjout->setNFrame(nmodel);
+          ftrjout->setNStep(nmodel);
+          ftrjout->writeHeader(trjout);
+          trjout.close();
+          if (ftrjout != NULL){
+            delete ftrjout;
+          }
         }
       }
     }
