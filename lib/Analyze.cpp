@@ -1356,7 +1356,7 @@ Eigen::Matrix3d Analyze::gyrationTensor(Molecule* mol){
   return S;
 }
 
-void Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const double temp){
+double Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const double temp){
   unsigned int i, j;
   int nrow;
   Atom* atm;
@@ -1403,6 +1403,8 @@ void Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenS
     Stot+=S;
   }
   Stot*=kB; //kcal/mol/K
+  
+  return Stot;
 }
 
 

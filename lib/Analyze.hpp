@@ -83,7 +83,7 @@ class Analyze {
 		static void pcasso(Molecule* mol, std::string dsspin="");
     //static std::vector<double> gyration(Molecule* mol);
     Eigen::Matrix3d gyrationTensor(Molecule* mol);
-    static void quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, double temp=300);
+    static double quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, double temp=300);
 };
 
 //Derived classes

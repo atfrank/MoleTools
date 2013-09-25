@@ -145,7 +145,7 @@ int main (int argc, char **argv){
       nrow=anin->getEigen().eigenvalues().rows();
       if (entropy == true){
         //Extract entropy
-        Analyze::quasiharmonicEntropy(anin->getMol(0), anin->getEigen(), temp);
+        std::cout << Analyze::quasiharmonicEntropy(anin->getMol(0), anin->getEigen(), temp) << std::endl;
       }
       else{
         //Extract mode structures
