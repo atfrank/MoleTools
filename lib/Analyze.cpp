@@ -1391,7 +1391,7 @@ double Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEige
   CONST=(speedl/PS2SEC)*PLANCK/(KBOLTZ);
   for (i=0; i< w.size(); i++){
     wave.at(i)=FRQ2INVCM*w.at(i); //Units of 1/cm
-    U=CONST*wave.at(i)/temp; //Unitless
+    U=CONST*wave.at(i)/temp; //Unitless, no need to multiply wave.at(i) by 1E-2/SPEEDL
     Q=1.0/(1.0-exp(-U));
     F=log(1.0/Q);
     if (U > 40.0){
