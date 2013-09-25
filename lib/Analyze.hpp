@@ -51,7 +51,7 @@ class Analyze {
     std::vector<unsigned int>& getModes();
     void initCovar(const unsigned int& xin, const unsigned int& yin);
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> diagonalizeCovar();
-    void setEigen(Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eiginin);
+    void setEigen(const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin);
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& getEigen();
     void setEigenMode(const unsigned int& modein);
     void readCovariance();
@@ -83,6 +83,7 @@ class Analyze {
 		static void pcasso(Molecule* mol, std::string dsspin="");
     //static std::vector<double> gyration(Molecule* mol);
     Eigen::Matrix3d gyrationTensor(Molecule* mol);
+    static void quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, double temp=300);
 };
 
 //Derived classes

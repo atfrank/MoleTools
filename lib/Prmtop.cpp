@@ -66,8 +66,8 @@ double Prmtop::getMass(const std::string& resnamein, const std::string& atmnamei
   }
   else{
     std::cerr << "Warning: Could not a find mass for atom " << resnamein;
-    std::cerr << " " << atmnamein << " and was set to zero." << std::endl;
-    return 0.0;
+    std::cerr << " " << atmnamein << " and was set to 1.0" << std::endl;
+    return 1.0;
   }
 }
 
@@ -77,7 +77,7 @@ double Prmtop::getCharge(const std::string& resnamein, const std::string& atmnam
   }
   else{
     std::cerr << "Warning: Could not find a charge for atom " << resnamein;
-    std::cerr << " " << atmnamein << " and was set to zero." << std::endl;
+    std::cerr << " " << atmnamein << " and was set to 0.0." << std::endl;
     return 0.0;
   }
 }

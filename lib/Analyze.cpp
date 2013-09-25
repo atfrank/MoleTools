@@ -237,7 +237,7 @@ std::string Analyze::getOutput(){
   return ofile;
 }
 
-void Analyze::setEigen(Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigenin){
+void Analyze::setEigen(const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin){
   eigen=eigenin;
 }
 
@@ -1354,6 +1354,55 @@ Eigen::Matrix3d Analyze::gyrationTensor(Molecule* mol){
   S=S/mol->getAtmVecSize();
 
   return S;
+}
+
+void Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const double temp){
+  unsigned int i, j;
+  int nrow;
+  Atom* atm;
+  double Stot;
+  double H, Q, U, F, S, CONST;
+  std::vector<double> w; //Frequency
+  std::vector<double> wave; //Wavenumbers [1/cm]
+  
+  nrow=eigenin.eigenvalues().rows();
+  w.resize(nrow);
+  wave.resize(nrow);
+  Stot=0.0;
+
+  j=0; 
+  for (i=0; i< mol->getNAtom(); i++){
+    atm=mol->getAtom(i);
+    if (atm->getSel() == false){
+      continue;
+    }
+    if (j < static_cast<unsigned int>(nrow)){
+      //Note that the eigenvalues are already in CHARMM units of [amu*Angstroms*Angstroms]
+      //So there is no need to multiply it by 10E20/AMU
+      w.at(j)=sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)]));
+      j++;
+      w.at(j)=sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)]));
+      j++;
+      w.at(j)=sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)]));
+      j++;
+    }
+  }
+
+  CONST=(speedl/PS2SEC)*PLANCK/(KBOLTZ);
+  for (i=0; i< w.size(); i++){
+    wave.at(i)=FRQ2INVCM*w.at(i); //Units of 1/cm
+    U=CONST*wave.at(i)/temp; //Unitless
+    Q=1.0/(1.0-exp(-U));
+    F=log(1.0/Q);
+    if (U > 40.0){
+      //Prevent overflow??
+      U=40.0;
+    }
+    H=U/(exp(U)-1.0);
+    S=H-F;
+    Stot+=S;
+  }
+  Stot*=kB; //kcal/mol/K
 }
 
 

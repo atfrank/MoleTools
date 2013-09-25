@@ -15,7 +15,7 @@ void usage(){
   std::cerr << "         [-mode mode1[:mode2[...[:modeN]]] | -mode modestart=modestop[=modeincr]]" << std::endl;
   std::cerr << "         [-pdb PDBfile] [-sel selection]" << std::endl;
   std::cerr << "         [-out TRAJfile]" << std::endl;
-  std::cerr << "         [-entropy]" << std::endl;
+  std::cerr << "         [-entropy] [-temp value]" << std::endl;
   std::cerr << "         [-top file]" << std::endl;
   std::cerr << "         [-overlap covarFile]" << std::endl;
   exit(0);
@@ -45,6 +45,7 @@ int main (int argc, char **argv){
   Trajectory *ftrjout;
   std::string top;
   bool entropy;
+  double temp;
 
   covar.clear();
   cmpcovar.clear();
@@ -60,6 +61,7 @@ int main (int argc, char **argv){
   ftrjout=NULL;
   top.clear();
   entropy=false;
+  temp=300;
 
 
   for (i=1; i<argc; i++){
@@ -115,6 +117,10 @@ int main (int argc, char **argv){
     else if (currArg.compare("-entropy") == 0){
       entropy=true;
     }
+    else if (currArg.compare("-temp") == 0){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> temp;
+    }
     else if (currArg.compare("-top") == 0){
       currArg=argv[++i];
       top=currArg;
@@ -134,14 +140,15 @@ int main (int argc, char **argv){
     anin->setInput(covar);
 
     if (pdb.length() > 0){
-      //Extract mode structures
       anin->addSel(sel);
       anin->preAnalysis(Molecule::readPDB(pdb), top); //Reads covariance matrix and diagonalizes it
       nrow=anin->getEigen().eigenvalues().rows();
       if (entropy == true){
-        
+        //Extract entropy
+        Analyze::quasiharmonicEntropy(anin->getMol(0), anin->getEigen(), temp);
       }
       else{
+        //Extract mode structures
         if (fout.length() > 0){
           trjout.open(fout.c_str(), std::ios::binary);
           ftrjout=new Trajectory;

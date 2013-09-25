@@ -19,8 +19,8 @@ Atom::Atom(){
   sel=true;
   summary="";
 	ss="";
-  mass=0;
-  charge=0;
+  mass=1.0;
+  charge=0.0;
 }
 
 Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int residin, Vector coorin, std::string segidin){
@@ -40,8 +40,8 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
   sel=true;
   summary="";
 	ss="";
-  mass=0;
-  charge=0;
+  mass=1.0;
+  charge=0.0;
 }
 
 void Atom::reset(){
@@ -61,8 +61,8 @@ void Atom::reset(){
   sel=true;
   summary="";
 	ss="";
-  mass=0;
-  charge=0;
+  mass=1.0;
+  charge=0.0;
 }
 
 void Atom::clone(Atom* atmin){
