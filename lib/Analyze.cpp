@@ -1364,10 +1364,10 @@ double Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEige
   double H, Q, U, F, S, CONST;
   std::vector<double> w; //Frequency
   std::vector<double> wave; //Wavenumbers [1/cm]
+  unsigned int ntransrot;
   
   nrow=eigenin.eigenvalues().rows();
-  w.resize(nrow);
-  wave.resize(nrow);
+  ntransrot=6; //Set to zero to match CHARMM with no cutoff
   Stot=0.0;
 
   j=0; 
@@ -1376,18 +1376,19 @@ double Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEige
     if (atm->getSel() == false){
       continue;
     }
-    if (j < static_cast<unsigned int>(nrow)){
+    if (j < static_cast<unsigned int>(nrow-ntransrot)){
       //Note that the eigenvalues are already in CHARMM units of [amu*Angstroms*Angstroms]
       //So there is no need to multiply it by 10E20/AMU
-      w.at(j)=sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)]));
+      w.push_back(sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)])));
       j++;
-      w.at(j)=sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)]));
+      w.push_back(sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)])));
       j++;
-      w.at(j)=sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)]));
+      w.push_back(sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)])));
       j++;
     }
   }
 
+  wave.resize(w.size());
   CONST=(speedl/PS2SEC)*PLANCK/(KBOLTZ);
   for (i=0; i< w.size(); i++){
     wave.at(i)=FRQ2INVCM*w.at(i); //Units of 1/cm
