@@ -34,6 +34,9 @@ int main (int argc, char **argv){
 	std::vector<std::vector<double> > rank;
 	std::pair<std::vector<std::pair<int, int> >::iterator, std::vector<std::pair<int,int> >::iterator> range;
 	std::vector<int> nbreak; //Total number of times a contact breaks before being permanently formed
+  std::vector<std::vector<int> > breakVec;
+  std::vector<double> avgBreak;
+  std::vector<double> stddevBreak;
 	unsigned int time;
 	int nline;
 	int nevents;
@@ -119,7 +122,7 @@ int main (int argc, char **argv){
 				if (nbreak.size() == 0){
 					nbreak.resize(s.at(2));
 					for (k=0; k< nbreak.size(); k++){
-						nbreak.at(k)=0;
+					  nbreak.at(k)=0;
 					}
 				}
 
@@ -203,6 +206,10 @@ int main (int argc, char **argv){
 		            order.at(k)=std::make_pair(k,0);
 		          }
             	trackFlag=false;
+              breakVec.push_back(nbreak);
+              for (k=0; k< nbreak.size(); k++){
+                nbreak.at(k)=0;
+              } 
             	nevents++;
           	}
 					}
@@ -215,10 +222,30 @@ int main (int argc, char **argv){
 		}
 	}
 
+  //Get break average and standard deviation
+  avgBreak.resize(nbreak.size());
+  stddevBreak.resize(nbreak.size());
+  for (j=0; j< breakVec.size(); j++){
+    avgBreak.at(j)=0.0;
+    stddevBreak.at(j)=0.0;
+    for (k=0; k< breakVec.at(j).size(); k++){
+      avgBreak.at(j)+=nbreak.at(k);
+    }
+  }
+  for (j=0; j< avgBreak.size(); j++){
+    avgBreak.at(j)/=nevents;
+    for (k=0; k< breakVec.size(); k++){
+      stddevBreak.at(j)+=breakVec.at(k).at(j);
+    }
+    if (nevents > 1){
+      stddevBreak.at(j)/=(nevents-1);
+    }
+  }
+
 	//Normalize ranks by nevents
 	for (j=0; j< rank.size(); j++){ //Contact number
 		for (k=0; k< rank.size(); k++){ //Rank number (appearance/disappearance order)
-			std::cout << j+1 << "   " << k+1 << "   " << rank.at(j).at(k)/nevents << "   " << nevents << "   " << (avgTime*1.0)/nevents << "   " << (nbreak.at(k)*1.0)/nevents << std::endl;
+			std::cout << j+1 << "   " << k+1 << "   " << rank.at(j).at(k)/nevents << "   " << nevents << "   " << (avgTime*1.0)/nevents << "   " << avgBreak.at(k) << "+/-" << stddevBreak.at(k) << std::endl;
 		}
 		std::cout << std::endl;
 	}
