@@ -23,14 +23,14 @@ int main (int argc, char **argv){
 
 
   int i;
-  unsigned int j;
+//  unsigned int j;
 //  int xcol;
 //  int ycol;
 //  int skip;
   std::string ifile;
   std::string currArg;
   std::ifstream inpFile;
-  std::istream* inp;
+//  std::istream* inp;
   std::string line;
   std::vector<std::string> s;
   std::vector<double> d;
@@ -40,8 +40,8 @@ int main (int argc, char **argv){
 
   ifile.clear();
 	format.clear();
-  inp=NULL;
-  j=0;
+//  inp=NULL;
+//  j=0;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -98,8 +98,8 @@ int main (int argc, char **argv){
 	mol=Molecule::readPDB(ifile, format);
   mol->readTopology(top);
   for (unsigned int k=0; k< mol->getAtmVecSize(); k++){
-    Atom* a;
-    a=mol->getAtom(k);
+//    Atom* a;
+//    a=mol->getAtom(k);
 //    std::cerr << a->getSummary() << " " << a->getMass() << " " << a->getCharge() << std::endl;
   }
 	/*

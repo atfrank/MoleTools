@@ -33,6 +33,7 @@ int main (int argc, char **argv){
 	std::vector<std::pair<int,int> > order;
 	std::vector<std::vector<double> > rank;
 	std::pair<std::vector<std::pair<int, int> >::iterator, std::vector<std::pair<int,int> >::iterator> range;
+	std::vector<int> nbreak; //Total number of times a contact breaks before being permanently formed
 	unsigned int time;
 	int nline;
 	int nevents;
@@ -48,6 +49,7 @@ int main (int argc, char **argv){
 	skip=0;
 	nline=0;
 	order.clear();
+	nbreak.clear();
 	time=0;
 	nevents=0;
 	trackFlag=false;
@@ -114,6 +116,12 @@ int main (int argc, char **argv){
 						}
           }
 				}
+				if (nbreak.size() == 0){
+					nbreak.resize(s.at(2));
+					for (k=0; k< nbreak.size(); k++){
+						nbreak.at(k)=0;
+					}
+				}
 
 				//Assess snapshot
 				if (lossFlag == false && s.at(0) == 0 && trackFlag == false){
@@ -139,6 +147,9 @@ int main (int argc, char **argv){
 						for (k=3; k< s.size(); k=k+2){
 							if (s.at(k) == 0){
 								if (lossFlag == false){
+									if (order.at(l).second > 0){
+										nbreak.at(l)++;
+									}
 									order.at(l).second=0; //Set time to zero if contact is broken
 								}
 								if (lossFlag == true && order.at(l).second == 0){
@@ -207,7 +218,7 @@ int main (int argc, char **argv){
 	//Normalize ranks by nevents
 	for (j=0; j< rank.size(); j++){ //Contact number
 		for (k=0; k< rank.size(); k++){ //Rank number (appearance/disappearance order)
-			std::cout << j+1 << "   " << k+1 << "   " << rank.at(j).at(k)/nevents << "   " << nevents << "   " << (avgTime*1.0)/nevents << std::endl;
+			std::cout << j+1 << "   " << k+1 << "   " << rank.at(j).at(k)/nevents << "   " << nevents << "   " << (avgTime*1.0)/nevents << "   " << (nbreak.at(k)*1.0)/nevents << std::endl;
 		}
 		std::cout << std::endl;
 	}
