@@ -84,6 +84,7 @@ class Analyze {
     //static std::vector<double> gyration(Molecule* mol);
     Eigen::Matrix3d gyrationTensor(Molecule* mol);
     static double quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, double temp=300);
+    static double configurationalEntropy(const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int>& modesin);
 };
 
 //Derived classes

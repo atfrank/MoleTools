@@ -275,6 +275,9 @@ void Analyze::readCovariance(){
     if (inpFile.is_open()){
       inpFile.close();
     }
+    if (nrow == 0){
+      std::cerr << std::endl << "Warning: The covariance matrix could not be read" << std::endl;
+    }
   }
   else{
     std::cerr << "Warning: A covariance matrix was not provided" << std::endl;
@@ -1390,6 +1393,8 @@ double Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEige
 
   wave.resize(w.size());
   CONST=(speedl/PS2SEC)*PLANCK/(KBOLTZ);
+
+  //Andricioaei & Karplus, (2001), J. Chem. Phys. 115:6289
   for (i=0; i< w.size(); i++){
     wave.at(i)=FRQ2INVCM*w.at(i); //Units of 1/cm
     U=CONST*wave.at(i)/temp; //Unitless, no need to multiply wave.at(i) by 1E-2/SPEEDL
@@ -1408,4 +1413,34 @@ double Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEige
   return Stot;
 }
 
+double Analyze::configurationalEntropy(const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int>& modesin){
+  //Karplus & Kushick, (1981), Macromolecules, 14:325
+  int n;
+  int nrow;
+  double S;
+  double det;
 
+  n=eigenin.eigenvalues().rows();
+  nrow=eigenin.eigenvalues().rows();
+  det=1;
+  S=0;
+
+  //for (int i=0; i< nrow; i++){
+  for (unsigned int i=0; i< modesin.size(); i++){
+    if (modesin.at(i) > static_cast<unsigned int>(nrow)){
+      std::cerr << "Warning: Skipping unknown Mode " << modesin.at(i) << std::endl;
+    }
+    else{
+      det*=eigenin.eigenvalues()[nrow-modesin.at(i)];
+    }
+  }
+
+  if (det != 0){
+    S=(n*kB/2)+(kB/2)*log(pow(2*PI, n)*det); //Units are in kcal/mol/K, det is unitless
+  }
+  else{
+    std::cerr << "Warning: Covariance matrix is singular!" << std::endl;
+  }
+
+  return S;
+}

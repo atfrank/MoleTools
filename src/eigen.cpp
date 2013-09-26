@@ -15,7 +15,7 @@ void usage(){
   std::cerr << "         [-mode mode1[:mode2[...[:modeN]]] | -mode modestart=modestop[=modeincr]]" << std::endl;
   std::cerr << "         [-pdb PDBfile] [-sel selection]" << std::endl;
   std::cerr << "         [-out TRAJfile]" << std::endl;
-  std::cerr << "         [-entropy] [-temp value]" << std::endl;
+  std::cerr << "         [-entropy | -quasi] [-temp value]" << std::endl;
   std::cerr << "         [-top file]" << std::endl;
   std::cerr << "         [-overlap covarFile]" << std::endl;
   exit(0);
@@ -44,6 +44,7 @@ int main (int argc, char **argv){
   std::ofstream trjout;
   Trajectory *ftrjout;
   std::string top;
+  bool quasi;
   bool entropy;
   double temp;
 
@@ -61,6 +62,7 @@ int main (int argc, char **argv){
   ftrjout=NULL;
   top.clear();
   entropy=false;
+  quasi=false;
   temp=300;
 
 
@@ -116,6 +118,11 @@ int main (int argc, char **argv){
     }
     else if (currArg.compare("-entropy") == 0){
       entropy=true;
+      quasi=false;
+    }
+    else if (currArg.compare("-quasi") == 0){
+      quasi=true;
+      entropy=false;
     }
     else if (currArg.compare("-temp") == 0){
       currArg=argv[++i];
@@ -130,8 +137,8 @@ int main (int argc, char **argv){
     }
   }
 
-  if (entropy == true && pdb.length() == 0){
-    std::cerr << "Error: Please provide a PDB file via \"-pdb\" for entropy calculations" << std::endl;
+  if (quasi == true && pdb.length() == 0){
+    std::cerr << "Error: Please provide a PDB file via \"-pdb\" for quasiharmonic entropy calculation" << std::endl;
     usage();
   }
 
@@ -143,9 +150,9 @@ int main (int argc, char **argv){
       anin->addSel(sel);
       anin->preAnalysis(Molecule::readPDB(pdb), top); //Reads covariance matrix and diagonalizes it
       nrow=anin->getEigen().eigenvalues().rows();
-      if (entropy == true){
+      if (quasi == true){
         //Extract entropy
-        std::cout << Analyze::quasiharmonicEntropy(anin->getMol(0), anin->getEigen(), temp) << std::endl;
+        std::cout << anin->quasiharmonicEntropy(anin->getMol(0), anin->getEigen(), temp) << std::endl;
       }
       else{
         //Extract mode structures
@@ -202,6 +209,17 @@ int main (int argc, char **argv){
           }
         }
       }
+    }
+    else if (entropy == true){
+      anin->preAnalysis();
+      if ((modes.size() == 1 && modes.at(0) == 0) || modes.size() == 0){
+        //If mode = 0 then print all eigenvalues
+        modes.clear();
+        for (j=0; j< static_cast<unsigned int>(anin->getEigen().eigenvalues().rows()); j++){
+          modes.push_back(j+1);
+        }
+      }
+      std::cout << anin->configurationalEntropy(anin->getEigen(), modes) << std::endl;
     }
     else if (cmpcovar.length() > 0){
       //Eigenvector Overlap
