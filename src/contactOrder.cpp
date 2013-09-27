@@ -223,29 +223,30 @@ int main (int argc, char **argv){
 	}
 
   //Get break average and standard deviation
-  avgBreak.resize(nbreak.size());
-  stddevBreak.resize(nbreak.size());
+  avgBreak.resize(nbreak.size(),0.0);
+  stddevBreak.resize(nbreak.size(),0.0);
   for (j=0; j< breakVec.size(); j++){
-    avgBreak.at(j)=0.0;
-    stddevBreak.at(j)=0.0;
     for (k=0; k< breakVec.at(j).size(); k++){
-      avgBreak.at(j)+=nbreak.at(k);
+      avgBreak.at(k)+=breakVec.at(j).at(k);
     }
   }
   for (j=0; j< avgBreak.size(); j++){
     avgBreak.at(j)/=nevents;
     for (k=0; k< breakVec.size(); k++){
-      stddevBreak.at(j)+=breakVec.at(k).at(j);
+      stddevBreak.at(j)+=pow(breakVec.at(k).at(j)-avgBreak.at(j),2.0);
     }
     if (nevents > 1){
-      stddevBreak.at(j)/=(nevents-1);
+      stddevBreak.at(j)=sqrt(stddevBreak.at(j)/(nevents-1.0));
+    }
+    else{
+      stddevBreak.at(j)=sqrt(stddevBreak.at(j));
     }
   }
 
 	//Normalize ranks by nevents
 	for (j=0; j< rank.size(); j++){ //Contact number
 		for (k=0; k< rank.size(); k++){ //Rank number (appearance/disappearance order)
-			std::cout << j+1 << "   " << k+1 << "   " << rank.at(j).at(k)/nevents << "   " << nevents << "   " << (avgTime*1.0)/nevents << "   " << avgBreak.at(k) << "+/-" << stddevBreak.at(k) << std::endl;
+			std::cout << j+1 << "   " << k+1 << "   " << rank.at(j).at(k)/nevents << "   " << nevents << "   " << (avgTime*1.0)/nevents << "   " << avgBreak.at(k) << " +/- " << stddevBreak.at(k) << std::endl;
 		}
 		std::cout << std::endl;
 	}
