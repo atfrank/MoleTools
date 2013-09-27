@@ -3,23 +3,11 @@
 #include "Residue.hpp"
 
 Residue::Residue (){
-  resname=NULL;
-  resid=NULL;
-  chainid=NULL;
-  start=NULL;
-  end=NULL;
-  segid=NULL;
   atmVec.clear();
 //  sel=true;
 }
 
 void Residue::reset(){
-  resname=NULL;
-  resid=NULL;
-  chainid=NULL;
-  start=NULL;
-  end=NULL;
-  segid=NULL;
   atmVec.clear();
 //  sel=true;
 }

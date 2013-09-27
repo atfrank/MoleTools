@@ -9,12 +9,6 @@
 
 class Residue {
   private:
-    std::string *resname;
-    int *resid;
-    std::string *chainid;
-    Atom *start;
-    Atom *end;
-    std::string *segid;
     std::vector<Atom*> atmVec;
 //    bool sel;
 

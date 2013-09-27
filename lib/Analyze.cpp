@@ -498,40 +498,41 @@ void AnalyzeRadiusOfGyration::runAnalysis(){
 }
 
 void AnalyzeEllipsoid::runAnalysis(){
-  Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigVal;
-  unsigned int nrow;
   Vector xyz;
-    
+	Molecule* cogmol;
+	Chain* c;
+	Residue* r;
+	Atom* a;
+	Eigen::Matrix3d tensor;
+   
+	tensor=Analyze::gyrationTensor(this->getMol(0));
+ 
+	cogmol=new Molecule;
+	c=new Chain;
+	r=new Residue;
+	a=new Atom;
+
   xyz=Analyze::centerOfGeometry(this->getMol(0));
 
-  //Output COG
-  std::cout << std::fixed;
-  std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.x();
-  std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.y();
-  std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.z();
+	a->dummy();
+	a->setCoor(xyz);
+	r->addAtom(a);
+	c->addAtom(a);
+	c->addResidue(r);
+	cogmol->addAtom(a);
+	cogmol->addResidue(r);
+	cogmol->addChain(c);
 
-  eigVal.compute(Analyze::gyrationTensor(this->getMol(0)));
-  nrow=eigVal.eigenvalues().rows();
+	//Outputs in the order of U[0,0], U[1,1], U[2,2], U[0,1], U[0,2], U[1,2]
+	std::cout << std::fixed;
+  std::cout << std::setw(8) << std::right << std::setprecision(0) << tensor(0,0)*1E4;
+  std::cout << std::setw(8) << std::right << std::setprecision(0) << tensor(1,1)*1E4;
+	std::cout << std::setw(8) << std::right << std::setprecision(0) << tensor(2,2)*1E4;
+  std::cout << std::setw(8) << std::right << std::setprecision(0) << tensor(0,1)*1E4;
+	std::cout << std::setw(8) << std::right << std::setprecision(0) << tensor(0,2)*1E4;
+  std::cout << std::setw(8) << std::right << std::setprecision(0) << tensor(1,2)*1E4;
 
-  //Output displacement from COG (sqrt(eigval))
-  for (unsigned int i=1; i<= 3; i++){
-    std::cout << std::fixed;
-    std::cout << std::setw(9) << std::right << std::setprecision(3) << sqrt(eigVal.eigenvalues()[nrow-i]);
-  }
-
-  /*
-  Eigen::Matrix3d tensor;
-
-  tensor=Analyze::gyrationTensor(this->getMol(0));
-
-  for (unsigned int i=0; i< 3; i++){
-    for (unsigned int j=i; j< 3; j++){
-      //Outputs in the order of U[0,0], U[0,1], U[0,2], U[1,1], U[1,2], U[2,2]
-      std::cout << std::fixed;
-      std::cout << std::setw(9) << std::right << std::setprecision(3) << tensor(i,j);
-    }
-  }
-  */
+	delete cogmol;
 }
 
 void AnalyzePairwiseDistance::runAnalysis(){

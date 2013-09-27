@@ -3,14 +3,12 @@
 #include "Chain.hpp"
 
 Chain::Chain (){
-  id=NULL;
   resVec.clear();
   atmVec.clear();
 //  sel=true;
 }
 
 void Chain::reset(){
-  id=NULL;
   resVec.clear();
   atmVec.clear();
 //  sel=true;

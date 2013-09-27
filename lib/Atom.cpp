@@ -87,6 +87,27 @@ void Atom::clone(Atom* atmin){
   charge=atmin->getCharge();
 }
 
+void Atom::dummy(){
+  pdbid="NoID";
+  recname="ATOM";
+  atmnum=1;
+  atmname="CA";
+  alt=" ";
+  resname="ALA";
+  chainid="+";
+  realid="+";
+  resid=999;
+  coor=Vector(0.0, 0.0, 0.0);
+  occu=0.0;
+  bfac=0.0;
+  segid="DUMY";
+  sel=true;
+  summary="";
+  ss="";
+  mass=1.0;
+  charge=0.0;	
+}
+
 //Get atom info
 std::string& Atom::getPdbId(){
 	return pdbid;

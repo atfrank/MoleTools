@@ -34,7 +34,7 @@ class Atom {
 		std::string ss; //Secondary structure
     double mass;
     double charge;
-    //All additional fields must also be added to Atom::clone() function!!
+    //All additional fields must also be added to Atom::clone(), Atom::dummy() functions!!
 
   public:
     Atom(); //Constructor
@@ -42,6 +42,7 @@ class Atom {
 
     void reset();
     void clone(Atom* atmin);
+		void dummy();
 
     //Get atom info
 		std::string& getPdbId();

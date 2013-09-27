@@ -9,7 +9,6 @@
 
 class Chain {
   private:
-    std::string *id;
     std::vector<Residue *> resVec; //Vector of residue pointers
     std::vector<Atom *> atmVec; //Vector of atom pointers
 //    bool sel;
