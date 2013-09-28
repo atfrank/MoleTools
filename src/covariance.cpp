@@ -1,6 +1,7 @@
 //Sean M. Law
 
 #include "Misc.hpp"
+#include "Eigen/Eigenvalues"
 
 #include <iostream>
 #include <fstream>
@@ -16,7 +17,7 @@ void usage(){
 int main (int argc, char **argv){
 
   int i;
-  unsigned int j, k;
+  unsigned int j, k, l;
   std::string currArg;
   std::vector<std::string> ifiles;
   std::ifstream inpFile;
@@ -27,12 +28,12 @@ int main (int argc, char **argv){
   std::vector<unsigned int> range;
   unsigned int incr;
   std::vector<double> avg;
-  std::vector<double> dx;
+  Eigen::MatrixXd tCovar;
+  Eigen::MatrixXd avgCovar;
   unsigned int n;
 
   ifiles.clear();
   avg.clear();
-  dx.clear();
   n=0;
 
   for (i=1; i<argc; i++){
@@ -69,11 +70,12 @@ int main (int argc, char **argv){
   }
 
   avg.resize(cols.size());
-  dx.resize(cols.size());
   for (j=0; j< cols.size(); j++){
     avg.at(j)=0.0;
-    dx.at(j)=0.0;
   }
+
+  tCovar=Eigen::MatrixXd::Zero(cols.size(), cols.size());
+  avgCovar=Eigen::MatrixXd::Zero(cols.size(), cols.size());
 
   //Get average
   for (j=0; j< ifiles.size(); j++){
@@ -83,12 +85,16 @@ int main (int argc, char **argv){
     while(finp->good() && !(finp->eof())){
       getline(*finp, line);
       Misc::splitNum(line, " \t", s, false);
+      if (line.length() == 0 || s.size() == 0){
+        continue;
+      }
       for (k=0; k< cols.size(); k++){
         if (cols.at(k) < s.size()){
           avg.at(k)+=s.at(cols.at(k));
         }
         else{
-          //Shouldn't be here
+          std::cerr << "Warning: Missing data in column " << cols.at(k)+1;
+          std::cerr << " and line " << n+1 << std::endl;
         }
       }
       n++; 
@@ -99,22 +105,38 @@ int main (int argc, char **argv){
     }
   }
 
-  //Get difference from average
+  for (k=0; k< cols.size(); k++){
+    avg.at(k)/=n;
+  }
+
+
+  //Get average difference 
   for (j=0; j< ifiles.size(); j++){
     inpFile.open(ifiles.at(j).c_str(), std::ios::in);
     finp=&inpFile;
-
     while(finp->good() && !(finp->eof())){
       getline(*finp, line);
       Misc::splitNum(line, " \t", s, false);
-      for (k=0; k< cols.size(); k++){
-        if (cols.at(k) < s.size()){
-          dx.at(k)+=(s.at(cols.at(k))-avg.at(k));
-        }
-        else{
-          //Shouldn't be here
-        } 
+      if (line.length() == 0 || s.size() == 0){
+        continue;
       }
+      for (k=0; k< cols.size(); k++){
+        tCovar(k,k)=0.0;
+        if (cols.at(k) < s.size()){
+          tCovar(k,k)=s.at(cols.at(k))-avg.at(k);
+        }
+      }
+      //Generate covariance matrix for all off diagonal elements first
+      //Note that the diagonal is NOT zero!
+      for (k=0; k< cols.size(); k++){
+        for (l=k+1; l< cols.size(); l++){
+          tCovar(k,l)=tCovar(k,k)*tCovar(l,l);
+          tCovar(l,k)=tCovar(k,l);
+        }
+        tCovar(k,k)=tCovar(k,k)*tCovar(k,k);
+      }
+      //Add to average covariance matrix
+      avgCovar+=tCovar;
     }
 
     if (inpFile.is_open()){
@@ -122,7 +144,12 @@ int main (int argc, char **argv){
     }
   } 
 
-  //Get average difference and construct covariance
+  //Take average
+  if (n > 1){
+    avgCovar/=(n-1);
+  }
+  std::cout << avgCovar << std::endl;
+
 
   return 0;
 }
