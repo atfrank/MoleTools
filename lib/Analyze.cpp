@@ -1432,12 +1432,21 @@ double Analyze::configurationalEntropy(const Eigen::SelfAdjointEigenSolver<Eigen
       std::cerr << "Warning: Skipping unknown Mode " << modesin.at(i) << std::endl;
     }
     else{
-      det*=eigenin.eigenvalues()[nrow-modesin.at(i)];
+      if (eigenin.eigenvalues()[nrow-modesin.at(i)] < 0){
+        //Eigenvalues should always be non-negative for a covariance matrix 
+        //Covariance matrices are positive-semidefinite matrices!
+        std::cerr << "Warning: Negative eigenvalue (" << eigenin.eigenvalues()[nrow-modesin.at(i)];
+        std::cerr << ") found for mode " << modesin.at(i) << " was taken as positive" << std::endl;
+        det*=-eigenin.eigenvalues()[nrow-modesin.at(i)];
+      }
+      else{
+        det*=eigenin.eigenvalues()[nrow-modesin.at(i)];
+      }
     }
   }
 
   if (det != 0){
-    S=(n*kB/2)+(kB/2)*log(pow(2*PI, n)*det); //Units are in kcal/mol/K, det is unitless
+    S=(0.5*n*kB)+0.5*kB*log(pow(2*PI, n)*det); //Units are in kcal/mol/K, det is unitless
   }
   else{
     std::cerr << "Warning: Covariance matrix is singular!" << std::endl;
