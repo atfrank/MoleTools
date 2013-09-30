@@ -16,6 +16,7 @@ void Prmtop::readTopology(const std::string& topin){
   double c; //charge
   std::map<std::string, double> massRef;
   std::string resname;
+  std::string word;
 
   resname.clear();
 
@@ -25,20 +26,22 @@ void Prmtop::readTopology(const std::string& topin){
 
     while (topinp->good() && !(topinp->eof())){
       getline(*topinp, line);
-      if (Misc::trim(line).compare(0,4,"MASS") == 0){
+      word=Misc::trim(line).substr(0,4);
+      Misc::toupper(word);
+      if (word.compare(0,4,"MASS") == 0){
         Misc::splitStr(line, " \t", s, false);
         if (s.size() >= 4){
           std::stringstream(s.at(3)) >> m;
           massRef.insert(std::make_pair(s.at(2), m));
         }
       }
-      else if (Misc::trim(line).compare(0,4,"RESI") == 0 || Misc::trim(line).compare(0,4,"PRES") == 0){
+      else if (word.compare(0,4,"RESI") == 0 || Misc::trim(line).compare(0,4,"PRES") == 0){
         Misc::splitStr(line, " \t", s, false);
         if (s.size() >= 3){
           resname=s.at(1);
         }
       }
-      else if (Misc::trim(line).compare(0,4,"ATOM") == 0){
+      else if (word.compare(0,4,"ATOM") == 0){
         Misc::splitStr(line, " \t", s, false);
         if (s.size() >= 3){
           mass.insert(std::make_pair(std::make_pair(resname, s.at(1)), massRef[s.at(2)]));
