@@ -152,7 +152,14 @@ int main (int argc, char **argv){
       nrow=anin->getEigen().eigenvalues().rows();
       if (quasi == true){
         //Extract entropy
-        std::cout << anin->quasiharmonicEntropy(anin->getMol(0), anin->getEigen(), temp) << std::endl;
+        if (modes.size() == 0 || (modes.size() == 1 && modes.at(0) == 0)){
+          //If modes = 0 then print all models
+          modes.clear();
+          for (j=0; j< static_cast<unsigned int>(anin->getEigen().eigenvalues().rows()); j++){
+            modes.push_back(j+1);
+          }
+        }
+        std::cout << anin->quasiharmonicEntropy(anin->getMol(0), anin->getEigen(), modes, temp) << std::endl;
       }
       else{
         //Extract mode structures

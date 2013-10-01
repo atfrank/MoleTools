@@ -1360,7 +1360,7 @@ Eigen::Matrix3d Analyze::gyrationTensor(Molecule* mol){
   return S;
 }
 
-double Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const double temp){
+double Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int> modesin, const double temp){
   unsigned int i, j;
   int nrow;
   Atom* atm;
@@ -1368,10 +1368,8 @@ double Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEige
   double H, Q, U, F, S, CONST;
   std::vector<double> w; //Frequency
   std::vector<double> wave; //Wavenumbers [1/cm]
-  unsigned int ntransrot;
   
   nrow=eigenin.eigenvalues().rows();
-  ntransrot=6; //Set to zero to match CHARMM with no cutoff
   Stot=0.0;
 
   j=0; 
@@ -1380,13 +1378,17 @@ double Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEige
     if (atm->getSel() == false){
       continue;
     }
-    if (j < static_cast<unsigned int>(nrow-ntransrot)){
-      //Note that the eigenvalues are already in CHARMM units of [amu*Angstroms*Angstroms]
-      //So there is no need to multiply it by 10E20/AMU
+    //Note that the eigenvalues are already in CHARMM units of [amu*Angstroms*Angstroms]
+    //So there is no need to multiply it by 10E20/AMU
+    if (j < static_cast<unsigned int>(nrow) && std::find(modesin.begin(), modesin.end(),j+1) != modesin.end()){
       w.push_back(sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)])));
       j++;
+    }
+    if (j < static_cast<unsigned int>(nrow) && std::find(modesin.begin(), modesin.end(),j+1) != modesin.end()){
       w.push_back(sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)])));
       j++;
+    }
+    if (j < static_cast<unsigned int>(nrow) && std::find(modesin.begin(), modesin.end(),j+1) != modesin.end()){
       w.push_back(sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)])));
       j++;
     }
