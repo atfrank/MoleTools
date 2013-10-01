@@ -1380,15 +1380,15 @@ double Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEige
     }
     //Note that the eigenvalues are already in CHARMM units of [amu*Angstroms*Angstroms]
     //So there is no need to multiply it by 10E20/AMU
-    if (j < static_cast<unsigned int>(nrow) && std::find(modesin.begin(), modesin.end(),j+1) != modesin.end()){
+    if (j < static_cast<unsigned int>(nrow) && std::find(modesin.begin(), modesin.end(),j+1) != modesin.end() && eigenin.eigenvalues()[nrow-(j+1)] > 0){
       w.push_back(sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)])));
       j++;
     }
-    if (j < static_cast<unsigned int>(nrow) && std::find(modesin.begin(), modesin.end(),j+1) != modesin.end()){
+    if (j < static_cast<unsigned int>(nrow) && std::find(modesin.begin(), modesin.end(),j+1) != modesin.end() && eigenin.eigenvalues()[nrow-(j+1)] > 0){
       w.push_back(sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)])));
       j++;
     }
-    if (j < static_cast<unsigned int>(nrow) && std::find(modesin.begin(), modesin.end(),j+1) != modesin.end()){
+    if (j < static_cast<unsigned int>(nrow) && std::find(modesin.begin(), modesin.end(),j+1) != modesin.end() && eigenin.eigenvalues()[nrow-(j+1)] > 0){
       w.push_back(sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)])));
       j++;
     }
