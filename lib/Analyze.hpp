@@ -7,6 +7,7 @@
 #include "Vector.hpp"
 #include "Constants.hpp"
 #include "Eigen/Eigenvalues"
+#include "Eigen/LU"
 
 #include <iostream>
 #include <fstream>
@@ -84,7 +85,7 @@ class Analyze {
     //static std::vector<double> gyration(Molecule* mol);
     Eigen::Matrix3d gyrationTensor(Molecule* mol);
     static double quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int> modesin, double temp=300);
-    static double configurationalEntropy(const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int>& modesin);
+    static double configurationalEntropy(const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int>& modesin, double cutoffin=1E-10);
 };
 
 //Derived classes

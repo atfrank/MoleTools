@@ -1417,7 +1417,7 @@ double Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEige
   return Stot;
 }
 
-double Analyze::configurationalEntropy(const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int>& modesin){
+double Analyze::configurationalEntropy(const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int>& modesin, double cutoffin){
   //Karplus & Kushick, (1981), Macromolecules, 14:325
   int n;
   int nrow;
@@ -1435,14 +1435,7 @@ double Analyze::configurationalEntropy(const Eigen::SelfAdjointEigenSolver<Eigen
       std::cerr << "Warning: Skipping unknown Mode " << modesin.at(i) << std::endl;
     }
     else{
-      if (eigenin.eigenvalues()[nrow-modesin.at(i)] < 0){
-        //Eigenvalues should always be non-negative for a covariance matrix 
-        //Covariance matrices are positive-semidefinite matrices!
-        std::cerr << "Warning: Negative eigenvalue (" << eigenin.eigenvalues()[nrow-modesin.at(i)];
-        std::cerr << ") found for mode " << modesin.at(i) << " was taken as positive" << std::endl;
-        det*=-eigenin.eigenvalues()[nrow-modesin.at(i)];
-      }
-      else{
+      if (eigenin.eigenvalues()[nrow-modesin.at(i)] > cutoffin){
         det*=eigenin.eigenvalues()[nrow-modesin.at(i)];
       }
     }
