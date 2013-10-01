@@ -1392,6 +1392,7 @@ double Analyze::quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEige
       w.push_back(sqrt((kB*temp)/(atm->getMass()*eigenin.eigenvalues()[nrow-(j+1)])));
       j++;
     }
+    //Note that 6 rigid body translation rotations are not explicitly removed!
   }
 
   wave.resize(w.size());
