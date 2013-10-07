@@ -385,6 +385,7 @@ void Select::initKeys(Molecule *mol){
 	std::replace(selKeysAtm["PHOSPHORUS"].begin(), selKeysAtm["PHOSPHORUS"].end(), ' ', '+');
 	std::replace(selKeysAtm["PHOSPHOROUS"].begin(), selKeysAtm["PHOSPHOROUS"].end(), ' ', '+');
 
+  std::replace(selKeysRes["HETERO"].begin(), selKeysRes["HETERO"].end(), ' ', '+');
 	std::replace(selKeysRes["PEPTIDE"].begin(), selKeysRes["PEPTIDE"].end(), ' ', '+');
 	std::replace(selKeysRes["PROTEIN"].begin(), selKeysRes["PROTEIN"].end(), ' ', '+');
 	std::replace(selKeysRes["BASIC"].begin(), selKeysRes["BASIC"].end(), ' ', '+');
