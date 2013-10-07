@@ -229,7 +229,7 @@ std::vector<double> Histogram::getBinCoor(const unsigned int &bin){
   std::vector<double> s;
 
   rem=bin;
-  for (i=nDim-1; i>=0 && i != std::numeric_limits<unsigned int>::max(); i--){
+  for (i=nDim-1; i != std::numeric_limits<unsigned int>::max(); i--){
    div=rem/convDim.at(i);
    rem=rem % convDim.at(i);
    s.push_back(MIN.at(i)+binwidth.at(i)*(static_cast<double>(div+0.5)));
