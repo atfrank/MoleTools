@@ -27,8 +27,7 @@ class Histogram {
     unsigned int TOTAL;
     struct binpair {
       unsigned int bininx;              
-      double binval1;
-      double binval2;
+      std::vector<double> binval;
     };
 
 

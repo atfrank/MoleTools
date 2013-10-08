@@ -196,29 +196,21 @@ void Histogram::printHisto (HistoFormatEnum format, double temp){
     }
   }
 
-  //Get a vector of indices to HISTO sorted by the bin
-  if (nDim == 2){
-    for (b=0; b< HISTO.size(); b++){
-      s=this->getBinCoor(b);
-      sortedHISTO.push_back(binpair());
-      sortedHISTO.at(b).bininx=b;
-      sortedHISTO.at(b).binval1=s.at(0);
-      sortedHISTO.at(b).binval2=s.at(1);
-    }
+  //Get a vector of indices to HISTO sorted by the bin value
+  for (b=0; b< HISTO.size(); b++){
+    s=this->getBinCoor(b);
+    sortedHISTO.push_back(binpair());
+    sortedHISTO.at(b).bininx=b;
+    sortedHISTO.at(b).binval=s;
   }
-  //Sort the bins wrt the value of the first bin
+  //Sort the bins wrt the bin value 
   std::sort(sortedHISTO.begin(), sortedHISTO.end(), sortBinVal);
 
   //1-D to n-D
   for (j=0; j< HISTO.size(); j++){
-    if (nDim == 2){
-      b=sortedHISTO.at(j).bininx;
-    }
-    else{
-      b=j;
-    }
+    b=sortedHISTO.at(j).bininx;
     s=this->getBinCoor(b);
-    if (nDim == 2 && last != s.at(0)){
+    if (last != s.at(0)){
       std::cout << std::endl;
       last=s.at(0);
     }
@@ -283,11 +275,10 @@ unsigned int Histogram::getHistoSize(){
 }
 
 bool Histogram::sortBinVal(const binpair &a, const binpair &b){
-  if (a.binval1 != b.binval1){
-    return a.binval1 < b.binval1;
-  }
-  if (a.binval2 != b.binval2){
-    return a.binval2 < b.binval2;
+  for (unsigned int i=0; i< a.binval.size(); i++){
+    if (a.binval.at(i) != b.binval.at(i)){
+      return a.binval.at(i) < b.binval.at(i);
+    }
   }
   
   return false;
