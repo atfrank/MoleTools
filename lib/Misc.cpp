@@ -232,5 +232,3 @@ bool Misc::findUniqueSecond(const std::pair<int, int> &a, const std::pair<int, i
 	return (a.second == b.second);
 }
 
-
-

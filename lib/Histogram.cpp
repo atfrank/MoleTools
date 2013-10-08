@@ -158,17 +158,20 @@ unsigned int Histogram::getBin(const unsigned int &nfilein, const unsigned int &
 
 void Histogram::printHisto (HistoFormatEnum format, double temp){
   unsigned int i;
-  unsigned int j;
   unsigned int b;
+  unsigned int j;
   std::vector<unsigned int> convDim;
   std::vector<double> binwidth;
   double norm;
   std::vector<double> s;
   double kBT;
+  std::vector<binpair> sortedHISTO;
+  double last;
 
   binwidth.resize(nDim);
   kBT=kB*temp;
   norm=1.0;
+  last=-1E20;
 
   j=1; //Track total number of bins
   for (i=0; i< nDim; i++){
@@ -193,9 +196,32 @@ void Histogram::printHisto (HistoFormatEnum format, double temp){
     }
   }
 
+  //Get a vector of indices to HISTO sorted by the bin
+  if (nDim == 2){
+    for (b=0; b< HISTO.size(); b++){
+      s=this->getBinCoor(b);
+      sortedHISTO.push_back(binpair());
+      sortedHISTO.at(b).bininx=b;
+      sortedHISTO.at(b).binval1=s.at(0);
+      sortedHISTO.at(b).binval2=s.at(1);
+    }
+  }
+  //Sort the bins wrt the value of the first bin
+  std::sort(sortedHISTO.begin(), sortedHISTO.end(), sortBinVal);
+
   //1-D to n-D
-  for(b=0; b< HISTO.size(); b++){
+  for (j=0; j< HISTO.size(); j++){
+    if (nDim == 2){
+      b=sortedHISTO.at(j).bininx;
+    }
+    else{
+      b=j;
+    }
     s=this->getBinCoor(b);
+    if (nDim == 2 && last != s.at(0)){
+      std::cout << std::endl;
+      last=s.at(0);
+    }
     for (i=0; i< s.size(); i++){
       std::cout << s.at(i) << "  ";
     }
@@ -255,3 +281,15 @@ std::vector<unsigned int>& Histogram::getHisto(){
 unsigned int Histogram::getHistoSize(){
   return HISTO.size();
 }
+
+bool Histogram::sortBinVal(const binpair &a, const binpair &b){
+  if (a.binval1 != b.binval1){
+    return a.binval1 < b.binval1;
+  }
+  if (a.binval2 != b.binval2){
+    return a.binval2 < b.binval2;
+  }
+  
+  return false;
+}
+

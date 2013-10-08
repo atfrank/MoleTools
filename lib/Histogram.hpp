@@ -25,6 +25,12 @@ class Histogram {
     std::vector<unsigned int> convDim;
     std::vector<double> binwidth;
     unsigned int TOTAL;
+    struct binpair {
+      unsigned int bininx;              
+      double binval1;
+      double binval2;
+    };
+
 
   public:
     Histogram(const unsigned &ninpin, const unsigned int &ndimin);
@@ -41,6 +47,7 @@ class Histogram {
     unsigned int getNData(int element);
     std::vector<unsigned int>& getHisto();
     unsigned int getHistoSize();
+    static bool sortBinVal(const binpair &a, const binpair &b);
 };
 
 #endif
