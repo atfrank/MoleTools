@@ -235,6 +235,8 @@ std::vector<double> Histogram::getBinCoor(const unsigned int &bin){
    s.push_back(MIN.at(i)+binwidth.at(i)*(static_cast<double>(div+0.5)));
   }
 
+  std::reverse(s.begin(), s.end());
+
   return s;
 }
 

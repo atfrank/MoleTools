@@ -9,6 +9,7 @@
 #include <vector>
 #include <iostream>
 #include <limits>
+#include <algorithm>
 
 enum HistoFormatEnum {COUNT, PROBABILITY, DENSITY, ENERGY};
 
