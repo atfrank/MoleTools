@@ -794,6 +794,7 @@ void WHAM::printPMF(){
 
   T=1.0/(B0*kB);
 
+  //See Histogram::printHisto for better output style
   for (it=Pun.begin(); it != Pun.end(); it++){
     coor=rCoor->getBinCoor(it->first);
     for (i=0; i< coor.size(); i++){
