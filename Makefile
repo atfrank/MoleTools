@@ -1,16 +1,21 @@
 include ./makefile.defs
 
-all: libtools.$(LIBEXT) programs
+all: libmoletools.$(LIBEXT) libmine.$(LIBEXT) programs
 
-libtools.$(LIBEXT):
+libmoletools.$(LIBEXT):
 	$(UNAME)
-	$(MAKE) -C lib 
+	$(MAKE) -C MoleTools 
+
+libmine.$(LIBEXT):
+	$(UNAME)
+	$(MAKE) -C MINE
 
 programs:
 	$(MAKE) -C src
 
 clean:
-	$(MAKE) -C lib clean
+	$(MAKE) -C MoleTools clean
+	$(MAKE) -C MINE clean
 	$(MAKE) -C src clean
 	rm -rf *~
 	rm -rf *stackdump

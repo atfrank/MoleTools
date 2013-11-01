@@ -2,9 +2,9 @@
 
 include ../makefile.defs
 
-OBJS = libtools.$(LIBEXT)
+OBJS = libmoletools.$(LIBEXT)
 
-all:	$(BINDIR) libtools.$(LIBEXT) analyzeTraj contact contactOrder correl covariance eigen histo modPDB modTraj mol22PDB pcasso pdb2Traj secondary traj2PDB unitTest wham
+all:	$(BINDIR) libmoletools.$(LIBEXT) analyzeTraj contact contactOrder correl covariance eigen histo mine modPDB modTraj mol22PDB pcasso pdb2Traj secondary traj2PDB unitTest wham
 
 clean:
 	rm -rf *.o
@@ -15,8 +15,8 @@ clean:
 $(BINDIR):
 	mkdir -p $(BINDIR)
 
-libtools.$(LIBEXT):
-	$(MAKE) -C ../lib libtools.$(LIBEXT)
+libmoletools.$(LIBEXT):
+	$(MAKE) -C ../MoleTools libmoletools.$(LIBEXT)
 
 analyzeTraj: analyzeTraj.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
@@ -38,7 +38,10 @@ eigen: eigen.o $(OBJS)
 
 histo: histo.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
-	
+
+mine: mine.o $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) -L../MINE -lmine $(LINKFLAGS) -o $(BINDIR)/$@ $<
+
 modPDB: modPDB.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
 

@@ -4,10 +4,10 @@ include ../makefile.defs
 
 LIBOBJS = Analyze.o Atom.o Chain.o Constants.o Histogram.o LinAlg.o Misc.o Molecule.o PDB.o Prmtop.o Residue.o SABA.o Select.o Trajectory.o Vector.o Mol2.o WHAM.o
 
-all:	libtools.$(LIBEXT)
+all:	libmoletools.$(LIBEXT)
 
-libtools.$(LIBEXT):	$(LIBOBJS)
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(LIBFLAGS) $^ -o libtools.$(LIBEXT)
+libmoletools.$(LIBEXT):	$(LIBOBJS)
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(LIBFLAGS) $^ -o libmoletools.$(LIBEXT)
 
 clean:
 	rm -rf *.o
