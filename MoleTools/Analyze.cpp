@@ -1098,6 +1098,36 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 	curr.clear();
   natom=0;
 
+	//Feature List
+	/*
+	(1)  Ca(i) -- Ca(i-2)
+	(2)  Ca(i) -- Ca(i-1)
+	(3)  Ca(i) -- Ca(i+1)
+	(4)  Ca(i) -- Ca(i+2)
+	(5)  Ca(i) -- Ca(i+3)
+	(6)  Ca(i) -- Ca(i+4)
+	(7)  Ca(i) -- Ca(i+5)
+	(8)  PC(i) -- PC(i-2)
+	(9)  PC(i) -- PC(i-1)
+	(10) PC(i) -- PC(i+1)
+	(11) PC(i) -- PC(i+2)
+	(12) PC(i) -- PC(i+3)
+	(13) PC(i) -- PC(i+4)
+	(14) PC(i) -- PC(i+5)
+	(15) Ca(i-1) -- Ca(i) -- Ca(i+1)
+	(16) Ca(i) -- Ca(i+1) -- Ca(i+2) -- Ca(i+3)
+	(17) Ca(i-2) -- Ca(i) -- Ca(i+2)
+	(18) PC(i-1) -- PC(i) -- PC(i+1)
+	(19) PC(i) -- PC(i+1) -- PC(i+2) -- PC(i+3)
+	(20) PC(i-2) -- PC(i) -- PC(i+2)
+	(21) Ca(i) -- Ca(j >= i+6, 1)
+	(22) Ca(i) -- Ca(j >= i+6, 2)
+	(23) Ca(i) -- Ca(j >= i+6, 3)
+	(24) Ca(i) -- Ca(j <= i-6, 1)
+	(25) Ca(i) -- Ca(j <= i-6, 2)
+	(26) Ca(i) -- Ca(j <= i-6, 3)
+	*/
+
   //Read DSSP file first
   if (dsspin.length() > 0){
     dsspFile.open(dsspin.c_str(), std::ios::in);
