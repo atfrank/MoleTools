@@ -15,6 +15,7 @@ void usage(){
   std::cerr << "Options: [-xcol column] [-ycol column]" << std::endl;
   std::cerr << "         [-start line] [-stop line]  [-skip lines]" << std::endl; 
 	std::cerr << "         [-max value] [-min value]" << std::endl;
+	std::cerr << "         [-delimiter expr]" << std::endl;
   exit(0);
 }
 
@@ -33,6 +34,7 @@ int main (int argc, char **argv){
   std::istream* inp;
   std::string line;
   std::vector<std::string> s;
+	std::string delim;
 
   int n;
   unsigned int nline;
@@ -66,34 +68,39 @@ int main (int argc, char **argv){
   xy=0;
 	min=std::numeric_limits<double>::min();
 	max=std::numeric_limits<double>::max();
+	delim=" \t";
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
-    if (currArg == "-h" || currArg == "-help"){
+    if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
     }
-    else if (currArg == "-x" || currArg == "-xcol"){
+    else if (currArg.compare("-x") == 0 || currArg.compare("-xcol") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> xcol;
       xcol--;
     }
-    else if (currArg == "-y" || currArg == "-ycol"){
+    else if (currArg.compare("-y") == 0 || currArg.compare("-ycol") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> ycol;
       ycol--;
     }
-		else if (currArg == "-start"){
+		else if (currArg.compare("-start") == 0){
 			currArg=argv[++i];
 			std::stringstream(currArg) >> start;
 		}
-		else if (currArg == "-stop"){
+		else if (currArg.compare("-stop") == 0){
 			currArg=argv[++i];
 			std::stringstream(currArg) >> stop;
 		}
-    else if (currArg == "-skip"){
+    else if (currArg.compare("-skip") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> skip;
-    } 
+    }
+		else if (currArg.compare("-delimiter") == 0 || currArg.compare("-delim") == 0){
+			currArg=argv[++i];
+			delim=currArg;
+		}
     else{
       ifile=currArg;
     }
@@ -122,7 +129,7 @@ int main (int argc, char **argv){
 			continue;
 		}
     else{
-      Misc::splitStr(line, " \t", s, false); //Split on one or more consecutive whitespace
+      Misc::splitStr(line, delim, s, false); //Split on one or more consecutive whitespace
       if (s.size() <= xcol || s.size() <= ycol ){
         continue;
       }
