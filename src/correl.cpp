@@ -12,7 +12,7 @@
 void usage(){
   std::cerr << std::endl << std::endl;
   std::cerr << "Usage:   correl [-options] <file>" << std::endl;
-  std::cerr << "Options: [-x column] [-y column]" << std::endl;
+  std::cerr << "Options: [-xcol column] [-ycol column]" << std::endl;
   std::cerr << "         [-start line] [-stop line]  [-skip lines]" << std::endl; 
 	std::cerr << "         [-max value] [-min value]" << std::endl;
   exit(0);
