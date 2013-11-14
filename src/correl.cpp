@@ -97,6 +97,14 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       std::stringstream(currArg) >> skip;
     }
+		else if (currArg.compare("-max") == 0){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> max;
+		}
+		else if (currArg.compare("-min") == 0){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> min;
+		}
 		else if (currArg.compare("-delimiter") == 0 || currArg.compare("-delim") == 0){
 			currArg=argv[++i];
 			delim=currArg;
