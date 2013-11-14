@@ -7,12 +7,15 @@
 #include <fstream>
 #include <cstdlib>
 #include <vector>
+#include <limits>
 
 void usage(){
 	std::cerr << std::endl << std::endl;
 	std::cerr << "Usage:   mine [-options] <input>" << std::endl;
 	std::cerr << "Options: [-x col] [-y col]" << std::endl;
 	std::cerr << "         [-delimiter expression]" << std::endl;
+	std::cerr << "         [-start line] [-stop line] [-skip nlines]" << std::endl;
+	std::cerr << "         [-max value] [-min value]" << std::endl;
 	std::cerr << "         [-mic]" << std::endl;
   exit(0);
 }
@@ -27,13 +30,15 @@ int main (int argc, char **argv){
 	std::string line;
 	std::string delimiter;
 	std::vector<std::string> s;
-	double tmp;
+	double xval, yval;
 	MINE *mine;
 	bool mic;
 	unsigned int xcol, ycol;
 	std::vector<double> xvec, yvec;
 	double* x;
 	double* y;
+	unsigned int nline, start, stop, skip;
+	double max, min;
 
 	delimiter=" \t";
 	mine=NULL;
@@ -41,6 +46,12 @@ int main (int argc, char **argv){
 	s.clear();
 	xcol=1-1;
 	ycol=2-1;
+	nline=0;
+	start=0;
+	stop=std::numeric_limits<unsigned int>::max();
+	skip=0;
+	min=std::numeric_limits<double>::min();
+	max=std::numeric_limits<double>::max();
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -64,6 +75,26 @@ int main (int argc, char **argv){
 		else if (currArg.compare("-mic") == 0){
 			mic=true;
 		}
+		else if (currArg.compare("-start") == 0){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> start;
+		}
+		else if (currArg.compare("-stop") == 0){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> stop;
+		}
+		else if (currArg.compare("-skip") == 0){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> skip;
+		}
+		else if (currArg.compare("-max") == 0){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> max;
+		}
+		else if (currArg.compare("-min") == 0){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> min;
+		}
     else{
       inp=currArg;
     }
@@ -79,18 +110,26 @@ int main (int argc, char **argv){
 		finp=&inpFile;
 		while (finp->good() && !(finp->eof())){
 			getline(*finp, line);
-			if (line.length() == 0){
+			nline++;
+			if (line.length() == 0 || nline < start || nline > stop){
 				continue;
 			}
-			Misc::splitStr(line, delimiter, s, false);
-			if (s.size() >= xcol && s.size() >= ycol){
-				std::stringstream(s.at(xcol)) >> tmp;
-				xvec.push_back(tmp);
-				std::stringstream(s.at(ycol)) >> tmp;
-				yvec.push_back(tmp);
+			else if (skip > 0 && nline % (skip+1) !=0){
+				continue;
 			}
 			else{
-				std::cerr << "Warning: Missing columns found and the row was ignored" << std::endl;
+				Misc::splitStr(line, delimiter, s, false);
+				if (s.size() >= xcol && s.size() >= ycol){
+					std::stringstream(s.at(xcol)) >> xval;
+					std::stringstream(s.at(ycol)) >> yval;
+					if (xval >= min && xval <=max && yval >= min && yval <= max){
+						xvec.push_back(xval);
+						yvec.push_back(yval);
+					}
+				}
+				else{
+					std::cerr << "Warning: Missing columns found and line " << nline << " was ignored" << std::endl;
+				}
 			}
 		}
 
@@ -98,11 +137,11 @@ int main (int argc, char **argv){
 			mine = new MINE(0.6, 15);
 			x=&xvec[0];
 			y=&yvec[0];
-
+			
 			mine->compute_score(x, y, static_cast<int>(xvec.size()));
 			if (mic == true){
 				std::cout << "MIC: " << mine->mic() << std::endl;
-			}
+			}	
 		}
 	}
 

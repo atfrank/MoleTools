@@ -7,25 +7,26 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <limits>
 
 void usage(){
 	std::cerr << std::endl << std::endl;
 	std::cerr << "Usage:   contactOrder [-options] <file(s)>" << std::endl;
 	std::cerr << "Options: [-loss]" << std::endl;
-	std::cerr << "         [-skip lines]" << std::endl;
+	std::cerr << "         [-start line] [-stop line] [-skip lines]" << std::endl;
   exit(0);
 }
 
 int main (int argc, char **argv){
 
-  int i,l,m,n;
-	unsigned int j, k, p;
+  int i,l;
+	unsigned int j, k, m, n, p;
   std::string currArg;
 	std::vector<std::string> ifiles;
 	std::ifstream inpFile;
 	std::istream* inp;
 	std::string line;
-	int skip;
+	unsigned int start, stop, skip;
 	std::vector<int> s;
 	//Note that contact "order" and contact "rank" mean the same thing 
 	//except that order is used for one binding even while rank is used
@@ -38,17 +39,19 @@ int main (int argc, char **argv){
   std::vector<double> avgBreak;
   std::vector<double> stddevBreak;
 	unsigned int time;
-	int nline;
+	unsigned int nline;
 	int nevents;
 	bool trackFlag;
 	int lastTime;
-	int start;
-	int stop;
-	int nrange;
+	unsigned int tstart;
+	unsigned int tstop;
+	unsigned int nrange;
 	bool lossFlag; //Disappearance of contacts
   unsigned int avgTime; //Tracks average time needed for binding/unbinding after first contact is made/lost
 
 	ifiles.clear();
+	start=0;
+	stop=std::numeric_limits<unsigned int>::max();
 	skip=0;
 	nline=0;
 	order.clear();
@@ -68,12 +71,17 @@ int main (int argc, char **argv){
 		else if (currArg.compare("-loss") == 0){
 			lossFlag=true;
 		}
+		else if (currArg.compare("-start") == 0){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> start;
+		}
+		else if (currArg.compare("-stop") == 0){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> stop;
+		}
     else if (currArg.compare("-skip") == 0){
       currArg=argv[++i];
 			std::stringstream(currArg) >> skip;
-			if (skip > 0){
-				skip--;
-			}
     }
     else{
 			ifiles.push_back(currArg);
@@ -92,11 +100,11 @@ int main (int argc, char **argv){
     std::cerr << "Processing file " << ifiles.at(j) << "..." << std::endl;
 		while (inp->good() && !(inp->eof())){
 			getline(*inp, line);
-			if (line.size() == 0){
+			nline++;
+			if (line.size() == 0 || nline < start || nline > stop){
 				continue;
 			}
-			if (nline != skip){
-				nline++;
+			else if (skip > 0 && nline % (skip+1) !=0){
 				continue;
 			}
 			else{
@@ -186,13 +194,13 @@ int main (int argc, char **argv){
 								if (lastTime != order.at(k).second){
 									range=std::equal_range(order.begin()+k, order.end(), order.at(k), Misc::sortPairSecond);
 
-									start = range.first-order.begin(); //Start of last time
-									stop = range.second-order.begin(); //Start of next time = Stop of last time +1
+									tstart = range.first-order.begin(); //Start of last time
+									tstop = range.second-order.begin(); //Start of next time = Stop of last time +1
 									nrange=range.second-range.first; 
 
 									//Add current order to rank
-									for (m=start; m< stop; m++){
-										for (n=start; n< stop; n++){ //Contact index, actual contact number is "order.at(n).first"
+									for (m=tstart; m< tstop; m++){
+										for (n=tstart; n< tstop; n++){ //Contact index, actual contact number is "order.at(n).first"
 											rank.at(order.at(n).first).at(l)+=1.0/nrange;
 										}
 										l++;
@@ -214,7 +222,6 @@ int main (int argc, char **argv){
           	}
 					}
 				}
-				nline=0;
 			}
 		}
 		if (ifiles.at(j) != "-"){

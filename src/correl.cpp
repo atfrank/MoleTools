@@ -7,12 +7,14 @@
 #include <sstream>
 #include <cstdlib>
 #include <cmath>
+#include <limits>
 
 void usage(){
   std::cerr << std::endl << std::endl;
   std::cerr << "Usage:   correl [-options] <file>" << std::endl;
   std::cerr << "Options: [-x column] [-y column]" << std::endl;
-  std::cerr << "         [-skip lines]" << std::endl; 
+  std::cerr << "         [-start line] [-stop line]  [-skip lines]" << std::endl; 
+	std::cerr << "         [-max value] [-min value]" << std::endl;
   exit(0);
 }
 
@@ -23,7 +25,8 @@ int main (int argc, char **argv){
   unsigned int j;
   unsigned int xcol;
   unsigned int ycol;
-  int skip;
+  unsigned int start, stop, skip;
+	double max, min;
   std::string ifile;
   std::string currArg;
   std::ifstream inpFile;
@@ -32,7 +35,7 @@ int main (int argc, char **argv){
   std::vector<std::string> s;
 
   int n;
-  int nline;
+  unsigned int nline;
   std::vector<double> xvals;
   std::vector<double> yvals;
   double xval;
@@ -49,6 +52,8 @@ int main (int argc, char **argv){
   ifile.clear();
   xcol=0;
   ycol=1;
+	start=0;
+	stop=std::numeric_limits<unsigned int>::max();
   skip=0;
   n=0; //Counts the number datapoints used for correlation analysis
   nline=0; //Number of lines, used with skip
@@ -59,6 +64,8 @@ int main (int argc, char **argv){
   xx=0;
   yy=0;
   xy=0;
+	min=std::numeric_limits<double>::min();
+	max=std::numeric_limits<double>::max();
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -75,12 +82,17 @@ int main (int argc, char **argv){
       std::stringstream(currArg) >> ycol;
       ycol--;
     }
+		else if (currArg == "-start"){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> start;
+		}
+		else if (currArg == "-stop"){
+			currArg=argv[++i];
+			std::stringstream(currArg) >> stop;
+		}
     else if (currArg == "-skip"){
       currArg=argv[++i];
       std::stringstream(currArg) >> skip;
-      if (skip > 0){
-        skip--;
-      }
     } 
     else{
       ifile=currArg;
@@ -102,13 +114,13 @@ int main (int argc, char **argv){
 
   while (inp->good() && !(inp->eof())){
     getline(*inp, line);
-    if (line.size() == 0){
+		nline++;
+    if (line.size() == 0 || nline < start || nline > stop){
       continue;
     }
-    if (nline != skip){
-      nline++;
-      continue;
-    }
+		else if (skip > 0 && nline % (skip+1) != 0){
+			continue;
+		}
     else{
       Misc::splitStr(line, " \t", s, false); //Split on one or more consecutive whitespace
       if (s.size() <= xcol || s.size() <= ycol ){
@@ -116,12 +128,13 @@ int main (int argc, char **argv){
       }
       std::stringstream(s.at(xcol)) >> xval;
       std::stringstream(s.at(ycol)) >> yval;
-      xvals.push_back(xval);
-      yvals.push_back(yval);
-      xavg=xavg+xval;
-      yavg=yavg+yval;
-      n++;
-      nline=0;
+			if (xval >= min && xval <= max && yval >= min && yval <= max){
+      	xvals.push_back(xval);
+      	yvals.push_back(yval);
+      	xavg=xavg+xval;
+      	yavg=yavg+yval;
+      	n++;
+			}
     }
   }
 
