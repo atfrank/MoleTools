@@ -1085,6 +1085,7 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 	Molecule* cmol;
 	std::vector<double> last;
 	std::vector<double> curr;
+	std::string currSS, listSS;
   std::ifstream dsspFile;
   std::istream* dsspinp;
   std::string line;
@@ -1097,6 +1098,8 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 	cmol=NULL;
 	last.clear();
 	curr.clear();
+	listSS.clear();
+	currSS.clear();
   natom=0;
 
 	//Feature List
@@ -1137,7 +1140,7 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
       getline(*dsspinp, line);
       Misc::splitStr(line, " \t", s, false);
       if (s.size() > 0){
-        dssp.push_back(s.back());
+				dssp.push_back((s.at(s.size()-2)));
       }
     }
     if (dsspFile.is_open()){
@@ -1271,25 +1274,32 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 				}
 			}
 			std::sort(iPlus6.begin(),iPlus6.end(), static_cast<bool (*)(const std::pair<double, std::string> &, const std::pair<double, std::string> &)>(Misc::sortPairFirst));
+			currSS="";
 			for (j=0; j< 3; j++){
 				if (j < iPlus6.size()){
-					//std::cout << iPlus6.at(j) << " ";
+					//std::cout << iPlus6.at(j).first << " ";
 					curr.push_back(iPlus6.at(j).first);
+					currSS.append(iPlus6.at(j).second);
+				 	currSS.append(" ");
 				}
 				else{
 					//std::cout << defVal << " ";
 					curr.push_back(defVal);
+					currSS.append("X ");
 				}
 			}
 			std::sort(iMinus6.begin(),iMinus6.end(),static_cast<bool (*)(const std::pair<double, std::string> &, const std::pair<double, std::string> &)>(Misc::sortPairFirst));
 			for (j=0; j< 3; j++){
         if (j < iMinus6.size()){
-          //std::cout << iMinus6.at(j) << " ";
+          //std::cout << iMinus6.at(j).first << " ";
 					curr.push_back(iMinus6.at(j).first);
+					currSS.append(iMinus6.at(j).second);
+          currSS.append(" ");
         }
         else{
           //std::cout << defVal << " ";
 					curr.push_back(defVal);
+					currSS.append("X ");
         }
       }
 
@@ -1300,12 +1310,15 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 				for (j=0; j< curr.size(); j++){
           std::cout << curr.at(j) << " ";
         }
+				listSS.append(currSS);
+				std::cout << listSS;
+				listSS=currSS+listSS.substr(0,12);
         if (dsspin.length() > 0){
           if (natom < dssp.size()){
             std::cout << dssp.at(natom) << " ";
           }
           else{
-            std::cout << "0" << " ";
+            std::cout << "X" << " ";
           }
         }
 				std::cout << std::endl;
@@ -1325,12 +1338,13 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 					for (j=0; j< curr.size(); j++){
 	          std::cout << defVal << " ";
 	        }
+					std::cout << listSS << "X X X X X X ";
           if (dsspin.length() > 0){
             if (natom < dssp.size()){
               std::cout << dssp.at(natom) << " ";
             }
             else{
-              std::cout << "0" << " ";
+              std::cout << "X" << " ";
             }
           }
 					std::cout << std::endl;
@@ -1343,13 +1357,17 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 				for (j=0; j< curr.size(); j++){
           std::cout << curr.at(j) << " ";
         }
+				listSS.clear();
+				listSS.append(currSS);
 				//Print S(i-1) which is all default values
 				for (j=0; j< curr.size(); j++){
           std::cout << defVal << " ";
         }
+				listSS.append("X X X X X X ");
 			}
 			last=curr;
 			curr.clear();
+			currSS.clear();
       natom++;
 		} //Loop through atoms
 	}//Loop through chains
