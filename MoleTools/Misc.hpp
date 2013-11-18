@@ -20,7 +20,7 @@ class Misc {
   public:
     static void splitStr (const std::string &str, const std::string &delim, std::vector<std::string> &out, const bool repeat=true);
     template <class SplitVec>
-    static void splitNum (const std::string &str, const std::string &delim, std::vector<SplitVec> &out, const bool repeat=true);
+      static void splitNum (const std::string &str, const std::string &delim, std::vector<SplitVec> &out, const bool repeat=true);
     static bool isdigit (const std::string &str);
     static bool isdouble (const std::string &str);
     static bool isfloat (const std::string &str);
@@ -34,9 +34,11 @@ class Misc {
 		template <class First, class Second>
 			static bool sortPairFirst(const std::pair<First, Second> &a, const std::pair<First, Second> &b);
 		template <class First, class Second>
-			static bool sortPairSecond(const std::pair<First, Second> &a, const std::pair<First, Second> &b);	
-		static bool findUniqueFirst(const std::pair<int, int> &a, const std::pair<int, int> &b);
-		static bool findUniqueSecond(const std::pair<int, int> &a, const std::pair<int, int> &b);
+			static bool sortPairSecond(const std::pair<First, Second> &a, const std::pair<First, Second> &b);
+    template <class First, class Second>
+		  static bool findUniqueFirst(const std::pair<First, Second> &a, const std::pair<First, Second> &b);
+    template <class First, class Second>
+		  static bool findUniqueSecond(const std::pair<First, Second> &a, const std::pair<First, Second> &b);
 };
 
 #endif

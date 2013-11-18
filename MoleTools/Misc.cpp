@@ -224,16 +224,23 @@ template bool Misc::sortPairFirst<double, std::string>(const std::pair<double, s
 
 template <class First, class Second>
 bool Misc::sortPairSecond(const std::pair<First, Second> &a, const std::pair<First, Second> &b){
-  return (a.first < b.first);
+  return (a.second < b.second);
 }
 
 template bool Misc::sortPairSecond<int, int>(const std::pair<int, int> &a, const std::pair<int, int> &b);
 
-bool Misc::findUniqueFirst(const std::pair<int, int> &a, const std::pair<int, int> &b){
+template <class First, class Second>
+bool Misc::findUniqueFirst(const std::pair<First, Second> &a, const std::pair<First, Second> &b){
 	return (a.first == b.first);
 }
 
-bool Misc::findUniqueSecond(const std::pair<int, int> &a, const std::pair<int, int> &b){
+template bool Misc::findUniqueFirst<int, int>(const std::pair<int, int> &a, const std::pair<int, int> &b);
+
+
+template <class First, class Second>
+bool Misc::findUniqueSecond(const std::pair<First, Second> &a, const std::pair<First, Second> &b){
 	return (a.second == b.second);
 }
+
+template bool Misc::findUniqueSecond(const std::pair<int, int> &a, const std::pair<int, int> &b);
 
