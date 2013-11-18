@@ -181,7 +181,7 @@ int main (int argc, char **argv){
 						if ((lossFlag == false && s.at(0) == s.at(2)) || (lossFlag == true && s.at(0) == 0)){ //All contacts are formed/loss
 
             	//Sort by time
-							std::sort(order.begin(), order.end(), Misc::sortPairSecond);
+							std::sort(order.begin(), order.end(), static_cast<bool (*)(const std::pair<int,int> &, const std::pair<int,int> &)>(Misc::sortPairSecond));
 
               //Get accumulate time for later averaging
               avgTime+=order.back().second-order.front().second;
@@ -192,7 +192,7 @@ int main (int argc, char **argv){
 							l=0;
 							for (k=0; k< order.size(); k=k+nrange){
 								if (lastTime != order.at(k).second){
-									range=std::equal_range(order.begin()+k, order.end(), order.at(k), Misc::sortPairSecond);
+									range=std::equal_range(order.begin()+k, order.end(), order.at(k), static_cast<bool (*)(const std::pair<int,int> &, const std::pair<int,int> &)>(Misc::sortPairSecond));
 
 									tstart = range.first-order.begin(); //Start of last time
 									tstop = range.second-order.begin(); //Start of next time = Stop of last time +1

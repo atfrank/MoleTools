@@ -215,14 +215,19 @@ double Misc::hypot (const double &a, const double &b){
 	}
 }
 
-bool Misc::sortPairFirst(const std::pair<int, int> &a, const std::pair<int, int> &b){
+template <class First, class Second>
+bool Misc::sortPairFirst(const std::pair<First, Second> &a, const std::pair<First, Second> &b){
+	return (a.first < b.first);
+}
+
+template bool Misc::sortPairFirst<double, std::string>(const std::pair<double, std::string> &a, const std::pair<double, std::string> &b);
+
+template <class First, class Second>
+bool Misc::sortPairSecond(const std::pair<First, Second> &a, const std::pair<First, Second> &b){
   return (a.first < b.first);
 }
 
-
-bool Misc::sortPairSecond(const std::pair<int, int> &a, const std::pair<int, int> &b){
-	return (a.second < b.second);
-}
+template bool Misc::sortPairSecond<int, int>(const std::pair<int, int> &a, const std::pair<int, int> &b);
 
 bool Misc::findUniqueFirst(const std::pair<int, int> &a, const std::pair<int, int> &b){
 	return (a.first == b.first);

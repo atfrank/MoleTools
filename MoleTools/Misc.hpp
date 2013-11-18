@@ -31,8 +31,10 @@ class Misc {
     static void toupper (std::string &str);
 		static int atoi (std::string &str, const unsigned int offset=0);
 		static double hypot (const double &a, const double &b);
-		static bool sortPairFirst(const std::pair<int, int> &a, const std::pair<int, int> &b);
-		static bool sortPairSecond(const std::pair<int, int> &a, const std::pair<int, int> &b);
+		template <class First, class Second>
+			static bool sortPairFirst(const std::pair<First, Second> &a, const std::pair<First, Second> &b);
+		template <class First, class Second>
+			static bool sortPairSecond(const std::pair<First, Second> &a, const std::pair<First, Second> &b);	
 		static bool findUniqueFirst(const std::pair<int, int> &a, const std::pair<int, int> &b);
 		static bool findUniqueSecond(const std::pair<int, int> &a, const std::pair<int, int> &b);
 };

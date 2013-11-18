@@ -1075,8 +1075,8 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 	unsigned int j, start;
 	double defVal;
 	unsigned int icapc; //Counter for Ca or pseudocenter (pc)
-	std::vector<double> iMinus6;//For non-local contacts
-	std::vector<double> iPlus6; //For non-local contacts
+	std::vector<std::pair<double,std::string> > iMinus6;//For non-local contacts
+	std::vector<std::pair<double,std::string> > iPlus6; //For non-local contacts
 	int diffResId;
 	std::map<std::pair<Atom*, Atom*>, double> caPairDist; //Ca-Ca Distances
 	std::map<std::pair<Atom*, Atom*>, double> pcPairDist; //Pseudocenter-Pseudocenter Distances
@@ -1091,6 +1091,7 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
   std::vector<std::string> dssp;
   std::vector<std::string> s;
   unsigned int natom;
+	std::string tmpSS;
 
 	defVal=9999.9;
 	cmol=NULL;
@@ -1224,23 +1225,29 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 			iMinus6.clear();
 			for (j=0; j< cmol->getAtmVecSize(); j++){
 				aj=cmol->getAtom(j);
+				if (j < dssp.size()){
+					tmpSS=dssp.at(j);
+				}
+				else{
+					tmpSS="0";
+				}
 				if (ai == aj){
 					continue;
 				}
 				//i+6
 				if (ai->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
-					iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+					iPlus6.push_back(std::make_pair(caPairDist.at(std::make_pair(ai, aj)), tmpSS));
 				}
 				else{
 					//atom i and atom j are on the same chain
 					diffResId=aj->getResId() - ai->getResId();
 					if (diffResId >= 6){
-						iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+						iPlus6.push_back(std::make_pair(caPairDist.at(std::make_pair(ai, aj)), tmpSS));
 					}
 					else{
 						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) >= 6)){
-							iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+							iPlus6.push_back(std::make_pair(caPairDist.at(std::make_pair(ai, aj)), tmpSS));
 						}
 					}
 				}
@@ -1248,37 +1255,37 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 				//i-6
 				if (ai->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
-					iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+					iMinus6.push_back(std::make_pair(caPairDist.at(std::make_pair(ai, aj)), tmpSS));
 				}
 				else{
 					//atom i and atom j are on the same chain
 					diffResId=aj->getResId() - ai->getResId();
 					if (diffResId <= -6){
-						iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+						iMinus6.push_back(std::make_pair(caPairDist.at(std::make_pair(ai, aj)), tmpSS));
 					}
 					else{
 						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) <= -6)){
-							iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+							iMinus6.push_back(std::make_pair(caPairDist.at(std::make_pair(ai, aj)), tmpSS));
 						}
 					}
 				}
 			}
-			std::sort(iPlus6.begin(),iPlus6.end());
+			std::sort(iPlus6.begin(),iPlus6.end(), static_cast<bool (*)(const std::pair<double, std::string> &, const std::pair<double, std::string> &)>(Misc::sortPairFirst));
 			for (j=0; j< 3; j++){
 				if (j < iPlus6.size()){
 					//std::cout << iPlus6.at(j) << " ";
-					curr.push_back(iPlus6.at(j));
+					curr.push_back(iPlus6.at(j).first);
 				}
 				else{
 					//std::cout << defVal << " ";
 					curr.push_back(defVal);
 				}
 			}
-			std::sort(iMinus6.begin(),iMinus6.end());
+			std::sort(iMinus6.begin(),iMinus6.end(),static_cast<bool (*)(const std::pair<double, std::string> &, const std::pair<double, std::string> &)>(Misc::sortPairFirst));
 			for (j=0; j< 3; j++){
         if (j < iMinus6.size()){
           //std::cout << iMinus6.at(j) << " ";
-					curr.push_back(iMinus6.at(j));
+					curr.push_back(iMinus6.at(j).first);
         }
         else{
           //std::cout << defVal << " ";
