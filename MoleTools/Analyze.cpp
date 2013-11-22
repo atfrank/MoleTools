@@ -1075,8 +1075,8 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 	unsigned int j, start;
 	double defVal;
 	unsigned int icapc; //Counter for Ca or pseudocenter (pc)
-	std::vector<std::pair<double,std::string> > iMinus6;//For non-local contacts
-	std::vector<std::pair<double,std::string> > iPlus6; //For non-local contacts
+	std::vector<double> iMinus6;//For non-local contacts
+	std::vector<double> iPlus6; //For non-local contacts
 	int diffResId;
 	std::map<std::pair<Atom*, Atom*>, double> caPairDist; //Ca-Ca Distances
 	std::map<std::pair<Atom*, Atom*>, double> pcPairDist; //Pseudocenter-Pseudocenter Distances
@@ -1085,21 +1085,17 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 	Molecule* cmol;
 	std::vector<double> last;
 	std::vector<double> curr;
-	std::string currSS, listSS;
   std::ifstream dsspFile;
   std::istream* dsspinp;
   std::string line;
   std::vector<std::string> dssp;
   std::vector<std::string> s;
   unsigned int natom;
-	std::string tmpSS;
 
 	defVal=9999.9;
 	cmol=NULL;
 	last.clear();
 	curr.clear();
-	listSS.clear();
-	currSS.clear();
   natom=0;
 
 	//Feature List
@@ -1140,7 +1136,19 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
       getline(*dsspinp, line);
       Misc::splitStr(line, " \t", s, false);
       if (s.size() > 0){
-				dssp.push_back((s.at(s.size()-2)));
+				if (s.at(s.size()-2).compare(0,1,"E") == 0 || s.at(s.size()-2).compare(0,1,"B") == 0){
+					dssp.push_back("E");
+				}
+				else if (s.at(s.size()-2).compare(0,1,"H") == 0 || s.at(s.size()-2).compare(0,1,"I") == 0 || s.at(s.size()-2).compare(0,1,"G") == 0){
+					dssp.push_back("H");
+				}
+				else if (s.at(s.size()-2).compare(0,1,"-") == 0 || s.at(s.size()-2).compare(0,1,"S") == 0 || s.at(s.size()-2).compare(0,1,"T") == 0){
+					dssp.push_back("C");
+				}
+				else{
+					std::cerr << "Warning unrecognized DSSP classification \"" << s.at(s.size()-2) << "\" has been set to \"X\"" << std::endl;
+					dssp.push_back("X");
+				}
       }
     }
     if (dsspFile.is_open()){
@@ -1228,29 +1236,23 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 			iMinus6.clear();
 			for (j=0; j< cmol->getAtmVecSize(); j++){
 				aj=cmol->getAtom(j);
-				if (j < dssp.size()){
-					tmpSS=dssp.at(j);
-				}
-				else{
-					tmpSS="0";
-				}
 				if (ai == aj){
 					continue;
 				}
 				//i+6
 				if (ai->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
-					iPlus6.push_back(std::make_pair(caPairDist.at(std::make_pair(ai, aj)), tmpSS));
+					iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
 				}
 				else{
 					//atom i and atom j are on the same chain
 					diffResId=aj->getResId() - ai->getResId();
 					if (diffResId >= 6){
-						iPlus6.push_back(std::make_pair(caPairDist.at(std::make_pair(ai, aj)), tmpSS));
+						iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
 					}
 					else{
 						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) >= 6)){
-							iPlus6.push_back(std::make_pair(caPairDist.at(std::make_pair(ai, aj)), tmpSS));
+							iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
 						}
 					}
 				}
@@ -1258,48 +1260,41 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 				//i-6
 				if (ai->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
-					iMinus6.push_back(std::make_pair(caPairDist.at(std::make_pair(ai, aj)), tmpSS));
+					iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
 				}
 				else{
 					//atom i and atom j are on the same chain
 					diffResId=aj->getResId() - ai->getResId();
 					if (diffResId <= -6){
-						iMinus6.push_back(std::make_pair(caPairDist.at(std::make_pair(ai, aj)), tmpSS));
+						iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
 					}
 					else{
 						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) <= -6)){
-							iMinus6.push_back(std::make_pair(caPairDist.at(std::make_pair(ai, aj)), tmpSS));
+							iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
 						}
 					}
 				}
 			}
-			std::sort(iPlus6.begin(),iPlus6.end(), static_cast<bool (*)(const std::pair<double, std::string> &, const std::pair<double, std::string> &)>(Misc::sortPairFirst));
-			currSS="";
+			std::sort(iPlus6.begin(),iPlus6.end());
 			for (j=0; j< 3; j++){
 				if (j < iPlus6.size()){
-					//std::cout << iPlus6.at(j).first << " ";
-					curr.push_back(iPlus6.at(j).first);
-					currSS.append(iPlus6.at(j).second);
-				 	currSS.append(" ");
+					//std::cout << iPlus6.at(j) << " ";
+					curr.push_back(iPlus6.at(j));
 				}
 				else{
 					//std::cout << defVal << " ";
 					curr.push_back(defVal);
-					currSS.append("X ");
 				}
 			}
-			std::sort(iMinus6.begin(),iMinus6.end(),static_cast<bool (*)(const std::pair<double, std::string> &, const std::pair<double, std::string> &)>(Misc::sortPairFirst));
+			std::sort(iMinus6.begin(),iMinus6.end());
 			for (j=0; j< 3; j++){
         if (j < iMinus6.size()){
-          //std::cout << iMinus6.at(j).first << " ";
-					curr.push_back(iMinus6.at(j).first);
-					currSS.append(iMinus6.at(j).second);
-          currSS.append(" ");
+          //std::cout << iMinus6.at(j) << " ";
+					curr.push_back(iMinus6.at(j));
         }
         else{
           //std::cout << defVal << " ";
 					curr.push_back(defVal);
-					currSS.append("X ");
         }
       }
 
@@ -1310,9 +1305,6 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 				for (j=0; j< curr.size(); j++){
           std::cout << curr.at(j) << " ";
         }
-				listSS.append(currSS);
-				std::cout << listSS;
-				listSS=currSS+listSS.substr(0,12);
         if (dsspin.length() > 0){
           if (natom < dssp.size()){
             std::cout << dssp.at(natom) << " ";
@@ -1338,7 +1330,6 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 					for (j=0; j< curr.size(); j++){
 	          std::cout << defVal << " ";
 	        }
-					std::cout << listSS << "X X X X X X ";
           if (dsspin.length() > 0){
             if (natom < dssp.size()){
               std::cout << dssp.at(natom) << " ";
@@ -1357,17 +1348,13 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 				for (j=0; j< curr.size(); j++){
           std::cout << curr.at(j) << " ";
         }
-				listSS.clear();
-				listSS.append(currSS);
 				//Print S(i-1) which is all default values
 				for (j=0; j< curr.size(); j++){
           std::cout << defVal << " ";
         }
-				listSS.append("X X X X X X ");
 			}
 			last=curr;
 			curr.clear();
-			currSS.clear();
       natom++;
 		} //Loop through atoms
 	}//Loop through chains
