@@ -1308,6 +1308,7 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
         if (dsspin.length() > 0){
           if (natom < dssp.size()){
             std::cout << dssp.at(natom) << " ";
+						natom++;
           }
           else{
             std::cout << "X" << " ";
@@ -1333,6 +1334,7 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
           if (dsspin.length() > 0){
             if (natom < dssp.size()){
               std::cout << dssp.at(natom) << " ";
+							natom++;
             }
             else{
               std::cout << "X" << " ";
@@ -1355,7 +1357,6 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 			}
 			last=curr;
 			curr.clear();
-      natom++;
 		} //Loop through atoms
 	}//Loop through chains
 
