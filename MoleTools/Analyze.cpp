@@ -1360,6 +1360,10 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 		} //Loop through atoms
 	}//Loop through chains
 
+	if (dsspin.length() > 0 && dssp.size() != natom){
+		std::cerr << "Warning: DSSP (" << dssp.size() << ") and NATOM (" << natom << ") mismatch" << std::endl;
+	}
+
 	if (cmol != NULL){
 		delete cmol;
 	}
