@@ -278,7 +278,7 @@ Atom* PDB::processAtomLine (std::string line, Atom* lastAtom){
   atmEntry->setChainId(chainid);
   atmEntry->setRealId(line.substr(21,1)); 
   //std::stringstream(line.substr(22,4)) >> resid; //PDB format
-	std::stringstream(line.substr(22,6)) >> resid;
+	std::stringstream(line.substr(22,6)) >> resid; //Automagically truncates anything that is not numeric, i.e. iCode
   atmEntry->setResId(resid);
   atmEntry->setICode(line.substr(26,1));
   std::stringstream(line.substr(30,8)) >> x;
