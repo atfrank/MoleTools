@@ -1074,14 +1074,11 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 	Atom *ai, *aj;
 	unsigned int j, start;
 	double defVal;
-	unsigned int icapc; //Counter for Ca or pseudocenter (pc)
 	std::vector<double> iMinus6;//For non-local contacts
 	std::vector<double> iPlus6; //For non-local contacts
 	int diffResId;
 	std::map<std::pair<Atom*, Atom*>, double> caPairDist; //Ca-Ca Distances
-	std::map<std::pair<Atom*, Atom*>, double> pcPairDist; //Pseudocenter-Pseudocenter Distances
 	std::map<Atom*, std::vector<double> > caAngles; //Ca-Ca Angle/Diehdral
-	std::map<Atom*, std::vector<double> > pcAngles; //Pseudocenter-Pseudocenter Angle/Dihedral
 	Molecule* cmol;
 	std::vector<double> last;
 	std::vector<double> curr;
@@ -1107,19 +1104,9 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 	(5)  Ca(i) -- Ca(i+3)
 	(6)  Ca(i) -- Ca(i+4)
 	(7)  Ca(i) -- Ca(i+5)
-	(8)  PC(i) -- PC(i-2)
-	(9)  PC(i) -- PC(i-1)
-	(10) PC(i) -- PC(i+1)
-	(11) PC(i) -- PC(i+2)
-	(12) PC(i) -- PC(i+3)
-	(13) PC(i) -- PC(i+4)
-	(14) PC(i) -- PC(i+5)
 	(15) Ca(i-1) -- Ca(i) -- Ca(i+1)
 	(16) Ca(i) -- Ca(i+1) -- Ca(i+2) -- Ca(i+3)
 	(17) Ca(i-2) -- Ca(i) -- Ca(i+2)
-	(18) PC(i-1) -- PC(i) -- PC(i+1)
-	(19) PC(i) -- PC(i+1) -- PC(i+2) -- PC(i+3)
-	(20) PC(i-2) -- PC(i) -- PC(i+2)
 	(21) Ca(i) -- Ca(j >= i+6, 1)
 	(22) Ca(i) -- Ca(j >= i+6, 2)
 	(23) Ca(i) -- Ca(j >= i+6, 3)
@@ -1166,69 +1153,46 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 	Analyze::pairwiseDistance(cmol, caPairDist);
 	Analyze::allAnglesDihedrals(cmol, caAngles);
 
-	//Analyze all pseudocenter
-	cmol->modPseudoCenter();
-	Analyze::pairwiseDistance(cmol, pcPairDist);
-	Analyze::allAnglesDihedrals(cmol, pcAngles);
-
 	for (unsigned int ichain=0; ichain < cmol->getChnVecSize(); ichain++){
 		c=cmol->getChain(ichain);
 		for (unsigned int iatom=0; iatom < c->getAtmVecSize(); iatom++){
 			ai=c->getAtom(iatom);
 			//i-2, i-1, i+1, i+2, i+3, i+4, i+5 Distances
-			for (icapc=0; icapc<=1; icapc++){
-				//Deal with unsigned int subtraction from zero
-				if (iatom == 0){
-					//std::cout << defVal << " " << defVal << " ";
-					curr.push_back(defVal);
-					curr.push_back(defVal);
-					start=iatom-0;
-				}
-				else if (iatom == 1){
+			//Deal with unsigned int subtraction from zero
+			if (iatom == 0){
+				//std::cout << defVal << " " << defVal << " ";
+				curr.push_back(defVal);
+				curr.push_back(defVal);
+				start=iatom-0;
+			}
+			else if (iatom == 1){
+				//std::cout << defVal << " ";
+				curr.push_back(defVal);
+				start=iatom-1;
+			}
+			else{
+				start=iatom-2;
+			}
+			for (j=start; j<= iatom+5; j++){
+				aj=c->getAtom(j);
+				if (aj == NULL){
 					//std::cout << defVal << " ";
 					curr.push_back(defVal);
-					start=iatom-1;
+				}
+				else if (j == iatom){
+					//Distance == 0
+					continue;
 				}
 				else{
-					start=iatom-2;
-				}
-				for (j=start; j<= iatom+5; j++){
-					aj=c->getAtom(j);
-					if (aj == NULL){
-						//std::cout << defVal << " ";
-						curr.push_back(defVal);
-					}
-					else if (j == iatom){
-						//Distance == 0
-						continue;
-					}
-					else{
-						if (icapc == 0){ //Ca
-							//std::cout << caPairDist.at(std::make_pair(ai, aj)) << " ";
-							curr.push_back(caPairDist.at(std::make_pair(ai, aj)));
-						}
-						else{ //Pseudocenter
-							//std::cout << pcPairDist.at(std::make_pair(ai, aj)) << " ";
-							curr.push_back(pcPairDist.at(std::make_pair(ai, aj)));
-						}
-					}
+					//std::cout << caPairDist.at(std::make_pair(ai, aj)) << " ";
+					curr.push_back(caPairDist.at(std::make_pair(ai, aj)));
 				}
 			}
 
 			//Angles and Dihedrals
-			for (icapc=0; icapc<=1; icapc++){
-				if (icapc == 0){ //Ca
-					for (j=0; j< caAngles.at(ai).size(); j++){
-						//std::cout << caAngles.at(ai).at(j) << " ";
-						curr.push_back(caAngles.at(ai).at(j));
-					}
-				}
-				else{ //Pseudocenter
-					for (j=0; j< pcAngles.at(ai).size(); j++){
-            //std::cout << pcAngles.at(ai).at(j) << " ";
-						curr.push_back(pcAngles.at(ai).at(j));
-          }
-				}
+			for (j=0; j< caAngles.at(ai).size(); j++){
+				//std::cout << caAngles.at(ai).at(j) << " ";
+				curr.push_back(caAngles.at(ai).at(j));
 			}
 		
 			//Shortest non-local contact distance, >= i+6 and <= i-6
@@ -1303,56 +1267,62 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 				//Not first atom of chain
 				//Print S(i+1) for last atom
 				for (j=0; j< curr.size(); j++){
-          std::cout << curr.at(j) << " ";
-        }
-        if (dsspin.length() > 0){
-          if (natom < dssp.size()){
-            std::cout << dssp.at(natom) << " ";
-						natom++;
-          }
-          else{
-            std::cout << "X" << " ";
-          }
+          std::cout << curr.at(j);
+					if (j< curr.size()-1){
+						std::cout << ",";
+					}
         }
 				std::cout << std::endl;
 				
-				std::cout << ai->getPdbId() << " " << ai->getChainId() << " " << ai->getResId() << " ";
+				//std::cout << ai->getPdbId() << "," << ai->getChainId() << "," << ai->getResId() << ",";
 				//Print S(i)
+				if (dsspin.length() > 0){
+          if (natom < dssp.size()){
+            std::cout << dssp.at(natom) << ",";
+          }
+          else{
+            std::cout << "X" << ",";
+          }
+        }
+				natom++;
 				for (j=0; j< curr.size(); j++){
-          std::cout << curr.at(j) << " ";
+          std::cout << curr.at(j) << ",";
         }
 				//Print S(i-1) stored in std::vector "last"
 				for (j=0; j< last.size(); j++){
-					std::cout << last.at(j) << " ";
+					std::cout << last.at(j) << ",";
 				}
 				if (iatom+1 == c->getAtmVecSize()){
 					//Last atom of chain
 					//Print S(i+1) which is all default values
 					for (j=0; j< curr.size(); j++){
-	          std::cout << defVal << " ";
+	          std::cout << defVal;
+						if (j< curr.size()-1){
+							std::cout << ",";
+						}
 	        }
-          if (dsspin.length() > 0){
-            if (natom < dssp.size()){
-              std::cout << dssp.at(natom) << " ";
-							natom++;
-            }
-            else{
-              std::cout << "X" << " ";
-            }
-          }
 					std::cout << std::endl;
 				}
 			}
 			else{
 				//First atom in chain, last is empty
-				std::cout << ai->getPdbId() << " " << ai->getChainId() << " " << ai->getResId() << " ";
+				//std::cout << ai->getPdbId() << "," << ai->getChainId() << "," << ai->getResId() << ",";
 				//Print S(i)
+				if (dsspin.length() > 0){
+          if (natom < dssp.size()){
+            std::cout << dssp.at(natom) << ",";
+          }
+          else{
+            std::cout << "X" << ",";
+          }
+        }
+				natom++;
 				for (j=0; j< curr.size(); j++){
-          std::cout << curr.at(j) << " ";
+          std::cout << curr.at(j) << ",";
         }
 				//Print S(i-1) which is all default values
 				for (j=0; j< curr.size(); j++){
-          std::cout << defVal << " ";
+          std::cout << defVal << ",";
         }
 			}
 			last=curr;
