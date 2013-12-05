@@ -167,4 +167,9 @@ class AnalyzePairwiseDistance: public Analyze {
     void runAnalysis();
 };
 
+class AnalyzePcasso: public Analyze {
+	public:
+		void runAnalysis();
+};
+
 #endif

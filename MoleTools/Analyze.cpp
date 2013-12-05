@@ -553,6 +553,9 @@ void AnalyzePairwiseDistance::runAnalysis(){
   }
 }
 
+void AnalyzePcasso::runAnalysis(){
+	Analyze::pcasso(this->getMol(0));
+}
 
 //All postAnalysis functions
 
