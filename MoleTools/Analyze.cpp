@@ -1276,13 +1276,8 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 				
 				//std::cout << ai->getPdbId() << "," << ai->getChainId() << "," << ai->getResId() << ",";
 				//Print S(i)
-				if (dsspin.length() > 0){
-          if (natom < dssp.size()){
-            std::cout << dssp.at(natom) << ",";
-          }
-          else{
-            std::cout << "X" << ",";
-          }
+				if (dsspin.length() > 0 && natom < dssp.size()){
+          std::cout << dssp.at(natom) << ",";
         }
 				else {
 					std::cout << "X" << ",";
@@ -1311,13 +1306,8 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 				//First atom in chain, last is empty
 				//std::cout << ai->getPdbId() << "," << ai->getChainId() << "," << ai->getResId() << ",";
 				//Print S(i)
-				if (dsspin.length() > 0){
-          if (natom < dssp.size()){
-            std::cout << dssp.at(natom) << ",";
-          }
-          else{
-            std::cout << "X" << ",";
-          }
+				if (dsspin.length() > 0 && natom < dssp.size()){
+          std::cout << dssp.at(natom) << ",";
         }
 				else{
 					std::cout << "X" << ",";
