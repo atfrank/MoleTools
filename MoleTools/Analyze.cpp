@@ -1284,6 +1284,9 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
             std::cout << "X" << ",";
           }
         }
+				else {
+					std::cout << "X" << ",";
+				}
 				natom++;
 				for (j=0; j< curr.size(); j++){
           std::cout << curr.at(j) << ",";
@@ -1316,6 +1319,9 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
             std::cout << "X" << ",";
           }
         }
+				else{
+					std::cout << "X" << ",";
+				}
 				natom++;
 				for (j=0; j< curr.size(); j++){
           std::cout << curr.at(j) << ",";
