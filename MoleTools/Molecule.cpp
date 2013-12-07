@@ -602,12 +602,22 @@ void Molecule::modPseudoCenter(){
 	}
 }
 
-void Molecule::pcasso (std::string dsspin){
+void Molecule::pcasso (std::string dsspin, bool trial){
   if (dsspin.length() > 0){
-	  Analyze::pcasso(this, dsspin);
+		if (trial == true){
+			Analyze::pcassoTrial(this, dsspin);
+		}
+		else{
+	  	Analyze::pcasso(this, dsspin);
+		}
   }
   else{
-    Analyze::pcasso(this);
+		if (trial == true){
+			Analyze::pcassoTrial(this);
+		}
+		else{
+    	Analyze::pcasso(this);
+		}
   }
 }
 

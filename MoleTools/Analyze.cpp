@@ -1338,6 +1338,273 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 	}
 }
 
+void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
+	Chain *c;
+	Atom *ai, *aj;
+	unsigned int j, start;
+	double defVal;
+	std::vector<double> iMinus6;//For non-local contacts
+	std::vector<double> iPlus6; //For non-local contacts
+	int diffResId;
+	std::map<std::pair<Atom*, Atom*>, double> caPairDist; //Ca-Ca Distances
+	std::map<Atom*, std::vector<double> > caAngles; //Ca-Ca Angle/Diehdral
+	Molecule* cmol;
+	std::vector<double> last;
+	std::vector<double> curr;
+  std::ifstream dsspFile;
+  std::istream* dsspinp;
+  std::string line;
+  std::vector<std::string> dssp;
+  std::vector<std::string> s;
+  unsigned int natom;
+
+	defVal=9999.9;
+	cmol=NULL;
+	last.clear();
+	curr.clear();
+  natom=0;
+
+	//Feature List
+	/*
+	(1)  Ca(i) -- Ca(i-2)
+	(2)  Ca(i) -- Ca(i-1)
+	(3)  Ca(i) -- Ca(i+1)
+	(4)  Ca(i) -- Ca(i+2)
+	(5)  Ca(i) -- Ca(i+3)
+	(6)  Ca(i) -- Ca(i+4)
+	(7)  Ca(i) -- Ca(i+5)
+	(15) Ca(i-1) -- Ca(i) -- Ca(i+1)
+	(16) Ca(i) -- Ca(i+1) -- Ca(i+2) -- Ca(i+3)
+	(17) Ca(i-2) -- Ca(i) -- Ca(i+2)
+	(21) Ca(i) -- Ca(j >= i+6, 1)
+	(22) Ca(i) -- Ca(j >= i+6, 2)
+	(23) Ca(i) -- Ca(j >= i+6, 3)
+	(24) Ca(i) -- Ca(j <= i-6, 1)
+	(25) Ca(i) -- Ca(j <= i-6, 2)
+	(26) Ca(i) -- Ca(j <= i-6, 3)
+	*/
+
+  //Read DSSP file first
+  if (dsspin.length() > 0){
+    dsspFile.open(dsspin.c_str(), std::ios::in);
+    dsspinp=&dsspFile;
+    while (dsspinp->good() && !(dsspinp->eof())){
+      getline(*dsspinp, line);
+      Misc::splitStr(line, " \t", s, false);
+      if (s.size() > 0){
+				if (s.at(s.size()-2).compare(0,1,"E") == 0 || s.at(s.size()-2).compare(0,1,"B") == 0){
+					dssp.push_back("E");
+				}
+				else if (s.at(s.size()-2).compare(0,1,"H") == 0 || s.at(s.size()-2).compare(0,1,"I") == 0 || s.at(s.size()-2).compare(0,1,"G") == 0){
+					dssp.push_back("H");
+				}
+				else if (s.at(s.size()-2).compare(0,1,"-") == 0 || s.at(s.size()-2).compare(0,1,"S") == 0 || s.at(s.size()-2).compare(0,1,"T") == 0){
+					dssp.push_back("C");
+				}
+				else{
+					std::cerr << "Warning unrecognized DSSP classification \"" << s.at(s.size()-2) << "\" has been set to \"X\"" << std::endl;
+					dssp.push_back("X");
+				}
+      }
+    }
+    if (dsspFile.is_open()){
+      dsspFile.close();
+    }
+  }
+
+	mol->storeSel();
+	mol->select(":.CA");
+	cmol=mol->clone(true,true); //Copy selection, keep original
+	mol->recallSel(); //Restore original selection
+	mol->eraseSel();
+
+	//Analyze all C-alpha first
+	Analyze::pairwiseDistance(cmol, caPairDist);
+	Analyze::allAnglesDihedrals(cmol, caAngles);
+
+	for (unsigned int ichain=0; ichain < cmol->getChnVecSize(); ichain++){
+		c=cmol->getChain(ichain);
+		for (unsigned int iatom=0; iatom < c->getAtmVecSize(); iatom++){
+			ai=c->getAtom(iatom);
+			//i-2, i-1, i+1, i+2, i+3, i+4, i+5 Distances
+			//Deal with unsigned int subtraction from zero
+			if (iatom == 0){
+				//std::cout << defVal << " " << defVal << " ";
+				curr.push_back(defVal);
+				curr.push_back(defVal);
+				start=iatom-0;
+			}
+			else if (iatom == 1){
+				//std::cout << defVal << " ";
+				curr.push_back(defVal);
+				start=iatom-1;
+			}
+			else{
+				start=iatom-2;
+			}
+			for (j=start; j<= iatom+5; j++){
+				aj=c->getAtom(j);
+				if (aj == NULL){
+					//std::cout << defVal << " ";
+					curr.push_back(defVal);
+				}
+				else if (j == iatom){
+					//Distance == 0
+					continue;
+				}
+				else{
+					//std::cout << caPairDist.at(std::make_pair(ai, aj)) << " ";
+					curr.push_back(caPairDist.at(std::make_pair(ai, aj)));
+				}
+			}
+
+			//Angles and Dihedrals
+			for (j=0; j< caAngles.at(ai).size(); j++){
+				//std::cout << caAngles.at(ai).at(j) << " ";
+				curr.push_back(caAngles.at(ai).at(j));
+			}
+		
+			//Shortest non-local contact distance, >= i+6 and <= i-6
+			iPlus6.clear();
+			iMinus6.clear();
+			for (j=0; j< cmol->getAtmVecSize(); j++){
+				aj=cmol->getAtom(j);
+				if (ai == aj){
+					continue;
+				}
+				//i+6
+				if (ai->getChainId().compare(aj->getChainId()) != 0){
+					//atom i and atom j are on different chains
+					iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+				}
+				else{
+					//atom i and atom j are on the same chain
+					diffResId=aj->getResId() - ai->getResId();
+					if (diffResId >= 6){
+						iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+					}
+					else{
+						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) >= 6)){
+							iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+						}
+					}
+				}
+
+				//i-6
+				if (ai->getChainId().compare(aj->getChainId()) != 0){
+					//atom i and atom j are on different chains
+					iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+				}
+				else{
+					//atom i and atom j are on the same chain
+					diffResId=aj->getResId() - ai->getResId();
+					if (diffResId <= -6){
+						iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+					}
+					else{
+						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) <= -6)){
+							iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+						}
+					}
+				}
+			}
+			std::sort(iPlus6.begin(),iPlus6.end());
+			for (j=0; j< 3; j++){
+				if (j < iPlus6.size()){
+					//std::cout << iPlus6.at(j) << " ";
+					curr.push_back(iPlus6.at(j));
+				}
+				else{
+					//std::cout << defVal << " ";
+					curr.push_back(defVal);
+				}
+			}
+			std::sort(iMinus6.begin(),iMinus6.end());
+			for (j=0; j< 3; j++){
+        if (j < iMinus6.size()){
+          //std::cout << iMinus6.at(j) << " ";
+					curr.push_back(iMinus6.at(j));
+        }
+        else{
+          //std::cout << defVal << " ";
+					curr.push_back(defVal);
+        }
+      }
+
+			//Print output
+			if (iatom > 0){
+				//Not first atom of chain
+				//Print S(i+1) for last atom
+				for (j=0; j< curr.size(); j++){
+          std::cout << curr.at(j);
+					if (j< curr.size()-1){
+						std::cout << ",";
+					}
+        }
+				std::cout << std::endl;
+				
+				//std::cout << ai->getPdbId() << "," << ai->getChainId() << "," << ai->getResId() << ",";
+				//Print S(i)
+				if (dsspin.length() > 0 && natom < dssp.size()){
+          std::cout << dssp.at(natom) << ",";
+        }
+				else {
+					std::cout << "X" << ",";
+				}
+				natom++;
+				for (j=0; j< curr.size(); j++){
+          std::cout << curr.at(j) << ",";
+        }
+				//Print S(i-1) stored in std::vector "last"
+				for (j=0; j< last.size(); j++){
+					std::cout << last.at(j) << ",";
+				}
+				if (iatom+1 == c->getAtmVecSize()){
+					//Last atom of chain
+					//Print S(i+1) which is all default values
+					for (j=0; j< curr.size(); j++){
+	          std::cout << defVal;
+						if (j< curr.size()-1){
+							std::cout << ",";
+						}
+	        }
+					std::cout << std::endl;
+				}
+			}
+			else{
+				//First atom in chain, last is empty
+				//std::cout << ai->getPdbId() << "," << ai->getChainId() << "," << ai->getResId() << ",";
+				//Print S(i)
+				if (dsspin.length() > 0 && natom < dssp.size()){
+          std::cout << dssp.at(natom) << ",";
+        }
+				else{
+					std::cout << "X" << ",";
+				}
+				natom++;
+				for (j=0; j< curr.size(); j++){
+          std::cout << curr.at(j) << ",";
+        }
+				//Print S(i-1) which is all default values
+				for (j=0; j< curr.size(); j++){
+          std::cout << defVal << ",";
+        }
+			}
+			last=curr;
+			curr.clear();
+		} //Loop through atoms
+	}//Loop through chains
+
+	if (dsspin.length() > 0 && dssp.size() != natom){
+		std::cerr << "Warning: DSSP (" << dssp.size() << ") and NATOM (" << natom << ") mismatch" << std::endl;
+	}
+
+	if (cmol != NULL){
+		delete cmol;
+	}
+}
+
+
 Eigen::Matrix3d Analyze::gyrationTensor(Molecule* mol){
   Eigen::Matrix3d S;
   Atom* a;

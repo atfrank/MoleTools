@@ -82,6 +82,7 @@ class Analyze {
 		static void pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, double>& pdin);
 		static void allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::vector<double> >& anglesin);
 		static void pcasso(Molecule* mol, std::string dsspin="");
+		static void pcassoTrial(Molecule* mol, std::string dsspin="");
     //static std::vector<double> gyration(Molecule* mol);
     Eigen::Matrix3d gyrationTensor(Molecule* mol);
     static double quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int> modesin, double temp=300);
