@@ -1343,8 +1343,8 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 	Atom *ai, *aj;
 	unsigned int j, start;
 	double defVal;
-	std::vector<double> iMinus6;//For non-local contacts
-	std::vector<double> iPlus6; //For non-local contacts
+	double iMinus6;//For non-local contacts
+	double iPlus6; //For non-local contacts
 	int diffResId;
 	std::map<std::pair<Atom*, Atom*>, double> caPairDist; //Ca-Ca Distances
 	std::map<Atom*, std::vector<double> > caAngles; //Ca-Ca Angle/Diehdral
@@ -1465,8 +1465,12 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 			}
 		
 			//Shortest non-local contact distance, >= i+6 and <= i-6
-			iPlus6.clear();
-			iMinus6.clear();
+			iPlus6=1E10;
+			iMinus6=1E10;
+			int minx;
+			int pinx;
+			minx=-1;
+			pinx=-1;
 			for (j=0; j< cmol->getAtmVecSize(); j++){
 				aj=cmol->getAtom(j);
 				if (ai == aj){
@@ -1475,17 +1479,26 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 				//i+6
 				if (ai->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
-					iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+					if (caPairDist.at(std::make_pair(ai,aj)) < iPlus6){
+						pinx=j;
+						iPlus6=caPairDist.at(std::make_pair(ai,aj));
+					}
 				}
 				else{
 					//atom i and atom j are on the same chain
 					diffResId=aj->getResId() - ai->getResId();
 					if (diffResId >= 6){
-						iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+						if (caPairDist.at(std::make_pair(ai,aj)) < iPlus6){
+						  pinx=j;
+							iPlus6=caPairDist.at(std::make_pair(ai,aj));
+						}
 					}
 					else{
 						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) >= 6)){
-							iPlus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+							if (caPairDist.at(std::make_pair(ai,aj)) < iPlus6){
+           	 		pinx=j;
+            		iPlus6=caPairDist.at(std::make_pair(ai,aj));
+          		}
 						}
 					}
 				}
@@ -1493,41 +1506,77 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 				//i-6
 				if (ai->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
-					iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+					if (caPairDist.at(std::make_pair(ai,aj)) < iMinus6){
+            minx=j;
+            iMinus6=caPairDist.at(std::make_pair(ai,aj));
+          }
 				}
 				else{
 					//atom i and atom j are on the same chain
 					diffResId=aj->getResId() - ai->getResId();
 					if (diffResId <= -6){
-						iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+						if (caPairDist.at(std::make_pair(ai,aj)) < iMinus6){
+            	minx=j;
+            	iMinus6=caPairDist.at(std::make_pair(ai,aj));
+          	}
 					}
 					else{
 						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) <= -6)){
-							iMinus6.push_back(caPairDist.at(std::make_pair(ai, aj)));
+							if (caPairDist.at(std::make_pair(ai,aj)) < iMinus6){
+            		minx=j;
+            		iMinus6=caPairDist.at(std::make_pair(ai,aj));
+          		}
 						}
 					}
 				}
 			}
-			std::sort(iPlus6.begin(),iPlus6.end());
-			for (j=0; j< 3; j++){
-				if (j < iPlus6.size()){
-					//std::cout << iPlus6.at(j) << " ";
-					curr.push_back(iPlus6.at(j));
+			int k;
+			for (k=pinx-1; k<=pinx+1; k++){
+				if (k >= 0 && k < cmol->getAtmVecSize()){
+					aj=cmol->getAtom(k);
+					curr.push_back(caPairDist.at(std::make_pair(ai, aj)));
+					/*
+					if (dssp.at(k) == "H"){
+						curr.push_back(1.0);
+					}
+					else if (dssp.at(k) == "E"){
+						curr.push_back(2.0);
+					}
+					else if (dssp.at(k) == "C"){
+						curr.push_back(3.0);
+					}
+					else{
+						curr.push_back(4.0);
+					}
+					*/
 				}
 				else{
-					//std::cout << defVal << " ";
 					curr.push_back(defVal);
+					//curr.push_back(4.0);
 				}
 			}
-			std::sort(iMinus6.begin(),iMinus6.end());
-			for (j=0; j< 3; j++){
-        if (j < iMinus6.size()){
-          //std::cout << iMinus6.at(j) << " ";
-					curr.push_back(iMinus6.at(j));
+			for (k=minx-1; k<=minx+1; k++){
+        if (k >= 0 && k < cmol->getAtmVecSize()){
+					aj=cmol->getAtom(k);
+          curr.push_back(caPairDist.at(std::make_pair(ai, aj)));
+					/*
+					if (dssp.at(k) == "H"){
+            curr.push_back(1.0);
+          }
+          else if (dssp.at(k) == "E"){
+            curr.push_back(2.0);
+          }
+          else if (dssp.at(k) == "C"){
+            curr.push_back(3.0);
+          }
+          else{
+            curr.push_back(4.0);
+          }
+					*/
         }
         else{
-          //std::cout << defVal << " ";
-					curr.push_back(defVal);
+          curr.push_back(defVal);
+					//curr.push_back(4.0);
         }
       }
 
