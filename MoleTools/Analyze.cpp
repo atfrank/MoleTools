@@ -1531,7 +1531,7 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 				}
 			}
 			int k;
-			for (k=pinx-1; k<=pinx+1; k++){
+			for (k=pinx-2; k<=pinx+2; k++){
 				if (k >= 0 && k < cmol->getAtmVecSize()){
 					aj=cmol->getAtom(k);
 					curr.push_back(caPairDist.at(std::make_pair(ai, aj)));
@@ -1555,7 +1555,7 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 					//curr.push_back(4.0);
 				}
 			}
-			for (k=minx-1; k<=minx+1; k++){
+			for (k=minx-2; k<=minx+2; k++){
         if (k >= 0 && k < cmol->getAtmVecSize()){
 					aj=cmol->getAtom(k);
           curr.push_back(caPairDist.at(std::make_pair(ai, aj)));
