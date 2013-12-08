@@ -144,8 +144,10 @@ void WHAM::processEnergies(){
             expBVE.at(j).at(k).resize(this->getNWindow());
             expBVxEx.at(j).at(k).resize(this->getNWindow());
             for (i=0; i< this->getNWindow(); i++){
-              expBVE.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i)) * exp(-(B.at(i)-B0)*e.at(0));                                                  
-              expBVxEx.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i+this->getNWindow())) * exp(-(B.at(i)-B0)*e.at(0));
+							//V = Vbias
+              expBVE.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i)) * exp(-(B.at(i)-B0)*e.at(0));
+							//Vx = Vbias + Vextrapolation
+              expBVxEx.at(j).at(k).at(i)=exp(-B.at(i)*(v.at(i)+v.at(i+this->getNWindow()))) * exp(-(B.at(i)-B0)*e.at(0));
             }
           }
           else{
@@ -199,8 +201,10 @@ void WHAM::processEnergies(){
           expBVE.at(j).at(k).resize(this->getNWindow());
           expBVxEx.at(j).at(k).resize(this->getNWindow());
           for (i=0; i< this->getNWindow(); i++){
+						//V = Vbias
             expBVE.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i));
-            expBVxEx.at(j).at(k).at(i)=exp(-B.at(i)*v.at(i+this->getNWindow()));
+						//Vx = Vbias + Vextrapolation
+            expBVxEx.at(j).at(k).at(i)=exp(-B.at(i)*(v.at(i)+v.at(i+this->getNWindow())));
           }
         }
         else{
@@ -746,7 +750,8 @@ void WHAM::binOnTheFly(){
 	// SUM(j=1,....,S) SUM(k=1,...,N(j)-----------------------------------------------------------------------
 	//                                    SUM(l=1,...,S) N(l)*F(l)*exp(-B(l)V(l,jk))*exp[-(B(l)-B(0))E(l,jk)]
 	//
-	// Note that one needs to re-weight each biased histogram count(jk) by expBVxEx(j,jk) when doing WHAM extrapolation!
+	// Note that one needs to re-weight each biased histogram count(jk) by expBVx(j,jk) when doing WHAM extrapolation!
+	// i.e. only the Vextrapolation term of Vx = Vbias + Vextrapolation is needed, not Vbias
 	//
 
   for (unsigned int j=0; j< this->getNWindow(); j++){
@@ -765,12 +770,13 @@ void WHAM::binOnTheFly(){
       }
       else{
         //WHAM Extrapolation
-				//The numerator is the biased histogram count re-weighted by expBVxEx for that datapoint
+				//The numerator is the biased histogram count re-weighted by expBVx for that datapoint
+				//i.e. only the Vextrpolation term of Vx = Vbias + Vextrapolation is needed, not Vbias
         if (Pun.find(b) != Pun.end()){
-          Pun[b]+=expBVxEx.at(j).at(k).at(j)*denomInv.at(j).at(k);
+          Pun[b]+=(expBVxEx.at(j).at(k).at(j)/expBVE.at(j).at(k).at(j))*denomInv.at(j).at(k);
         }
         else{
-          Pun[b]=expBVxEx.at(j).at(k).at(j)*denomInv.at(j).at(k);
+          Pun[b]=(expBVxEx.at(j).at(k).at(j)/expBVE.at(j).at(k).at(j))*denomInv.at(j).at(k);
         }
       }
     }
