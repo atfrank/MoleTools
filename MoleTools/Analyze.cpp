@@ -1549,19 +1549,45 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 				if (k >= 0 && k < cmol->getAtmVecSize()){
 					aj=cmol->getAtom(k);
 					ai->addData(caPairDist.at(std::make_pair(ai, aj)));
+					if (dssp.at(k) == "H"){
+            ai->addData(1.0);
+          }
+          else if (dssp.at(k) == "E"){
+            ai->addData(2.0);
+          }
+          else if (dssp.at(k) == "C"){
+            ai->addData(3.0);
+          }
+          else{
+            ai->addData(4.0);
+          }
 				}
 				else{
 					ai->addData(defVal);
+					ai->addData(4.0);
 				}
 			}
 			for (k=minx-1; k<=minx+1; k++){
         if (k >= 0 && k < cmol->getAtmVecSize()){
 					aj=cmol->getAtom(k);
           ai->addData(caPairDist.at(std::make_pair(ai, aj)));
+					if (dssp.at(k) == "H"){
+            ai->addData(1.0);
+          }
+          else if (dssp.at(k) == "E"){
+            ai->addData(2.0);
+          }
+          else if (dssp.at(k) == "C"){
+            ai->addData(3.0);
+          }
+          else{
+            ai->addData(4.0);
+          }
         }
         else{
           ai->addData(defVal);
-        }
+          ai->addData(4.0);
+        }	
       }
 		} //Loop through atoms
 	}//Loop through chains
