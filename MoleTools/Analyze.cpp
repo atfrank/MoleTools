@@ -1549,6 +1549,7 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 				if (k >= 0 && k < cmol->getAtmVecSize()){
 					aj=cmol->getAtom(k);
 					ai->addData(caPairDist.at(std::make_pair(ai, aj)));
+/*
 					if (dssp.at(k) == "H"){
             ai->addData(1.0);
           }
@@ -1561,16 +1562,18 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
           else{
             ai->addData(4.0);
           }
+*/
 				}
 				else{
 					ai->addData(defVal);
-					ai->addData(4.0);
+//					ai->addData(4.0);
 				}
 			}
 			for (k=minx-1; k<=minx+1; k++){
         if (k >= 0 && k < cmol->getAtmVecSize()){
 					aj=cmol->getAtom(k);
           ai->addData(caPairDist.at(std::make_pair(ai, aj)));
+/*
 					if (dssp.at(k) == "H"){
             ai->addData(1.0);
           }
@@ -1583,10 +1586,11 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
           else{
             ai->addData(4.0);
           }
+*/
         }
         else{
           ai->addData(defVal);
-          ai->addData(4.0);
+//          ai->addData(4.0);
         }	
       }
 		} //Loop through atoms
@@ -1609,6 +1613,37 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
       for (j=0; j< ai->getDataSize(); j++){
           std::cout << ai->getDataPoint(j) << ",";
       }
+
+			//Print S(i-2)
+			if (iatom > 1){
+        //Not first atom of chain
+        aj=c->getAtom(iatom-2);
+        for (j=0; j< ai->getDataSize(); j++){
+          if (aj != NULL){
+            std::cout << aj->getDataPoint(j) << ",";
+          }
+          else{
+            std::cout << defVal << ",";
+          }
+        }
+      }
+      else{
+        //Print S(i-2) which is all default values
+        for (j=0; j< ai->getDataSize(); j++){
+          std::cout << defVal << ",";
+        }
+      }
+
+			//Print S(i+2)
+      aj=c->getAtom(iatom+2);
+      for (j=0; j< ai->getDataSize(); j++){
+        if (aj != NULL){
+          std::cout << aj->getDataPoint(j) << ",";
+        }
+        else{
+          std::cout << defVal << ",";
+        }
+      }	
 
 			//Print S(i-1)
 			if (iatom > 0){
