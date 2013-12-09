@@ -1432,15 +1432,36 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 				//std::cout << defVal << " " << defVal << " ";
 				curr.push_back(defVal);
 				curr.push_back(defVal);
+				curr.push_back(defVal);
+				curr.push_back(defVal);
+				curr.push_back(defVal);
 				start=iatom-0;
 			}
 			else if (iatom == 1){
 				//std::cout << defVal << " ";
 				curr.push_back(defVal);
+				curr.push_back(defVal);
+				curr.push_back(defVal);
+				curr.push_back(defVal);
 				start=iatom-1;
 			}
-			else{
+			else if (iatom == 2){
+				curr.push_back(defVal);
+				curr.push_back(defVal);
+				curr.push_back(defVal);
 				start=iatom-2;
+			}
+			else if (iatom == 3){
+				curr.push_back(defVal);
+				curr.push_back(defVal);
+				start=iatom-3;
+			}
+			else if (iatom == 4){
+				curr.push_back(defVal);
+				start=iatom-4;
+			}
+			else{
+				start=iatom-5;
 			}
 			for (j=start; j<= iatom+5; j++){
 				aj=c->getAtom(j);
@@ -1531,11 +1552,11 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 				}
 			}
 			int k;
-			for (k=pinx-2; k<=pinx+2; k++){
+			for (k=pinx-1; k<=pinx+1; k++){
 				if (k >= 0 && k < cmol->getAtmVecSize()){
 					aj=cmol->getAtom(k);
 					curr.push_back(caPairDist.at(std::make_pair(ai, aj)));
-					/*
+					//*
 					if (dssp.at(k) == "H"){
 						curr.push_back(1.0);
 					}
@@ -1548,18 +1569,18 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 					else{
 						curr.push_back(4.0);
 					}
-					*/
+					//*/
 				}
 				else{
 					curr.push_back(defVal);
-					//curr.push_back(4.0);
+					curr.push_back(4.0);
 				}
 			}
-			for (k=minx-2; k<=minx+2; k++){
+			for (k=minx-1; k<=minx+1; k++){
         if (k >= 0 && k < cmol->getAtmVecSize()){
 					aj=cmol->getAtom(k);
           curr.push_back(caPairDist.at(std::make_pair(ai, aj)));
-					/*
+					//*
 					if (dssp.at(k) == "H"){
             curr.push_back(1.0);
           }
@@ -1572,11 +1593,11 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
           else{
             curr.push_back(4.0);
           }
-					*/
+					//*/
         }
         else{
           curr.push_back(defVal);
-					//curr.push_back(4.0);
+					curr.push_back(4.0);
         }
       }
 
