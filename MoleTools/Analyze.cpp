@@ -1423,10 +1423,9 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 		for (unsigned int iatom=0; iatom < c->getAtmVecSize(); iatom++){
 			ai=c->getAtom(iatom);
 			ai->clearData();
-			//i-2, i-1, i+1, i+2, i+3, i+4, i+5 Distances
+			//i-5, i-4, i-3, i-2, i-1, i+1, i+2, i+3, i+4, i+5 Distances
 			//Deal with unsigned int subtraction from zero
 			if (iatom == 0){
-				//std::cout << defVal << " " << defVal << " ";
 				ai->addData(defVal);
 				ai->addData(defVal);
 				ai->addData(defVal);
@@ -1470,14 +1469,12 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 					continue;
 				}
 				else{
-					//std::cout << caPairDist.at(std::make_pair(ai, aj)) << " ";
 					ai->addData(caPairDist.at(std::make_pair(ai, aj)));
 				}
 			}
 
 			//Angles and Dihedrals
 			for (j=0; j< caAngles.at(ai).size(); j++){
-				//std::cout << caAngles.at(ai).at(j) << " ";
 				ai->addData(caAngles.at(ai).at(j));
 			}
 		
@@ -1611,11 +1608,14 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 			aj=c->getAtom(iatom+1);
 			for (j=0; j< ai->getDataSize(); j++){
         if (aj != NULL){
-          std::cout << aj->getDataPoint(j) << ",";
+          std::cout << aj->getDataPoint(j);
         }
         else{
-          std::cout << defVal << ",";
+          std::cout << defVal;
         }
+				if (j < ai->getDataSize()-1){
+					std::cout << ",";
+				}
       }
 
       std::cout << std::endl;
