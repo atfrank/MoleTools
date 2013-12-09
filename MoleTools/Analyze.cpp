@@ -1349,8 +1349,6 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 	std::map<std::pair<Atom*, Atom*>, double> caPairDist; //Ca-Ca Distances
 	std::map<Atom*, std::vector<double> > caAngles; //Ca-Ca Angle/Diehdral
 	Molecule* cmol;
-	std::vector<double> last;
-	std::vector<double> curr;
   std::ifstream dsspFile;
   std::istream* dsspinp;
   std::string line;
@@ -1360,8 +1358,6 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 
 	defVal=9999.9;
 	cmol=NULL;
-	last.clear();
-	curr.clear();
   natom=0;
 
 	//Feature List
@@ -1426,38 +1422,39 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 		c=cmol->getChain(ichain);
 		for (unsigned int iatom=0; iatom < c->getAtmVecSize(); iatom++){
 			ai=c->getAtom(iatom);
+			ai->clearData();
 			//i-2, i-1, i+1, i+2, i+3, i+4, i+5 Distances
 			//Deal with unsigned int subtraction from zero
 			if (iatom == 0){
 				//std::cout << defVal << " " << defVal << " ";
-				curr.push_back(defVal);
-				curr.push_back(defVal);
-				curr.push_back(defVal);
-				curr.push_back(defVal);
-				curr.push_back(defVal);
+				ai->addData(defVal);
+				ai->addData(defVal);
+				ai->addData(defVal);
+				ai->addData(defVal);
+				ai->addData(defVal);
 				start=iatom-0;
 			}
 			else if (iatom == 1){
 				//std::cout << defVal << " ";
-				curr.push_back(defVal);
-				curr.push_back(defVal);
-				curr.push_back(defVal);
-				curr.push_back(defVal);
+				ai->addData(defVal);
+        ai->addData(defVal);
+        ai->addData(defVal);
+        ai->addData(defVal);
 				start=iatom-1;
 			}
 			else if (iatom == 2){
-				curr.push_back(defVal);
-				curr.push_back(defVal);
-				curr.push_back(defVal);
+				ai->addData(defVal);
+        ai->addData(defVal);
+        ai->addData(defVal);
 				start=iatom-2;
 			}
 			else if (iatom == 3){
-				curr.push_back(defVal);
-				curr.push_back(defVal);
+				ai->addData(defVal);
+        ai->addData(defVal);
 				start=iatom-3;
 			}
 			else if (iatom == 4){
-				curr.push_back(defVal);
+				ai->addData(defVal);	
 				start=iatom-4;
 			}
 			else{
@@ -1466,8 +1463,7 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 			for (j=start; j<= iatom+5; j++){
 				aj=c->getAtom(j);
 				if (aj == NULL){
-					//std::cout << defVal << " ";
-					curr.push_back(defVal);
+					ai->addData(defVal);
 				}
 				else if (j == iatom){
 					//Distance == 0
@@ -1475,14 +1471,14 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 				}
 				else{
 					//std::cout << caPairDist.at(std::make_pair(ai, aj)) << " ";
-					curr.push_back(caPairDist.at(std::make_pair(ai, aj)));
+					ai->addData(caPairDist.at(std::make_pair(ai, aj)));
 				}
 			}
 
 			//Angles and Dihedrals
 			for (j=0; j< caAngles.at(ai).size(); j++){
 				//std::cout << caAngles.at(ai).at(j) << " ";
-				curr.push_back(caAngles.at(ai).at(j));
+				ai->addData(caAngles.at(ai).at(j));
 			}
 		
 			//Shortest non-local contact distance, >= i+6 and <= i-6
@@ -1555,115 +1551,77 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 			for (k=pinx-1; k<=pinx+1; k++){
 				if (k >= 0 && k < cmol->getAtmVecSize()){
 					aj=cmol->getAtom(k);
-					curr.push_back(caPairDist.at(std::make_pair(ai, aj)));
-					//*
-					if (dssp.at(k) == "H"){
-						curr.push_back(1.0);
-					}
-					else if (dssp.at(k) == "E"){
-						curr.push_back(2.0);
-					}
-					else if (dssp.at(k) == "C"){
-						curr.push_back(3.0);
-					}
-					else{
-						curr.push_back(4.0);
-					}
-					//*/
+					ai->addData(caPairDist.at(std::make_pair(ai, aj)));
 				}
 				else{
-					curr.push_back(defVal);
-					curr.push_back(4.0);
+					ai->addData(defVal);
 				}
 			}
 			for (k=minx-1; k<=minx+1; k++){
         if (k >= 0 && k < cmol->getAtmVecSize()){
 					aj=cmol->getAtom(k);
-          curr.push_back(caPairDist.at(std::make_pair(ai, aj)));
-					//*
-					if (dssp.at(k) == "H"){
-            curr.push_back(1.0);
-          }
-          else if (dssp.at(k) == "E"){
-            curr.push_back(2.0);
-          }
-          else if (dssp.at(k) == "C"){
-            curr.push_back(3.0);
-          }
-          else{
-            curr.push_back(4.0);
-          }
-					//*/
+          ai->addData(caPairDist.at(std::make_pair(ai, aj)));
         }
         else{
-          curr.push_back(defVal);
-					curr.push_back(4.0);
+          ai->addData(defVal);
         }
       }
+		} //Loop through atoms
+	}//Loop through chains
 
-			//Print output
+	//Print output
+	for (unsigned int ichain=0; ichain < cmol->getChnVecSize(); ichain++){
+    c=cmol->getChain(ichain);
+    for (unsigned int iatom=0; iatom < c->getAtmVecSize(); iatom++){
+      ai=c->getAtom(iatom);
+	
+			//Print S(i)
+			if (dsspin.length() > 0 && natom < dssp.size()){
+        std::cout << dssp.at(natom) << ",";
+      }
+      else{
+        std::cout << "X" << ",";
+      }
+      natom++;
+      for (j=0; j< ai->getDataSize(); j++){
+          std::cout << ai->getDataPoint(j) << ",";
+      }
+
+			//Print S(i-1)
 			if (iatom > 0){
 				//Not first atom of chain
-				//Print S(i+1) for last atom
-				for (j=0; j< curr.size(); j++){
-          std::cout << curr.at(j);
-					if (j< curr.size()-1){
-						std::cout << ",";
+				aj=c->getAtom(iatom-1);
+				for (j=0; j< ai->getDataSize(); j++){
+					if (aj != NULL){
+						std::cout << aj->getDataPoint(j) << ",";
 					}
-        }
-				std::cout << std::endl;
-				
-				//std::cout << ai->getPdbId() << "," << ai->getChainId() << "," << ai->getResId() << ",";
-				//Print S(i)
-				if (dsspin.length() > 0 && natom < dssp.size()){
-          std::cout << dssp.at(natom) << ",";
-        }
-				else {
-					std::cout << "X" << ",";
-				}
-				natom++;
-				for (j=0; j< curr.size(); j++){
-          std::cout << curr.at(j) << ",";
-        }
-				//Print S(i-1) stored in std::vector "last"
-				for (j=0; j< last.size(); j++){
-					std::cout << last.at(j) << ",";
-				}
-				if (iatom+1 == c->getAtmVecSize()){
-					//Last atom of chain
-					//Print S(i+1) which is all default values
-					for (j=0; j< curr.size(); j++){
-	          std::cout << defVal;
-						if (j< curr.size()-1){
-							std::cout << ",";
-						}
-	        }
-					std::cout << std::endl;
+					else{
+						std::cout << defVal << ",";
+					}
 				}
 			}
 			else{
-				//First atom in chain, last is empty
-				//std::cout << ai->getPdbId() << "," << ai->getChainId() << "," << ai->getResId() << ",";
-				//Print S(i)
-				if (dsspin.length() > 0 && natom < dssp.size()){
-          std::cout << dssp.at(natom) << ",";
-        }
-				else{
-					std::cout << "X" << ",";
-				}
-				natom++;
-				for (j=0; j< curr.size(); j++){
-          std::cout << curr.at(j) << ",";
-        }
 				//Print S(i-1) which is all default values
-				for (j=0; j< curr.size(); j++){
+				for (j=0; j< ai->getDataSize(); j++){
+					std::cout << defVal << ",";
+				}
+			}
+
+			//Print S(i+1)
+			aj=c->getAtom(iatom+1);
+			for (j=0; j< ai->getDataSize(); j++){
+        if (aj != NULL){
+          std::cout << aj->getDataPoint(j) << ",";
+        }
+        else{
           std::cout << defVal << ",";
         }
-			}
-			last=curr;
-			curr.clear();
+      }
+
+      std::cout << std::endl;
+
 		} //Loop through atoms
-	}//Loop through chains
+	} //Loop through chains
 
 	if (dsspin.length() > 0 && dssp.size() != natom){
 		std::cerr << "Warning: DSSP (" << dssp.size() << ") and NATOM (" << natom << ") mismatch" << std::endl;

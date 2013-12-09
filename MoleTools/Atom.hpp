@@ -12,6 +12,7 @@
 #include <sstream>
 #include <cctype> //isdigit
 #include <cstdlib>
+#include <vector>
 
 class Atom {
   private:
@@ -34,6 +35,7 @@ class Atom {
 		std::string ss; //Secondary structure
     double mass;
     double charge;
+		std::vector<double> data;
     //All additional fields must also be added to Atom::clone(), Atom::dummy() functions!!
 
   public:
@@ -67,6 +69,9 @@ class Atom {
 		std::string& getSS();
     double& getMass();
     double& getCharge();
+		std::vector<double>& getData();
+		double& getDataPoint(const unsigned int element);
+		unsigned int getDataSize();
 	
     //Set atom info
 		void setPdbId(const std::string& pdbidin);
@@ -98,6 +103,8 @@ class Atom {
 		void setSS(const std::string& ssin);
     void setMass(const double& massin);
     void setCharge(const double& chargein);
+		void addData(const double& din);
+		void clearData();
 };
 
 #endif

@@ -21,6 +21,7 @@ Atom::Atom(){
 	ss="";
   mass=1.0;
   charge=0.0;
+	data.clear();
 }
 
 Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int residin, Vector coorin, std::string segidin){
@@ -42,6 +43,7 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
 	ss="";
   mass=1.0;
   charge=0.0;
+	data.clear();
 }
 
 void Atom::reset(){
@@ -63,6 +65,7 @@ void Atom::reset(){
 	ss="";
   mass=1.0;
   charge=0.0;
+	data.clear();
 }
 
 void Atom::clone(Atom* atmin){
@@ -85,6 +88,7 @@ void Atom::clone(Atom* atmin){
 	ss=atmin->getSS();
   mass=atmin->getMass();
   charge=atmin->getCharge();
+	data=atmin->getData();
 }
 
 void Atom::dummy(){
@@ -105,7 +109,8 @@ void Atom::dummy(){
   summary="";
   ss="";
   mass=1.0;
-  charge=0.0;	
+  charge=0.0;
+	data.clear();
 }
 
 //Get atom info
@@ -195,6 +200,21 @@ double& Atom::getMass(){
 
 double& Atom::getCharge(){
   return charge;
+}
+
+std::vector<double>& Atom::getData(){
+	return data;
+}
+
+double& Atom::getDataPoint(const unsigned int element){
+	if (element >= data.size() || element < 0){
+		std::cerr << "Error: Atom::getDataPoint Out of Range" << std::endl;
+	}
+	return data.at(element);
+}
+
+unsigned int Atom::getDataSize(){
+	return data.size();
 }
 
 //Set atom info
@@ -314,4 +334,12 @@ void Atom::setMass(const double& massin){
 
 void Atom::setCharge(const double& chargein){
   charge=chargein;
+}
+
+void Atom::addData(const double& din){
+	data.push_back(din);
+}
+
+void Atom::clearData(){
+	data.clear();
 }
