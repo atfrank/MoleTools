@@ -37,15 +37,15 @@ class Molecule {
     Molecule* clone(bool selFlag=true, bool keep=true);
 		Molecule* copy(bool selFlag=true);
     void addAtom(Atom* atmEntry);
-    Atom* getAtom(int element); 
+    Atom* getAtom(const unsigned int& element); 
     void addChain(Chain* chnEntry);
     void addResidue(Residue* resEntry);
-    Chain* getChain(int element);
+    Chain* getChain(const unsigned int& element);
     unsigned int getChnVecSize();
     unsigned int getResVecSize();
     unsigned int getAtmVecSize();
     std::vector<Atom*> getAtmVec();
-    Residue* getResidue(const int& element);
+    Residue* getResidue(const unsigned int& element);
     void readTopology(const std::string& topin);
     void readParameter(const std::string& prmin);
     void setMass();

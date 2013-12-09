@@ -221,8 +221,13 @@ Molecule* Molecule::copy (bool selFlag){
   return mol;
 }
 
-Atom* Molecule::getAtom(int element){
-  return atmVec.at(element);
+Atom* Molecule::getAtom(const unsigned int& element){
+	if (element >= atmVec.size() && element < 0){
+		return NULL;
+	}
+	else{
+  	return atmVec.at(element);
+	}
 }
 
 unsigned int Molecule::getAtmVecSize(){
@@ -245,8 +250,13 @@ void Molecule::addResidue(Residue* resEntry){
   }
 }
 
-Chain* Molecule::getChain(int element){
-  return chnVec.at(element);
+Chain* Molecule::getChain(const unsigned int& element){
+	if (element >= chnVec.size() || element < 0){
+		return 0;
+	}
+	else{
+  	return chnVec.at(element);
+	}
 }
 
 unsigned int Molecule::getChnVecSize(){
@@ -257,8 +267,13 @@ unsigned int Molecule::getResVecSize(){
   return resVec.size();
 }
 
-Residue* Molecule::getResidue(const int& element){
-  return resVec.at(element);
+Residue* Molecule::getResidue(const unsigned int& element){
+	if (element >= resVec.size() || element < 0){
+		return NULL;
+	}
+	else{
+  	return resVec.at(element);
+	}
 }
 
 void Molecule::readTopology(const std::string& topin){
