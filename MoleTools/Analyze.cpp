@@ -1340,15 +1340,17 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 
 void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 	Chain *c;
-	Atom *ai, *aj;
+	Atom *ai, *aj, *ak;
 	unsigned int j, start;
 	double defVal;
 	double iMinus6;//For non-local contacts
 	double iPlus6; //For non-local contacts
 	int diffResId;
 	std::map<std::pair<Atom*, Atom*>, double> caPairDist; //Ca-Ca Distances
-	std::map<Atom*, std::vector<double> > caAngles; //Ca-Ca Angle/Diehdral
-	Molecule* cmol;
+	std::map<std::pair<Atom*, Atom*>, double> pcPairDist; //Pc-Pc Distances
+	std::map<Atom*, std::vector<double> > caAngles; //Ca-Ca Angle/Diehdral/Wide
+	std::map<Atom*, std::vector<double> > pcAngles; //Pc-Pc Angle/Dihedral/Wide
+	Molecule *camol, *pcmol;
   std::ifstream dsspFile;
   std::istream* dsspinp;
   std::string line;
@@ -1357,7 +1359,8 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
   unsigned int natom;
 
 	defVal=9999.9;
-	cmol=NULL;
+	camol=NULL;
+	pcmol=NULL;
   natom=0;
 
 	//Feature List
@@ -1410,16 +1413,17 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 
 	mol->storeSel();
 	mol->select(":.CA");
-	cmol=mol->clone(true,true); //Copy selection, keep original
+	camol=mol->clone(true,true); //Copy selection, keep original
+	pcmol=mol->clone(true,true);
 	mol->recallSel(); //Restore original selection
 	mol->eraseSel();
 
 	//Analyze all C-alpha first
-	Analyze::pairwiseDistance(cmol, caPairDist);
-	Analyze::allAnglesDihedrals(cmol, caAngles);
+	Analyze::pairwiseDistance(camol, caPairDist);
+	Analyze::allAnglesDihedrals(camol, caAngles);
 
-	for (unsigned int ichain=0; ichain < cmol->getChnVecSize(); ichain++){
-		c=cmol->getChain(ichain);
+	for (unsigned int ichain=0; ichain < camol->getChnVecSize(); ichain++){
+		c=camol->getChain(ichain);
 		for (unsigned int iatom=0; iatom < c->getAtmVecSize(); iatom++){
 			ai=c->getAtom(iatom);
 			ai->clearData();
@@ -1485,8 +1489,8 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 			int pinx;
 			minx=-1;
 			pinx=-1;
-			for (j=0; j< cmol->getAtmVecSize(); j++){
-				aj=cmol->getAtom(j);
+			for (j=0; j< camol->getAtmVecSize(); j++){
+				aj=camol->getAtom(j);
 				if (ai == aj){
 					continue;
 				}
@@ -1544,61 +1548,60 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 					}
 				}
 			}
+
 			int k;
-			for (k=pinx-1; k<=pinx+1; k++){
-				if (k >= 0 && k < cmol->getAtmVecSize()){
-					aj=cmol->getAtom(k);
-					ai->addData(caPairDist.at(std::make_pair(ai, aj)));
-/*
-					if (dssp.at(k) == "H"){
-            ai->addData(1.0);
-          }
-          else if (dssp.at(k) == "E"){
-            ai->addData(2.0);
-          }
-          else if (dssp.at(k) == "C"){
-            ai->addData(3.0);
-          }
-          else{
-            ai->addData(4.0);
-          }
-*/
+			int q;
+			int max;
+			max=10;
+			if (iatom == 0){
+				for (k=0; k< max; k++){
+					ai->addData(defVal);
+				}
+				start=0;
+			}
+			else{
+				start=iatom-1;
+			}
+			for (q=start; q<= iatom+1; q++){
+				if (q >=0 && q < c->getAtmVecSize()){
+					ak=c->getAtom(q);
+					for (k=pinx-2; k<=pinx+2; k++){
+						if (k >= 0 && k < camol->getAtmVecSize()){
+							aj=camol->getAtom(k);
+							ai->addData(caPairDist.at(std::make_pair(ak, aj)));
+						}
+						else{
+							ai->addData(defVal);
+						}
+					}
+					for (k=minx-2; k<=minx+2; k++){
+        		if (k >= 0 && k < camol->getAtmVecSize()){
+							aj=camol->getAtom(k);
+							ai->addData(caPairDist.at(std::make_pair(ak, aj)));
+        		}
+        		else{
+          		ai->addData(defVal);
+        		}	
+					}
 				}
 				else{
-					ai->addData(defVal);
-//					ai->addData(4.0);
+					for (k=0; k< max; k++){
+						ai->addData(defVal);
+					}
 				}
 			}
-			for (k=minx-1; k<=minx+1; k++){
-        if (k >= 0 && k < cmol->getAtmVecSize()){
-					aj=cmol->getAtom(k);
-          ai->addData(caPairDist.at(std::make_pair(ai, aj)));
-/*
-					if (dssp.at(k) == "H"){
-            ai->addData(1.0);
-          }
-          else if (dssp.at(k) == "E"){
-            ai->addData(2.0);
-          }
-          else if (dssp.at(k) == "C"){
-            ai->addData(3.0);
-          }
-          else{
-            ai->addData(4.0);
-          }
-*/
-        }
-        else{
-          ai->addData(defVal);
-//          ai->addData(4.0);
-        }	
-      }
+
 		} //Loop through atoms
 	}//Loop through chains
 
+	//Analyze all pseudocenter
+	pcmol->modPseudoCenter();
+	Analyze::pairwiseDistance(pcmol, pcPairDist);
+	Analyze::allAnglesDihedrals(pcmol, pcAngles);
+
 	//Print output
-	for (unsigned int ichain=0; ichain < cmol->getChnVecSize(); ichain++){
-    c=cmol->getChain(ichain);
+	for (unsigned int ichain=0; ichain < camol->getChnVecSize(); ichain++){
+    c=camol->getChain(ichain);
     for (unsigned int iatom=0; iatom < c->getAtmVecSize(); iatom++){
       ai=c->getAtom(iatom);
 	
@@ -1613,37 +1616,6 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
       for (j=0; j< ai->getDataSize(); j++){
           std::cout << ai->getDataPoint(j) << ",";
       }
-
-			//Print S(i-2)
-			if (iatom > 1){
-        //Not first atom of chain
-        aj=c->getAtom(iatom-2);
-        for (j=0; j< ai->getDataSize(); j++){
-          if (aj != NULL){
-            std::cout << aj->getDataPoint(j) << ",";
-          }
-          else{
-            std::cout << defVal << ",";
-          }
-        }
-      }
-      else{
-        //Print S(i-2) which is all default values
-        for (j=0; j< ai->getDataSize(); j++){
-          std::cout << defVal << ",";
-        }
-      }
-
-			//Print S(i+2)
-      aj=c->getAtom(iatom+2);
-      for (j=0; j< ai->getDataSize(); j++){
-        if (aj != NULL){
-          std::cout << aj->getDataPoint(j) << ",";
-        }
-        else{
-          std::cout << defVal << ",";
-        }
-      }	
 
 			//Print S(i-1)
 			if (iatom > 0){
@@ -1688,8 +1660,11 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 		std::cerr << "Warning: DSSP (" << dssp.size() << ") and NATOM (" << natom << ") mismatch" << std::endl;
 	}
 
-	if (cmol != NULL){
-		delete cmol;
+	if (camol != NULL){
+		delete camol;
+	}
+	if (pcmol != NULL){
+		delete pcmol;
 	}
 }
 
