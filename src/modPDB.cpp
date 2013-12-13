@@ -21,6 +21,7 @@ void usage (){
   std::cerr << "         [-center] [-censel selection]" << std::endl;
 	std::cerr << "         [-format type] [-chains]" << std::endl;
   std::cerr << "         [-nohetero]" << std::endl;
+	std::cerr << "         [-cat PDBfile] [-catsel selection]" << std::endl;
   std::cerr << std::endl << std::endl;
   exit(0);
 }
@@ -28,6 +29,7 @@ void usage (){
 int main (int argc, char **argv){
 
   int i;
+	unsigned int j;
   int model=0;
   std::string pdb;
   std::string currArg;
@@ -45,13 +47,17 @@ int main (int argc, char **argv){
   std::string outsel="";
 	Molecule *mol;
 	Molecule *fitmol;
+	Molecule *catmol;
+	std::string catsel="";
 	std::string format;
 	bool chnFlag;
   bool hetFlag;
+	std::vector<std::string> catpdbs;
 
   pdb.clear();
 	mol=NULL;
 	fitmol=NULL; //Stationary molecule
+	catmol=NULL;
   dx=0.0;
   dy=0.0;
   dz=0.0;
@@ -67,7 +73,8 @@ int main (int argc, char **argv){
 	format.clear();
 	chnFlag=false;
   hetFlag=true; //Keep hetero atoms
-  
+  catpdbs.clear();
+
   for (i=1; i<argc; i++){
     currArg=argv[i];
     if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
@@ -144,7 +151,15 @@ int main (int argc, char **argv){
 		}
     else if (currArg.compare("-nohetero") == 0){
       hetFlag=false;
-    } 
+    }
+		else if (currArg.compare("-cat") == 0){
+			currArg=argv[++i];
+			catpdbs.push_back(currArg);
+		}
+		else if (currArg.compare("-catsel") == 0){
+			currArg=argv[++i];
+			catsel=currArg;
+		}
     else{
       pdb=currArg;
     }
@@ -161,6 +176,18 @@ int main (int argc, char **argv){
     mol->select(sel);
 		mol=mol->clone(true, false); //Clone and delete original
   }
+
+	if (catpdbs.size() > 0){
+		for (j=0; j< catpdbs.size(); j++){
+			catmol=Molecule::readPDB(catpdbs.at(j), model, format, hetFlag);
+			if (catsel.length() > 0){
+				catmol->select(catsel);
+				catmol=catmol->clone(true, false); //Clone and delete original
+			}
+			mol->cat(catmol,true,false); //Cat selected and delete original
+			catmol=NULL;
+		}
+	}
 
 	if (fit == true){
 		if (fitpdb.length() > 0){
@@ -210,6 +237,14 @@ int main (int argc, char **argv){
 
 	if (mol != NULL){
 		delete mol;
+	}
+
+	if (fitmol != NULL){
+		delete fitmol;
+	}
+
+	if (catmol != NULL){
+		delete catmol;
 	}
 
   return 0;

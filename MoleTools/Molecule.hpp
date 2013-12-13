@@ -36,7 +36,7 @@ class Molecule {
 		static Molecule* readMol2 (const std::string ifile, const std::string format="");
     Molecule* clone(bool selFlag=true, bool keep=true);
 		Molecule* copy(bool selFlag=true);
-		void cat (Molecule* catmol, bool selFlag=true);
+		void cat (Molecule* catmol, bool selFlag=true, bool keep=true);
     void addAtom(Atom* atmEntry);
     Atom* getAtom(const unsigned int& element); 
     void addChain(Chain* chnEntry);

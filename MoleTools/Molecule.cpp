@@ -221,7 +221,61 @@ Molecule* Molecule::copy (bool selFlag){
   return mol;
 }
 
-void Molecule::cat (Molecule* cmol, bool selFlag){
+void Molecule::cat (Molecule* catmol, bool selFlag, bool keep){
+	//Deep copy
+  Chain *c, *chnEntry;
+  Residue *r, *resEntry;
+  Atom *a, *atmEntry;
+
+  c=NULL;
+  r=NULL;
+  a=NULL;
+  chnEntry=NULL;
+  resEntry=NULL;
+  atmEntry=NULL;
+  this->setCopyFlag(false); //Not a copy
+
+  for (unsigned int i=0; i< catmol->getChnVecSize(); i++){
+    c=catmol->getChain(i);
+    chnEntry=new Chain; //Deleted later if no residues/atoms
+
+    for (unsigned int j=0; j< c->getResVecSize(); j++){
+      r=c->getResidue(j);
+      resEntry=new Residue; //Deleted later if no atoms
+
+      for (unsigned int k=0; k< r->getAtmVecSize(); k++){
+        a=r->getAtom(k);
+        if(selFlag == true && a->getSel() == false){
+          continue;
+        }
+        //Add each selected atom
+        atmEntry=new Atom; //This is necessary!
+        atmEntry->clone(a); //Clone Atom
+        this->addAtom(atmEntry);
+        resEntry->addAtom(atmEntry);
+        chnEntry->addAtom(atmEntry);
+      }
+      if (resEntry->getAtmVecSize() > 0){
+        //Add each residue with selected atoms
+        this->addResidue(resEntry);
+        chnEntry->addResidue(resEntry);
+      }
+      else{
+        delete resEntry;
+      }
+    }
+    if (chnEntry->getResVecSize() > 0){
+      //Add each chain with selected atoms
+      this->addChain(chnEntry);
+    }
+    else{
+      delete chnEntry;
+    }
+  }
+
+  if (keep == false){
+    delete catmol;
+  }
 
 }
 
