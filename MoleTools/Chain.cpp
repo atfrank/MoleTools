@@ -27,7 +27,7 @@ void Chain::addAtom(Atom* atmEntry){
 }
 
 Atom* Chain::getAtom (const unsigned int& element){
-	if (element >= atmVec.size() || element < 0){
+	if (element >= atmVec.size()){
 		return NULL;
 	}
 	else{
@@ -36,7 +36,7 @@ Atom* Chain::getAtom (const unsigned int& element){
 }
 
 Residue* Chain::getResidue (const unsigned int& element){
-	if (element >= resVec.size() || element < 0){
+	if (element >= resVec.size()){
 		return NULL;
 	}
 	else{

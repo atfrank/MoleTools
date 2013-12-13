@@ -207,7 +207,7 @@ std::vector<double>& Atom::getData(){
 }
 
 double& Atom::getDataPoint(const unsigned int element){
-	if (element >= data.size() || element < 0){
+	if (element >= data.size()){
 		std::cerr << "Error: Atom::getDataPoint Out of Range" << std::endl;
 	}
 	return data.at(element);

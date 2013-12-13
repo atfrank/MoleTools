@@ -221,8 +221,12 @@ Molecule* Molecule::copy (bool selFlag){
   return mol;
 }
 
+void Molecule::cat (Molecule* cmol, bool selFlag){
+
+}
+
 Atom* Molecule::getAtom(const unsigned int& element){
-	if (element >= atmVec.size() && element < 0){
+	if (element >= atmVec.size()){
 		return NULL;
 	}
 	else{
@@ -251,7 +255,7 @@ void Molecule::addResidue(Residue* resEntry){
 }
 
 Chain* Molecule::getChain(const unsigned int& element){
-	if (element >= chnVec.size() || element < 0){
+	if (element >= chnVec.size()){
 		return 0;
 	}
 	else{
@@ -268,7 +272,7 @@ unsigned int Molecule::getResVecSize(){
 }
 
 Residue* Molecule::getResidue(const unsigned int& element){
-	if (element >= resVec.size() || element < 0){
+	if (element >= resVec.size()){
 		return NULL;
 	}
 	else{

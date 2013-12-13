@@ -43,7 +43,7 @@ std::string Residue::getSegId(){
 }
 
 Atom* Residue::getAtom (const unsigned int &element){
-	if (element >= atmVec.size() || element < 0){
+	if (element >= atmVec.size()){
 		return NULL;
 	}
 	else{

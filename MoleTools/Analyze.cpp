@@ -1563,7 +1563,7 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 				start=iatom-1;
 			}
 			for (q=start; q<= iatom+1; q++){
-				if (q >=0 && q < c->getAtmVecSize()){
+				if (q < c->getAtmVecSize()){
 					ak=c->getAtom(q);
 					for (k=static_cast<int>(pinx)-2; k<=static_cast<int>(pinx)+2; k++){
 						if (k >= 0 && k < static_cast<int>(camol->getAtmVecSize())){
@@ -1738,7 +1738,7 @@ void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
 				start=iatom-1;
 			}
 			for (q=start; q<= iatom+1; q++){
-				if (q >=0 && q < c->getAtmVecSize()){
+				if (q < c->getAtmVecSize()){
 					ak=c->getAtom(q);
 					for (k=static_cast<int>(pinx)-2; k<=static_cast<int>(pinx)+2; k++){
 						if (k >= 0 && k < static_cast<int>(pcmol->getAtmVecSize())){
