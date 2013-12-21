@@ -22,6 +22,7 @@ class Analyze {
     std::vector<std::string> sel;
 		std::vector<Molecule*> mol;
 		std::vector<double> tdata; //Time dependent data, maybe for averaging
+		std::vector<std::vector<double> > fdata; //Frame data, cleared after each frame
     Eigen::MatrixXd avgCovar;
     std::vector<unsigned int> modes;
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigen;
@@ -43,6 +44,7 @@ class Analyze {
 		void setNData(const int& ndatain);
 		int& getNData();
 		std::vector<double>& getTDataVec();
+		std::vector<std::vector<double> >& getFDataVec();
     void setInput(const std::string& fin);
     std::string getInput();
     void setOutput (const std::string& fin);
@@ -81,8 +83,8 @@ class Analyze {
     static std::vector<double> projectModes(Molecule* cmpmol, Molecule* refmol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int>& modesin);
 		static void pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, double>& pdin);
 		static void allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::vector<double> >& anglesin);
-		static void pcasso(Molecule* mol, std::string dsspin="");
-		static void pcassoTrial(Molecule* mol, std::string dsspin="");
+		static void pcassoOld(Molecule* mol, std::vector<std::vector<double> > &fdataIO, std::string dsspin="");
+		static void pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO, std::string dsspin="");
     //static std::vector<double> gyration(Molecule* mol);
     Eigen::Matrix3d gyrationTensor(Molecule* mol);
     static double quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int> modesin, double temp=300);

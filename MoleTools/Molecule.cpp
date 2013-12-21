@@ -16,6 +16,7 @@ Molecule::Molecule (){
 	storedSel.clear();
 	remarks.clear();
 	iCodeFlag=false;
+	fdata.clear();
 }
 
 Molecule::~Molecule (){
@@ -676,20 +677,26 @@ void Molecule::modPseudoCenter(){
 }
 
 void Molecule::pcasso (std::string dsspin, bool trial){
+	if (fdata.size() == 0 || fdata.size() != this->getNAtomSelected()){
+		fdata.resize(this->getNAtomSelected());
+	}
+
   if (dsspin.length() > 0){
 		if (trial == true){
-			Analyze::pcassoTrial(this, dsspin);
+//			Analyze::pcassoTrial(this, fdata, dsspin);
+			std::cerr << "Warning: \"-trial\" option is not implemented" << std::endl;
 		}
 		else{
-	  	Analyze::pcasso(this, dsspin);
+	  	Analyze::pcasso(this, fdata, dsspin);
 		}
   }
   else{
 		if (trial == true){
-			Analyze::pcassoTrial(this);
+//			Analyze::pcassoTrial(this, fdata);
+			std::cerr << "Warning: \"-trial\" option is not implemented" << std::endl;
 		}
 		else{
-    	Analyze::pcasso(this);
+    	Analyze::pcasso(this, fdata);
 		}
   }
 }

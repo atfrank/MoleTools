@@ -6,6 +6,7 @@ Analyze::Analyze (){
 	sel.clear();
 	mol.clear();
 	tdata.clear();
+	fdata.clear();
 	ndata=0;
 	resel=false;
   avgCovar.resize(0,0);
@@ -104,6 +105,10 @@ int& Analyze::getNData(){
 
 std::vector<double>& Analyze::getTDataVec(){
 	return tdata;
+}
+
+std::vector<std::vector<double> >& Analyze::getFDataVec(){
+	return fdata;
 }
 
 Eigen::MatrixXd& Analyze::getCovar(){
@@ -554,7 +559,14 @@ void AnalyzePairwiseDistance::runAnalysis(){
 }
 
 void AnalyzePcasso::runAnalysis(){
-	Analyze::pcasso(this->getMol(0));
+	std::vector<std::vector<double> > &fdata=this->getFDataVec();
+
+	//Resize if necessary
+	if (fdata.size() == 0 || fdata.size() != this->getMol(0)->getNAtomSelected()){
+	  fdata.resize(this->getMol(0)->getNAtomSelected());
+	}
+
+	Analyze::pcasso(this->getMol(0), fdata);
 }
 
 //All postAnalysis functions
@@ -1072,7 +1084,7 @@ void Analyze::allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::vector<doub
   }
 }
 
-void Analyze::pcasso(Molecule* mol, std::string dsspin){
+void Analyze::pcassoOld(Molecule* mol, std::vector<std::vector<double> > &fdataIO, std::string dsspin){
 	Chain *c;
 	Atom *ai, *aj;
 	unsigned int j, start;
@@ -1338,7 +1350,7 @@ void Analyze::pcasso(Molecule* mol, std::string dsspin){
 	}
 }
 
-void Analyze::pcassoTrial(Molecule* mol, std::string dsspin){
+void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO, std::string dsspin){
 	Chain *c;
 	Atom *ai, *aj, *ak;
 	unsigned int j, start;
