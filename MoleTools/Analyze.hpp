@@ -33,6 +33,7 @@ class Analyze {
 
 	public:
 		Analyze ();
+		virtual ~Analyze ();
 		void addSel(const std::string& selin);
 		std::string getSel(const int& element);
 		unsigned int getNSel();
@@ -172,6 +173,7 @@ class AnalyzePairwiseDistance: public Analyze {
 
 class AnalyzePcasso: public Analyze {
 	public:
+		void preAnalysis(Molecule* molin, std::string fin="");
 		void runAnalysis();
 };
 

@@ -14,6 +14,10 @@ Analyze::Analyze (){
   ofile.clear();
 }
 
+Analyze::~Analyze (){
+	//Do nothing
+}
+
 void Analyze::addSel(const std::string& selin){
 	this->sel.push_back(selin);
 }
@@ -413,6 +417,18 @@ void AnalyzeProjection::preAnalysis(Molecule* molin, std::string topin){
   //std::cout << getEigen().eigenvectors().col(N3-1) << std::endl;
 }
 
+void AnalyzePcasso::preAnalysis(Molecule* molin, std::string fin){
+  this->setInput(fin);
+	this->setupMolSel(molin);
+
+	//Resize if necessary
+	if (this->getFDataVec().size() == 0 || this->getFDataVec().size() != this->getMol(0)->getNAtom()){
+		this->getFDataVec().resize(this->getMol(0)->getNAtom());
+	}
+
+}
+
+
 //All runAnalysis Functions
 
 void AnalyzeCOG::runAnalysis(){
@@ -559,14 +575,7 @@ void AnalyzePairwiseDistance::runAnalysis(){
 }
 
 void AnalyzePcasso::runAnalysis(){
-	std::vector<std::vector<double> > &fdata=this->getFDataVec();
-
-	//Resize if necessary
-	if (fdata.size() == 0 || fdata.size() != this->getMol(0)->getNAtomSelected()){
-	  fdata.resize(this->getMol(0)->getNAtomSelected());
-	}
-
-	Analyze::pcasso(this->getMol(0), fdata);
+	Analyze::pcasso(this->getMol(0), this->getFDataVec(), this->getInput());
 }
 
 //All postAnalysis functions

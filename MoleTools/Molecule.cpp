@@ -16,7 +16,6 @@ Molecule::Molecule (){
 	storedSel.clear();
 	remarks.clear();
 	iCodeFlag=false;
-	fdata.clear();
 }
 
 Molecule::~Molecule (){
@@ -677,28 +676,17 @@ void Molecule::modPseudoCenter(){
 }
 
 void Molecule::pcasso (std::string dsspin, bool trial){
-	if (fdata.size() == 0 || fdata.size() != this->getNAtomSelected()){
-		fdata.resize(this->getNAtomSelected());
-	}
+	Analyze* anin=new AnalyzePcasso;
+	anin->preAnalysis(this, dsspin); //
 
-  if (dsspin.length() > 0){
-		if (trial == true){
-//			Analyze::pcassoTrial(this, fdata, dsspin);
-			std::cerr << "Warning: \"-trial\" option is not implemented" << std::endl;
-		}
-		else{
-	  	Analyze::pcasso(this, fdata, dsspin);
-		}
+	if (trial == true){
+		std::cerr << "Warning: \"-trial\" option is not implemented" << std::endl;
+	}
+	else{
+   	anin->runAnalysis();
   }
-  else{
-		if (trial == true){
-//			Analyze::pcassoTrial(this, fdata);
-			std::cerr << "Warning: \"-trial\" option is not implemented" << std::endl;
-		}
-		else{
-    	Analyze::pcasso(this, fdata);
-		}
-  }
+
+	delete anin;
 }
 
 //Virtual Functions

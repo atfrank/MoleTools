@@ -22,7 +22,6 @@ class Molecule {
 		std::string remarks;
 		bool iCodeFlag;
     Prmtop toppar;
-		std::vector<std::vector<double> > fdata; //Storing features or other data
 
   public:
 		Molecule(); //Constructor
