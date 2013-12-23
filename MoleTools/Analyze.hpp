@@ -3,6 +3,7 @@
 #ifndef ANALYZE_H
 #define ANALYZE_H
 
+#include "Enum.hpp"
 #include "Molecule.hpp"
 #include "Vector.hpp"
 #include "Constants.hpp"
@@ -84,8 +85,7 @@ class Analyze {
     static std::vector<double> projectModes(Molecule* cmpmol, Molecule* refmol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int>& modesin);
 		static void pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, double>& pdin);
 		static void allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::vector<double> >& anglesin);
-		static void pcassoOld(Molecule* mol, std::vector<std::vector<double> > &fdataIO, std::string dsspin="");
-		static void pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO, std::string dsspin="");
+		static void pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO);
     //static std::vector<double> gyration(Molecule* mol);
     Eigen::Matrix3d gyrationTensor(Molecule* mol);
     static double quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int> modesin, double temp=300);
@@ -175,6 +175,7 @@ class AnalyzePcasso: public Analyze {
 	public:
 		void preAnalysis(Molecule* molin, std::string fin="");
 		void runAnalysis();
+		void printPcasso(PcassoOutEnum out=FEATURES);
 };
 
 #endif

@@ -27,7 +27,7 @@ void usage(){
   std::cerr << "         [-covariance selection covarout | -project selection mode1[:mode2[:...:[modeN]]] covarin]" << std::endl;
   std::cerr << "         [-gyrtensor selection] [-rgyr selection] [-ellipsoid selection]" << std::endl;
   std::cerr << "         [-pairdist selection]" << std::endl;
-	std::cerr << "         [-pcasso]" << std::endl;
+	std::cerr << "         [-pcasso] [-predict]" << std::endl;
   std::cerr << "         [-list file]" << std::endl;
   std::cerr << "         [-verbose]" << std::endl;
 	exit(0);
@@ -67,6 +67,7 @@ int main (int argc, char **argv){
   bool timeseries;
   std::vector<unsigned int> modes;
   bool verbose;
+	PcassoOutEnum pout;
 
 	std::vector<Analyze *> analyses;
 	Analyze *anin;
@@ -85,6 +86,7 @@ int main (int argc, char **argv){
 	nline=0;
   timeseries=false;
   modes.clear();
+	pout=FEATURES;
 
 
   for (i=1; i<argc; i++){
@@ -217,6 +219,9 @@ int main (int argc, char **argv){
 			anin=new AnalyzePcasso;
 			anin->addSel(":.CA");
 			analyses.push_back(anin);
+		}
+		else if (currArg.compare("-predict") == 0){
+			
 		}
     else if (currArg.compare("-skip") == 0){
       currArg=argv[++i];

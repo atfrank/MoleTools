@@ -675,19 +675,16 @@ void Molecule::modPseudoCenter(){
 	}
 }
 
-void Molecule::pcasso (std::string dsspin, bool trial){
-	Analyze* anin=new AnalyzePcasso;
+void Molecule::pcasso (std::string dsspin, PcassoOutEnum out){
+	AnalyzePcasso* anin=new AnalyzePcasso;
 
 	anin->addSel(":.CA");
 	
 	anin->preAnalysis(this, dsspin);
 
-	if (trial == true){
-		std::cerr << "Warning: \"-trial\" option is not implemented" << std::endl;
-	}
-	else{
-   	anin->runAnalysis();
-  }
+  anin->runAnalysis();
+
+	anin->printPcasso(out);
 
 	delete anin;
 }

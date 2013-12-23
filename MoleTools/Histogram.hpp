@@ -3,6 +3,7 @@
 #ifndef HISTOGRAM_H
 #define HISTOGRAM_H
 
+#include "Enum.hpp"
 #include "Misc.hpp"
 #include "Constants.hpp"
 
@@ -10,8 +11,6 @@
 #include <iostream>
 #include <limits>
 #include <algorithm>
-
-enum HistoFormatEnum {COUNT, PROBABILITY, DENSITY, ENERGY};
 
 class Histogram {
   private:
