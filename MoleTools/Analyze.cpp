@@ -418,10 +418,11 @@ void AnalyzeProjection::preAnalysis(Molecule* molin, std::string topin){
 }
 
 void AnalyzePcasso::preAnalysis(Molecule* molin, std::string fin){
-  this->setInput(fin);
 	this->setupMolSel(molin);
+	this->setInput(fin);
 
 	//Resize if necessary
+	this->getFDataVec();
 	if (this->getFDataVec().size() == 0 || this->getFDataVec().size() != this->getMol(0)->getNAtom()){
 		this->getFDataVec().resize(this->getMol(0)->getNAtom());
 	}

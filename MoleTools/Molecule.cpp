@@ -677,7 +677,10 @@ void Molecule::modPseudoCenter(){
 
 void Molecule::pcasso (std::string dsspin, bool trial){
 	Analyze* anin=new AnalyzePcasso;
-	anin->preAnalysis(this, dsspin); //
+
+	anin->addSel(":.CA");
+	
+	anin->preAnalysis(this, dsspin);
 
 	if (trial == true){
 		std::cerr << "Warning: \"-trial\" option is not implemented" << std::endl;
