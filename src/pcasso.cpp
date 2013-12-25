@@ -10,8 +10,8 @@
 
 void usage(){
   std::cerr << "Usage:   pcasso [-options] <pdbFile>" << std::endl;
-  std::cerr << "Options: [-dssp dsspFile]" << std::endl;
-	std::cerr << "         [-predict]" << std::endl;
+  std::cerr << "Options: [-predict | -features]" << std::endl;
+//	std::cerr << "         [-dssp dsspFile]" << std::endl;
 //	std::cerr << "         [-trial]" << std::endl;
   std::cerr << std::endl;
   exit(0);
@@ -41,6 +41,9 @@ int main (int argc, char **argv){
     }
 		else if (currArg.compare("-predict") == 0 || currArg.compare("-prediction") == 0){
 			out=PREDICT;
+		}
+		else if (currArg.compare("-features") == 0 || currArg.compare("-feature") == 0){
+			out=FEATURES;
 		}
     else{
       pdbs.push_back(currArg);
