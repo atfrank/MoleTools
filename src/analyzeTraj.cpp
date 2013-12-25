@@ -27,7 +27,7 @@ void usage(){
   std::cerr << "         [-covariance selection covarout | -project selection mode1[:mode2[:...:[modeN]]] covarin]" << std::endl;
   std::cerr << "         [-gyrtensor selection] [-rgyr selection] [-ellipsoid selection]" << std::endl;
   std::cerr << "         [-pairdist selection]" << std::endl;
-	std::cerr << "         [-pcasso] [-predict]" << std::endl;
+	std::cerr << "         [-pcasso predict|features]" << std::endl;
   std::cerr << "         [-list file]" << std::endl;
   std::cerr << "         [-verbose]" << std::endl;
 	exit(0);
@@ -67,7 +67,6 @@ int main (int argc, char **argv){
   bool timeseries;
   std::vector<unsigned int> modes;
   bool verbose;
-	PcassoOutEnum pout;
 
 	std::vector<Analyze *> analyses;
 	Analyze *anin;
@@ -86,8 +85,6 @@ int main (int argc, char **argv){
 	nline=0;
   timeseries=false;
   modes.clear();
-	pout=FEATURES;
-
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -218,10 +215,19 @@ int main (int argc, char **argv){
 		else if (currArg.compare("-pcasso") == 0){
 			anin=new AnalyzePcasso;
 			anin->addSel(":.CA");
-			analyses.push_back(anin);
-		}
-		else if (currArg.compare("-predict") == 0){
-			
+			currArg=argv[++i];
+			if (currArg.compare("predict") == 0 || currArg.compare("prediction") == 0){
+				static_cast<AnalyzePcasso *>(anin)->setOutType(PREDICT);
+				analyses.push_back(anin);
+			}
+			else if (currArg.compare("features") == 0 || currArg.compare("feature") == 0){
+				static_cast<AnalyzePcasso *>(anin)->setOutType(FEATURES);
+				analyses.push_back(anin);
+			}
+			else{
+				std::cerr << "Warning: Unrecognized PCASSO output type" << std::endl;
+				delete anin;
+			}
 		}
     else if (currArg.compare("-skip") == 0){
       currArg=argv[++i];

@@ -571,20 +571,18 @@ void AnalyzePairwiseDistance::runAnalysis(){
 }
 
 void AnalyzePcasso::runAnalysis(){
-	Analyze::pcasso(this->getMol(0), this->getFDataVec()); //PCASSO features get stored in the second argument (a 2-D vector double)
-}
-
-void AnalyzePcasso::printPcasso(PcassoOutEnum out){
 	std::ifstream dsspFile;
   std::istream* dsspinp;
   std::string line;
   std::vector<std::string> dssp;
   std::vector<std::string> s;
   unsigned int natom;
+	
+	Analyze::pcasso(this->getMol(0), this->getFDataVec()); //PCASSO features get stored in the second argument (a 2-D vector double)
 
 	natom=0;
 
-	//Read DSSP file first
+  //Read DSSP file first
   if (this->getInput().length() > 0){
     dsspFile.open(this->getInput().c_str(), std::ios::in);
     dsspinp=&dsspFile;
@@ -610,37 +608,40 @@ void AnalyzePcasso::printPcasso(PcassoOutEnum out){
     if (dsspFile.is_open()){
       dsspFile.close();
     }
-  }	
+  }
 
-	std::vector<std::vector<double> > &feat=this->getFDataVec();
+  std::vector<std::vector<double> > &feat=this->getFDataVec();
 
-	if (out == PREDICT || out == PREDICTION){
+	if (this->getOutType() == PREDICT || this->getOutType() == PREDICTION){
+		std::cerr << "PREDICTIONS NOT IMPLEMENTED YET" << std::endl;
+	}
+	else if (this->getOutType() == FEATURES || this->getOutType() == FEATURE){
+    //Print features
+    for (unsigned int i=0; i < feat.size(); i++){
+      if (this->getInput().length() > 0 && natom < dssp.size()){
+        std::cout << dssp.at(natom) << ",";
+      }
+      else{
+        std::cout << "X" << ",";
+      }
 
+      for (unsigned int j=0; j< feat.at(i).size(); j++){
+        std::cout << feat.at(i).at(j);
+        if (j < feat.at(i).size()-1){
+          std::cout << ",";
+        }
+      }
+
+      std::cout << std::endl;
+      natom++;
+    } //Loop through chains
+
+    if (this->getInput().length() > 0 && dssp.size() != natom){
+      std::cerr << "Warning: DSSP (" << dssp.size() << ") and NATOM (" << natom << ") mismatch" << std::endl;
+    }
 	}
 	else{
-		//Print features
-  	for (unsigned int i=0; i < feat.size(); i++){
-    	if (this->getInput().length() > 0 && natom < dssp.size()){
-      	std::cout << dssp.at(natom) << ",";
-    	}
-    	else{
-      	std::cout << "X" << ",";
-    	}
-
-    	for (unsigned int j=0; j< feat.at(i).size(); j++){
-      	std::cout << feat.at(i).at(j);
-      	if (j < feat.at(i).size()-1){
-        	std::cout << ",";
-      	}
-    	}
-
-    	std::cout << std::endl;
-    	natom++;
-  	} //Loop through chains
-
-  	if (this->getInput().length() > 0 && dssp.size() != natom){
-    	std::cerr << "Warning: DSSP (" << dssp.size() << ") and NATOM (" << natom << ") mismatch" << std::endl;
-  	}
+		std::cerr << "Warning: Unrecognized PCASSO output type" << std::endl;
 	}
 
 }
@@ -702,7 +703,6 @@ void AnalyzeCovariance::postAnalysis(){
     }
   }
 }
-
 
 //Basic analysis functions
 
@@ -1745,4 +1745,12 @@ double Analyze::configurationalEntropy(const Eigen::SelfAdjointEigenSolver<Eigen
   }
 
   return S;
+}
+
+void AnalyzePcasso::setOutType(PcassoOutEnum pin){
+	pout=pin;
+}
+
+PcassoOutEnum AnalyzePcasso::getOutType(){
+	return pout;
 }

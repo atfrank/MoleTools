@@ -677,14 +677,13 @@ void Molecule::modPseudoCenter(){
 
 void Molecule::pcasso (std::string dsspin, PcassoOutEnum out){
 	AnalyzePcasso* anin=new AnalyzePcasso;
-
-	anin->addSel(":.CA");
 	
+	anin->addSel(":.CA");
+	anin->setOutType(out);
+
 	anin->preAnalysis(this, dsspin);
 
   anin->runAnalysis();
-
-	anin->printPcasso(out);
 
 	delete anin;
 }

@@ -69,6 +69,7 @@ class Analyze {
     virtual void preAnalysis();
 		virtual void runAnalysis() =0; //Pure virtual function
 		virtual void postAnalysis();
+		virtual void setOutType(){};
 
 		//Analysis functions
 		static Vector centerOfGeometry(Molecule* mol, bool selFlag=true);
@@ -172,10 +173,14 @@ class AnalyzePairwiseDistance: public Analyze {
 };
 
 class AnalyzePcasso: public Analyze {
+	private:
+		PcassoOutEnum pout;
+
 	public:
+		void setOutType(PcassoOutEnum pin);
+		PcassoOutEnum getOutType();
 		void preAnalysis(Molecule* molin, std::string fin="");
 		void runAnalysis();
-		void printPcasso(PcassoOutEnum out=FEATURES);
 };
 
 #endif
