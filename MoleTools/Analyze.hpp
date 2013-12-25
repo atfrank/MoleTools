@@ -69,7 +69,6 @@ class Analyze {
     virtual void preAnalysis();
 		virtual void runAnalysis() =0; //Pure virtual function
 		virtual void postAnalysis();
-		virtual void setOutType(){};
 
 		//Analysis functions
 		static Vector centerOfGeometry(Molecule* mol, bool selFlag=true);
