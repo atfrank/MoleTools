@@ -19,7 +19,7 @@ class Analyze {
 	private:
     //Since this is an abstract base class
     //all members need to be accessed via a function or passed
-    //directly to the analysis function
+    //directly to the analysis function or set the members as protected
     std::vector<std::string> sel;
 		std::vector<Molecule*> mol;
 		std::vector<double> tdata; //Time dependent data, maybe for averaging
