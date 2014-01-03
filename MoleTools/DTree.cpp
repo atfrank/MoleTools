@@ -18,7 +18,7 @@ void DTree::delDTree(DTreeNode *leaf){
 	}
 }
 
-void DTree::addDTree(int key, DTreeNode *leaf){
+void DTree::addDTree(double key, DTreeNode *leaf){
 	if (key < leaf ->key_value){
 		if (leaf->left != NULL){
 			addDTree(key, leaf->left);
@@ -43,7 +43,7 @@ void DTree::addDTree(int key, DTreeNode *leaf){
 	}
 }
 
-DTreeNode* DTree::searchDTree(int key, DTreeNode *leaf){
+DTreeNode* DTree::searchDTree(double key, DTreeNode *leaf){
 	if (leaf != NULL){
 		if (key == leaf->key_value){
 			return leaf;
@@ -60,7 +60,7 @@ DTreeNode* DTree::searchDTree(int key, DTreeNode *leaf){
 	}
 }
 
-void DTree::addDTree(int key){
+void DTree::addDTree(double key){
 	//Public version of the addDTree function
 	//Takes care of when the root node has not been initialized
 	if (root != NULL){
@@ -74,7 +74,7 @@ void DTree::addDTree(int key){
 	}
 }
 
-DTreeNode* DTree::searchDTree(int key){
+DTreeNode* DTree::searchDTree(double key){
 	//Public version of the searchDTree function
 	//Starts search recursion starting at root node
 	return searchDTree(key, root);
