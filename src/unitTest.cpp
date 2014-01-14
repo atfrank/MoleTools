@@ -37,7 +37,10 @@ int main (int argc, char **argv){
 	DTree* root=new DTree; //Keep root for this tree
 	DTree* t=root;
 	std::vector<std::vector <double> > f;
+	std::vector<std::string> tokens;
+	std::string delim=":";
 
+/*
 	f.resize(3);
 	for (unsigned int i=0; i< f.size(); i++){
 		f.at(i).resize(3);
@@ -46,21 +49,31 @@ int main (int argc, char **argv){
 //			std::cerr << f.at(i).at(j) << std::endl;
 		}
 	}
-
-/*
-	t->addDTree(4.5);
-	t->searchDTree(4.5)->SSE="C";
-	std::cerr << t->searchDTree(4.5)->SSE << std::endl;
-	std::cerr << t->searchDTree(4.5)->left << std::endl;
-	t->searchDTree(4.5)->inx=10;
-	std::cerr << t->searchDTree(4.5)->inx << std::endl;
-	t->addDTree(5.5);
-	t->searchDTree(5.5)->inx=20;
-	std::cerr << t->searchDTree(4.5)->inx << std::endl;
-	std::cerr << t->searchDTree(5.5)->inx << std::endl;
-	std::cerr << t->searchDTree(4.5)->right->inx << std::endl;
 */
 
+	f.resize(1);
+	f.at(0).resize(11);
+	f.at(0).at(0)=1.5;
+	f.at(0).at(1)=2.5;
+	f.at(0).at(2)=3.5;
+	f.at(0).at(3)=4.5;
+	f.at(0).at(4)=6.0;
+	f.at(0).at(5)=7.0;
+	f.at(0).at(6)=8.0;
+	f.at(0).at(7)=9.0;
+	f.at(0).at(8)=10.0;
+	f.at(0).at(9)=11.0;
+	f.at(0).at(10)=12.0;
+
+	std::string serialT = "1.0:1 2.0:2 3.0:3 4.0:4 H C 5.0:5 E H 6.0:6 C E 7.0:7 8.0:8 9.0:9 E C 10.0:10 H E 11.0:11 H E";
+
+	Misc::splitStr(Misc::trim(serialT), " \t", tokens, false);
+	t->genDTree(tokens, delim);
+
+	std::cerr << t->getDTreeClass(f.at(0)) << std::endl;
+
+	t->delDTree();
+/*
 	t->addDTree(4.5, 0, "C");
 	t->addDTree(5.5, 0, "H");
 	t->addDTree(6.5, 0, "E");
@@ -68,7 +81,7 @@ int main (int argc, char **argv){
 	std::cerr << t->getDTreeRoot()->left->cls << std::endl;
 	std::cerr << t->getDTreeRoot()->getDTreeNodeLeft()->cls << std::endl;
 	std::cerr << t->getDTreeRoot()->left->left->cls << std::endl;
-	
+*/	
 
   return 0;
 }
