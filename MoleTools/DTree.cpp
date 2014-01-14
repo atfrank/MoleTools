@@ -99,7 +99,11 @@ std::string DTree::getDTreeClass(DTreeNode *leaf, const std::vector<double> &fin
 		}
 	}
 	else{
-		if (fin.at(leaf->inx) < leaf->key_value){
+		if (leaf->inx >= fin.size()){
+			std::cerr << "Error: Missing feature (inx = " << leaf->inx << " )" << std::endl;
+			return "";
+		}
+		else if (fin.at(leaf->inx) < leaf->key_value){
 			return getDTreeClass(leaf->left, fin);
 		}
 		else{
