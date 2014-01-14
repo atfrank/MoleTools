@@ -53,19 +53,21 @@ int main (int argc, char **argv){
 
 	f.resize(1);
 	f.at(0).resize(11);
-	f.at(0).at(0)=1.5;
-	f.at(0).at(1)=2.5;
-	f.at(0).at(2)=3.5;
-	f.at(0).at(3)=4.5;
+	f.at(0).at(0)=0.5;
+	f.at(0).at(1)=3.5;
+	f.at(0).at(2)=4.5;
+	f.at(0).at(3)=0.5;
 	f.at(0).at(4)=6.0;
-	f.at(0).at(5)=7.0;
-	f.at(0).at(6)=8.0;
-	f.at(0).at(7)=9.0;
+	f.at(0).at(5)=5.0;
+	f.at(0).at(6)=6.0;
+	f.at(0).at(7)=7.0;
 	f.at(0).at(8)=10.0;
 	f.at(0).at(9)=11.0;
 	f.at(0).at(10)=12.0;
 
-	std::string serialT = "1.0:1 2.0:2 3.0:3 4.0:4 H C 5.0:5 E H 6.0:6 C E 7.0:7 8.0:8 9.0:9 E C 10.0:10 H E 11.0:11 H E";
+//	std::string serialT = "1.0:1 2.0:2 3.0:3 4.0:4 A B 5.0:5 C D 6.0:6 E F 7.0:7 8.0:8 9.0:9 G H 10.0:10 I J 11.0:11 K L";
+	std::string serialT = "1.0:1 2.0:2 3.0:3 4.0:4 A B Z 5.0:5 C D 6.0:6 E F 7.0:7 8.0:8 9.0:9 G H 10.0:10 I J 11.0:11 K L";
+
 
 	Misc::splitStr(Misc::trim(serialT), " \t", tokens, false);
 	t->genDTree(tokens, delim);

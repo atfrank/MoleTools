@@ -91,8 +91,12 @@ std::string DTree::getDTreeClass(DTreeNode *leaf, const std::vector<double> &fin
 		return leaf->cls;
 	}
 	else if (leaf->left == NULL || leaf->right == NULL){
-		std::cerr << "Error: The decision tree has missing nodes!" << std::endl;
-		return "";
+		if (leaf->left != NULL){
+			return getDTreeClass(leaf->left, fin);
+		}
+		else{
+			return getDTreeClass(leaf->right, fin);
+		}
 	}
 	else{
 		if (fin.at(leaf->inx) < leaf->key_value){
