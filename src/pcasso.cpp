@@ -28,7 +28,7 @@ int main (int argc, char **argv){
 	PcassoOutEnum out;
 
   dssp.clear();
-	out=FEATURES;
+	out=PREDICT;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];

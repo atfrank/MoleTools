@@ -78,7 +78,7 @@ class Molecule {
     void rotate (const double &r1c1, const double &r1c2, const double &r1c3, const double &r2c1, const double &r2c2, const double &r2c3, const double &r3c1, const double &r3c2, const double &r3c3);
     void center (bool selFlag=true);
 		void modPseudoCenter();
-		void pcasso (std::string dsspin="", PcassoOutEnum out=FEATURES);
+		void pcasso (std::string dsspin="", PcassoOutEnum out=PREDICT);
 
 		//Virtual functions
 		virtual void format();

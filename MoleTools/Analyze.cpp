@@ -18,6 +18,11 @@ Analyze::~Analyze (){
 	//Do nothing
 }
 
+AnalyzePcasso::AnalyzePcasso (){
+	pout=PREDICT;
+	#include "PCASSO.hpp"
+}
+
 void Analyze::addSel(const std::string& selin){
 	this->sel.push_back(selin);
 }

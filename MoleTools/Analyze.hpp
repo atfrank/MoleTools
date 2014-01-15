@@ -7,6 +7,7 @@
 #include "Molecule.hpp"
 #include "Vector.hpp"
 #include "Constants.hpp"
+#include "DTree.hpp"
 #include "Eigen/Eigenvalues"
 #include "Eigen/LU"
 
@@ -174,8 +175,10 @@ class AnalyzePairwiseDistance: public Analyze {
 class AnalyzePcasso: public Analyze {
 	private:
 		PcassoOutEnum pout;
+		std::vector<DTree *> t;
 
 	public:
+		AnalyzePcasso();
 		void setOutType(PcassoOutEnum pin);
 		PcassoOutEnum getOutType();
 		void preAnalysis(Molecule* molin, std::string fin="");

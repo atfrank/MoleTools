@@ -3,10 +3,8 @@
 #ifndef PCASSO_H
 #define PCASSO_H
 
-#include "BTree.hpp"
-
-class PCASSO: public BTree {
-
-};
+//for (unsigned int i=0; i< 50; i++){
+//  t.push_back(new DTree);
+//}
 
 #endif
