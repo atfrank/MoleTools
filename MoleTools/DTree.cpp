@@ -4,6 +4,7 @@
 
 DTree::DTree(){
 	root=NULL;
+	classMap.clear();
 }
 
 DTree::~DTree(){
@@ -45,7 +46,7 @@ void DTree::addDTree(double key, DTreeNode *leaf, unsigned int index, std::strin
 
 void DTree::genDTree(DTreeNode *&leaf, std::vector<std::string> &t, unsigned int &inx, std::string delim){
 	//Pre-order string expected
-	//Example: 1.0:1 2.0:2 3.0:3 4.0:4 H C 5.0:5 E H 6.0:6 C E 7.0:7 8.0:8 9.0:9 E C 10.0:10 H E 11.0:11 H E 
+	//Example: 0.0:0 1.0:1 2.0:2 3.0:3 A B 4.0:4 C D 5.0:5 E F 6.0:6 7.0:7 8.0:8 G H 9.0:9 I J 10.0:10 K L 
 	//Value:Index or Class
 
   std::vector<std::string> s;
@@ -73,7 +74,7 @@ void DTree::genDTree(DTreeNode *&leaf, std::vector<std::string> &t, unsigned int
       std::stringstream(s.at(0)) >> d;
       leaf->key_value=d;
       std::stringstream(s.at(1)) >> i;
-      leaf->inx=i-1;
+      leaf->inx=i; //Base zero
       this->genDTree(leaf->left, t, ++inx, delim);
 			this->genDTree(leaf->right, t, ++inx, delim);
     }
@@ -88,13 +89,21 @@ void DTree::genDTree(DTreeNode *&leaf, std::vector<std::string> &t, unsigned int
 
 std::string DTree::getDTreeClass(DTreeNode *leaf, const std::vector<double> &fin){
 	if (leaf->left == NULL && leaf->right == NULL){
-		return leaf->cls;
+		//Return class
+		if (this->getClassSize() != 0){
+			return this->getClass(leaf->cls);
+		}
+		else{
+			return leaf->cls;
+		}
 	}
 	else if (leaf->left == NULL || leaf->right == NULL){
 		if (leaf->left != NULL){
+			//Go deeper
 			return getDTreeClass(leaf->left, fin);
 		}
 		else{
+			//Go deeper
 			return getDTreeClass(leaf->right, fin);
 		}
 	}
@@ -103,10 +112,12 @@ std::string DTree::getDTreeClass(DTreeNode *leaf, const std::vector<double> &fin
 			std::cerr << "Error: Missing feature (inx = " << leaf->inx << " )" << std::endl;
 			return "";
 		}
-		else if (fin.at(leaf->inx) < leaf->key_value){
+		else if (fin.at(leaf->inx) <= leaf->key_value){
+			//Go deeper
 			return getDTreeClass(leaf->left, fin);
 		}
 		else{
+			//Go deeper
 			return getDTreeClass(leaf->right, fin);
 		}
 	}
@@ -131,7 +142,7 @@ void DTree::addDTree(double key, unsigned int index, std::string classin){
 void DTree::genDTree(std::vector<std::string> &t, std::string delim){
 	//Public version of the genDTree function
 	//Pre-order string expected
-	//Example: 1.0:1 2.0:2 3.0:3 4.0:4 H C 5.0:5 E H 6.0:6 C E 7.0:7 8.0:8 9.0:9 E C 10.0:10 H E 11.0:11 H E
+	//Example: 0.0:0 1.0:1 2.0:2 3.0:3 A B 4.0:4 C D 5.0:5 E F 6.0:6 7.0:7 8.0:8 G H 9.0:9 I J 10.0:10 K L
 	//Value:Index or Class
 
 	unsigned int inx;
@@ -162,7 +173,7 @@ void DTree::genDTree(std::vector<std::string> &t, std::string delim){
 			std::stringstream(s.at(0)) >> d;
 			root->key_value=d;
 			std::stringstream(s.at(1)) >> i;
-			root->inx=i-1;
+			root->inx=i; //Base zero
 			this->genDTree(root->left, t, ++inx, delim);
 			this->genDTree(root->right, t, ++inx, delim);
 		}
@@ -207,3 +218,27 @@ DTreeNode* DTreeNode::getDTreeNodeLeft(){
 DTreeNode* DTreeNode::getDTreeNodeRight(){
 	return this->right;
 }
+
+unsigned int DTree::getClassSize(){
+	return classMap.size();
+}
+
+void DTree::addClass(std::string valin, std::string classin){
+	classMap.insert(std::pair<std::string,std::string>(valin, classin));	
+}
+
+void DTree::delClass(std::string classin){
+	
+}
+
+std::string DTree::getClass(std::string valin){
+	if (classMap.find(valin) != classMap.end()){
+		return classMap.at(valin);
+	}
+	else{
+		std::cerr << "Error: Unrecognized class mapping \"" << valin << "\"" << std::endl;
+		return "";
+	}
+}
+
+

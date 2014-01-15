@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <map>
 
 struct DTreeNode{
   double key_value;
@@ -27,6 +28,7 @@ class DTree {
 
 		void delDTree(DTreeNode *leaf);
 		DTreeNode* root;
+		std::map<std::string, std::string> classMap;
 		
 		void addDTree(double key, DTreeNode *leaf, unsigned int index, std::string classin="");
 		std::string getDTreeClass(DTreeNode *leaf, const std::vector<double> &fin);
@@ -44,6 +46,11 @@ class DTree {
 
 		DTreeNode* getDTreeRoot();
 		std::string getDTreeClass(const std::vector<double> &fin);
+
+		unsigned int getClassSize();
+		void addClass(std::string valin, std::string classin);
+		void delClass(std::string classin);
+		std::string getClass(std::string valin);
 };
 
 #endif
