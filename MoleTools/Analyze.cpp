@@ -627,6 +627,7 @@ void AnalyzePcasso::runAnalysis(){
 	std::map<std::string, unsigned int> vote; 
 	std::map<std::string, unsigned int>::iterator iter;
 	std::string tmpClass;
+	std::string maxClass;
 	unsigned int max;
 
 	if (this->getOutType() == PREDICT || this->getOutType() == PREDICTION){
@@ -637,21 +638,18 @@ void AnalyzePcasso::runAnalysis(){
 				tmpClass=t.at(j)->getDTreeClass(feat.at(i));
 				if (vote.find(tmpClass) != vote.end()){
 					vote.at(tmpClass)++;
+					if (vote.at(tmpClass) > max){
+						//Find majority vote, method matches openCV
+						//Is pseudo-random since it depends on the order of the trees
+						max=vote.at(tmpClass);
+						maxClass=tmpClass;
+					}
 				}
 				else{
 					vote.insert(std::pair<std::string, unsigned int>(tmpClass,1));
 				}
 			}
-			//Find majority vote, take last class (H > E > C)if there is a tie
-			for (iter=vote.begin(); iter != vote.end(); iter++){
-//				std::cout << iter->second << " ";
-				if (iter->second >= max){ //">=" ensures that H > E > C
-					tmpClass=iter->first;
-					max=iter->second;
-				}
-			}
-//			std::cout << std::endl;
-			std::cout << tmpClass << std::endl;
+			std::cout << maxClass << std::endl; //Print majority vote
 		}
 	}
 	else if (this->getOutType() == FEATURES || this->getOutType() == FEATURE){
@@ -744,9 +742,9 @@ void AnalyzeCovariance::postAnalysis(){
 }
 
 void AnalyzePcasso::postAnalysis(){
-	for (unsigned int i=0; i< PCASSO::getNTree(); i++){
-		t.at(i)->delDTree();
-		delete t.at(i);
+	while (!t.empty()){
+		t.back()->delDTree();
+		t.pop_back();
 	}
 }
 
