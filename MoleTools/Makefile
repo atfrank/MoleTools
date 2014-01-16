@@ -15,8 +15,5 @@ clean:
 	rm -rf *stackdump
 	rm -rf *~
 
-#PCASSO.o:  PCASSO.hpp
-#	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(LIBFLAGS) $(DEBUG) -c $< -o $@
-
 %.o:	%.cpp
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(LIBFLAGS) $(DEBUG) -c $< -o $@

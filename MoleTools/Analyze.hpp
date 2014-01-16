@@ -8,6 +8,7 @@
 #include "Vector.hpp"
 #include "Constants.hpp"
 #include "DTree.hpp"
+#include "PCASSO.hpp"
 #include "Eigen/Eigenvalues"
 #include "Eigen/LU"
 
@@ -178,11 +179,12 @@ class AnalyzePcasso: public Analyze {
 		std::vector<DTree *> t;
 
 	public:
-		AnalyzePcasso();
+		AnalyzePcasso(std::string delim=":");
 		void setOutType(PcassoOutEnum pin);
 		PcassoOutEnum getOutType();
 		void preAnalysis(Molecule* molin, std::string fin="");
 		void runAnalysis();
+		void postAnalysis();
 };
 
 #endif

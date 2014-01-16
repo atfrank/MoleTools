@@ -18,9 +18,17 @@ Analyze::~Analyze (){
 	//Do nothing
 }
 
-AnalyzePcasso::AnalyzePcasso (){
+AnalyzePcasso::AnalyzePcasso (std::string delim){
+	std::vector<std::string> tokens;
+
 	pout=PREDICT;
-	#include "PCASSO.hpp"
+	t.clear();
+	t.resize(PCASSO::getNTree());
+	for (unsigned int i=0; i< PCASSO::getNTree(); i++){
+		t.at(i)=new DTree;
+		Misc::splitStr(Misc::trim(PCASSO::getTree(i)), " \t", tokens, false);
+		t.at(i)->genDTree(tokens, delim);
+	}
 }
 
 void Analyze::addSel(const std::string& selin){
@@ -616,9 +624,35 @@ void AnalyzePcasso::runAnalysis(){
   }
 
   std::vector<std::vector<double> > &feat=this->getFDataVec();
+	std::map<std::string, unsigned int> vote; 
+	std::map<std::string, unsigned int>::iterator iter;
+	std::string tmpClass;
+	unsigned int max;
 
 	if (this->getOutType() == PREDICT || this->getOutType() == PREDICTION){
-		std::cerr << "PREDICTIONS NOT IMPLEMENTED YET" << std::endl;
+		for (unsigned int i=0; i< feat.size(); i++){
+			vote.clear();
+			max=0;
+			for (unsigned int j=0; j< PCASSO::getNTree(); j++){
+				tmpClass=t.at(j)->getDTreeClass(feat.at(i));
+				if (vote.find(tmpClass) != vote.end()){
+					vote.at(tmpClass)++;
+				}
+				else{
+					vote.insert(std::pair<std::string, unsigned int>(tmpClass,1));
+				}
+			}
+			//Find majority vote, take last class (H > E > C)if there is a tie
+			for (iter=vote.begin(); iter != vote.end(); iter++){
+//				std::cout << iter->second << " ";
+				if (iter->second >= max){ //">=" ensures that H > E > C
+					tmpClass=iter->first;
+					max=iter->second;
+				}
+			}
+//			std::cout << std::endl;
+			std::cout << tmpClass << std::endl;
+		}
 	}
 	else if (this->getOutType() == FEATURES || this->getOutType() == FEATURE){
     //Print features
@@ -707,6 +741,13 @@ void AnalyzeCovariance::postAnalysis(){
       out.close();
     }
   }
+}
+
+void AnalyzePcasso::postAnalysis(){
+	for (unsigned int i=0; i< PCASSO::getNTree(); i++){
+		t.at(i)->delDTree();
+		delete t.at(i);
+	}
 }
 
 //Basic analysis functions

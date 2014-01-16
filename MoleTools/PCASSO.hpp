@@ -3,8 +3,18 @@
 #ifndef PCASSO_H
 #define PCASSO_H
 
-//for (unsigned int i=0; i< 50; i++){
-//  t.push_back(new DTree);
-//}
+#include <string>
+#include <vector>
+
+class PCASSO {
+	private:
+		//Don't put std::vector<std::string> t here!
+		//Can't instantiate object when using static call!
+
+	public:
+		static std::string getTree (unsigned int elem);
+		static unsigned int getNTree();
+
+};
 
 #endif
