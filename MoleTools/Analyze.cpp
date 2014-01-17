@@ -628,21 +628,29 @@ void AnalyzePcasso::runAnalysis(){
 	std::map<std::string, unsigned int>::iterator iter;
 	std::string tmpClass;
 	std::string maxClass;
-	unsigned int max;
+	unsigned int maxVote;
+	bool majority;
+	unsigned int ntree;
+
+	ntree=PCASSO::getNTree();
 
 	if (this->getOutType() == PREDICT || this->getOutType() == PREDICTION){
 		for (unsigned int i=0; i< feat.size(); i++){
 			vote.clear();
-			max=0;
-			for (unsigned int j=0; j< PCASSO::getNTree(); j++){
+			maxVote=0;
+			majority=false;
+			for (unsigned int j=0; j< ntree && majority == false; j++){
 				tmpClass=t.at(j)->getDTreeClass(feat.at(i));
 				if (vote.find(tmpClass) != vote.end()){
 					vote.at(tmpClass)++;
-					if (vote.at(tmpClass) > max){
-						//Find majority vote, method matches openCV
+					if (vote.at(tmpClass) > maxVote){
+						//Find majority vote, method adapted from openCV
 						//Is pseudo-random since it depends on the order of the trees
-						max=vote.at(tmpClass);
+						maxVote=vote.at(tmpClass);
 						maxClass=tmpClass;
+						if (static_cast<float>(maxVote)/ntree > 0.5){ //Unsigned integer division!
+							majority=true;
+						}
 					}
 				}
 				else{
@@ -1225,26 +1233,6 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 	camol=NULL;
 	pcmol=NULL;
 
-	//Feature List
-	/*
-	(1)  Ca(i) -- Ca(i-2)
-	(2)  Ca(i) -- Ca(i-1)
-	(3)  Ca(i) -- Ca(i+1)
-	(4)  Ca(i) -- Ca(i+2)
-	(5)  Ca(i) -- Ca(i+3)
-	(6)  Ca(i) -- Ca(i+4)
-	(7)  Ca(i) -- Ca(i+5)
-	(15) Ca(i-1) -- Ca(i) -- Ca(i+1)
-	(16) Ca(i) -- Ca(i+1) -- Ca(i+2) -- Ca(i+3)
-	(17) Ca(i-2) -- Ca(i) -- Ca(i+2)
-	(21) Ca(i) -- Ca(j >= i+6, 1)
-	(22) Ca(i) -- Ca(j >= i+6, 2)
-	(23) Ca(i) -- Ca(j >= i+6, 3)
-	(24) Ca(i) -- Ca(j <= i-6, 1)
-	(25) Ca(i) -- Ca(j <= i-6, 2)
-	(26) Ca(i) -- Ca(j <= i-6, 3)
-	*/
-
 	mol->storeSel();
 	mol->select(":.CA");
 	camol=mol->clone(true,true); //Copy selection, keep original
@@ -1612,6 +1600,7 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
     c=camol->getChain(ichain);
     for (unsigned int iatom=0; iatom < c->getAtmVecSize(); iatom++){
       ai=c->getAtom(iatom);
+			fdataIO.at(natom).reserve(3*ai->getDataSize());
 	
 			//Store S(i)
       for (j=0; j< ai->getDataSize(); j++){
