@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
+#include <ctime>
 
 void usage(){
   std::cerr << "Usage:   pcasso [-options] <pdbFile>" << std::endl;
@@ -72,7 +73,12 @@ int main (int argc, char **argv){
 	  for (j=0; j< pdbs.size(); j++){
   	  Molecule *mol=Molecule::readPDB(pdbs.at(j));
 		  std::cerr << "Processing file \"" << pdbs.at(j) << "..." << std::endl;
+				std::clock_t start;
+				double duration;
+				start=std::clock();
 			mol->pcasso("", out); //Makes temporary clone with C-alpha only, and analyzes it
+				duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
+//				std::cerr << duration << std::endl;
 		  delete mol;
     }
 	}

@@ -566,10 +566,12 @@ void AnalyzeEllipsoid::runAnalysis(){
 }
 
 void AnalyzePairwiseDistance::runAnalysis(){
-  std::map<std::pair<Atom*, Atom*>, double> pdist;
+//  std::map<std::pair<Atom*, Atom*>, double> pdist;
+	std::vector<std::vector<double> > pdist;
   Atom* ai;
   Atom* aj;
   
+	this->getMol(0)->assignAtmInx();
   Analyze::pairwiseDistance(this->getMol(0), pdist);
 
   for (unsigned int i=0; i< this->getMol(0)->getAtmVecSize(); i++){
@@ -578,7 +580,7 @@ void AnalyzePairwiseDistance::runAnalysis(){
       aj=this->getMol(0)->getAtom(j);
 //      std::cout << "  " << ai->getSummary() << "-" << aj->getSummary();
       std::cout << std::fixed;
-      std::cout << std::setw(9) << std::right << std::setprecision(3) << pdist.at(std::make_pair(ai, aj));
+			std::cout << std::setw(9) << std::right << std::setprecision(3) << pdist.at(ai->getAtmInx()).at(aj->getAtmInx());
     }
   }
 }
@@ -1108,14 +1110,16 @@ std::vector<double> Analyze::projectModes(Molecule* cmpmol, Molecule* refmol, co
   return proj;
 }
 
-void Analyze::pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, double>& pdin){
+void Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector< double> >& pdin){
 	unsigned int i, j;
 	double distance;
 
 	pdin.clear();
+	pdin.resize(mol->getAtmVecSize());
 
 	for (i=0; i< mol->getAtmVecSize(); i++){
-		pdin.insert(std::make_pair(std::make_pair(mol->getAtom(i), mol->getAtom(i)), 0.0)); //Zero diagonal
+		pdin.at(i).resize(mol->getAtmVecSize());
+		pdin.at(mol->getAtom(i)->getAtmInx()).at(mol->getAtom(i)->getAtmInx())=0.0; //Zero diagonal
 	}
 
   for (i=0; i< mol->getAtmVecSize(); i++){
@@ -1124,18 +1128,20 @@ void Analyze::pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, 
 			if (mol->getAtom(i)->getX() < 9999.9 && mol->getAtom(j)->getX() < 9999.9){
 				distance=Analyze::distance(mol->getAtom(i)->getCoor(), mol->getAtom(j)->getCoor());
 			}
-		  pdin.insert(std::make_pair(std::make_pair(mol->getAtom(i), mol->getAtom(j)), distance));
-		  pdin.insert(std::make_pair(std::make_pair(mol->getAtom(j), mol->getAtom(i)), distance));
+			pdin.at(mol->getAtom(i)->getAtmInx()).at(mol->getAtom(j)->getAtmInx())=distance;
+			pdin.at(mol->getAtom(j)->getAtmInx()).at(mol->getAtom(i)->getAtmInx())=distance;
     }
   }
 }
 
-void Analyze::allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::vector<double> >& angin){
+void Analyze::allAnglesDihedrals(Molecule *mol, std::vector<std::vector<double> >& anglesin){
 	unsigned int i, j;
 	Chain *c;
 	Atom *atmI, *iMinusTwo, *iMinusOne, *iPlusOne, *iPlusTwo, *iPlusThree;
 	unsigned int size;
 	std::vector<double> angles;
+
+	anglesin.resize(mol->getAtmVecSize());
 
 	for (i=0; i< mol->getChnVecSize(); i++){
     c=mol->getChain(i);
@@ -1207,7 +1213,8 @@ void Analyze::allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::vector<doub
 				//Get Wide Angle (i-2, i, i+2)
 				angles.at(2)=Analyze::angle(iMinusTwo->getCoor(), atmI->getCoor(), iPlusTwo->getCoor());
 			}
-			angin.insert(std::make_pair(atmI, angles));
+			anglesin.at(atmI->getAtmInx()).resize(3);
+			anglesin.at(atmI->getAtmInx())=angles;
     }
   }
 }
@@ -1222,10 +1229,10 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 	unsigned minx;
 	unsigned pinx;
 	int diffResId;
-	std::map<std::pair<Atom*, Atom*>, double> caPairDist; //Ca-Ca Distances
-	std::map<std::pair<Atom*, Atom*>, double> pcPairDist; //Pc-Pc Distances
-	std::map<Atom*, std::vector<double> > caAngles; //Ca-Ca Angle/Diehdral/Wide
-	std::map<Atom*, std::vector<double> > pcAngles; //Pc-Pc Angle/Dihedral/Wide
+	std::vector<std::vector<double> > caPairDist; //Ca-Ca Distances
+	std::vector<std::vector<double> > pcPairDist; //Pc-Pc Distances
+	std::vector<std::vector<double> > caAngles; //Ca-Ca Angle/Diehdral/Wide
+	std::vector<std::vector<double> > pcAngles; //Pc-Pc Angle/Dihedral/Wide
 	Molecule *camol, *pcmol;
 	unsigned int natom;
 
@@ -1239,6 +1246,9 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 	pcmol=mol->clone(true,true);
 	mol->recallSel(); //Restore original selection
 	mol->eraseSel();
+
+	camol->assignAtmInx();
+	pcmol->assignAtmInx();
 
 	//Analyze all C-alpha first
 	Analyze::pairwiseDistance(camol, caPairDist);
@@ -1295,13 +1305,13 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 					continue;
 				}
 				else{
-					ai->addData(caPairDist.at(std::make_pair(ai, aj)));
+					ai->addData(caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()));
 				}
 			}
 
 			//Angles and Dihedrals
-			for (j=0; j< caAngles.at(ai).size(); j++){
-				ai->addData(caAngles.at(ai).at(j));
+			for (j=0; j< caAngles.at(ai->getAtmInx()).size(); j++){
+				ai->addData(caAngles.at(ai->getAtmInx()).at(j));
 			}
 		
 			//Shortest non-local contact distance, >= i+6 and <= i-6
@@ -1317,25 +1327,25 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 				//i+6
 				if (ai->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
-					if (caPairDist.at(std::make_pair(ai,aj)) < iPlus6){
+					if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
 						pinx=j;
-						iPlus6=caPairDist.at(std::make_pair(ai,aj));
+						iPlus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
 					}
 				}
 				else{
 					//atom i and atom j are on the same chain
 					diffResId=aj->getResId() - ai->getResId();
 					if (diffResId >= 6){
-						if (caPairDist.at(std::make_pair(ai,aj)) < iPlus6){
+						if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
 						  pinx=j;
-							iPlus6=caPairDist.at(std::make_pair(ai,aj));
+							iPlus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
 						}
 					}
 					else{
 						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) >= 6)){
-							if (caPairDist.at(std::make_pair(ai,aj)) < iPlus6){
+							if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
            	 		pinx=j;
-            		iPlus6=caPairDist.at(std::make_pair(ai,aj));
+								iPlus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
           		}
 						}
 					}
@@ -1344,25 +1354,25 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 				//i-6
 				if (ai->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
-					if (caPairDist.at(std::make_pair(ai,aj)) < iMinus6){
+					if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
             minx=j;
-            iMinus6=caPairDist.at(std::make_pair(ai,aj));
+						iMinus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
           }
 				}
 				else{
 					//atom i and atom j are on the same chain
 					diffResId=aj->getResId() - ai->getResId();
 					if (diffResId <= -6){
-						if (caPairDist.at(std::make_pair(ai,aj)) < iMinus6){
+						if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
             	minx=j;
-            	iMinus6=caPairDist.at(std::make_pair(ai,aj));
+							iMinus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
           	}
 					}
 					else{
 						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) <= -6)){
-							if (caPairDist.at(std::make_pair(ai,aj)) < iMinus6){
+							if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
             		minx=j;
-            		iMinus6=caPairDist.at(std::make_pair(ai,aj));
+								iMinus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
           		}
 						}
 					}
@@ -1388,7 +1398,7 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 					for (k=static_cast<int>(pinx)-2; k<=static_cast<int>(pinx)+2; k++){
 						if (k >= 0 && k < static_cast<int>(camol->getAtmVecSize())){
 							aj=camol->getAtom(k);
-							ai->addData(caPairDist.at(std::make_pair(ak, aj)));
+							ai->addData(caPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()));
 						}
 						else{
 							ai->addData(defVal);
@@ -1397,7 +1407,7 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 					for (k=static_cast<int>(minx)-2; k<=static_cast<int>(minx)+2; k++){
         		if (k >= 0 && k < static_cast<int>(camol->getAtmVecSize())){
 							aj=camol->getAtom(k);
-							ai->addData(caPairDist.at(std::make_pair(ak, aj)));
+							ai->addData(caPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()));
         		}
         		else{
           		ai->addData(defVal);
@@ -1470,13 +1480,13 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 					continue;
 				}
 				else{
-					ai->addData(pcPairDist.at(std::make_pair(ak, aj)));
+					ai->addData(pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()));
 				}
 			}
 
 			//Angles and Dihedrals
-			for (j=0; j< pcAngles.at(ak).size(); j++){
-				ai->addData(pcAngles.at(ak).at(j));
+			for (j=0; j< pcAngles.at(ak->getAtmInx()).size(); j++){
+				ai->addData(pcAngles.at(ak->getAtmInx()).at(j));
 			}
 		
 			//Shortest non-local contact distance, >= i+6 and <= i-6
@@ -1492,25 +1502,25 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 				//i+6
 				if (ak->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
-					if (pcPairDist.at(std::make_pair(ak,aj)) < iPlus6){
+					if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
 						pinx=j;
-						iPlus6=pcPairDist.at(std::make_pair(ak,aj));
+						iPlus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
 					}
 				}
 				else{
 					//atom i and atom j are on the same chain
 					diffResId=aj->getResId() - ak->getResId();
 					if (diffResId >= 6){
-						if (pcPairDist.at(std::make_pair(ak,aj)) < iPlus6){
+						if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
 						  pinx=j;
-							iPlus6=pcPairDist.at(std::make_pair(ak,aj));
+							iPlus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
 						}
 					}
 					else{
 						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ak->getICode()) >= 6)){
-							if (pcPairDist.at(std::make_pair(ak,aj)) < iPlus6){
+							if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
            	 		pinx=j;
-            		iPlus6=pcPairDist.at(std::make_pair(ak,aj));
+								iPlus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
           		}
 						}
 					}
@@ -1519,25 +1529,25 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 				//i-6
 				if (ak->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
-					if (pcPairDist.at(std::make_pair(ak,aj)) < iMinus6){
+					if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
             minx=j;
-            iMinus6=pcPairDist.at(std::make_pair(ak,aj));
+						iMinus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
           }
 				}
 				else{
 					//atom i and atom j are on the same chain
 					diffResId=aj->getResId() - ak->getResId();
 					if (diffResId <= -6){
-						if (pcPairDist.at(std::make_pair(ak,aj)) < iMinus6){
+						if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
             	minx=j;
-            	iMinus6=pcPairDist.at(std::make_pair(ak,aj));
+							iMinus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
           	}
 					}
 					else{
 						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ak->getICode()) <= -6)){
-							if (pcPairDist.at(std::make_pair(ak,aj)) < iMinus6){
+							if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
             		minx=j;
-            		iMinus6=pcPairDist.at(std::make_pair(ak,aj));
+								iMinus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
           		}
 						}
 					}
@@ -1563,7 +1573,7 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 					for (k=static_cast<int>(pinx)-2; k<=static_cast<int>(pinx)+2; k++){
 						if (k >= 0 && k < static_cast<int>(pcmol->getAtmVecSize())){
 							aj=pcmol->getAtom(k);
-							ai->addData(pcPairDist.at(std::make_pair(ak, aj)));
+							ai->addData(pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()));
 						}
 						else{
 							ai->addData(defVal);
@@ -1572,7 +1582,7 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 					for (k=static_cast<int>(minx)-2; k<=static_cast<int>(minx)+2; k++){
         		if (k >= 0 && k < static_cast<int>(pcmol->getAtmVecSize())){
 							aj=pcmol->getAtom(k);
-							ai->addData(pcPairDist.at(std::make_pair(ak, aj)));
+							ai->addData(pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()));
         		}
         		else{
           		ai->addData(defVal);

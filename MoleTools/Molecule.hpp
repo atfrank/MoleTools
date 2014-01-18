@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <map>
+#include <limits>
 
 //Base class
 class Molecule {
@@ -69,6 +70,8 @@ class Molecule {
 		bool checkICode();
 		void setICodeFlag(bool iCodeFlagIn=false);
 		bool getICodeFlag();
+		void assignAtmInx();
+		void resetAtmInx();
 
     double lsqfit (Molecule *refmol, bool transform=true);
 		double rmsd (Molecule *refmol);

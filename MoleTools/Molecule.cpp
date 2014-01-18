@@ -802,3 +802,20 @@ void Molecule::setICodeFlag(bool iCodeFlagIn){
 bool Molecule::getICodeFlag(){
 	return iCodeFlag;
 }
+
+void Molecule::assignAtmInx(){
+	unsigned int natom;
+
+	natom=0;
+
+	for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+		this->getAtom(i)->setAtmInx(natom);
+		natom++;
+	}
+}
+
+void Molecule::resetAtmInx(){
+	for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+		this->getAtom(i)->setAtmInx(std::numeric_limits<unsigned int>::max());
+	}
+}

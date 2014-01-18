@@ -13,6 +13,7 @@
 #include <cctype> //isdigit
 #include <cstdlib>
 #include <vector>
+#include <limits>
 
 class Atom {
   private:
@@ -35,6 +36,7 @@ class Atom {
 		std::string ss; //Secondary structure
     double mass;
     double charge;
+		unsigned int atminx; //For easier 2-D lookup tables
 		std::vector<double> data;
     //All additional fields must also be added to Atom::clone(), Atom::dummy() functions!!
 
@@ -71,6 +73,7 @@ class Atom {
     double& getCharge();
 		std::vector<double>& getData();
 		double& getDataPoint(const unsigned int element);
+		unsigned int& getAtmInx();
 		unsigned int getDataSize();
 	
     //Set atom info
@@ -103,6 +106,7 @@ class Atom {
 		void setSS(const std::string& ssin);
     void setMass(const double& massin);
     void setCharge(const double& chargein);
+		void setAtmInx(const unsigned int& atminxin);
 		void addData(const double& din);
 		void clearData();
 };

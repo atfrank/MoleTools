@@ -85,8 +85,8 @@ class Analyze {
 	  static double dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecule* sel4,bool selFlag=true);
     static void averageCovariance (Molecule* cmpmol, Molecule* refmol, Eigen::MatrixXd& covarin, int &ndataIO);
     static std::vector<double> projectModes(Molecule* cmpmol, Molecule* refmol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int>& modesin);
-		static void pairwiseDistance(Molecule *mol, std::map<std::pair<Atom*, Atom*>, double>& pdin);
-		static void allAnglesDihedrals(Molecule *mol, std::map<Atom*, std::vector<double> >& anglesin);
+		static void pairwiseDistance(Molecule *mol, std::vector<std::vector<double> >& pdin);
+		static void allAnglesDihedrals(Molecule *mol, std::vector<std::vector<double> >& anglesin);
 		static void pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO);
     //static std::vector<double> gyration(Molecule* mol);
     Eigen::Matrix3d gyrationTensor(Molecule* mol);

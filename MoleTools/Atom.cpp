@@ -21,6 +21,7 @@ Atom::Atom(){
 	ss="";
   mass=1.0;
   charge=0.0;
+	atminx=std::numeric_limits<unsigned int>::max();
 	data.clear();
 }
 
@@ -43,6 +44,7 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
 	ss="";
   mass=1.0;
   charge=0.0;
+	atminx=std::numeric_limits<unsigned int>::max();
 	data.clear();
 }
 
@@ -88,6 +90,7 @@ void Atom::clone(Atom* atmin){
 	ss=atmin->getSS();
   mass=atmin->getMass();
   charge=atmin->getCharge();
+	atminx=atmin->getAtmInx();
 	data=atmin->getData();
 }
 
@@ -110,6 +113,7 @@ void Atom::dummy(){
   ss="";
   mass=1.0;
   charge=0.0;
+	atminx=std::numeric_limits<unsigned int>::max();
 	data.clear();
 }
 
@@ -201,6 +205,11 @@ double& Atom::getMass(){
 double& Atom::getCharge(){
   return charge;
 }
+
+unsigned int& Atom::getAtmInx(){
+  return atminx;
+}
+
 
 std::vector<double>& Atom::getData(){
 	return data;
@@ -334,6 +343,10 @@ void Atom::setMass(const double& massin){
 
 void Atom::setCharge(const double& chargein){
   charge=chargein;
+}
+
+void Atom::setAtmInx(const unsigned int& atminxin){
+	atminx=atminxin;
 }
 
 void Atom::addData(const double& din){
