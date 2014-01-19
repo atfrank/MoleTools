@@ -42,6 +42,7 @@ class Analyze {
 		unsigned int getNSel();
     void addMol(Molecule* molin);
 		void setMol(const int& element, Molecule* molin);
+		void clearMol();
 		void resizeNMol(const int sizein);
 		Molecule* getMol(const int& element);
 		unsigned int getNMol();

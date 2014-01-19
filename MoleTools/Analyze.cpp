@@ -51,6 +51,10 @@ void Analyze::setMol(const int& element, Molecule* molin){
 	this->mol.at(element)=molin;
 }
 
+void Analyze::clearMol(){
+	this->mol.clear();
+}
+
 void Analyze::resizeNMol(const int sizein){
   this->mol.resize(sizein);
 }
@@ -592,7 +596,7 @@ void AnalyzePcasso::runAnalysis(){
   std::vector<std::string> dssp;
   std::vector<std::string> s;
   unsigned int natom;
-	
+
 	Analyze::pcasso(this->getMol(0), this->getFDataVec()); //PCASSO features get stored in the second argument (a 2-D vector double)
 
 	natom=0;
@@ -1613,10 +1617,9 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 		} //Loop through atoms
 	}//Loop through chains
 
-	//Resize if necessary
-  if (fdataIO.size() == 0 || fdataIO.size() != camol->getNAtom()){
-		fdataIO.resize(camol->getNAtom());
-	}
+	//Always clear and resize!
+	fdataIO.clear();
+	fdataIO.resize(camol->getNAtom());
 
 	//Store features
 	natom=0; //This is needed since natom is used for other things above

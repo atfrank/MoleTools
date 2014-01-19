@@ -1,6 +1,7 @@
 //Sean M. Law
 
 #include "Molecule.hpp"
+#include "Analyze.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -70,17 +71,32 @@ int main (int argc, char **argv){
     }
   }
   else{
+		//Placed here for efficiency; construct trees once instead of calling mol->pcasso()
+		AnalyzePcasso* anin=new AnalyzePcasso;
+		anin->addSel(":.CA");
+		anin->setOutType(out);
+		
 	  for (j=0; j< pdbs.size(); j++){
   	  Molecule *mol=Molecule::readPDB(pdbs.at(j));
 		  std::cerr << "Processing file \"" << pdbs.at(j) << "..." << std::endl;
-				std::clock_t start;
-				double duration;
-				start=std::clock();
-			mol->pcasso("", out); //Makes temporary clone with C-alpha only, and analyzes it
-				duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
-//				std::cerr << duration << std::endl;
+				
+			//std::clock_t start;
+			//double duration;
+			//start=std::clock();
+
+			//mol->pcasso("", out); //Removed for efficiency; avoid re-constructing trees
+
+			anin->clearMol();
+			anin->preAnalysis(mol, "");
+
+			anin->runAnalysis();
+
+			//duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
+			//std::cerr << duration << std::endl;
+
 		  delete mol;
     }
+		delete anin;
 	}
 
   return 0;

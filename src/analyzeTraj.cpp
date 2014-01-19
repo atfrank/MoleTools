@@ -10,6 +10,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <vector>
+#include <ctime>
 
 void usage(){
   std::cerr << std::endl << std::endl;
@@ -371,7 +372,14 @@ int main (int argc, char **argv){
 					    std::cout << ftrjin->getNPriv()*ftrjin->getTStepPS()/ftrjin->getNSavc()+i*ftrjin->getTStepPS();
             }
 					  for (ianalysis=0; ianalysis< analyses.size(); ianalysis++){
+							//std::clock_t start;
+        			//double duration;
+        			//start=std::clock();
+
 						  analyses.at(ianalysis)->runAnalysis();
+
+							//duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
+        			//std::cerr << duration << std::endl;
 					  }
             if (timeseries == true){
 					    std::cout << std::endl;
