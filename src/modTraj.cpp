@@ -423,6 +423,9 @@ int main (int argc, char **argv){
 		if (setnframe > 0){
 			ftrjout->setNFrame(setnframe);
 		}
+    else if (flist.length() > 0){
+      ftrjout->setNFrame(listinx);
+    }
 		else{
 			ftrjout->setNFrame(nframe);
 		}
