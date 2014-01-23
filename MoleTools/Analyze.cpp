@@ -1340,26 +1340,24 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 				if (ai == aj){
 					continue;
 				}
+
 				//i+6
-				if (ai->getChainId().compare(aj->getChainId()) != 0){
+				//Assess distance first to avoid unnecessary string comparison
+				if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
+					if (ai->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
-					if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
 						pinx=j;
 						iPlus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
 					}
-				}
-				else{
-					//atom i and atom j are on the same chain
-					diffResId=aj->getResId() - ai->getResId();
-					if (diffResId >= 6){
-						if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
+					else{
+						//atom i and atom j are on the same chain
+						diffResId=aj->getResId() - ai->getResId();
+						if (diffResId >= 6){
 						  pinx=j;
 							iPlus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
 						}
-					}
-					else{
-						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) >= 6)){
-							if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
+						else{
+							if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) >= 6)){
            	 		pinx=j;
 								iPlus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
           		}
@@ -1368,25 +1366,22 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 				}
 
 				//i-6
-				if (ai->getChainId().compare(aj->getChainId()) != 0){
+				//Assess distance first to avoid unnecessary string comparison
+				if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
+					if (ai->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
-					if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
             minx=j;
 						iMinus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
           }
-				}
-				else{
-					//atom i and atom j are on the same chain
-					diffResId=aj->getResId() - ai->getResId();
-					if (diffResId <= -6){
-						if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
+					else{
+						//atom i and atom j are on the same chain
+						diffResId=aj->getResId() - ai->getResId();
+						if (diffResId <= -6){
             	minx=j;
 							iMinus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
           	}
-					}
-					else{
+						else{
 						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) <= -6)){
-							if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
             		minx=j;
 								iMinus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
           		}
@@ -1517,26 +1512,24 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 				if (ak == aj){
 					continue;
 				}
+
 				//i+6
-				if (ak->getChainId().compare(aj->getChainId()) != 0){
+				//Assess distance first to avoid unnecessary string comparison
+				if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
+					if (ak->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
-					if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
 						pinx=j;
 						iPlus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
 					}
-				}
-				else{
-					//atom i and atom j are on the same chain
-					diffResId=aj->getResId() - ak->getResId();
-					if (diffResId >= 6){
-						if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
+					else{
+						//atom i and atom j are on the same chain
+						diffResId=aj->getResId() - ak->getResId();
+						if (diffResId >= 6){
 						  pinx=j;
 							iPlus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
 						}
-					}
-					else{
-						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ak->getICode()) >= 6)){
-							if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
+						else{
+							if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ak->getICode()) >= 6)){
            	 		pinx=j;
 								iPlus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
           		}
@@ -1545,25 +1538,22 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 				}
 
 				//i-6
-				if (ak->getChainId().compare(aj->getChainId()) != 0){
+				//Assess distance first to avoid unnecessary string comparison
+				if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
+					if (ak->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
-					if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
             minx=j;
 						iMinus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
           }
-				}
-				else{
-					//atom i and atom j are on the same chain
-					diffResId=aj->getResId() - ak->getResId();
-					if (diffResId <= -6){
-						if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
+					else{
+						//atom i and atom j are on the same chain
+						diffResId=aj->getResId() - ak->getResId();
+						if (diffResId <= -6){
             	minx=j;
 							iMinus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
           	}
-					}
-					else{
-						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ak->getICode()) <= -6)){
-							if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
+						else{
+							if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ak->getICode()) <= -6)){
             		minx=j;
 								iMinus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
           		}
