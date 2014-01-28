@@ -1236,7 +1236,7 @@ void Analyze::allAnglesDihedrals(Molecule *mol, std::vector<std::vector<double> 
 void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 	Chain *c;
 	Atom *ai, *aj, *ak;
-	unsigned int j, start;
+	unsigned int i, j, start;
 	double defVal;
 	double iMinus6;//For non-local contacts
 	double iPlus6; //For non-local contacts
@@ -1249,6 +1249,7 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 	std::vector<std::vector<double> > pcAngles; //Pc-Pc Angle/Dihedral/Wide
 	Molecule *camol, *pcmol;
 	unsigned int natom;
+	double dist;
 
 	defVal=9999.9;
 	camol=NULL;
@@ -1275,6 +1276,7 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 		for (unsigned int iatom=0; iatom < c->getAtmVecSize(); iatom++){
 			ai=c->getAtom(iatom);
 			ai->clearData();
+			i=ai->getAtmInx();
 			//i-5, i-4, i-3, i-2, i-1, i+1, i+2, i+3, i+4, i+5 Distances
 			//Deal with unsigned int subtraction from zero
 			if (iatom == 0){
@@ -1321,13 +1323,13 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 					continue;
 				}
 				else{
-					ai->addData(caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()));
+					ai->addData(caPairDist.at(i).at(aj->getAtmInx()));
 				}
 			}
 
 			//Angles and Dihedrals
-			for (j=0; j< caAngles.at(ai->getAtmInx()).size(); j++){
-				ai->addData(caAngles.at(ai->getAtmInx()).at(j));
+			for (j=0; j< caAngles.at(i).size(); j++){
+				ai->addData(caAngles.at(i).at(j));
 			}
 		
 			//Shortest non-local contact distance, >= i+6 and <= i-6
@@ -1335,31 +1337,35 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 			iMinus6=1E10;
 			pinx=natom;
 			minx=natom;
+
 			for (j=0; j< natom; j++){
 				aj=camol->getAtom(j);
+
 				if (ai == aj){
 					continue;
 				}
+				
+				dist=caPairDist.at(i).at(j);
 
 				//i+6
 				//Assess distance first to avoid unnecessary string comparison
-				if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
+				if (dist < iPlus6){
 					if (ai->getChainId().compare(aj->getChainId()) != 0){
-					//atom i and atom j are on different chains
+						//atom i and atom j are on different chains
 						pinx=j;
-						iPlus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
+						iPlus6=dist;
 					}
 					else{
 						//atom i and atom j are on the same chain
 						diffResId=aj->getResId() - ai->getResId();
 						if (diffResId >= 6){
 						  pinx=j;
-							iPlus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
+							iPlus6=dist;
 						}
 						else{
 							if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) >= 6)){
            	 		pinx=j;
-								iPlus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
+								iPlus6=dist;
           		}
 						}
 					}
@@ -1367,23 +1373,23 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 
 				//i-6
 				//Assess distance first to avoid unnecessary string comparison
-				if (caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
+				if (dist < iMinus6){
 					if (ai->getChainId().compare(aj->getChainId()) != 0){
 					//atom i and atom j are on different chains
             minx=j;
-						iMinus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
+						iMinus6=dist;
           }
 					else{
 						//atom i and atom j are on the same chain
 						diffResId=aj->getResId() - ai->getResId();
 						if (diffResId <= -6){
             	minx=j;
-							iMinus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
+							iMinus6=dist;
           	}
 						else{
-						if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) <= -6)){
+							if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ai->getICode()) <= -6)){
             		minx=j;
-								iMinus6=caPairDist.at(ai->getAtmInx()).at(aj->getAtmInx());
+								iMinus6=dist;
           		}
 						}
 					}
@@ -1447,6 +1453,7 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 		for (unsigned int iatom=0; iatom < c->getAtmVecSize(); iatom++){
 			ai=camol->getChain(ichain)->getAtom(iatom); //From C-alpha
 			ak=c->getAtom(iatom);
+			i=ak->getAtmInx();
 			//i-5, i-4, i-3, i-2, i-1, i+1, i+2, i+3, i+4, i+5 Distances
 			//Deal with unsigned int subtraction from zero
 			if (iatom == 0){
@@ -1493,7 +1500,7 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 					continue;
 				}
 				else{
-					ai->addData(pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()));
+					ai->addData(pcPairDist.at(i).at(aj->getAtmInx()));
 				}
 			}
 
@@ -1513,25 +1520,27 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 					continue;
 				}
 
+				dist=pcPairDist.at(i).at(j);
+
 				//i+6
 				//Assess distance first to avoid unnecessary string comparison
-				if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iPlus6){
+				if (dist < iPlus6){
 					if (ak->getChainId().compare(aj->getChainId()) != 0){
-					//atom i and atom j are on different chains
+						//atom i and atom j are on different chains
 						pinx=j;
-						iPlus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
+						iPlus6=dist;
 					}
 					else{
 						//atom i and atom j are on the same chain
 						diffResId=aj->getResId() - ak->getResId();
 						if (diffResId >= 6){
 						  pinx=j;
-							iPlus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
+							iPlus6=dist;
 						}
 						else{
 							if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ak->getICode()) >= 6)){
            	 		pinx=j;
-								iPlus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
+								iPlus6=dist;
           		}
 						}
 					}
@@ -1539,23 +1548,23 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 
 				//i-6
 				//Assess distance first to avoid unnecessary string comparison
-				if (pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx()) < iMinus6){
+				if (dist < iMinus6){
 					if (ak->getChainId().compare(aj->getChainId()) != 0){
-					//atom i and atom j are on different chains
+						//atom i and atom j are on different chains
             minx=j;
-						iMinus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
+						iMinus6=dist;
           }
 					else{
 						//atom i and atom j are on the same chain
 						diffResId=aj->getResId() - ak->getResId();
 						if (diffResId <= -6){
             	minx=j;
-							iMinus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
+							iMinus6=dist;
           	}
 						else{
 							if (diffResId == 0 && (Misc::atoi(aj->getICode()) - Misc::atoi(ak->getICode()) <= -6)){
             		minx=j;
-								iMinus6=pcPairDist.at(ak->getAtmInx()).at(aj->getAtmInx());
+								iMinus6=dist;
           		}
 						}
 					}

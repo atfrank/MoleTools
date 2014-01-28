@@ -80,9 +80,9 @@ int main (int argc, char **argv){
   	  Molecule *mol=Molecule::readPDB(pdbs.at(j));
 		  std::cerr << "Processing file \"" << pdbs.at(j) << "..." << std::endl;
 				
-			//std::clock_t start;
-			//double duration;
-			//start=std::clock();
+			std::clock_t start;
+			double duration;
+			start=std::clock();
 
 			//mol->pcasso("", out); //Removed for efficiency; avoid re-constructing trees
 
@@ -91,8 +91,8 @@ int main (int argc, char **argv){
 
 			anin->runAnalysis();
 
-			//duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
-			//std::cerr << duration << std::endl;
+			duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
+//			std::cout << "* " << mol->getNAtom() << " " << duration << std::endl;
 
 		  delete mol;
     }
