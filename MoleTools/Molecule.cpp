@@ -292,7 +292,11 @@ unsigned int Molecule::getAtmVecSize(){
   return atmVec.size();
 }
 
-std::vector<Atom*> Molecule::getAtmVec(){
+std::vector<Atom*>& Molecule::getAtmVec(){
+  return atmVec;
+}
+
+std::vector<Atom*> Molecule::getAtmVecClone(){
   return atmVec;
 }
 

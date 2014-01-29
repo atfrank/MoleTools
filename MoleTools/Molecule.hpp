@@ -47,7 +47,8 @@ class Molecule {
     unsigned int getChnVecSize();
     unsigned int getResVecSize();
     unsigned int getAtmVecSize();
-    std::vector<Atom*> getAtmVec();
+    std::vector<Atom*>& getAtmVec();
+		std::vector<Atom*> getAtmVecClone();
     Residue* getResidue(const unsigned int& element);
     void readTopology(const std::string& topin);
     void readParameter(const std::string& prmin);

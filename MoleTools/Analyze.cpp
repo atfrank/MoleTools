@@ -1115,10 +1115,9 @@ std::vector<double> Analyze::projectModes(Molecule* cmpmol, Molecule* refmol, co
 }
 
 void Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector< double> >& pdin){
-	unsigned int i, j;
 	double distance;
-	Atom* ai;
-	Atom* aj;
+	std::vector<Atom*>::iterator ai;
+	std::vector<Atom*>::iterator aj;
 	unsigned int natom;
 
 	natom=mol->getAtmVecSize();
@@ -1126,26 +1125,24 @@ void Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector< double> >
 	pdin.clear();
 	pdin.resize(natom);
 
-	for (i=0; i< natom; i++){
-		pdin.at(i).resize(mol->getAtmVecSize());
-		ai=mol->getAtom(i);
-		pdin.at(ai->getAtmInx()).at(ai->getAtmInx())=0.0; //Zero diagonal
+	for (ai=mol->getAtmVec().begin(); ai != mol->getAtmVec().end(); ++ai){
+		pdin[(*ai)->getAtmInx()].resize(natom);
+		pdin[(*ai)->getAtmInx()][(*ai)->getAtmInx()]=0.0; //Zero diagonal
 	}
 
-  for (i=0; i< natom; i++){
-    for (j=i+1; j< natom; j++){
-			ai=mol->getAtom(i);
-			aj=mol->getAtom(j);
-			if (mol->getAtom(i)->getX() < 9999.9 && mol->getAtom(j)->getX() < 9999.9){
-				distance=Analyze::distance(ai->getCoor(), aj->getCoor());
-			}
-			else{
-				distance=9999.9;
-			}
-			pdin.at(ai->getAtmInx()).at(aj->getAtmInx())=distance;
-			pdin.at(aj->getAtmInx()).at(ai->getAtmInx())=distance;
-    }
-  }
+	for (ai=mol->getAtmVec().begin(); ai != mol->getAtmVec().end(); ++ai){
+		for (aj=ai+1; aj != mol->getAtmVec().end(); ++aj){
+			if ((*ai)->getX() < 9999.9 && (*aj)->getX() < 9999.9){
+        distance=Analyze::distance((*ai)->getCoor(), (*aj)->getCoor());
+      }
+      else{
+        distance=9999.9;
+      }
+			pdin[(*ai)->getAtmInx()][(*aj)->getAtmInx()]=distance;
+			pdin[(*aj)->getAtmInx()][(*ai)->getAtmInx()]=distance;
+		}
+	}
+
 }
 
 void Analyze::allAnglesDihedrals(Molecule *mol, std::vector<std::vector<double> >& anglesin){

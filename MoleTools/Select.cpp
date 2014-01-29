@@ -14,7 +14,7 @@ void Select::makeSel (Molecule* mol, std::string selin){
   Select *sel=new Select;
 	sel->initKeys(mol);
 
-  ref=mol->getAtmVec(); //Always make a copy of the pointers and sort it!
+  ref=mol->getAtmVecClone(); //Always make a clone of the pointers and sort it!
   std::sort(ref.begin(), ref.end());
 
   //Passing mol->getAtmVec() directly won't work
