@@ -1163,44 +1163,6 @@ void Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector< double> >
 
 }
 
-void Analyze::pairwiseDistance(Molecule *mol, std::vector< double>& pdin){
-  std::vector<Atom*>::iterator ai;
-  std::vector<Atom*>::iterator aj;
-  unsigned int natom;
-  unsigned int aiInx;
-	unsigned int ajInx;
-  bool flag;
-
-  natom=mol->getAtmVecSize();
-
-  pdin.clear();
-  pdin.resize(natom*natom);
-
-  for (ai=mol->getAtmVec().begin(); ai != mol->getAtmVec().end(); ++ai){
-    aiInx=(*ai)->getAtmInx();
-    if ((*ai)->getX() < 9999.9){
-      flag=true;
-    }
-    else{
-      flag=false;
-    }
-    for (aj=mol->getAtmVec().begin(); aj != mol->getAtmVec().end() ; ++aj){
-			ajInx=(*aj)->getAtmInx();
-			if (aiInx != ajInx){
-      	if (flag && (*aj)->getX() < 9999.9){
-        	pdin.at(aiInx+natom*ajInx)=Analyze::distance((*ai)->getCoor(), (*aj)->getCoor());
-      	}
-      	else{
-        	pdin.at(aiInx+natom*ajInx)=9999.9;
-      	}
-			}
-			else{
-				pdin.at(aiInx+natom*ajInx)=0.0;
-			}
-    }
-	}
-}
-
 void Analyze::allAnglesDihedrals(Molecule *mol, std::vector<std::vector<double> >& anglesin){
 	unsigned int i, j;
 	Chain *c;
