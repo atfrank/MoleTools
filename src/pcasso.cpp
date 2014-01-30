@@ -92,7 +92,7 @@ int main (int argc, char **argv){
 			anin->runAnalysis();
 
 			duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
-//			std::cout << "* " << mol->getNAtom() << " " << duration << std::endl;
+			std::cerr << "* " << mol->getNAtom() << " " << duration << std::endl;
 
 		  delete mol;
     }

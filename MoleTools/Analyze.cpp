@@ -1115,10 +1115,11 @@ std::vector<double> Analyze::projectModes(Molecule* cmpmol, Molecule* refmol, co
 }
 
 void Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector< double> >& pdin){
-	double distance;
 	std::vector<Atom*>::iterator ai;
 	std::vector<Atom*>::iterator aj;
 	unsigned int natom;
+	unsigned int aiInx;
+	bool flag;
 
 	natom=mol->getAtmVecSize();
 
@@ -1126,20 +1127,37 @@ void Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector< double> >
 	pdin.resize(natom);
 
 	for (ai=mol->getAtmVec().begin(); ai != mol->getAtmVec().end(); ++ai){
-		pdin[(*ai)->getAtmInx()].resize(natom);
-		pdin[(*ai)->getAtmInx()][(*ai)->getAtmInx()]=0.0; //Zero diagonal
+		aiInx=(*ai)->getAtmInx();
+		pdin.at(aiInx).resize(natom);
+		pdin.at(aiInx).at(aiInx)=0.0; //Zero diagonal
 	}
 
 	for (ai=mol->getAtmVec().begin(); ai != mol->getAtmVec().end(); ++ai){
-		for (aj=ai+1; aj != mol->getAtmVec().end(); ++aj){
-			if ((*ai)->getX() < 9999.9 && (*aj)->getX() < 9999.9){
-        distance=Analyze::distance((*ai)->getCoor(), (*aj)->getCoor());
+		aiInx=(*ai)->getAtmInx();
+		if ((*ai)->getX() < 9999.9){
+			flag=true;
+		}
+		else{
+			flag=false;
+		}
+		//Lower Triangle
+		for (aj=mol->getAtmVec().begin(); aj != ai; ++aj){
+      if (flag && (*aj)->getX() < 9999.9){
+        pdin.at(aiInx).at((*aj)->getAtmInx())=Analyze::distance((*ai)->getCoor(), (*aj)->getCoor());
       }
       else{
-        distance=9999.9;
+        pdin.at(aiInx).at((*aj)->getAtmInx())=9999.9;
       }
-			pdin[(*ai)->getAtmInx()][(*aj)->getAtmInx()]=distance;
-			pdin[(*aj)->getAtmInx()][(*ai)->getAtmInx()]=distance;
+    }
+	
+		//Upper Triangle
+		for (aj=ai+1; aj != mol->getAtmVec().end(); ++aj){
+			if (flag && (*aj)->getX() < 9999.9){
+        pdin.at(aiInx).at((*aj)->getAtmInx())=Analyze::distance((*ai)->getCoor(), (*aj)->getCoor());
+      }
+      else{
+        pdin.at(aiInx).at((*aj)->getAtmInx())=9999.9;
+      }
 		}
 	}
 
