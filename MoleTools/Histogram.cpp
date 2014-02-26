@@ -156,6 +156,10 @@ unsigned int Histogram::getBin(const unsigned int &nfilein, const unsigned int &
   return b;
 }
 
+std::vector<unsigned int> Histogram::getBins (){
+	return bins;
+}
+
 void Histogram::printHisto (HistoFormatEnum format, double temp){
   unsigned int i;
   unsigned int b;
@@ -171,7 +175,7 @@ void Histogram::printHisto (HistoFormatEnum format, double temp){
   binwidth.resize(nDim);
   kBT=kB*temp;
   norm=1.0;
-  last=-1E20;
+  last=std::numeric_limits<double>::min();
 
   j=1; //Track total number of bins
   for (i=0; i< nDim; i++){
