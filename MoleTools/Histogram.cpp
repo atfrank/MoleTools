@@ -214,7 +214,7 @@ void Histogram::printHisto (HistoFormatEnum format, double temp){
   for (j=0; j< HISTO.size(); j++){
     b=sortedHISTO.at(j).bininx;
     s=this->getBinCoor(b);
-    if (last != s.at(0)){
+    if (last != s.at(0) && s.size() > 1){
       std::cout << std::endl;
       last=s.at(0);
     }
