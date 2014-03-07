@@ -583,7 +583,8 @@ void WHAM::getExpTempRange(const std::string &tin){
 		f=exp(log(s.at(2)/s.at(1))/(static_cast<unsigned int>(s.at(0))-1));
 		currT=s.at(1);
 		for (i=0; i< s.at(0); i++){
-			std::cout << currT;
+			std::cout << std::fixed;
+			std::cout << std::setprecision(4) << currT;
 			if (i<s.at(0)-1){
 				std::cout << ":";
 			}

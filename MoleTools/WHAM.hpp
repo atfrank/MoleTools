@@ -14,6 +14,7 @@
 #include <map>
 #include <limits>
 #include <ctime>
+#include <iomanip>
 
 class WHAM {
   private:
