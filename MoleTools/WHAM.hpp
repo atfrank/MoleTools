@@ -57,6 +57,7 @@ class WHAM {
     bool setTemp(const std::string &tin);
     void setTemp(const std::vector<double> &tin);
     bool setTempRange(const std::string &tin);
+		void getExpTempRange(const std::string &tin);
     void setFactor(const double &factorin);
     void setNWindow(const unsigned int &nwin);
     void setNWindow(const int &nwin);
