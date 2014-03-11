@@ -109,6 +109,9 @@ int main (int argc, char **argv){
 			currArg=argv[++i];
 			delim=currArg;
 		}
+		else if (currArg.compare(0,1,"-") == 0){
+      std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
+    }
     else{
       ifile=currArg;
     }

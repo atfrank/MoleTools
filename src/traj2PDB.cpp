@@ -96,6 +96,9 @@ int main (int argc, char **argv){
     else if (currArg.compare("-chains") == 0){
       chnFlag=true;
     }
+		else if (currArg.compare(0,1,"-") == 0){
+      std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
+    }
     else{
       trajs.push_back(currArg);
     }

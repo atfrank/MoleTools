@@ -47,6 +47,9 @@ int main (int argc, char **argv){
 		else if (currArg.compare("-features") == 0 || currArg.compare("-feature") == 0){
 			out=FEATURES;
 		}
+		else if (currArg.compare(0,1,"-") == 0){
+      std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
+    }
     else{
       pdbs.push_back(currArg);
     }
