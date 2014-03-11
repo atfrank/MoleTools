@@ -213,8 +213,8 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
 	}
   else{
     out.clear();
-    for (i=0; i< ref.size(); i++){
-      if (group.compare("chain") == 0){
+    if (group.compare("chain") == 0){
+			for (i=0; i< ref.size(); i++){
         if (str.compare(ref.at(i)->getChainId()) == 0){
           out.push_back(ref.at(i));
         }
@@ -224,8 +224,10 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
         else{
           continue;
         }
-      }
-      else if (group.compare("residue") == 0){
+			}
+    }
+    else if (group.compare("residue") == 0){
+			for (i=0; i< ref.size(); i++){
         int resnum;
         std::stringstream(str) >> resnum;
         if (Misc::isdigit(str) && resnum == ref.at(i)->getResId()){
@@ -240,18 +242,20 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
         else{
           continue;
         }
-      }
-      else if (group.compare("atom") == 0){
+			}
+    }
+    else if (group.compare("atom") == 0){
+			for (i=0; i< ref.size(); i++){
         if (str.compare(Misc::trim(ref.at(i)->getAtmName())) == 0){
           out.push_back(ref.at(i));
         }
         else{
           continue;
         }
-      }
-      else{
-        continue;
-      }
+			}
+    }
+    else{
+      //Do Nothing
     }
   }
 
