@@ -38,9 +38,9 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
   std::vector<Atom *> cmpCurr, cmpNext;
   std::vector<Atom *> out;
   std::vector<Atom *>::iterator it;
+  std::vector<Atom *>::const_iterator iter;
   std::string curr, next, start, end;
   size_t pos;
-  unsigned int i;
 
   //For memory efficiency, always parse "next" first!
   if (str.length() == 0){
@@ -214,45 +214,45 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
   else{
     out.clear();
     if (group.compare("chain") == 0){
-			for (i=0; i< ref.size(); i++){
-        if (str.compare(ref.at(i)->getChainId()) == 0){
-          out.push_back(ref.at(i));
+      for (iter=ref.begin(); iter != ref.end(); ++iter){
+        if (str.compare((*iter)->getChainId()) == 0){
+          out.push_back(*iter);
         }
-        else if (str.compare(ref.at(i)->getSegId()) == 0){
-          out.push_back(ref.at(i));
+        else if (str.compare((*iter)->getSegId()) == 0){
+          out.push_back(*iter);
         }
         else{
           continue;
         }
-			}
+      }
     }
     else if (group.compare("residue") == 0){
-			for (i=0; i< ref.size(); i++){
+      for (iter=ref.begin(); iter != ref.end(); ++iter){
         int resnum;
         std::stringstream(str) >> resnum;
-        if (Misc::isdigit(str) && resnum == ref.at(i)->getResId()){
-          out.push_back(ref.at(i));
+        if (Misc::isdigit(str) && resnum == (*iter)->getResId()){
+          out.push_back(*iter);
         }
-        else if (str.compare(ref.at(i)->getResName()) == 0){
-          out.push_back(ref.at(i));
+        else if (str.compare((*iter)->getResName()) == 0){
+          out.push_back(*iter);
         }
-				else if (str.compare(Misc::trim(ref.at(i)->getRecName())) == 0){
-          out.push_back(ref.at(i));
+        else if (str.compare(Misc::trim((*iter)->getRecName())) == 0){
+          out.push_back(*iter);
         }
         else{
           continue;
-        }
-			}
+        } 
+      }
     }
     else if (group.compare("atom") == 0){
-			for (i=0; i< ref.size(); i++){
-        if (str.compare(Misc::trim(ref.at(i)->getAtmName())) == 0){
-          out.push_back(ref.at(i));
+      for (iter=ref.begin(); iter != ref.end(); ++iter){
+        if (str.compare(Misc::trim((*iter)->getAtmName())) == 0){
+          out.push_back(*iter);
         }
         else{
           continue;
         }
-			}
+      }
     }
     else{
       //Do Nothing
