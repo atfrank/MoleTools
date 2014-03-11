@@ -8,6 +8,7 @@
 #include <sstream> //string stream
 #include <string>
 #include <cstdlib>
+#include <ctime>
 
 void usage (){
   std::cerr << std::endl;
@@ -160,9 +161,6 @@ int main (int argc, char **argv){
 			currArg=argv[++i];
 			catsel=currArg;
 		}
-		else if (currArg.compare(0,1,"-") == 0){
-      std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
-    }
     else{
       pdb=currArg;
     }
@@ -173,12 +171,19 @@ int main (int argc, char **argv){
     usage();
   }
 
+//  std::clock_t start;
+//  double duration;
+//  start=std::clock();
+
   mol=Molecule::readPDB(pdb, model, format, hetFlag);
 	
   if (sel.length() >0){
     mol->select(sel);
 		mol=mol->clone(true, false); //Clone and delete original
   }
+
+//  duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
+//  std::cerr << duration << std::endl;
 
 	if (catpdbs.size() > 0){
 		for (j=0; j< catpdbs.size(); j++){

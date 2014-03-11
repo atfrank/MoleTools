@@ -227,21 +227,29 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
       }
     }
     else if (group.compare("residue") == 0){
+      int resnum;
+      std::stringstream(str) >> resnum;
+      bool digitFlag=Misc::isdigit(str);
       for (iter=ref.begin(); iter != ref.end(); ++iter){
-        int resnum;
-        std::stringstream(str) >> resnum;
-        if (Misc::isdigit(str) && resnum == (*iter)->getResId()){
-          out.push_back(*iter);
-        }
-        else if (str.compare((*iter)->getResName()) == 0){
-          out.push_back(*iter);
-        }
-        else if (str.compare(Misc::trim((*iter)->getRecName())) == 0){
-          out.push_back(*iter);
+        if (digitFlag){
+          if (resnum == (*iter)->getResId()){
+            out.push_back(*iter);
+          }
+          else{
+            continue;
+          }
         }
         else{
-          continue;
-        } 
+          if (str.compare((*iter)->getResName()) == 0){
+            out.push_back(*iter);
+          }
+          else if (str.compare(Misc::trim((*iter)->getRecName())) == 0){
+            out.push_back(*iter);
+          }
+          else{
+            continue;
+          }
+        }
       }
     }
     else if (group.compare("atom") == 0){
