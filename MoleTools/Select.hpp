@@ -4,6 +4,7 @@
 
 #include "Molecule.hpp"
 #include "Misc.hpp"
+#include "Analyze.hpp"
 
 #include <vector>
 #include <sstream>
