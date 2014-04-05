@@ -41,7 +41,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
   std::vector<Atom *>::const_iterator iter;
   std::string curr, next, start, end;
   size_t pos;
-	double around;
+	double angstrom;
 
   //For memory efficiency, always parse "next" first!
   if (str.length() == 0){
@@ -100,11 +100,22 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     out.clear();
     std::set_difference(ref.begin(), ref.end(), cmpCurr.begin(), cmpCurr.end(), back_inserter(out));
   }
-	else if ((pos=str.find("~")) != std::string::npos){
-    //N Angstroms around selection X. The final selection returned does NOT include X
-    out.clear();
+	else if ((pos=str.find_last_of("~#")) != std::string::npos){
+		//Around (~), Expand (#)
+
+    //N Angstroms around selection X. The final selection does NOT include X
+		//A:10+20.CA~1.5
+
+		//Expand selection X by N Angstroms. The final selection includes X
+		//A:10+20.CA#2
+
+		//Around and Expand can be chained together
+		//A:10+20.CA~1.5#2
+
+		out.clear();
+
 		next=str.substr(pos+1, std::string::npos);
-		std::stringstream(next) >> around;
+		std::stringstream(next) >> angstrom;
 
 		if (pos > 0){
       curr=str.substr(0, pos);
@@ -112,28 +123,41 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
       if (cmpCurr.size() == 0){
         return out;
       }
-			else if (around <= 0.0){
+			else if (angstrom <= 0.0){
 				return out;
 			}
 			else{
 				//Compute pairwise distances
-				for (it=cmpCurr.begin(); it != cmpCurr.end(); ++it){
-					for (iter=ref.begin(); iter != ref.end(); ++iter){
-						//Distance calculation
-						if ((*it) != (*iter) && Analyze::distance((*it)->getCoor() , (*iter)->getCoor()) <= around){
-							out.push_back((*iter));
-						}	
+				if (str.substr(pos, 1).compare("~") == 0){
+					for (it=cmpCurr.begin(); it != cmpCurr.end(); ++it){
+						for (iter=ref.begin(); iter != ref.end(); ++iter){
+							//Distance calculation
+							if ((*it) != (*iter) && Analyze::distance((*it)->getCoor() , (*iter)->getCoor()) <= angstrom){
+								out.push_back((*iter));
+							}	
+						}
 					}
 				}
+				else if (str.substr(pos, 1).compare("#") == 0){
+					for (it=cmpCurr.begin(); it != cmpCurr.end(); ++it){
+            for (iter=ref.begin(); iter != ref.end(); ++iter){
+              //Distance calculation
+              if (Analyze::distance((*it)->getCoor() , (*iter)->getCoor()) <= angstrom){
+                out.push_back((*iter));
+              }
+            }
+          }
+				}
+				else{
+					//Do Nothing
+				}
 				std::sort(out.begin(), out.end());
-
-				return out; 
+				return out;
 			}
     }
     else{
       return out;
     }
-	
   }
   else if ((pos=str.find(":")) != std::string::npos){
     //Logical AND between Chains and Residues: A:GLY.
