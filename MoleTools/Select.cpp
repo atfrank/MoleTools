@@ -101,7 +101,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     std::set_difference(ref.begin(), ref.end(), cmpCurr.begin(), cmpCurr.end(), back_inserter(out));
   }
 	else if ((pos=str.find("~")) != std::string::npos){
-    //N Angstroms around selection X. The final selection returned will include X
+    //N Angstroms around selection X. The final selection returned does NOT include X
     out.clear();
 		next=str.substr(pos+1, std::string::npos);
 		std::stringstream(next) >> around;
@@ -113,26 +113,25 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
         return out;
       }
 			else if (around <= 0.0){
-				return cmpCurr;
+				return out;
 			}
 			else{
 				//Compute pairwise distances
 				for (it=cmpCurr.begin(); it != cmpCurr.end(); ++it){
 					for (iter=ref.begin(); iter != ref.end(); ++iter){
 						//Distance calculation
-						if (it != iter && Analyze::distance((*it)->getCoor() , (*iter)->getCoor()) <= around){
-							cmpNext.push_back((*iter));
+						if ((*it) != (*iter) && Analyze::distance((*it)->getCoor() , (*iter)->getCoor()) <= around){
+							out.push_back((*iter));
 						}	
 					}
 				}
-				cmpCurr.insert(cmpCurr.end(), cmpNext.begin(), cmpNext.end());
-				std::sort(cmpCurr.begin(), cmpCurr.end());
+				std::sort(out.begin(), out.end());
 
-				return cmpCurr; 
+				return out; 
 			}
     }
     else{
-      out=ref;
+      return out;
     }
 	
   }
