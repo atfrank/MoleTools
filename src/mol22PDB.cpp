@@ -5,10 +5,11 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <vector>
 
 void usage(){
   std::cerr << std::endl;
-  std::cerr << "Usage:   mol22PDB [-options] <MOL2file>" << std::endl;
+  std::cerr << "Usage:   mol22PDB [-options] <MOL2files>" << std::endl;
   std::cerr << "Options: [-sel selection]" << std::endl;
 	std::cerr << "         [-format type] [-chains]" << std::endl;
 //	std::cerr << "         [-warnings]" << std::endl;
@@ -20,7 +21,7 @@ int main (int argc, char **argv){
 
 
   int i;
-  std::string mol2;
+  std::vector<std::string> mol2;
   std::string currArg;
   std::string sel;
 	std::string format;
@@ -52,22 +53,33 @@ int main (int argc, char **argv){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
     else{
-      mol2=currArg;
+      mol2.push_back(currArg);
     }
   }
 
-  if (mol2.length() == 0){
+  if (mol2.size() == 0){
     std::cerr << std::endl << "Error: Please provide an input file" << std::endl << std::endl;
     usage();
   }
 
-  Molecule *mol=Molecule::readMol2(mol2, format);
+  Molecule *mol=new Molecule;
+
+	for (unsigned int j=0; j< mol2.size(); j++){
+		mol->cat(Molecule::readMol2(mol2.at(j), format));
+	}
 
   if (sel.length() >0){
     mol->select(sel);
   }
 
- 	mol->writePDB(chnFlag); 
+ 	mol->writePDB(chnFlag);
+
+	mol=mol->clone();
+	for (i=0; i< mol->getNAtom(); i++){
+//		std::cerr << mol->getAtom(i)->getAtmType() << std::endl;
+	}
+
+	delete mol;
 
   return 0;
 }

@@ -7,6 +7,7 @@ Atom::Atom(){
   recname="ATOM";
   atmnum=0;
   atmname="    ";
+	atmtype="    ";
   alt=" ";
   resname="   ";
   chainid=" ";
@@ -30,6 +31,7 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
   recname="ATOM";
   atmnum=atmnumin;
   atmname=atmnamein;
+	atmname="    ";
   alt=" ";
   resname=resnamein;
   chainid=" ";
@@ -53,6 +55,7 @@ void Atom::reset(){
   recname="ATOM";
   atmnum=0;
   atmname="    ";
+	atmtype="    ";
   alt=" ";
   resname="   ";
   chainid=" ";
@@ -75,6 +78,7 @@ void Atom::clone(Atom* atmin){
   recname=atmin->getRecName();
   atmnum=atmin->getAtmNum();
   atmname=atmin->getAtmName();
+	atmtype=atmin->getAtmType();
   alt=atmin->getAlt();
   resname=atmin->getResName();
   chainid=atmin->getChainId();
@@ -99,6 +103,7 @@ void Atom::dummy(){
   recname="ATOM";
   atmnum=1;
   atmname="CA";
+	atmtype="C.3";
   alt=" ";
   resname="ALA";
   chainid="+";
@@ -132,6 +137,10 @@ int& Atom::getAtmNum(){
 
 std::string& Atom::getAtmName(){
   return atmname;
+}
+
+std::string& Atom::getAtmType(){
+	return atmtype;
 }
 
 std::string& Atom::getAlt(){
@@ -245,6 +254,14 @@ void Atom::setAtmName(const std::string& atmnamein){
 
 void Atom::setAtmName(){
   atmname="    ";
+}
+
+void Atom::setAtmType(const std::string& atmtypein){
+	atmtype=atmtypein;
+}
+
+void Atom::setAtmType(){
+	atmtype="    ";
 }
 
 void Atom::setAlt(const std::string& altin){

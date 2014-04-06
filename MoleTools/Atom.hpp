@@ -21,6 +21,7 @@ class Atom {
     std::string recname; //Record name: "ATOM  ", "HETATM"
     int  atmnum; //Atom serial number
     std::string atmname; //Atom name
+		std::string atmtype; //Mol2
     std::string alt; //Alternate location indicator
     std::string resname; //Residue name
     std::string chainid; //Chain identifier, modified if realid is duplicated
@@ -53,6 +54,7 @@ class Atom {
     std::string& getRecName();
     int& getAtmNum();
     std::string& getAtmName();
+		std::string& getAtmType();
     std::string& getAlt();
     std::string& getResName();
     std::string& getChainId();
@@ -82,6 +84,8 @@ class Atom {
     void setAtmNum(const int& atmnumin);
     void setAtmName(const std::string& atmnamein);
     void setAtmName(); //Clear
+		void setAtmType(const std::string& atmtypein);
+		void setAtmType(); //Clear
     void setAlt(const std::string& altin);
     void setAlt(); //Clear
     void setResName(const std::string& resnamein);

@@ -138,6 +138,8 @@ Atom* Mol2::processAtomLine (std::string line, Atom* lastAtom){
   std::stringstream(s.at(4)) >> z;
   atmEntry->setCoor(Vector(x,y,z));
 
+	atmEntry->setAtmType(s.at(5));
+
 	if (s.size() >= 6){
 		std::stringstream(s.at(6)) >> resid;
 		atmEntry->setResId(resid);
