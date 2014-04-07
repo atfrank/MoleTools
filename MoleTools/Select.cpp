@@ -154,7 +154,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
           }
 					//Sort and remove duplicates
 					std::sort(out.begin(), out.end());
-					cmpNext.erase(unique(out.begin(), out.end()), out.end());
+					out.erase(unique(out.begin(), out.end()), out.end());
 				}
 				else{
 					//Do Nothing
