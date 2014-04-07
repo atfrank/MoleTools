@@ -133,10 +133,15 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
 						for (iter=ref.begin(); iter != ref.end(); ++iter){
 							//Distance calculation
 							if ((*it) != (*iter) && Analyze::distance((*it)->getCoor() , (*iter)->getCoor()) <= angstrom){
-								out.push_back((*iter));
+								//out.push_back((*iter));
+								cmpNext.push_back((*iter));
 							}	
 						}
 					}
+					//Sort, remove duplicates, and find difference
+					std::sort(cmpNext.begin(), cmpNext.end());
+					cmpNext.erase(unique(cmpNext.begin(), cmpNext.end()), cmpNext.end());
+					std::set_difference(cmpNext.begin(), cmpNext.end(), cmpCurr.begin(), cmpCurr.end(), back_inserter(out));
 				}
 				else if (str.substr(pos, 1).compare("#") == 0){
 					for (it=cmpCurr.begin(); it != cmpCurr.end(); ++it){
@@ -147,6 +152,9 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
               }
             }
           }
+					//Sort and remove duplicates
+					std::sort(out.begin(), out.end());
+					cmpNext.erase(unique(out.begin(), out.end()), out.end());
 				}
 				else{
 					//Do Nothing
