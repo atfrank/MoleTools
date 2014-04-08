@@ -2,6 +2,16 @@
 
 #include "Molecule.hpp"
 
+#include "Chain.hpp"
+#include "Residue.hpp"
+#include "Atom.hpp"
+#include "PDB.hpp"
+#include "Mol2.hpp"
+#include "Select.hpp"
+#include "Analyze.hpp"
+#include "LinAlg.hpp"
+#include "Misc.hpp"
+
 Molecule::Molecule (){
 	chnVec.clear();
 	resVec.clear();

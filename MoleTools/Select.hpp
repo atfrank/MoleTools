@@ -2,10 +2,6 @@
 #ifndef SELECT_H
 #define SELECT_H
 
-#include "Molecule.hpp"
-#include "Misc.hpp"
-#include "Analyze.hpp"
-
 #include <vector>
 #include <sstream>
 #include <algorithm>

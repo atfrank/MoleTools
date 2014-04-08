@@ -1,6 +1,7 @@
 //Sean M. Law
 
 #include "WHAM.hpp"
+#include "Misc.hpp"
 
 #include <iostream>
 #include <fstream>

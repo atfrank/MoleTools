@@ -2,9 +2,6 @@
 #ifndef PDB_H
 #define PDB_H
 
-#include "Molecule.hpp"
-#include "Misc.hpp"
-
 #include <iostream>
 #include <iomanip>
 #include <map>

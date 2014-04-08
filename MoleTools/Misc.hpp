@@ -3,8 +3,6 @@
 #ifndef MISC_H
 #define MISC_H
 
-#include "Histogram.hpp"
-
 #include <vector>
 #include <string>
 #include <sstream>

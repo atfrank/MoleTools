@@ -2,6 +2,12 @@
 
 #include "Select.hpp"
 
+#include "Molecule.hpp"
+#include "Residue.hpp"
+#include "Atom.hpp"
+#include "Misc.hpp"
+#include "Analyze.hpp"
+
 void Select::makeSel (Molecule* mol, std::string selin){
 
   std::vector<Atom *> ref;

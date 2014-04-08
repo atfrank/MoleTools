@@ -2,6 +2,9 @@
 
 #include "Histogram.hpp"
 
+#include "Misc.hpp"
+#include "Constants.hpp"
+
 Histogram::Histogram(const unsigned &ninpin, const unsigned int &ndimin){
   MIN.resize(ndimin);
   MAX.resize(ndimin);

@@ -2,6 +2,8 @@
 
 #include "LinAlg.hpp"
 
+#include "Misc.hpp"
+
 //modPDB.exe tests/file.pdb -fit tests/file.ref.pdb -outsel :.CA > t.pdb
 
 

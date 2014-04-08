@@ -2,6 +2,16 @@
 
 #include "Analyze.hpp"
 
+#include "Molecule.hpp"
+#include "Chain.hpp"
+#include "Residue.hpp"
+#include "Atom.hpp"
+#include "Vector.hpp"
+#include "Constants.hpp"
+#include "DTree.hpp"
+#include "PCASSO.hpp"
+#include "Misc.hpp"
+
 Analyze::Analyze (){
 	sel.clear();
 	mol.clear();

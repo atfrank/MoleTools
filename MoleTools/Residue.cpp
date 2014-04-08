@@ -2,6 +2,8 @@
 
 #include "Residue.hpp"
 
+#include "Atom.hpp"
+
 Residue::Residue (){
   atmVec.clear();
 //  sel=true;

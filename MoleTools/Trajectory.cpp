@@ -2,6 +2,10 @@
 
 #include "Trajectory.hpp"
 
+#include "Constants.hpp"
+#include "Molecule.hpp"
+#include "Atom.hpp"
+
 //Deal with Endianess
 
 Trajectory::Trajectory (){

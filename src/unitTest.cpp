@@ -1,6 +1,7 @@
 //Sean M. Law
 
 #include "DTree.hpp"
+#include "Misc.hpp"
 
 #include <iostream>
 #include <fstream>

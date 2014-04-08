@@ -3,9 +3,11 @@
 #ifndef CHAIN_H
 #define CHAIN_H
 
-#include "Residue.hpp"
-
 #include <vector>
+
+//Forward Declaration
+class Residue;
+class Atom;
 
 class Chain {
   private:

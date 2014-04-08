@@ -3,10 +3,6 @@
 #ifndef WHAM_H
 #define WHAM_H
 
-#include "Misc.hpp"
-#include "Constants.hpp"
-#include "Histogram.hpp"
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -15,6 +11,9 @@
 #include <limits>
 #include <ctime>
 #include <iomanip>
+
+//Forward Declaration
+class Histogram;
 
 class WHAM {
   private:

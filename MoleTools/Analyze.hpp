@@ -4,19 +4,18 @@
 #define ANALYZE_H
 
 #include "Enum.hpp"
-#include "Molecule.hpp"
-#include "Vector.hpp"
-#include "Constants.hpp"
-#include "DTree.hpp"
-#include "PCASSO.hpp"
 #include "Eigen/Eigenvalues"
 #include "Eigen/LU"
 
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <vector>
 
+//Forward Declaration
 class Molecule;
+class Vector;
+class DTree;
 
 //Abstract base class (cannot create instance of it!)
 class Analyze {

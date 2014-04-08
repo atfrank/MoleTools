@@ -3,7 +3,6 @@
 #define ATOM_H
 
 #include "Vector.hpp"
-#include "Constants.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -15,8 +14,9 @@
 #include <vector>
 #include <limits>
 
-class Chain; //Forward declaration
-class Residue; //Forward declaration
+//Forward declaration
+class Chain;
+class Residue;
 
 class Atom {
   private:

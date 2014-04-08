@@ -2,6 +2,8 @@
 
 #include "DTree.hpp"
 
+#include "Misc.hpp"
+
 DTree::DTree(){
 	root=NULL;
 	classMap.clear();

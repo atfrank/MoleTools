@@ -3,9 +3,6 @@
 #ifndef TRAJECTORY_H
 #define TRAJECTORY_H
 
-#include "Constants.hpp"
-#include "Molecule.hpp"
-
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -15,6 +12,9 @@
 #include <vector>
 #include <limits>
 #include <cstdlib>
+
+//Forward Declaration
+class Molecule;
 
 class Trajectory {
   private:

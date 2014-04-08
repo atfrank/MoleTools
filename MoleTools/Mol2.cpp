@@ -2,6 +2,13 @@
 
 #include "Mol2.hpp"
 
+#include "Molecule.hpp"
+#include "Chain.hpp"
+#include "Residue.hpp"
+#include "Atom.hpp"
+#include "Misc.hpp"
+#include "Select.hpp"
+
 Mol2::Mol2(){
   chnMap.clear();
 }

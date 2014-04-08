@@ -2,6 +2,9 @@
 
 #include "Chain.hpp"
 
+#include "Residue.hpp"
+#include "Atom.hpp"
+
 Chain::Chain (){
   resVec.clear();
   atmVec.clear();

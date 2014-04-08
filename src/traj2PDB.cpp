@@ -2,6 +2,7 @@
 
 #include "Trajectory.hpp"
 #include "Molecule.hpp"
+#include "Misc.hpp"
 
 #include <iostream>
 #include <fstream>

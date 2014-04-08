@@ -2,6 +2,8 @@
 
 #include "Prmtop.hpp"
 
+#include "Misc.hpp"
+
 Prmtop::Prmtop (){
   mass.clear();
   charge.clear();

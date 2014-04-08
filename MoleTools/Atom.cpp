@@ -2,6 +2,8 @@
 
 #include "Atom.hpp"
 
+#include "Constants.hpp"
+
 Atom::Atom(){
 	pdbid="NoID";
   recname="ATOM";

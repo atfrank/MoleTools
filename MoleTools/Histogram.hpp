@@ -4,8 +4,6 @@
 #define HISTOGRAM_H
 
 #include "Enum.hpp"
-#include "Misc.hpp"
-#include "Constants.hpp"
 #include "Bin.hpp"
 
 #include <vector>

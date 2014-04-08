@@ -2,6 +2,12 @@
 
 #include "PDB.hpp"
 
+#include "Molecule.hpp"
+#include "Chain.hpp"
+#include "Residue.hpp"
+#include "Atom.hpp"
+#include "Misc.hpp"
+
 PDB::PDB(){
   chnMap.clear();
 	format.clear();

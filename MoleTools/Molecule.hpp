@@ -3,20 +3,19 @@
 #ifndef MOLECULE_H
 #define MOLECULE_H
 
-#include "PDB.hpp"
-#include "Mol2.hpp"
-#include "Select.hpp"
-#include "Analyze.hpp"
-
-#include "Enum.hpp"
-#include "Chain.hpp"
-#include "LinAlg.hpp"
 #include "Prmtop.hpp"
+#include "Vector.hpp"
+#include "Enum.hpp"
 #include "Eigen/Dense"
 
 #include <vector>
 #include <map>
 #include <limits>
+
+//Forward Declaration
+class Chain;
+class Residue;
+class Atom;
 
 //Base class
 class Molecule {

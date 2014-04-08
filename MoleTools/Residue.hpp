@@ -3,9 +3,10 @@
 #ifndef RESIDUE_H
 #define RESIDUE_H
 
-#include "Atom.hpp"
-
 #include <vector>
+
+//Forward Declaration
+class Atom;
 
 class Residue {
   private:

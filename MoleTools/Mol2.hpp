@@ -2,10 +2,6 @@
 #ifndef MOL2_H
 #define MOL2_H
 
-//#include "Molecule.hpp"
-#include "Misc.hpp"
-#include "Select.hpp"
-
 #include <iostream>
 #include <iomanip>
 #include <map>

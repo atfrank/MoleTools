@@ -3,7 +3,6 @@
 #ifndef DTREE_H
 #define DTREE_H
 
-#include "Misc.hpp"
 #include <cstdlib>
 #include <string>
 #include <vector>

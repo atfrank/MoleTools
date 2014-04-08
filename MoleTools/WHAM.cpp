@@ -2,6 +2,10 @@
 
 #include "WHAM.hpp"
 
+#include "Misc.hpp"
+#include "Constants.hpp"
+#include "Histogram.hpp"
+
 WHAM::WHAM (){
   cmd.clear();
   Fguess.clear();
