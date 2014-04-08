@@ -200,7 +200,9 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
       else{
 				//Do nothing
       }
-
+			
+			atmEntry->setResidue(resEntry);
+			atmEntry->setChain(chnEntry);
 			resEntry->addAtom(atmEntry);
 			chnEntry->addAtom(atmEntry);
 

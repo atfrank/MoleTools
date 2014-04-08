@@ -15,6 +15,9 @@
 #include <vector>
 #include <limits>
 
+class Chain; //Forward declaration
+class Residue; //Forward declaration
+
 class Atom {
   private:
 		std::string pdbid;
@@ -23,7 +26,9 @@ class Atom {
     std::string atmname; //Atom name
 		std::string atmtype; //Mol2
     std::string alt; //Alternate location indicator
+		Residue* res;
     std::string resname; //Residue name
+		Chain* chn;
     std::string chainid; //Chain identifier, modified if realid is duplicated
     std::string realid; //Store original chainid
     int  resid; //Residue sequence number
@@ -56,7 +61,9 @@ class Atom {
     std::string& getAtmName();
 		std::string& getAtmType();
     std::string& getAlt();
+		Residue* getResidue();
     std::string& getResName();
+		Chain* getChain();
     std::string& getChainId();
     std::string& getRealId();
     int& getResId();
@@ -88,8 +95,11 @@ class Atom {
 		void setAtmType(); //Clear
     void setAlt(const std::string& altin);
     void setAlt(); //Clear
+		void setResidue(); //Clear
+		void setResidue(Residue* resin=NULL);
     void setResName(const std::string& resnamein);
     void setResName(); //Clear
+		void setChain(Chain* chnin=NULL);
     void setChainId(const std::string& chainidin);
     void setRealId(const std::string& realidin);
     void setChainId(); //Clear

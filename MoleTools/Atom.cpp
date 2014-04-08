@@ -9,7 +9,9 @@ Atom::Atom(){
   atmname="    ";
 	atmtype="    ";
   alt=" ";
+	res=NULL;
   resname="   ";
+	chn=NULL;
   chainid=" ";
   realid=" ";
   resid=0;
@@ -33,7 +35,9 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
   atmname=atmnamein;
 	atmname="    ";
   alt=" ";
+	res=NULL;
   resname=resnamein;
+	chn=NULL;
   chainid=" ";
   realid=" ";
   resid=residin;
@@ -57,7 +61,9 @@ void Atom::reset(){
   atmname="    ";
 	atmtype="    ";
   alt=" ";
+	res=NULL;
   resname="   ";
+	chn=NULL;
   chainid=" ";
   realid=" ";
   resid=0;
@@ -80,7 +86,9 @@ void Atom::clone(Atom* atmin){
   atmname=atmin->getAtmName();
 	atmtype=atmin->getAtmType();
   alt=atmin->getAlt();
+	res=atmin->getResidue();
   resname=atmin->getResName();
+	chn=atmin->getChain();
   chainid=atmin->getChainId();
   realid=atmin->getRealId();
   resid=atmin->getResId();
@@ -105,7 +113,9 @@ void Atom::dummy(){
   atmname="CA";
 	atmtype="C.3";
   alt=" ";
+	res=NULL;
   resname="ALA";
+	chn=NULL;
   chainid="+";
   realid="+";
   resid=999;
@@ -147,8 +157,16 @@ std::string& Atom::getAlt(){
   return alt;
 }
 
+Residue* Atom::getResidue(){
+	return res;
+}
+
 std::string& Atom::getResName(){
   return resname;
+}
+
+Chain* Atom::getChain(){
+	return chn;
 }
 
 std::string& Atom::getChainId(){
@@ -272,12 +290,20 @@ void Atom::setAlt(){
   alt=" ";
 }
 
+void Atom::setResidue(Residue* resin){
+	res=resin;
+}
+
 void Atom::setResName(const std::string& resnamein){
   resname=resnamein;
 }
 
 void Atom::setResName(){
   resname=" ";
+}
+
+void Atom::setChain(Chain* chnin){
+	chn=chnin;	
 }
 
 void Atom::setChainId(const std::string& chainidin){
