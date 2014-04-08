@@ -4,6 +4,7 @@
 #define CHAIN_H
 
 #include <vector>
+#include <string>
 
 //Forward Declaration
 class Residue;

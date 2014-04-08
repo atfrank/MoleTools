@@ -3,10 +3,10 @@
 #include "Histogram.hpp"
 #include "Misc.hpp"
 
-#include <iostream>
 #include <fstream>
 #include <cstdlib>
 #include <ctime>
+#include <limits>
 
 void usage(){
   std::cerr << std::endl;

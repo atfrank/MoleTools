@@ -5,8 +5,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <sstream>
-#include <cstdlib>
 
 void usage(){
   std::cerr << std::endl << std::endl;

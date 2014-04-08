@@ -4,13 +4,6 @@
 #include "Vector.hpp"
 #include "Misc.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <sstream> //string stream
-#include <string>
-#include <cstdlib>
-#include <ctime>
-
 void usage (){
   std::cerr << std::endl;
   std::cerr << "Usage:   modPDB [-options] <PDBfile>" << std::endl;

@@ -5,6 +5,7 @@
 #include "Misc.hpp"
 
 #include <cmath>
+#include <cstdlib>
 
 //modPDB.exe tests/file.pdb -fit tests/file.ref.pdb -outsel :.CA > t.pdb
 

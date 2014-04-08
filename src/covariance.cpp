@@ -3,10 +3,7 @@
 #include "Misc.hpp"
 #include "Eigen/Eigenvalues"
 
-#include <iostream>
 #include <fstream>
-#include <cstdlib>
-#include <vector>
 
 void usage(){
   std::cerr << "Usage:   Covariance [-options] <input(s)>" << std::endl;

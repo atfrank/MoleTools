@@ -4,10 +4,6 @@
 #include "Analyze.hpp"
 
 #include <iostream>
-#include <fstream>
-#include <vector>
-#include <string>
-#include <cstdlib>
 #include <ctime>
 
 void usage(){

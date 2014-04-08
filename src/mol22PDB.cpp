@@ -3,11 +3,6 @@
 #include "Molecule.hpp"
 #include "Misc.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
-#include <vector>
-
 void usage(){
   std::cerr << std::endl;
   std::cerr << "Usage:   mol22PDB [-options] <MOL2files>" << std::endl;
@@ -76,8 +71,8 @@ int main (int argc, char **argv){
  	mol->writePDB(chnFlag);
 
 	mol=mol->clone();
-	for (i=0; i< mol->getNAtom(); i++){
-//		std::cerr << mol->getAtom(i)->getAtmType() << std::endl;
+	for (unsigned int j=0; j< mol->getNAtom(); j++){
+//		std::cerr << mol->getAtom(j)->getAtmType() << std::endl;
 	}
 
 	delete mol;

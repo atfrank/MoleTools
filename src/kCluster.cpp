@@ -2,10 +2,6 @@
 
 #include "Molecule.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
-
 void usage(){
   exit(0);
 }

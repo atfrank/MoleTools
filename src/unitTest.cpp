@@ -3,12 +3,7 @@
 #include "DTree.hpp"
 #include "Misc.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <cstdlib>
-#include <cmath>
-#include <vector>
 
 void usage(){
   std::cerr << std::endl << std::endl;

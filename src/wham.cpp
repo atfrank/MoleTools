@@ -3,10 +3,6 @@
 #include "WHAM.hpp"
 #include "Misc.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <iomanip>
 #include <cstdlib>
 #include <cmath>
 

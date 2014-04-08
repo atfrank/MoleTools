@@ -3,6 +3,7 @@
 #include "Misc.hpp"
 
 #include <cmath>
+#include <algorithm>
 
 void Misc::splitStr (const std::string &str, const std::string &delim, std::vector<std::string> &out, const bool repeat){
   size_t p0=0;

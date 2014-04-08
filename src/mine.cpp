@@ -3,10 +3,8 @@
 #include "Misc.hpp"
 #include "MINE/cppmine.h"
 
-#include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include <vector>
 #include <limits>
 
 void usage(){

@@ -5,6 +5,9 @@
 #include "Misc.hpp"
 #include "Constants.hpp"
 
+#include <limits>
+#include <algorithm>
+
 Histogram::Histogram(const unsigned &ninpin, const unsigned int &ndimin){
   MIN.resize(ndimin);
   MAX.resize(ndimin);

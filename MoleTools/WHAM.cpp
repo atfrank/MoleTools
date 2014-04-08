@@ -8,6 +8,8 @@
 
 #include <iomanip>
 #include <fstream>
+#include <limits>
+#include <algorithm>
 
 WHAM::WHAM (){
   cmd.clear();

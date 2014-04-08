@@ -5,12 +5,7 @@
 #include "Misc.hpp"
 #include "Analyze.hpp"
 
-#include <iostream>
 #include <fstream>
-#include <sstream>
-#include <cstdlib>
-#include <vector>
-#include <ctime>
 
 void usage(){
   std::cerr << std::endl << std::endl;

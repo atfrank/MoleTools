@@ -4,11 +4,10 @@
 
 #include "Misc.hpp"
 
-#include <iostream>
 #include <fstream>
-#include <cstdlib>
 #include <limits>
 #include <cmath>
+#include <algorithm>
 
 void usage(){
 	std::cerr << std::endl << std::endl;

@@ -5,6 +5,7 @@
 #include "Constants.hpp"
 
 #include <iostream>
+#include <limits>
 
 Atom::Atom(){
 	pdbid="NoID";

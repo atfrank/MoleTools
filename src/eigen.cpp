@@ -5,9 +5,7 @@
 #include "Misc.hpp"
 #include "Trajectory.hpp"
 
-#include <iostream>
 #include <fstream>
-#include <cstdlib>
 
 void usage(){
   std::cerr << "Usage:   eigen [-options] <covarFILE>" << std::endl;
