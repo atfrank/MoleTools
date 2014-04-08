@@ -42,6 +42,10 @@ std::string Residue::getSegId(){
   return this->getAtom(0)->getSegId();
 }
 
+std::vector<Atom*>& Residue::getAtmVec(){
+	return atmVec;
+}
+
 Atom* Residue::getAtom (const unsigned int &element){
 	if (element >= atmVec.size()){
 		return NULL;

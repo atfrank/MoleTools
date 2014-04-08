@@ -23,6 +23,7 @@ class Residue {
     Atom* getEnd();
     std::string getSegId();
     void addAtom(Atom* atmEntry);
+		std::vector<Atom*>& getAtmVec();
     Atom* getAtom (const unsigned int &element);
     unsigned int getAtmVecSize();
 //    void setSel(bool selin);

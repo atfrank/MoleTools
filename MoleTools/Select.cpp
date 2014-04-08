@@ -100,8 +100,8 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     out.clear();
     std::set_difference(ref.begin(), ref.end(), cmpCurr.begin(), cmpCurr.end(), back_inserter(out));
   }
-	else if ((pos=str.find_last_of("~#")) != std::string::npos){
-		//Around (~), Expand (#)
+	else if ((pos=str.find_last_of("~#$")) != std::string::npos){
+		//Around (~), Expand (#), By Residue ($)
 
     //N Angstroms around selection X. The final selection does NOT include X
 		//A:10+20.CA~1.5
@@ -109,8 +109,11 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
 		//Expand selection X by N Angstroms. The final selection includes X
 		//A:10+20.CA#2
 
-		//Around and Expand can be chained together
-		//A:10+20.CA~1.5#2
+		//By residue
+		//A:10+20.CA$
+
+		//Around, Expand, and By Residue can be chained together
+		//A:10+20.CA~1.5#2$
 
 		out.clear();
 
@@ -155,6 +158,14 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
 					//Sort and remove duplicates
 					std::sort(out.begin(), out.end());
 					out.erase(unique(out.begin(), out.end()), out.end());
+				}
+				else if (str.substr(pos, 1).compare("$") == 0){
+					for (it=cmpCurr.begin(); it != cmpCurr.end(); ++it){
+						out.insert(out.end(), (*it)->getResidue()->getAtmVec().begin(), (*it)->getResidue()->getAtmVec().end());
+					}
+					//Sort and remove duplicates
+          std::sort(out.begin(), out.end());
+          out.erase(unique(out.begin(), out.end()), out.end());
 				}
 				else{
 					//Do Nothing
