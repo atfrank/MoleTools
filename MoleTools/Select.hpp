@@ -11,6 +11,9 @@
 #include <algorithm>
 #include <map>
 
+class Molecule;
+class Atom;
+
 class Select {
   private:
 		std::map<std::string, std::string> selKeysAtm;

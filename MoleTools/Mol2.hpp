@@ -2,7 +2,7 @@
 #ifndef MOL2_H
 #define MOL2_H
 
-#include "Molecule.hpp"
+//#include "Molecule.hpp"
 #include "Misc.hpp"
 #include "Select.hpp"
 
@@ -10,6 +10,9 @@
 #include <iomanip>
 #include <map>
 #include <stdexcept>
+
+class Molecule;
+class Atom;
 
 class Mol2 {
   private:

@@ -2,12 +2,6 @@
 
 #include "Molecule.hpp"
 
-//Circular dependencies must be listed here instead of the header file
-#include "PDB.hpp"
-#include "Mol2.hpp"
-#include "Select.hpp"
-#include "Analyze.hpp"
-
 Molecule::Molecule (){
 	chnVec.clear();
 	resVec.clear();

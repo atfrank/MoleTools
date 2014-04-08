@@ -10,6 +10,10 @@
 #include <map>
 #include <stdexcept>
 
+class Molecule;
+class Residue;
+class Atom;
+
 class PDB {
   private:
     std::map<std::string, int> chnMap;

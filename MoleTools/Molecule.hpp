@@ -3,6 +3,11 @@
 #ifndef MOLECULE_H
 #define MOLECULE_H
 
+#include "PDB.hpp"
+#include "Mol2.hpp"
+#include "Select.hpp"
+#include "Analyze.hpp"
+
 #include "Enum.hpp"
 #include "Chain.hpp"
 #include "LinAlg.hpp"

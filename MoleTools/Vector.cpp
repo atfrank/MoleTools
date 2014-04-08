@@ -2,8 +2,6 @@
 
 #include "Vector.hpp"
 
-#include <iostream>
-
 Vector::Vector(){
   xcoor=0.0;
   ycoor=0.0;

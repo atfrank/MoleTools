@@ -4,6 +4,7 @@
 #define VECTOR_H
 
 #include <cmath>
+#include <iostream>
 
 class Vector {
   private:

@@ -16,6 +16,8 @@
 #include <fstream>
 #include <algorithm>
 
+class Molecule;
+
 //Abstract base class (cannot create instance of it!)
 class Analyze {
 	private:
