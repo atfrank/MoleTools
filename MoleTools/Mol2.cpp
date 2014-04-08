@@ -9,6 +9,8 @@
 #include "Misc.hpp"
 #include "Select.hpp"
 
+#include <fstream>
+
 Mol2::Mol2(){
   chnMap.clear();
 }

@@ -7,9 +7,6 @@
 #include "Bin.hpp"
 
 #include <vector>
-#include <iostream>
-#include <limits>
-#include <algorithm>
 
 class Histogram {
   private:

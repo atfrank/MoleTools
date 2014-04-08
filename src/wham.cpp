@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iomanip>
 #include <cstdlib>
+#include <cmath>
 
 void usage(){
   std::cerr << "Usage:   wham [-options] <metadatafile>" << std::endl;

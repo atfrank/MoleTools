@@ -6,6 +6,9 @@
 #include "Constants.hpp"
 #include "Histogram.hpp"
 
+#include <iomanip>
+#include <fstream>
+
 WHAM::WHAM (){
   cmd.clear();
   Fguess.clear();

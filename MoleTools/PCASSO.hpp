@@ -4,7 +4,6 @@
 #define PCASSO_H
 
 #include <string>
-#include <vector>
 
 class PCASSO {
 	private:

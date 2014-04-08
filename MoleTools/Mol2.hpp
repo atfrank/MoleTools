@@ -2,10 +2,8 @@
 #ifndef MOL2_H
 #define MOL2_H
 
-#include <iostream>
-#include <iomanip>
 #include <map>
-#include <stdexcept>
+#include <string>
 
 class Molecule;
 class Atom;

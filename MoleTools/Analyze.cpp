@@ -12,6 +12,9 @@
 #include "PCASSO.hpp"
 #include "Misc.hpp"
 
+#include <fstream>
+#include <iomanip>
+
 Analyze::Analyze (){
 	sel.clear();
 	mol.clear();

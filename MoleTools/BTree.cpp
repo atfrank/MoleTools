@@ -2,6 +2,8 @@
 
 #include "BTree.hpp"
 
+#include <cstdlib>
+
 BTree::BTree(){
 	root=NULL;
 }

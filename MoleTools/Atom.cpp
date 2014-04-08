@@ -4,6 +4,8 @@
 
 #include "Constants.hpp"
 
+#include <iostream>
+
 Atom::Atom(){
 	pdbid="NoID";
   recname="ATOM";

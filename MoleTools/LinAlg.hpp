@@ -4,9 +4,6 @@
 #define LINALG_H
 
 #include <vector>
-#include <algorithm>
-#include <iostream>
-#include <cmath>
 
 class LinAlg {
   private:

@@ -3,10 +3,8 @@
 #ifndef DTREE_H
 #define DTREE_H
 
-#include <cstdlib>
 #include <string>
 #include <vector>
-#include <sstream>
 #include <map>
 
 struct DTreeNode{

@@ -3,9 +3,8 @@
 #define SELECT_H
 
 #include <vector>
-#include <sstream>
-#include <algorithm>
 #include <map>
+#include <string>
 
 class Molecule;
 class Atom;

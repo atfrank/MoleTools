@@ -2,6 +2,8 @@
 
 #include "Misc.hpp"
 
+#include <cmath>
+
 void Misc::splitStr (const std::string &str, const std::string &delim, std::vector<std::string> &out, const bool repeat){
   size_t p0=0;
   size_t p1=std::string::npos;

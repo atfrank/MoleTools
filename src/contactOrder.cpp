@@ -8,6 +8,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <limits>
+#include <cmath>
 
 void usage(){
 	std::cerr << std::endl << std::endl;

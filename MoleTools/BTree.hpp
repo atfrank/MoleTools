@@ -3,8 +3,6 @@
 #ifndef BTREE_H
 #define BTREE_H
 
-#include <cstdlib>
-
 struct BTreeNode{
   int key_value;
 	BTreeNode *left;

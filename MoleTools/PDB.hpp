@@ -2,10 +2,8 @@
 #ifndef PDB_H
 #define PDB_H
 
-#include <iostream>
-#include <iomanip>
 #include <map>
-#include <stdexcept>
+#include <string>
 
 class Molecule;
 class Residue;

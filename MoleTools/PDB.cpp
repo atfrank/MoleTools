@@ -8,6 +8,9 @@
 #include "Atom.hpp"
 #include "Misc.hpp"
 
+#include <fstream>
+#include <iomanip>
+
 PDB::PDB(){
   chnMap.clear();
 	format.clear();

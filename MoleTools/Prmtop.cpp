@@ -4,6 +4,8 @@
 
 #include "Misc.hpp"
 
+#include <fstream>
+
 Prmtop::Prmtop (){
   mass.clear();
   charge.clear();

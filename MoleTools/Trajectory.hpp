@@ -3,15 +3,8 @@
 #ifndef TRAJECTORY_H
 #define TRAJECTORY_H
 
-#include <fstream>
-#include <iostream>
-#include <iomanip>
-#include <cstring>
-#include <sstream>
 #include <string>
 #include <vector>
-#include <limits>
-#include <cstdlib>
 
 //Forward Declaration
 class Molecule;

@@ -10,7 +10,6 @@
 
 #include <vector>
 #include <map>
-#include <limits>
 
 //Forward Declaration
 class Chain;

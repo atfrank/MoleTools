@@ -4,15 +4,8 @@
 
 #include "Vector.hpp"
 
-#include <fstream>
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <sstream>
-#include <cctype> //isdigit
-#include <cstdlib>
 #include <vector>
-#include <limits>
+#include <string>
 
 //Forward declaration
 class Chain;

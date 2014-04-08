@@ -7,9 +7,6 @@
 #include "Eigen/Eigenvalues"
 #include "Eigen/LU"
 
-#include <iostream>
-#include <fstream>
-#include <algorithm>
 #include <vector>
 
 //Forward Declaration

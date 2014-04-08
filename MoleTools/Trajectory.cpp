@@ -6,6 +6,10 @@
 #include "Molecule.hpp"
 #include "Atom.hpp"
 
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+
 //Deal with Endianess
 
 Trajectory::Trajectory (){

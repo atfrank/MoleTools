@@ -3,8 +3,8 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include <cmath>
-#include <iostream>
+//#include <cmath>
+//#include <iostream>
 
 class Vector {
   private:

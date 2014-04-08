@@ -3,14 +3,9 @@
 #ifndef WHAM_H
 #define WHAM_H
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <vector>
 #include <map>
-#include <limits>
-#include <ctime>
-#include <iomanip>
+#include <string>
 
 //Forward Declaration
 class Histogram;

@@ -7,10 +7,10 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <cctype>
-#include <cmath>
-#include <algorithm>
-#include <typeinfo>
+//#include <cctype>
+//#include <cmath>
+//#include <algorithm>
+//#include <typeinfo>
 
 class Misc {
   private:
