@@ -135,6 +135,7 @@ Atom* Mol2::processAtomLine (std::string line, Atom* lastAtom){
 	std::vector<Atom *> ref;
 	Molecule *mol=new Molecule;
 	std::vector<Atom *> atmSel;
+	double charge;
 
 	sel->initKeys(mol); //mol is not actually used, needed to initialize selection keys
 
@@ -169,6 +170,10 @@ Atom* Mol2::processAtomLine (std::string line, Atom* lastAtom){
 			  atmEntry->setResName("UNK");	
 			}
 		}
+	}
+	if (s.size() >= 8){
+		std::stringstream(s.at(8)) >> charge;
+		atmEntry->setCharge(charge);
 	}
 
   atmEntry->setChainId(" ");

@@ -1127,7 +1127,7 @@ std::vector<double> Analyze::projectModes(Molecule* cmpmol, Molecule* refmol, co
   return proj;
 }
 
-void Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector< double> >& pdin){
+void Analyze::pairwiseDistance(Molecule *mol, std::vector<std::vector<double> >& pdin){
 	std::vector<Atom*>::iterator ai;
 	std::vector<Atom*>::iterator aj;
 	unsigned int natom;
