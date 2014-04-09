@@ -7,8 +7,10 @@
 #include <ctime>
 
 void usage(){
-  std::cerr << "Usage:   pcasso [-options] <pdbFile>" << std::endl;
+  std::cerr << "Usage:   pcasso [-options] <PDBfile>" << std::endl;
   std::cerr << "Options: [-predict | -features]" << std::endl;
+	std::cerr << "         [-trj TRAJfile]" << std::endl;
+	std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
 //	std::cerr << "         [-dssp dsspFile]" << std::endl;
 //	std::cerr << "         [-trial]" << std::endl;
   std::cerr << std::endl;
@@ -24,9 +26,11 @@ int main (int argc, char **argv){
   std::string currArg;
   std::string dssp;
 	PcassoOutEnum out;
+	std::vector<std::string> trajs;
 
   dssp.clear();
 	out=PREDICT;
+	trajs.clear();
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -43,6 +47,10 @@ int main (int argc, char **argv){
 		else if (currArg.compare("-features") == 0 || currArg.compare("-feature") == 0){
 			out=FEATURES;
 		}
+		else if (currArg.compare("-trj") == 0 || currArg.compare("-traj") == 0){
+			currArg=argv[++i];
+			trajs.push_back(currArg);
+		}
 		else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
@@ -56,18 +64,23 @@ int main (int argc, char **argv){
     usage();
   }
 
-  if (dssp.length() > 0){
+	if (trajs.size() > 0){
+		if (pdbs.size() > 1){
+			std::cerr << std::endl << "Warning: Only the first PDB structure is used for trajectory analysis" << std::endl << std::endl;
+		}
+		//Trajectory analysis
+
+	}
+  else if (dssp.length() > 0){
     if (pdbs.size() > 1){
       std::cerr << "Warning: \"-dssp\" option can only be used with a single PDB input" << std::endl;
       std::cerr << "Warning: Only the first PDB structure was processed" << std::endl;
     }
-    if (pdbs.size() > 0){
-      //Only process first structure!
-      Molecule *mol=Molecule::readPDB(pdbs.at(0));
-      std::cerr << "Processing file \"" << pdbs.at(0) << "..." << std::endl;
-			mol->pcasso(dssp, out); //Makes temporary clone with C-alpha only, and analyzes it
-      delete mol;
-    }
+    //Only process first structure!
+    Molecule *mol=Molecule::readPDB(pdbs.at(0));
+    std::cerr << "Processing file \"" << pdbs.at(0) << "..." << std::endl;
+	mol->pcasso(dssp, out); //Makes temporary clone with C-alpha only, and analyzes it
+    delete mol;
   }
   else{
 		//Placed here for efficiency; construct trees once instead of calling mol->pcasso()
@@ -78,10 +91,12 @@ int main (int argc, char **argv){
 	  for (j=0; j< pdbs.size(); j++){
   	  Molecule *mol=Molecule::readPDB(pdbs.at(j));
 		  std::cerr << "Processing file \"" << pdbs.at(j) << "..." << std::endl;
-				
+		
+			/*
 			std::clock_t start;
 			double duration;
 			start=std::clock();
+			*/
 
 			//mol->pcasso("", out); //Removed for efficiency; avoid re-constructing trees
 
@@ -90,8 +105,10 @@ int main (int argc, char **argv){
 
 			anin->runAnalysis();
 
+			/*
 			duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
 			std::cerr << "* " << mol->getNAtom() << " " << duration << std::endl;
+			*/
 
 		  delete mol;
     }
