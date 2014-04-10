@@ -588,7 +588,7 @@ unsigned int Trajectory::getLastFrame(){
   return lastFrame;
 }
 
-unsigned int Trajectory::getLastPos(){
+unsigned long long int Trajectory::getLastPos(){
 	return lastPos;
 }
 
@@ -712,7 +712,7 @@ void Trajectory::setLastFrame(const unsigned int &frame){
   lastFrame=frame;
 }
 
-void Trajectory::setLastPos(const unsigned int &pos){
+void Trajectory::setLastPos(const unsigned long long int &pos){
 	lastPos=pos;
 }
 
