@@ -336,7 +336,10 @@ int main (int argc, char **argv){
 				}
         //Loop through desired frames
 				for (i=start; i< ftrjin->getNFrame() && i< stop; i=i+1+skip){
-					ftrjin->readFrame(trjin, i);
+					if( ftrjin->readFrame(trjin, i) == false){
+						std::cerr << "Warning: EOF found before the next frame could be read" << std::endl;
+						break;
+					}
           nframe++;
 					//Fit if needed
 					if (fit == true){
