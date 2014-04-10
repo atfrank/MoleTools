@@ -371,7 +371,6 @@ int main (int argc, char **argv){
             std::cerr << "Warning: EOF found before the next frame could be read" << std::endl;
             break;
           }
-					ftrjin->readFrame(trjin, i);
           currFrames++;
           if (pdb.length() >0){
 						//Transform molecule only if PDB is provided

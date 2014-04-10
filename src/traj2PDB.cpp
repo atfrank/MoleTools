@@ -141,7 +141,6 @@ int main (int argc, char **argv){
             std::cerr << "Warning: EOF found before the next frame could be read" << std::endl;
             break;
           }
-					ftrjin->readFrame(trjin, i);
 					fout << tag << "." << npdb << ".pdb";
 					outname=fout.str();
 					pdbout.open(outname.c_str(), std::ios::out);

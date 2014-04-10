@@ -122,7 +122,6 @@ int main (int argc, char **argv){
 	            std::cerr << "Warning: EOF found before the next frame could be read" << std::endl;
             	break;
 						}
-          	ftrjin->readFrame(trjin, i);
           	nframe++;
 						//Analyze PCASSO
 						anin->runAnalysis();					
