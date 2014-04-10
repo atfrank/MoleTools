@@ -16,7 +16,7 @@ $(BINDIR):
 	mkdir -p $(BINDIR)
 
 libmoletools.$(LIBEXT):
-	$(MAKE) -C ../MoleTools libmoletools.$(LIBEXT)
+	$(MAKE) -C ../lib libmoletools.$(LIBEXT)
 
 analyzeTraj: analyzeTraj.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<

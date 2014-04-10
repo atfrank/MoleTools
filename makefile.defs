@@ -6,8 +6,8 @@ CXXFLAGS = -Wall -lm
 OPTFLAGS = -O3
 #DEBUG = -g
 OTHERLIBS = ../
-INCFLAGS = -I../MoleTools -I$(OTHERLIBS)
-LINKFLAGS = -L../MoleTools -lmoletools 
+INCFLAGS = -I../lib -I$(OTHERLIBS)
+LINKFLAGS = -L../lib -lmoletools 
 BINDIR = ../bin
 ifeq ($(shell uname -o 2>/dev/null), Cygwin)
 	LIBEXT=dll

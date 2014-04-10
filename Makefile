@@ -4,7 +4,7 @@ all: libmoletools.$(LIBEXT) libmine.$(LIBEXT) programs
 
 libmoletools.$(LIBEXT):
 	$(UNAME)
-	$(MAKE) -C MoleTools 
+	$(MAKE) -C lib 
 
 libmine.$(LIBEXT):
 	$(UNAME)
@@ -14,7 +14,7 @@ programs:
 	$(MAKE) -C src
 
 clean:
-	$(MAKE) -C MoleTools clean
+	$(MAKE) -C lib clean
 	$(MAKE) -C MINE clean
 	$(MAKE) -C src clean
 	rm -rf *~
