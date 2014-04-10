@@ -118,6 +118,10 @@ int main (int argc, char **argv){
         	}
 					//Loop through desired frames
         	for (i=start; i< ftrjin->getNFrame() && i< stop; i=i+1+skip){
+						if( ftrjin->readFrame(trjin, i) == false){
+	            std::cerr << "Warning: EOF found before the next frame could be read" << std::endl;
+            	break;
+						}
           	ftrjin->readFrame(trjin, i);
           	nframe++;
 						//Analyze PCASSO
