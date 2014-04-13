@@ -205,7 +205,6 @@ int main (int argc, char **argv){
 	  	mol->lsqfit(fitmol);
 			//mol->rmsd(fitmol);
       mol->selAll();
-      delete fitmol;
 		}
 		else {
 			std::cerr << std::endl << "Error: Please provide a PDB file for fitting" << std::endl;
