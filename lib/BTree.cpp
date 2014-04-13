@@ -12,49 +12,49 @@ BTree::~BTree(){
 	delBTree();
 }
 
-void BTree::delBTree(BTreeNode *leaf){
-	if (leaf != NULL){
-		delBTree(leaf->left);
-		delBTree(leaf->right);
-		delete leaf;
+void BTree::delBTree(BTreeNode *node){
+	if (node != NULL){
+		delBTree(node->left);
+		delBTree(node->right);
+		delete node;
 	}
 }
 
-void BTree::addBTree(int key, BTreeNode *leaf){
-	if (key < leaf ->key_value){
-		if (leaf->left != NULL){
-			addBTree(key, leaf->left);
+void BTree::addBTree(int key, BTreeNode *node){
+	if (key < node ->key_value){
+		if (node->left != NULL){
+			addBTree(key, node->left);
 		}
 		else{
-			leaf->left=new BTreeNode;
-			leaf->left->key_value=key;
-			leaf->left->left=NULL; //Sets left child of child node to NULL
-			leaf->left->right=NULL; //Sets right child of child node to NULL
+			node->left=new BTreeNode;
+			node->left->key_value=key;
+			node->left->left=NULL; //Sets left child of child node to NULL
+			node->left->right=NULL; //Sets right child of child node to NULL
 		}
 	}
 	else{
-		if (leaf->right != NULL){
-			addBTree(key, leaf->right);
+		if (node->right != NULL){
+			addBTree(key, node->right);
 		}
 		else{
-			leaf->right=new BTreeNode;
-			leaf->right->key_value=key;
-			leaf->right->left=NULL; //Sets left child of child node to NULL
-			leaf->right->right=NULL; //Sets right child of child node to NULL
+			node->right=new BTreeNode;
+			node->right->key_value=key;
+			node->right->left=NULL; //Sets left child of child node to NULL
+			node->right->right=NULL; //Sets right child of child node to NULL
 		}
 	}
 }
 
-BTreeNode* BTree::searchBTree(int key, BTreeNode *leaf){
-	if (leaf != NULL){
-		if (key == leaf->key_value){
-			return leaf;
+BTreeNode* BTree::searchBTree(int key, BTreeNode *node){
+	if (node != NULL){
+		if (key == node->key_value){
+			return node;
 		}
-		else if (key < leaf->key_value){
-			return searchBTree(key, leaf->left);
+		else if (key < node->key_value){
+			return searchBTree(key, node->left);
 		}
 		else{
-			return searchBTree(key, leaf->right);
+			return searchBTree(key, node->right);
 		}
 	}
 	else{

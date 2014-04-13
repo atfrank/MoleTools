@@ -12,9 +12,9 @@ struct BTreeNode{
 
 class BTree {
 	private:
-		void delBTree(BTreeNode *leaf);
-		void addBTree(int key, BTreeNode *leaf);
-		BTreeNode *searchBTree(int key, BTreeNode *leaf);
+		void delBTree(BTreeNode *node);
+		void addBTree(int key, BTreeNode *node);
+		BTreeNode *searchBTree(int key, BTreeNode *node);
 		BTreeNode *root;
 
 	public:

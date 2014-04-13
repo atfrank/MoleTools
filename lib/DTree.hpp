@@ -12,7 +12,7 @@ struct DTreeNode{
 	unsigned int inx; //1-D vector<double> index, no response column!
 	DTreeNode *left;
 	DTreeNode *right;
-	std::string cls;
+	std::string leaf;
 
 	DTreeNode* getDTreeNodeLeft();
 	DTreeNode* getDTreeNodeRight();
@@ -23,13 +23,13 @@ struct DTreeNode{
 class DTree {
 	private:
 
-		void delDTree(DTreeNode *leaf);
+		void delDTree(DTreeNode *node);
 		DTreeNode* root;
 		std::map<std::string, std::string> classMap;
 		
-		void addDTree(double key, DTreeNode *leaf, unsigned int index, std::string classin="");
-		std::string getDTreeClass(DTreeNode *leaf, const std::vector<double> &fin);
-		void genDTree(DTreeNode *&leaf, std::vector<std::string> &t, unsigned int &inx, std::string delim=":");
+		void addDTree(double key, DTreeNode *node, unsigned int index, std::string classin="");
+		std::string getDTreeClass(DTreeNode *node, const std::vector<double> &fin);
+		void genDTree(DTreeNode *&node, std::vector<std::string> &t, unsigned int &inx, std::string delim=":");
 
 	public:
 		DTree();
