@@ -2,7 +2,7 @@
 
 include ../makefile.defs
 
-CFLAGS = -Wall -lm $(LIBFLAGS)
+CFLAGS = -Wall $(LIBFLAGS)
 
 LIBOBJS = cppmine.o mine.o 
 
