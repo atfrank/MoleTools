@@ -25,6 +25,8 @@ Analyze::Analyze (){
   avgCovar.resize(0,0);
   ifile.clear();
   ofile.clear();
+	nframe=0;
+	verbose=false;
 }
 
 Analyze::~Analyze (){
@@ -274,6 +276,22 @@ void Analyze::setOutput (const std::string& fin){
 }
 std::string Analyze::getOutput(){
   return ofile;
+}
+
+void Analyze::setNFrame(const unsigned int nframein){
+  nframe=nframein;
+}
+
+unsigned int Analyze::getNFrame(){
+  return nframe;
+}
+
+void Analyze::setVerbose(bool verbosein){
+  verbose=verbosein;
+}
+
+bool Analyze::getVerbose(){
+  return verbose;
 }
 
 void Analyze::setEigen(const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin){
@@ -676,7 +694,17 @@ void AnalyzePcasso::runAnalysis(){
 					vote.insert(std::pair<std::string, unsigned int>(tmpClass,1));
 				}
 			}
-			std::cout << maxClass << std::endl; //Print majority vote
+			if (this->getVerbose() == true && this->getMol(0)->getNAtom() == feat.size()){
+        std::cout << this->getMol(0)->getAtom(i)->getSummary() << " ";
+        std::cout << maxClass; //Print majority vote
+        if (this->getNFrame() > 0){
+          std::cout << " " << this->getNFrame();
+        }
+        std::cout << std::endl;
+      }
+      else{
+				std::cout << maxClass << std::endl; //Print majority vote
+			}
 		}
 	}
 	else if (this->getOutType() == FEATURES || this->getOutType() == FEATURE){
@@ -1841,3 +1869,4 @@ void AnalyzePcasso::setOutType(PcassoOutEnum pin){
 PcassoOutEnum AnalyzePcasso::getOutType(){
 	return pout;
 }
+

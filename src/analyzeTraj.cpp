@@ -267,6 +267,7 @@ int main (int argc, char **argv){
     mol=Molecule::readPDB(pdb);
 		for (j=0; j< analyses.size(); j++){
 			analyses.at(j)->preAnalysis(mol); //Make copies of mol from selection
+			analyses.at(j)->setVerbose(verbose);
 		}
     mol->selAll();
   }
@@ -355,6 +356,7 @@ int main (int argc, char **argv){
                 std::cout << ftrjin->getNPriv()*ftrjin->getTStepPS()/ftrjin->getNSavc()+i*ftrjin->getTStepPS();
               }
               for (ianalysis=0; ianalysis< analyses.size(); ianalysis++){
+								analyses.at(ianalysis)->setNFrame(nframe);
                 analyses.at(ianalysis)->runAnalysis();
               }
               if (timeseries == true){
@@ -376,7 +378,8 @@ int main (int argc, char **argv){
 							//std::clock_t start;
         			//double duration;
         			//start=std::clock();
-
+							
+							analyses.at(ianalysis)->setNFrame(nframe);
 						  analyses.at(ianalysis)->runAnalysis();
 
 							//duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;

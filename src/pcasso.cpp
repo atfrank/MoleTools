@@ -10,7 +10,8 @@
 
 void usage(){
   std::cerr << "Usage:   pcasso [-options] <PDBfile>" << std::endl;
-  std::cerr << "Options: [-predict | -features]" << std::endl;
+  std::cerr << "Options: [-verbose]" << std::endl;
+//	std::cerr << "         [-predict | -features]" << std::endl;
 	std::cerr << "         [-trj TRAJfile]" << std::endl;
 	std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
 //	std::cerr << "         [-dssp dsspFile]" << std::endl;
@@ -38,6 +39,7 @@ int main (int argc, char **argv){
 	Trajectory *ftrjin;
 	unsigned int nframe;
 	AnalyzePcasso *anin;
+	bool verbose;
 
   dssp.clear();
 	out=PREDICT;
@@ -45,6 +47,7 @@ int main (int argc, char **argv){
 	ftrjin=NULL;
 	nframe=0;
 	anin=NULL;
+	verbose=false;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -79,6 +82,9 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       std::stringstream(currArg) >> stop;
     }
+		else if (currArg.compare("-verbose") == 0){
+			verbose=true;
+		}
 		else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
@@ -102,6 +108,7 @@ int main (int argc, char **argv){
 		anin=new AnalyzePcasso;
 		anin->addSel(":.CA");
 		anin->setOutType(out);
+		anin->setVerbose(verbose);
 		mol=Molecule::readPDB(pdbs.at(0));
 		anin->preAnalysis(mol, "");
 		mol->selAll();
@@ -124,6 +131,7 @@ int main (int argc, char **argv){
 						}
           	nframe++;
 						//Analyze PCASSO
+						anin->setNFrame(nframe);
 						anin->runAnalysis();					
 					}
 				}
@@ -154,6 +162,7 @@ int main (int argc, char **argv){
 		anin=new AnalyzePcasso;
 		anin->addSel(":.CA");
 		anin->setOutType(out);
+		anin->setVerbose(verbose);
 		
 	  for (j=0; j< pdbs.size(); j++){
   	  mol=Molecule::readPDB(pdbs.at(j));
