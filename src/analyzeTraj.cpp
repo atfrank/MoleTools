@@ -41,7 +41,8 @@ void usage(){
   std::cerr << "         [-covariance selection covarout | -project selection mode1[:mode2[:...:[modeN]]] covarin]" << std::endl;
   std::cerr << "         [-gyrtensor selection] [-rgyr selection] [-ellipsoid selection]" << std::endl;
   std::cerr << "         [-pairdist selection]" << std::endl;
-	std::cerr << "         [-pcasso predict|features]" << std::endl;
+//	std::cerr << "         [-pcasso predict|features]" << std::endl;
+	std::cerr << "         [-pcasso]" << std::endl;
   std::cerr << "         [-list file]" << std::endl;
   std::cerr << "         [-verbose]" << std::endl;
 	exit(0);
@@ -229,18 +230,20 @@ int main (int argc, char **argv){
 		else if (currArg.compare("-pcasso") == 0){
 			anin=new AnalyzePcasso;
 			anin->addSel(":.CA");
-			currArg=argv[++i];
+			currArg=argv[i+1];
 			if (currArg.compare("predict") == 0 || currArg.compare("prediction") == 0){
 				static_cast<AnalyzePcasso *>(anin)->setOutType(PREDICT);
 				analyses.push_back(anin);
+				currArg=argv[++i];
 			}
 			else if (currArg.compare("features") == 0 || currArg.compare("feature") == 0){
 				static_cast<AnalyzePcasso *>(anin)->setOutType(FEATURES);
 				analyses.push_back(anin);
+				currArg=argv[++i];
 			}
 			else{
-				std::cerr << "Warning: Unrecognized PCASSO output type" << std::endl;
-				delete anin;
+				static_cast<AnalyzePcasso *>(anin)->setOutType(PREDICT);
+				analyses.push_back(anin);
 			}
 			timeseries=true;
 		}
