@@ -224,6 +224,7 @@ int main (int argc, char **argv){
 				std::cerr << "Warning: Unrecognized PCASSO output type" << std::endl;
 				delete anin;
 			}
+			timeseries=true;
 		}
     else if (currArg.compare("-skip") == 0){
       currArg=argv[++i];
@@ -356,7 +357,6 @@ int main (int argc, char **argv){
                 std::cout << ftrjin->getNPriv()*ftrjin->getTStepPS()/ftrjin->getNSavc()+i*ftrjin->getTStepPS();
               }
               for (ianalysis=0; ianalysis< analyses.size(); ianalysis++){
-								analyses.at(ianalysis)->setNFrame(nframe);
                 analyses.at(ianalysis)->runAnalysis();
               }
               if (timeseries == true){
@@ -379,7 +379,6 @@ int main (int argc, char **argv){
         			//double duration;
         			//start=std::clock();
 							
-							analyses.at(ianalysis)->setNFrame(nframe);
 						  analyses.at(ianalysis)->runAnalysis();
 
 							//duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;

@@ -31,7 +31,6 @@ class Analyze {
 		bool resel; //Re-do selection for each analysis, not implemented yet
     std::string ifile;
     std::string ofile;
-		unsigned int nframe;
 		bool verbose;
 
 	public:
@@ -54,8 +53,6 @@ class Analyze {
     std::string getInput();
     void setOutput (const std::string& fin);
     std::string getOutput();
-		void setNFrame(const unsigned int nframein);
-    unsigned int getNFrame();
 		void setVerbose(bool verbosein);
 		bool getVerbose();
     Eigen::MatrixXd& getCovar();
