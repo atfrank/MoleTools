@@ -63,6 +63,8 @@ int main (int argc, char **argv){
     mol->select(sel);
   }
 
+	std::cerr << mol->getYear() << std::endl;
+
   //Molecule *cmol=mol->clone();
 
   return 0;

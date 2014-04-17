@@ -38,6 +38,7 @@ Molecule::Molecule (){
 	storedSel.clear();
 	remarks.clear();
 	iCodeFlag=false;
+	year=0;
 }
 
 Molecule::~Molecule (){
@@ -138,6 +139,7 @@ Molecule* Molecule::clone (bool selFlag, bool keep){
 	resEntry=NULL;
   atmEntry=NULL;
 	mol->setCopyFlag(false); //Not a copy
+	mol->setYear(this->getYear());
 	
   for (unsigned int i=0; i< this->getChnVecSize(); i++){
     c=this->getChain(i);
@@ -201,6 +203,7 @@ Molecule* Molecule::copy (bool selFlag){
 	chnEntry=NULL;
 	resEntry=NULL;
 	mol->setCopyFlag(true); //Is a copy, do not destruct atoms!
+	mol->setYear(this->getYear());
 
 	for (unsigned int i=0; i< this->getChnVecSize(); i++){
 		c=this->getChain(i);
@@ -256,6 +259,7 @@ void Molecule::cat (Molecule* catmol, bool selFlag, bool keep){
   resEntry=NULL;
   atmEntry=NULL;
   this->setCopyFlag(false); //Not a copy
+	this->setYear(0);
 
   for (unsigned int i=0; i< catmol->getChnVecSize(); i++){
     c=catmol->getChain(i);
@@ -844,4 +848,12 @@ void Molecule::resetAtmInx(){
 	for (unsigned int i=0; i< this->getAtmVecSize(); i++){
 		this->getAtom(i)->setAtmInx(std::numeric_limits<unsigned int>::max());
 	}
+}
+
+void Molecule::setYear(const unsigned int& yearin){
+	year=yearin;
+}
+
+unsigned int Molecule::getYear(){
+	return year;
 }

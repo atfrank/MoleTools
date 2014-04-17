@@ -4,7 +4,7 @@ include ../makefile.defs
 
 OBJS = libmoletools.$(LIBEXT)
 
-all:	$(BINDIR) libmoletools.$(LIBEXT) analyzeTraj compressedSensing contact contactOrder correl covariance eigen histo mine modPDB modTraj mol22PDB pcasso pdb2Traj traj2PDB unitTest wham
+all:	$(BINDIR) libmoletools.$(LIBEXT) analyzeTraj compressedSensing contact contactOrder correl covariance eigen histo mine modPDB modTraj mol22PDB pcasso pdb2Traj statPDB traj2PDB unitTest wham
 
 clean:
 	rm -rf *.o
@@ -60,7 +60,7 @@ pcasso: pcasso.o $(OBJS)
 pdb2Traj: pdb2Traj.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
 
-secondary: secondary.o $(OBJS)
+statPDB: statPDB.o $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(LINKFLAGS) -o $(BINDIR)/$@ $<
 
 traj2PDB: traj2PDB.o $(OBJS)

@@ -155,6 +155,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
   Atom *lastAtom;
   PDB pdb;
 	std::string PDBID;
+	unsigned int year;
 
 	if (format.compare("CHARMM") == 0){
 		mol=new MoleculeCHARMM;
@@ -180,7 +181,19 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
   while (inp->good() && !(inp->eof())){
 
     getline(*inp,line);
-    if (line.size() > 6 && line.compare(0,6,"MODEL ") == 0){
+    if (line.compare(0,6,"HEADER") == 0){
+			if (year < 71){
+				mol->setYear(year+2000);
+			}
+			else{
+				mol->setYear(year+1900);
+			}
+			if (Misc::trim(line.substr(62,4)).length() == 4){
+				PDBID=Misc::trim(line.substr(62,4));
+				Misc::toupper(PDBID);
+			}
+		}
+		else if (line.size() > 6 && line.compare(0,6,"MODEL ") == 0){
       std::stringstream(line.substr(10,4)) >> currModel;
       if ((model==0 && currModel == 1) || currModel==model){
 				modelFlag=true;
