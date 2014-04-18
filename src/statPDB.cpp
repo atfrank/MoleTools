@@ -113,10 +113,13 @@ int main (int argc, char **argv){
 						else if (atmname.compare("O") == 0){
             	count++;
           	}
+						else if (atmname.compare(0,2,"OT") == 0){
+							count++;
+						}
 						else{
 							//Do Nothing
 						}
-						if (count == 4){
+						if (count >= 4){
 							break;
 						}
 					}
@@ -133,7 +136,16 @@ int main (int argc, char **argv){
 			std::cout << pdbs.at(j) << " " << done << " " << cmol->getYear() << " ";
 			if (done == true && atm != NULL){
 				std::cout << atm->getChainId() << ":";
-				std::cout << atm->getResName() << atm->getResId() << ".";
+				std::cout << atm->getResName() << atm->getResId() << ". ";
+			}
+			else{
+				std::cout << ":. ";
+			}
+			if (mol->getExp().length() > 0){
+				std::cout << Misc::replace(mol->getExp(), " ", "_", true) << " ";
+			}	
+			else{
+				std::cout << "N/A ";
 			}
 			std::cout << std::endl;
 		}

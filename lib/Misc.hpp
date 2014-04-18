@@ -37,6 +37,7 @@ class Misc {
     static void splitStr (const std::string &str, const std::string &delim, std::vector<std::string> &out, const bool repeat=true);
     template <class SplitVec>
       static void splitNum (const std::string &str, const std::string &delim, std::vector<SplitVec> &out, const bool repeat=true);
+		static std::string replace (const std::string &str, const std::string search=" ", const std::string replace="_", const bool globalFlag=false);
     static bool isdigit (const std::string &str);
     static bool isdouble (const std::string &str);
     static bool isfloat (const std::string &str);

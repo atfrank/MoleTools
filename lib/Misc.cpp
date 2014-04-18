@@ -113,6 +113,20 @@ template void Misc::splitNum<double> (const std::string&, const std::string&, st
 
 template void Misc::splitNum<float> (const std::string&, const std::string&, std::vector<float>&, const bool);
 
+std::string Misc::replace (const std::string &str, const std::string searchStr, const std::string replaceStr, const bool globalFlag){
+	std::string out;
+
+	out=str;
+	for (std::string::size_type pos=0; (pos=out.find(searchStr, pos)) != std::string::npos;){
+		out.replace(pos, searchStr.length(), replaceStr);
+		pos += replaceStr.length()-searchStr.length()+1;
+		if (globalFlag == false){
+			break;
+		}
+	}
+
+	return out;
+}
 
 bool Misc::isdigit (const std::string &str){
   return str.find_first_not_of("0123456789") == std::string::npos;
