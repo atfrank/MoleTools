@@ -19,7 +19,13 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "Molecule.hpp"
+#include "Chain.hpp"
+#include "Residue.hpp"
+#include "Atom.hpp"
+#include "Misc.hpp"
+
 #include <iostream>
+#include <fstream>
 
 void usage(){
   exit(0);
@@ -29,43 +35,112 @@ int main (int argc, char **argv){
 
 
   int i;
-  std::string pdb;
+  std::vector<std::string> pdbs;
   std::string currArg;
-  std::string sel;
+	std::string flist;
+	std::fstream listFile;
+	std::istream* listinp;
+	std::string line;
+	Chain* chn;
+	Residue *res;
+	Atom *atm;
 
-  pdb.clear();
+  pdbs.clear();
+	flist.clear();
+	chn=NULL;
+	res=NULL;
+	atm=NULL;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
     if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
     }
-    else if (currArg.compare("-nsel") == 0){
-      currArg=argv[++i];
-      sel=currArg;
-    }
+		else if (currArg.compare("-list") == 0){
+			currArg=argv[++i];
+			flist=currArg;
+		}
 		else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
     else{
-      pdb=currArg;
+      pdbs.push_back(currArg);
     }
   }
 
-  if (pdb.length() == 0){
+  if (pdbs.size() == 0 && flist.length() == 0){
     std::cerr << std::endl << "Error: Please provide an input file" << std::endl << std::endl;
     usage();
   }
 
-  Molecule *mol=Molecule::readPDB(pdb);
+	if (flist.length() > 0){
+		listFile.open(flist.c_str(), std::ios::in);
+		listinp=&listFile;
+		while (listinp->good() && !(listinp->eof())){
+			getline(*listinp, line);
+			pdbs.push_back(line);
+		}
+	}
+	
+	for (unsigned int j=0; j< pdbs.size(); j++){
+		Molecule *mol=Molecule::readPDB(pdbs.at(j));
 
-  if (sel.length() >0){
-    mol->select(sel);
-  }
+    mol->select(":protein.backbone", false);
+		Molecule *cmol=mol->copy(true);
 
-	std::cerr << mol->getYear() << std::endl;
+		if (cmol->getNAtom() != 0){
+			bool done=false;
+			for (unsigned int c=0; c< cmol->getChnVecSize(); c++){
+				chn=cmol->getChain(c);
+				for (unsigned int r=0; r< chn->getResVecSize(); r++){
+					if (r == 0 || r == chn->getResVecSize()){
+						continue;
+					}
+					res=chn->getResidue(r);
+					unsigned int count=0;
+					for (unsigned int a=0; a< res->getAtmVecSize(); a++){
+						atm=res->getAtom(a);
+						std::string atmname=Misc::trim(atm->getAtmName());
+				 		if (atmname.compare("CA") == 0){
+							count++;
+						}
+						else if (atmname.compare("N") == 0){
+					  	count++;
+          	}
+						else if (atmname.compare("C") == 0){
+            	count++;
+          	}
+						else if (atmname.compare("O") == 0){
+            	count++;
+          	}
+						else{
+							//Do Nothing
+						}
+						if (count == 4){
+							break;
+						}
+					}
+					if (count < 4){
+						done=true;
+						break;
+					}
+				}
+				if (done == true){
+					break;
+				}
+			}
 
-  //Molecule *cmol=mol->clone();
+			std::cout << pdbs.at(j) << " " << done << " " << cmol->getYear() << " ";
+			if (done == true && atm != NULL){
+				std::cout << atm->getChainId() << ":";
+				std::cout << atm->getResName() << atm->getResId() << ".";
+			}
+			std::cout << std::endl;
+		}
+		
+		delete mol;
+
+	}
 
   return 0;
 }

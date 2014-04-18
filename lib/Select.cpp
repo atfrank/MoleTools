@@ -26,7 +26,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 #include "Misc.hpp"
 #include "Analyze.hpp"
 
-void Select::makeSel (Molecule* mol, std::string selin){
+void Select::makeSel (Molecule* mol, std::string selin, bool dieFlag){
 
   std::vector<Atom *> ref;
   unsigned int i;
@@ -49,7 +49,9 @@ void Select::makeSel (Molecule* mol, std::string selin){
 		std::cerr << std::endl << "Error: Selection \"";
 		std::cerr << selin << "\" did not match any atoms";
 		std::cerr << std::endl << std::endl;
-		exit(1);
+		if (dieFlag == true){
+			exit(1);
+		}
 	}
 
   mol->deselAll();

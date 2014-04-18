@@ -182,6 +182,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
 
     getline(*inp,line);
     if (line.compare(0,6,"HEADER") == 0){
+			std::stringstream(line.substr(57,2)) >> year;
 			if (year < 71){
 				mol->setYear(year+2000);
 			}

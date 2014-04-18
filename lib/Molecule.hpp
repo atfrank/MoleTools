@@ -78,7 +78,7 @@ class Molecule {
     void setCharge();
     void selAll();
     void deselAll();
-    void select(std::string sel);
+    void select(std::string sel, bool dieFlag=true);
     unsigned int getNAtom();
     unsigned int getNAtomSelected(); //Determining this on the fly is a good safety measure
 		void setCopyFlag(bool copyFlagIn=false);

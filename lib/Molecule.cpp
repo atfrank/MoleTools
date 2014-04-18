@@ -402,8 +402,8 @@ void Molecule::deselAll(){
   }
 }
 
-void Molecule::select(std::string sel){
-  Select::makeSel(this, sel);
+void Molecule::select(std::string sel, bool dieFlag){
+  Select::makeSel(this, sel, dieFlag);
 }
 
 unsigned int Molecule::getNAtom(){
