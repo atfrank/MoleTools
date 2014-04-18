@@ -470,7 +470,7 @@ void Select::initKeys(Molecule *mol){
   //std::cerr << selKeysAtm["HYDROGEN"] << std::endl;
 
   selKeysRes["HETERO"]="HETATM HETAT HETA";
-	selKeysRes["PEPTIDE"]="ALA CYS CYX VAL LEU ILE ASP GLU GLY GLN ASN HSD HSE HSP HIE HID HIS PRO TRP MET SER THR PHE TYR LYS ARG";
+	selKeysRes["PEPTIDE"]="ALA CSD ABA PCA CYS CYX CME VAL LEU ILE ASP GLU CGU GLY GLN ASN HSD HSE HSP HIE HID HIS PRO TRP MET MSE SER SEP THR TPO PHE TYR PTR LYS MLY ARG";
 	selKeysRes["PROTEIN"]=selKeysRes["PEPTIDE"];
 	//At physiological pH
 	selKeysRes["BASIC"]="ARG LYS";
