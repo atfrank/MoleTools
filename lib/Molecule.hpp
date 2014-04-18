@@ -46,6 +46,7 @@ class Molecule {
 		bool iCodeFlag;
     Prmtop toppar;
 		unsigned int year;
+		std::string exp;
 
   public:
 		Molecule(); //Constructor
@@ -97,6 +98,8 @@ class Molecule {
 		void resetAtmInx();
 		void setYear(const unsigned int& yearin);
 		unsigned int getYear();
+		void setExp(const std::string& expin);
+		std::string getExp();
 
     double lsqfit (Molecule *refmol, bool transform=true);
 		double rmsd (Molecule *refmol);
