@@ -148,6 +148,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
   std::string line;
   int currModel=0;
 	bool modelFlag=true;
+	bool firstModelFlag=false;
   Molecule *mol;
   Chain *chnEntry=new Chain;
   Residue *resEntry=new Residue;
@@ -199,7 +200,8 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
 		}
 		else if (line.size() > 6 && line.compare(0,6,"MODEL ") == 0){
       std::stringstream(line.substr(10,4)) >> currModel;
-      if ((model==0 && currModel == 1) || currModel==model){
+      if ((model==0 && firstModelFlag==false) || currModel==model){
+				firstModelFlag=true; //Processed first model
 				modelFlag=true;
       }
 			else{
