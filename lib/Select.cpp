@@ -58,6 +58,8 @@ void Select::makeSel (Molecule* mol, std::string selin, bool dieFlag){
   for (i=0; i< atmSel.size(); i++){
     atmSel.at(i)->setSel(true);
   }
+
+	delete sel;
 }
 
 std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, const std::vector<Atom *> &ref, const std::string &group){
