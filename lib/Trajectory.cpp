@@ -97,6 +97,10 @@ bool Trajectory::findFormat(std::ifstream &trjin){
     swab=false;
 	}
 
+	if (buffer != NULL){
+		delete buffer;
+	}
+
   trjin.seekg(0, std::ios::beg);
 
 	clearHeader();
@@ -114,6 +118,8 @@ BinBuf* Trajectory::readFortran(std::ifstream &trjin, BinBuf *buffer, int &lengt
   int recStart;
   int recEnd;
 	BinBuf *binOut;
+
+	binOut=NULL;
 
   //Read Fortran record lengths and buffer
   trjin.read(reinterpret_cast<char*>(&recStart), sizeof(int));
@@ -212,7 +218,11 @@ void Trajectory::readHeader(std::ifstream &trjin){
 		qcheck=buffer[14].i;
 		
 		version=buffer[20].i;
-		
+
+		if (buffer != NULL){
+			delete buffer;
+		}
+
 		//Title
 		cbuffer=readFortran(trjin, cbuffer, length);
     this->setHdrSize(this->getHdrSize()+length+sizeof(int)*2);
@@ -221,6 +231,10 @@ void Trajectory::readHeader(std::ifstream &trjin){
     for (i=0; i< ntitle; i++){
       title[i].assign(cbuffer+sizeof(int)+i*80,80);
     }
+
+		if (cbuffer != NULL){
+			delete cbuffer;
+		}
 		
 
 		//NATOM
@@ -231,6 +245,10 @@ void Trajectory::readHeader(std::ifstream &trjin){
       std::cerr << "Error: Atom number mismatch!" << std::endl;
     }
 
+		if (buffer != NULL){
+			delete buffer;
+		}
+
     //FIXED
     if (nfixed > 0){
       buffer=readFortran(trjin, buffer, length);
@@ -240,6 +258,10 @@ void Trajectory::readHeader(std::ifstream &trjin){
 			//	std::cerr << buffer[i].i << ":";
       //  fixinx.push_back(buffer[i].i);
       //}
+
+			if (buffer != NULL){
+				delete buffer;
+			}
     }
 
     if (this->getShow() == true){
@@ -253,12 +275,6 @@ void Trajectory::readHeader(std::ifstream &trjin){
 		//Do nothing
 	}
 
-	if (buffer != NULL){
-		delete buffer;
-	}
-	if (cbuffer != NULL){
-		delete cbuffer;
-	}
 }
 
 void Trajectory::writeHeader(std::ofstream &trjout){
@@ -459,7 +475,9 @@ bool Trajectory::readFrame(std::ifstream &trjin, unsigned int frame){
     	}
 		}
 
-		delete dbuffer;
+		if (dbuffer != NULL){
+			delete dbuffer;
+		}
 	}
 
 	//Coordinates

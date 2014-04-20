@@ -53,7 +53,7 @@ int main (int argc, char **argv){
     }
   }
 
-	for (unsigned int j=0; j< pdbs.size();){
+	for (unsigned int j=0; j< pdbs.size(); j++){
 		Molecule *mol=Molecule::readPDB(pdbs.at(j));
 
 		mol->select(":.CA");
