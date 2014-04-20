@@ -78,14 +78,17 @@ int main (int argc, char **argv){
 		listinp=&listFile;
 		while (listinp->good() && !(listinp->eof())){
 			getline(*listinp, line);
-			pdbs.push_back(line);
+			if (line.length() > 0){
+				pdbs.push_back(line);
+			}
 		}
 	}
-	
+
 	for (unsigned int j=0; j< pdbs.size(); j++){
 		Molecule *mol=Molecule::readPDB(pdbs.at(j));
+		std::cerr << "Processing file \"" << pdbs.at(j) << "\"..." << std::endl;
 
-    mol->select(":protein.backbone", false);
+    mol->select(":protein+unk.backbone", false);
 		Molecule *cmol=mol->copy(true);
 
 		if (cmol->getNAtom() != 0){
@@ -148,6 +151,9 @@ int main (int argc, char **argv){
 				std::cout << "N/A ";
 			}
 			std::cout << std::endl;
+		}
+		else{
+			std::cout << "# " << pdbs.at(j) << " " << cmol->getNAtom() << std::endl;
 		}
 		
 		delete mol;
