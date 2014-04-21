@@ -69,7 +69,7 @@ int main (int argc, char **argv){
 	bool startFlag=false;
 	std::string line;
 	std::vector<std::string> s;
-	Vector xyz;
+	Coor xyz;
   std::string flist;
   std::ifstream listFile;
   std::istream* listinp;

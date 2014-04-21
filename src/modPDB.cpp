@@ -19,7 +19,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "Molecule.hpp"
-#include "Vector.hpp"
+#include "Coor.hpp"
 #include "Misc.hpp"
 
 void usage (){
@@ -52,7 +52,7 @@ int main (int argc, char **argv){
   std::string censel="";
   bool center=false;
   double dx, dy, dz;
-  Vector dxyz;
+  Coor dxyz;
   bool translate=false;
 	double r1c1, r1c2, r1c3, r2c1, r2c2, r2c3, r3c1, r3c2, r3c3;
 	bool rotate=false;
@@ -130,7 +130,7 @@ int main (int argc, char **argv){
       std::stringstream(currArg) >> dy;
       currArg=argv[++i];
       std::stringstream(currArg) >> dz;
-      dxyz=Vector(dx, dy, dz);
+      dxyz=Coor(dx, dy, dz);
       translate=true;
     }
 		else if (currArg.compare("-rotate") == 0){

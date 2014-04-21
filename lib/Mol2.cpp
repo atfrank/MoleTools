@@ -165,7 +165,7 @@ Atom* Mol2::processAtomLine (std::string line, Atom* lastAtom){
 	std::stringstream(s.at(2)) >> x;
   std::stringstream(s.at(3)) >> y;
   std::stringstream(s.at(4)) >> z;
-  atmEntry->setCoor(Vector(x,y,z));
+  atmEntry->setCoor(Coor(x,y,z));
 
 	atmEntry->setAtmType(s.at(5));
 

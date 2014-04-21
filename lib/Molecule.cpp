@@ -483,9 +483,9 @@ void Molecule::zeroCoor(){
 	Chain *chn;
   Residue *res;
   Atom *atm;
-	Vector coor;
+	Coor coor;
 
-	coor=Vector(0.0, 0.0, 0.0);
+	coor=Coor(0.0, 0.0, 0.0);
 
   for (unsigned int i=0; i< this->getChnVecSize(); i++){
     chn=this->getChain(i);
@@ -505,9 +505,9 @@ double Molecule::lsqfit (Molecule *refmol, bool transform){
 	Eigen::MatrixXd ref; //Nx3 Stationary Coordinate Matrix
 	Eigen::Matrix3d R; //3x3 Covariance Matrix
 	unsigned int i;
-	Vector cmpCOG;
-	Vector refCOG;
-	Vector coor;
+	Coor cmpCOG;
+	Coor refCOG;
+	Coor coor;
 	Atom *atm;
 	//double E0;
 	//unsigned int j;
@@ -641,11 +641,11 @@ void Molecule::recenter (Molecule *recmol){
 
 void Molecule::translate (const double &dx, const double &dy, const double &dz){
   for(unsigned int i=0; i< this->getNAtom(); i++){
-    this->getAtom(i)->setCoor(this->getAtom(i)->getCoor()+Vector(dx, dy, dz));
+    this->getAtom(i)->setCoor(this->getAtom(i)->getCoor()+Coor(dx, dy, dz));
   }
 }
 
-void Molecule::translate (const Vector &u){
+void Molecule::translate (const Coor &u){
   for(unsigned int i=0; i< this->getNAtom(); i++){
     this->getAtom(i)->setCoor(this->getAtom(i)->getCoor()+u);
   }
@@ -653,8 +653,8 @@ void Molecule::translate (const Vector &u){
 
 void Molecule::rotate (const double &r1c1, const double &r1c2, const double &r1c3, const double &r2c1, const double &r2c2, const double &r2c3, const double &r3c1, const double &r3c2, const double &r3c3){
   Atom *atm;
-  Vector coor;
-  Vector cog;
+  Coor coor;
+  Coor cog;
 
   cog=Analyze::centerOfGeometry(this, false);
 
@@ -671,7 +671,7 @@ void Molecule::rotate (const double &r1c1, const double &r1c2, const double &r1c
 }
 
 void Molecule::center (bool selFlag){
-  Vector cog=Analyze::centerOfGeometry(this, selFlag);
+  Coor cog=Analyze::centerOfGeometry(this, selFlag);
   for (unsigned int i=0; i< this->getNAtom(); i++){
     this->getAtom(i)->setCoor(this->getAtom(i)->getCoor()-cog);
   }
@@ -698,13 +698,13 @@ void Molecule::modPseudoCenter(){
 				}
 				else{
 					//No i+1 neighbor, modify coordinates
-					lastAtom->setCoor(Vector(9999.9, 9999.9, 9999.9));
+					lastAtom->setCoor(Coor(9999.9, 9999.9, 9999.9));
 				}
 			}
 			lastAtom=atmEntry;
 		}
 		//No i+1 neighbor for last atom in chain, modify coordinates
-		lastAtom->setCoor(Vector(9999.9, 9999.9, 9999.9));
+		lastAtom->setCoor(Coor(9999.9, 9999.9, 9999.9));
 	}
 }
 

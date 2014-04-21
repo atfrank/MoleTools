@@ -38,7 +38,7 @@ Atom::Atom(){
   chainid=" ";
   realid=" ";
   resid=0;
-  coor=Vector(0.0, 0.0, 0.0);
+  coor=Coor(0.0, 0.0, 0.0);
   occu=0.0;
   bfac=0.0;
   segid="   ";
@@ -51,7 +51,7 @@ Atom::Atom(){
 	data.clear();
 }
 
-Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int residin, Vector coorin, std::string segidin){
+Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int residin, Coor coorin, std::string segidin){
 	pdbid="NoID";
   recname="ATOM";
   atmnum=atmnumin;
@@ -90,7 +90,7 @@ void Atom::reset(){
   chainid=" ";
   realid=" ";
   resid=0;
-  coor=Vector(0.0, 0.0, 0.0);
+  coor=Coor(0.0, 0.0, 0.0);
   occu=0.0;
   bfac=0.0;
   segid="    ";
@@ -142,7 +142,7 @@ void Atom::dummy(){
   chainid="+";
   realid="+";
   resid=999;
-  coor=Vector(0.0, 0.0, 0.0);
+  coor=Coor(0.0, 0.0, 0.0);
   occu=0.0;
   bfac=0.0;
   segid="DUMY";
@@ -208,7 +208,7 @@ std::string& Atom::getICode(){
   return icode;
 }
 
-Vector& Atom::getCoor () {
+Coor& Atom::getCoor () {
   return coor;
 }
 
@@ -371,7 +371,7 @@ void Atom::setZ (const double& zin){
   coor.z()=zin;
 }
 
-void Atom::setCoor (const Vector& coorin){
+void Atom::setCoor (const Coor& coorin){
   coor=coorin;
 }
 

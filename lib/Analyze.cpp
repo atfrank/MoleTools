@@ -24,7 +24,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 #include "Chain.hpp"
 #include "Residue.hpp"
 #include "Atom.hpp"
-#include "Vector.hpp"
+#include "Coor.hpp"
 #include "Constants.hpp"
 #include "DTree.hpp"
 #include "PCASSO.hpp"
@@ -485,7 +485,7 @@ void AnalyzePcasso::preAnalysis(Molecule* molin, std::string fin){
 //All runAnalysis Functions
 
 void AnalyzeCOG::runAnalysis(){
-  Vector xyz=Analyze::centerOfGeometry(this->getMol(0));
+  Coor xyz=Analyze::centerOfGeometry(this->getMol(0));
   std::cout << std::fixed;
   std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.x();
   std::cout << std::setw(9) << std::right << std::setprecision(3) << xyz.y();
@@ -572,7 +572,7 @@ void AnalyzeRadiusOfGyration::runAnalysis(){
 }
 
 void AnalyzeEllipsoid::runAnalysis(){
-  Vector xyz;
+  Coor xyz;
 	Molecule* cogmol;
 	Chain* c;
 	Residue* r;
@@ -810,8 +810,8 @@ void AnalyzePcasso::postAnalysis(){
 
 //Basic analysis functions
 
-Vector Analyze::centerOfGeometry(Molecule *mol, bool selFlag){
-	Vector cog=Vector(0.0, 0.0, 0.0);
+Coor Analyze::centerOfGeometry(Molecule *mol, bool selFlag){
+	Coor cog=Coor(0.0, 0.0, 0.0);
 
   for (unsigned int i=0; i< mol->getAtmVecSize(); i++){
     if (selFlag == true && mol->getAtom(i)->getSel() == false){
@@ -885,8 +885,8 @@ void Analyze::rmsf (Molecule* cmpmol, Molecule* refmol, std::vector<double> &tda
 
 	unsigned int i,j;
 	Atom *atm;
-	std::vector<Vector> coor;
-	Vector d;
+	std::vector<Coor> coor;
+	Coor d;
 
 	//Check selection sizes and resize matrices
   if (cmpmol->getNAtomSelected() != refmol->getNAtomSelected()){
@@ -920,7 +920,7 @@ void Analyze::rmsf (Molecule* cmpmol, Molecule* refmol, std::vector<double> &tda
 void Analyze::averageMol (Molecule* cmpmol, Molecule* refmol, int &ndataIO){
   unsigned int i,j;
   Atom *atm;
-  std::vector<Vector> coor;
+  std::vector<Coor> coor;
 
   //Check selection sizes and resize matrices
   if (cmpmol->getNAtomSelected() != refmol->getNAtomSelected()){
@@ -950,14 +950,14 @@ void Analyze::averageMol (Molecule* cmpmol, Molecule* refmol, int &ndataIO){
   }
 }
 
-double Analyze::distance (const Vector& u, const Vector& v){
-	Vector d=u-v;
+double Analyze::distance (const Coor& u, const Coor& v){
+	Coor d=u-v;
 	return d.norm();
 }
 
-double Analyze::angle (const Vector& u, const Vector& v, const Vector& w){
+double Analyze::angle (const Coor& u, const Coor& v, const Coor& w){
   double angle;
-  Vector dx, dy;
+  Coor dx, dy;
   double dp, nx, ny;
 
   dx=u-v;
@@ -973,9 +973,9 @@ double Analyze::angle (const Vector& u, const Vector& v, const Vector& w){
   return angle/PI*180.0;
 }
 
-double Analyze::dihedral (const Vector& t, const Vector& u, const Vector& v, const Vector& w) {
+double Analyze::dihedral (const Coor& t, const Coor& u, const Coor& v, const Coor& w) {
   double dihedral;
-  Vector dx, dy, dz, p1, p2, p3;
+  Coor dx, dy, dz, p1, p2, p3;
   double np1, np2, dp1, dp2, ts;
 
   dx=t-u;
@@ -1741,7 +1741,7 @@ void Analyze::pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO){
 Eigen::Matrix3d Analyze::gyrationTensor(Molecule* mol){
   Eigen::Matrix3d S;
   Atom* a;
-  Vector xyz;
+  Coor xyz;
   double dx, dy, dz;
 
   S=Eigen::Matrix3d::Zero();

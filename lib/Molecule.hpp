@@ -22,7 +22,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 #define MOLECULE_H
 
 #include "Prmtop.hpp"
-#include "Vector.hpp"
+#include "Coor.hpp"
 #include "Enum.hpp"
 #include "Eigen/Dense"
 
@@ -105,7 +105,7 @@ class Molecule {
 		double rmsd (Molecule *refmol);
 		void recenter (Molecule *recmol);
     void translate (const double &dx, const double &dy, const double &dz);
-    void translate (const Vector &u);
+    void translate (const Coor &u);
     void rotate (const double &r1c1, const double &r1c2, const double &r1c3, const double &r2c1, const double &r2c2, const double &r2c3, const double &r3c1, const double &r3c2, const double &r3c3);
     void center (bool selFlag=true);
 		void modPseudoCenter();
