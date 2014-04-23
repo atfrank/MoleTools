@@ -1,0 +1,16 @@
+<map id="Analyze" name="Analyze">
+<area shape="rect" id="node2" href="$class_analyze_angle.html" title="AnalyzeAngle" alt="" coords="158,5,259,32"/>
+<area shape="rect" id="node3" href="$class_analyze_average.html" title="AnalyzeAverage" alt="" coords="150,56,267,83"/>
+<area shape="rect" id="node4" href="$class_analyze_c_o_g.html" title="AnalyzeCOG" alt="" coords="158,107,259,133"/>
+<area shape="rect" id="node5" href="$class_analyze_covariance.html" title="AnalyzeCovariance" alt="" coords="141,157,276,184"/>
+<area shape="rect" id="node6" href="$class_analyze_dihedral.html" title="AnalyzeDihedral" alt="" coords="151,208,266,235"/>
+<area shape="rect" id="node7" href="$class_analyze_distance.html" title="AnalyzeDistance" alt="" coords="149,259,268,285"/>
+<area shape="rect" id="node8" href="$class_analyze_ellipsoid.html" title="AnalyzeEllipsoid" alt="" coords="151,309,266,336"/>
+<area shape="rect" id="node9" href="$class_analyze_gyration_tensor.html" title="AnalyzeGyrationTensor" alt="" coords="131,360,286,387"/>
+<area shape="rect" id="node10" href="$class_analyze_pairwise_distance.html" title="AnalyzePairwiseDistance" alt="" coords="125,411,293,437"/>
+<area shape="rect" id="node11" href="$class_analyze_pcasso.html" title="AnalyzePcasso" alt="" coords="152,461,265,488"/>
+<area shape="rect" id="node12" href="$class_analyze_projection.html" title="AnalyzeProjection" alt="" coords="147,512,270,539"/>
+<area shape="rect" id="node13" href="$class_analyze_radius_of_gyration.html" title="AnalyzeRadiusOfGyration" alt="" coords="123,563,295,589"/>
+<area shape="rect" id="node14" href="$class_analyze_r_m_s_d.html" title="AnalyzeRMSD" alt="" coords="154,613,263,640"/>
+<area shape="rect" id="node15" href="$class_analyze_r_m_s_f.html" title="AnalyzeRMSF" alt="" coords="155,664,262,691"/>
+</map>
