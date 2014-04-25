@@ -34,7 +34,7 @@ void usage(){
 int main (int argc, char **argv){
 
   int i;
-	unsigned int j;
+  unsigned int j;
   std::string fout;
   Molecule *mol;
   std::vector<std::string> pdbs;
@@ -42,12 +42,12 @@ int main (int argc, char **argv){
   std::string outsel="";
   std::ofstream trjout;
   std::ifstream trjin;
-	Trajectory *ftrjout;
+  Trajectory *ftrjout;
   Trajectory *ftrjin;
 
   pdbs.clear();
   mol=NULL;
-	ftrjout=NULL;
+  ftrjout=NULL;
   ftrjin=NULL;
 
   for (i=1; i<argc; i++){
@@ -63,7 +63,7 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       outsel=currArg;
     }
-		else if (currArg.compare(0,1,"-") == 0){
+    else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
     else{
@@ -78,53 +78,53 @@ int main (int argc, char **argv){
   else if (fout.length() == 0){
     std::cerr << std::endl << "Error: Please specify an output trajectory via \"-out\"" << std::endl; 
   }
-	else{
-		trjout.open(fout.c_str(), std::ios::binary);
+  else{
+    trjout.open(fout.c_str(), std::ios::binary);
     ftrjout=new Trajectory;
     ftrjout->setDefaultHeader();
-		ftrjout->setNFrame(static_cast<int>(pdbs.size()));
+    ftrjout->setNFrame(static_cast<int>(pdbs.size()));
     ftrjout->setNStep(static_cast<int>(pdbs.size()));
 
-		for (j=0; j< pdbs.size(); j++){
-			mol=Molecule::readPDB(pdbs.at(j));
-			if (outsel.length() > 0){
-				mol->select(outsel);
-				mol=mol->clone(true, false);
-			}
-			
-			if (j==0){
-				ftrjout->setNAtom(static_cast<int>(mol->getNAtom()));
-				ftrjout->writeHeader(trjout);
-			}
+    for (j=0; j< pdbs.size(); j++){
+      mol=Molecule::readPDB(pdbs.at(j));
+      if (outsel.length() > 0){
+        mol->select(outsel);
+        mol=mol->clone(true, false);
+      }
+      
+      if (j==0){
+        ftrjout->setNAtom(static_cast<int>(mol->getNAtom()));
+        ftrjout->writeHeader(trjout);
+      }
 
-			if (ftrjout->getNAtom() == static_cast<int>(mol->getNAtom())){
-   			ftrjout->setMolecule(mol);
-	
-				if (trjout.is_open()){
+      if (ftrjout->getNAtom() == static_cast<int>(mol->getNAtom())){
+        ftrjout->setMolecule(mol);
+  
+        if (trjout.is_open()){
           if (trjin.is_open()){
             ftrjout->writeFrame(trjout, ftrjin);
           }
           else{
-     			  ftrjout->writeFrame(trjout);
+            ftrjout->writeFrame(trjout);
           }
-   			}
-			}
-			else{
-				ftrjout->setNFrame(ftrjout->getNFrame()-1);
-				std::cerr << "Warning: Atom number mismatch!" << std::endl;
-			}
+        }
+      }
+      else{
+        ftrjout->setNFrame(ftrjout->getNFrame()-1);
+        std::cerr << "Warning: Atom number mismatch!" << std::endl;
+      }
 
-			delete mol;
-		}
-	}
+      delete mol;
+    }
+  }
 
   if (trjout.is_open()){
     //Re-write header in case of any changes
     ftrjout->writeHeader(trjout);
     trjout.close();
-		if (ftrjout != NULL){
-			delete ftrjout;
-		}
+    if (ftrjout != NULL){
+      delete ftrjout;
+    }
   }
 
   return 0;

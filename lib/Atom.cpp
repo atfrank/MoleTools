@@ -1,6 +1,6 @@
 //Sean M. Law
 //Aaron T. Frank
-    
+  
 /*
 This file is part of MoleTools.
 
@@ -26,41 +26,41 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 #include <limits>
 
 Atom::Atom(){
-	pdbid="NoID";
+  pdbid="NoID";
   recname="ATOM";
   atmnum=0;
   atmname="    ";
-	atmtype="    ";
+  atmtype="  ";
   alt=" ";
-	res=NULL;
+  res=NULL;
   resname="   ";
-	chn=NULL;
+  chn=NULL;
   chainid=" ";
   realid=" ";
   resid=0;
   coor=Coor(0.0, 0.0, 0.0);
   occu=0.0;
   bfac=0.0;
-  segid="   ";
+  segid=" ";
   sel=true;
   summary="";
-	ss="";
+  ss="";
   mass=1.0;
   charge=0.0;
-	atminx=std::numeric_limits<unsigned int>::max();
-	data.clear();
+  atminx=std::numeric_limits<unsigned int>::max();
+  data.clear();
 }
 
 Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int residin, Coor coorin, std::string segidin){
-	pdbid="NoID";
+  pdbid="NoID";
   recname="ATOM";
   atmnum=atmnumin;
   atmname=atmnamein;
-	atmname="    ";
+  atmname="  ";
   alt=" ";
-	res=NULL;
+  res=NULL;
   resname=resnamein;
-	chn=NULL;
+  chn=NULL;
   chainid=" ";
   realid=" ";
   resid=residin;
@@ -70,63 +70,63 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
   segid=segidin;
   sel=true;
   summary="";
-	ss="";
+  ss="";
   mass=1.0;
   charge=0.0;
-	atminx=std::numeric_limits<unsigned int>::max();
-	data.clear();
+  atminx=std::numeric_limits<unsigned int>::max();
+  data.clear();
 }
 
 void Atom::reset(){
-	pdbid="NoID";
+  pdbid="NoID";
   recname="ATOM";
   atmnum=0;
   atmname="    ";
-	atmtype="    ";
+  atmtype="  ";
   alt=" ";
-	res=NULL;
+  res=NULL;
   resname="   ";
-	chn=NULL;
+  chn=NULL;
   chainid=" ";
   realid=" ";
   resid=0;
   coor=Coor(0.0, 0.0, 0.0);
   occu=0.0;
   bfac=0.0;
-  segid="    ";
+  segid="  ";
   sel=true;
   summary="";
-	ss="";
+  ss="";
   mass=1.0;
   charge=0.0;
-	data.clear();
+  data.clear();
 }
 
 void Atom::clone(Atom* atmin){
-	pdbid=atmin->getPdbId();
+  pdbid=atmin->getPdbId();
   recname=atmin->getRecName();
   atmnum=atmin->getAtmNum();
   atmname=atmin->getAtmName();
-	atmtype=atmin->getAtmType();
+  atmtype=atmin->getAtmType();
   alt=atmin->getAlt();
-	res=atmin->getResidue();
+  res=atmin->getResidue();
   resname=atmin->getResName();
-	chn=atmin->getChain();
+  chn=atmin->getChain();
   chainid=atmin->getChainId();
   realid=atmin->getRealId();
   resid=atmin->getResId();
-	icode=atmin->getICode();
+  icode=atmin->getICode();
   coor=atmin->getCoor();
   occu=atmin->getOccu();
   bfac=atmin->getBFac();
   segid=atmin->getSegId();
   sel=atmin->getSel();
   summary=atmin->getSummary();
-	ss=atmin->getSS();
+  ss=atmin->getSS();
   mass=atmin->getMass();
   charge=atmin->getCharge();
-	atminx=atmin->getAtmInx();
-	data=atmin->getData();
+  atminx=atmin->getAtmInx();
+  data=atmin->getData();
 }
 
 void Atom::dummy(){
@@ -134,11 +134,11 @@ void Atom::dummy(){
   recname="ATOM";
   atmnum=1;
   atmname="CA";
-	atmtype="C.3";
+  atmtype="C.3";
   alt=" ";
-	res=NULL;
+  res=NULL;
   resname="ALA";
-	chn=NULL;
+  chn=NULL;
   chainid="+";
   realid="+";
   resid=999;
@@ -151,13 +151,13 @@ void Atom::dummy(){
   ss="";
   mass=1.0;
   charge=0.0;
-	atminx=std::numeric_limits<unsigned int>::max();
-	data.clear();
+  atminx=std::numeric_limits<unsigned int>::max();
+  data.clear();
 }
 
 //Get atom info
 std::string& Atom::getPdbId(){
-	return pdbid;
+  return pdbid;
 }
 
 std::string& Atom::getRecName(){
@@ -173,7 +173,7 @@ std::string& Atom::getAtmName(){
 }
 
 std::string& Atom::getAtmType(){
-	return atmtype;
+  return atmtype;
 }
 
 std::string& Atom::getAlt(){
@@ -181,7 +181,7 @@ std::string& Atom::getAlt(){
 }
 
 Residue* Atom::getResidue(){
-	return res;
+  return res;
 }
 
 std::string& Atom::getResName(){
@@ -189,7 +189,7 @@ std::string& Atom::getResName(){
 }
 
 Chain* Atom::getChain(){
-	return chn;
+  return chn;
 }
 
 std::string& Atom::getChainId(){
@@ -245,7 +245,7 @@ std::string& Atom::getSummary(){
 }
 
 std::string& Atom::getSS(){
-	return ss;
+  return ss;
 }
 
 double& Atom::getMass(){
@@ -262,23 +262,23 @@ unsigned int& Atom::getAtmInx(){
 
 
 std::vector<double>& Atom::getData(){
-	return data;
+  return data;
 }
 
 double& Atom::getDataPoint(const unsigned int element){
-	if (element >= data.size()){
-		std::cerr << "Error: Atom::getDataPoint Out of Range" << std::endl;
-	}
-	return data.at(element);
+  if (element >= data.size()){
+    std::cerr << "Error: Atom::getDataPoint Out of Range" << std::endl;
+  }
+  return data.at(element);
 }
 
 unsigned int Atom::getDataSize(){
-	return data.size();
+  return data.size();
 }
 
 //Set atom info
 void Atom::setPdbId(const std::string& pdbidin){
-	pdbid=pdbidin;
+  pdbid=pdbidin;
 }
 
 void Atom::setRecName(const std::string& recnamein){
@@ -298,11 +298,11 @@ void Atom::setAtmName(){
 }
 
 void Atom::setAtmType(const std::string& atmtypein){
-	atmtype=atmtypein;
+  atmtype=atmtypein;
 }
 
 void Atom::setAtmType(){
-	atmtype="    ";
+  atmtype="  ";
 }
 
 void Atom::setAlt(const std::string& altin){
@@ -314,7 +314,7 @@ void Atom::setAlt(){
 }
 
 void Atom::setResidue(Residue* resin){
-	res=resin;
+  res=resin;
 }
 
 void Atom::setResName(const std::string& resnamein){
@@ -326,7 +326,7 @@ void Atom::setResName(){
 }
 
 void Atom::setChain(Chain* chnin){
-	chn=chnin;	
+  chn=chnin;  
 }
 
 void Atom::setChainId(const std::string& chainidin){
@@ -388,7 +388,7 @@ void Atom::setSegId(const std::string& segidin){
 }
 
 void Atom::setSegId(){
-  segid="    ";
+  segid="  ";
 }
 
 void Atom::setSel(const bool selin){
@@ -400,7 +400,7 @@ void Atom::setSummary(const std::string& summaryin){
 }
 
 void Atom::setSS(const std::string& ssin){
-	ss=ssin;
+  ss=ssin;
 }
 
 void Atom::setMass(const double& massin){
@@ -412,13 +412,13 @@ void Atom::setCharge(const double& chargein){
 }
 
 void Atom::setAtmInx(const unsigned int& atminxin){
-	atminx=atminxin;
+  atminx=atminxin;
 }
 
 void Atom::addData(const double& din){
-	data.push_back(din);
+  data.push_back(din);
 }
 
 void Atom::clearData(){
-	data.clear();
+  data.clear();
 }

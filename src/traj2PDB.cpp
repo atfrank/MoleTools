@@ -30,7 +30,7 @@ void usage(){
   std::cerr << "Options: [-sel selection]" << std::endl;
   std::cerr << "         [-out tag] [-outsel selection]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;
-	std::cerr << "         [-show]" << std::endl;
+  std::cerr << "         [-show]" << std::endl;
   std::cerr << "         [-format type] [-chains]" << std::endl;
   exit(0);
 }
@@ -38,11 +38,11 @@ void usage(){
 int main (int argc, char **argv){
 
   int i;
-	unsigned int j;
+  unsigned int j;
   std::vector<std::string> trajs;
-	std::stringstream fout;
-	std::string outname;
-	std::string tag="file";
+  std::stringstream fout;
+  std::string outname;
+  std::string tag="file";
   Molecule *mol;
   Molecule *outmol;
   std::string pdb;
@@ -50,11 +50,11 @@ int main (int argc, char **argv){
   std::string currArg;
   std::string outsel="";
   std::ifstream trjin;
-	std::ofstream pdbout;
-	Trajectory *ftrjin;
+  std::ofstream pdbout;
+  Trajectory *ftrjin;
   bool show=false;
-	int skip=0;
-	int start=0;
+  int skip=0;
+  int start=0;
   int stop=std::numeric_limits<int>::max();
   unsigned int npdb;
   std::string format;
@@ -63,9 +63,9 @@ int main (int argc, char **argv){
   pdb.clear();
   mol=NULL;
   outmol=NULL;
-	ftrjin=NULL;
+  ftrjin=NULL;
   npdb=1;
-	format.clear();
+  format.clear();
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -112,7 +112,7 @@ int main (int argc, char **argv){
     else if (currArg.compare("-chains") == 0){
       chnFlag=true;
     }
-		else if (currArg.compare(0,1,"-") == 0){
+    else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
     else{
@@ -141,50 +141,50 @@ int main (int argc, char **argv){
     }
   }
 
-	mol->selAll();
+  mol->selAll();
 
-	for (j=0; j< trajs.size(); j++){
-		trjin.open(trajs.at(j).c_str(), std::ios::binary);
+  for (j=0; j< trajs.size(); j++){
+    trjin.open(trajs.at(j).c_str(), std::ios::binary);
 
-		if (trjin.is_open()){
-			ftrjin=new Trajectory;
+    if (trjin.is_open()){
+      ftrjin=new Trajectory;
       ftrjin->setShow(show);
       ftrjin->setMolecule(mol);
 
       if (ftrjin->findFormat(trjin) == true){
-				ftrjin->readHeader(trjin);
+        ftrjin->readHeader(trjin);
         //Loop through desired frames
-				for (i=start; i< ftrjin->getNFrame() && i< stop; i=i+1+skip){
-					if( ftrjin->readFrame(trjin, i) == false){
+        for (i=start; i< ftrjin->getNFrame() && i< stop; i=i+1+skip){
+          if( ftrjin->readFrame(trjin, i) == false){
             std::cerr << "Warning: EOF found before the next frame could be read" << std::endl;
             break;
           }
-					fout << tag << "." << npdb << ".pdb";
-					outname=fout.str();
-					pdbout.open(outname.c_str(), std::ios::out);
+          fout << tag << "." << npdb << ".pdb";
+          outname=fout.str();
+          pdbout.open(outname.c_str(), std::ios::out);
           std::cerr << "Writing \"" << outname << "\"..." << std::endl;
-					if (outsel.length() > 0){
-        		pdbout << outmol->writePDB(true, false);
-      		}
-      		else{
-        		pdbout << ftrjin->getMolecule()->writePDB(true, false, chnFlag);
-      		}
-					pdbout.close();
-					fout.str(std::string()); //Clear fout
+          if (outsel.length() > 0){
+            pdbout << outmol->writePDB(true, false);
+          }
+          else{
+            pdbout << ftrjin->getMolecule()->writePDB(true, false, chnFlag);
+          }
+          pdbout.close();
+          fout.str(std::string()); //Clear fout
           npdb++;
-				}
-			}
-			else{
-				std::cerr << "Warning: Skipping unknown trajectory format \"";
-				std::cerr << trajs.at(j) << "\"" << std::endl;
-			}
+        }
+      }
+      else{
+        std::cerr << "Warning: Skipping unknown trajectory format \"";
+        std::cerr << trajs.at(j) << "\"" << std::endl;
+      }
 
-			if (ftrjin != NULL){
-				delete ftrjin;
-			}
-		}
-		trjin.close();
-	}
+      if (ftrjin != NULL){
+        delete ftrjin;
+      }
+    }
+    trjin.close();
+  }
 
   return 0;
 }

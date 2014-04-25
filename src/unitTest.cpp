@@ -36,32 +36,32 @@ int main (int argc, char **argv){
 
   int i;
   std::string currArg;
-	std::vector<std::string> pdbs;
+  std::vector<std::string> pdbs;
 
-	pdbs.clear();
+  pdbs.clear();
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
     if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
     }
-		else if (currArg.compare(0,1,"-") == 0){
+    else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
     else{
-			pdbs.push_back(currArg);
+      pdbs.push_back(currArg);
     }
   }
 
-	for (unsigned int j=0; j< pdbs.size(); j++){
-		Molecule *mol=Molecule::readPDB(pdbs.at(j));
+  for (unsigned int j=0; j< pdbs.size(); j++){
+    Molecule *mol=Molecule::readPDB(pdbs.at(j));
 
-		mol->select(":.CA");
-		Molecule *cmol=mol->copy(true);
+    mol->select(":.CA");
+    Molecule *cmol=mol->copy(true);
 
-		delete cmol;
-		delete mol;
-	}
+    delete cmol;
+    delete mol;
+  }
 
   return 0;
 }

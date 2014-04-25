@@ -25,8 +25,8 @@ void usage(){
   std::cerr << std::endl;
   std::cerr << "Usage:   mol22PDB [-options] <MOL2files>" << std::endl;
   std::cerr << "Options: [-sel selection]" << std::endl;
-	std::cerr << "         [-format type] [-chains]" << std::endl;
-//	std::cerr << "         [-warnings]" << std::endl;
+  std::cerr << "         [-format type] [-chains]" << std::endl;
+//  std::cerr << "         [-warnings]" << std::endl;
   std::cerr << std::endl;
   exit(0);
 }
@@ -38,13 +38,13 @@ int main (int argc, char **argv){
   std::vector<std::string> mol2;
   std::string currArg;
   std::string sel;
-	std::string format;
+  std::string format;
   bool chnFlag;
-//	bool warnings;
+//  bool warnings;
 
   mol2.clear();
   chnFlag=false;
-	format.clear();
+  format.clear();
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -55,15 +55,15 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       sel=currArg;
     }
-		else if (currArg.compare("-format") == 0){
-			currArg=argv[++i];
-			Misc::toupper(currArg);
-			format=currArg;
-		}
+    else if (currArg.compare("-format") == 0){
+      currArg=argv[++i];
+      Misc::toupper(currArg);
+      format=currArg;
+    }
     else if (currArg.compare("-chains") == 0){
       chnFlag=true;
     }
-		else if (currArg.compare(0,1,"-") == 0){
+    else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
     else{
@@ -78,22 +78,22 @@ int main (int argc, char **argv){
 
   Molecule *mol=new Molecule;
 
-	for (unsigned int j=0; j< mol2.size(); j++){
-		mol->cat(Molecule::readMol2(mol2.at(j), format));
-	}
+  for (unsigned int j=0; j< mol2.size(); j++){
+    mol->cat(Molecule::readMol2(mol2.at(j), format));
+  }
 
   if (sel.length() >0){
     mol->select(sel);
   }
 
- 	mol->writePDB(chnFlag);
+  mol->writePDB(chnFlag);
 
-	mol=mol->clone();
-	for (unsigned int j=0; j< mol->getNAtom(); j++){
-//		std::cerr << mol->getAtom(j)->getAtmType() << std::endl;
-	}
+  mol=mol->clone();
+  for (unsigned int j=0; j< mol->getNAtom(); j++){
+//    std::cerr << mol->getAtom(j)->getAtmType() << std::endl;
+  }
 
-	delete mol;
+  delete mol;
 
   return 0;
 }

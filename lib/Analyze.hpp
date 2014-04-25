@@ -34,45 +34,45 @@ class DTree;
 
 //Abstract base class (cannot create instance of it!)
 class Analyze {
-	private:
+  private:
     //Since this is an abstract base class
     //all members need to be accessed via a function or passed
     //directly to the analysis function or set the members as protected
     std::vector<std::string> sel;
-		std::vector<Molecule*> mol;
-		std::vector<double> tdata; //Time dependent data, maybe for averaging
-		std::vector<std::vector<double> > fdata; //Frame data, cleared after each frame
+    std::vector<Molecule*> mol;
+    std::vector<double> tdata; //Time dependent data, maybe for averaging
+    std::vector<std::vector<double> > fdata; //Frame data, cleared after each frame
     Eigen::MatrixXd avgCovar;
     std::vector<unsigned int> modes;
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigen;
-		int ndata; //Total number of datapoints
-		bool resel; //Re-do selection for each analysis, not implemented yet
+    int ndata; //Total number of datapoints
+    bool resel; //Re-do selection for each analysis, not implemented yet
     std::string ifile;
     std::string ofile;
-		bool verbose;
+    bool verbose;
 
-	public:
-		Analyze ();
-		virtual ~Analyze ();
-		void addSel(const std::string& selin);
-		std::string getSel(const int& element);
-		unsigned int getNSel();
+  public:
+    Analyze ();
+    virtual ~Analyze ();
+    void addSel(const std::string& selin);
+    std::string getSel(const int& element);
+    unsigned int getNSel();
     void addMol(Molecule* molin);
-		void setMol(const int& element, Molecule* molin);
-		void clearMol();
-		void resizeNMol(const int sizein);
-		Molecule* getMol(const int& element);
-		unsigned int getNMol();
-		void setNData(const int& ndatain);
-		int& getNData();
-		std::vector<double>& getTDataVec();
-		std::vector<std::vector<double> >& getFDataVec();
+    void setMol(const int& element, Molecule* molin);
+    void clearMol();
+    void resizeNMol(const int sizein);
+    Molecule* getMol(const int& element);
+    unsigned int getNMol();
+    void setNData(const int& ndatain);
+    int& getNData();
+    std::vector<double>& getTDataVec();
+    std::vector<std::vector<double> >& getFDataVec();
     void setInput(const std::string& fin);
     std::string getInput();
     void setOutput (const std::string& fin);
     std::string getOutput();
-		void setVerbose(bool verbosein);
-		bool getVerbose();
+    void setVerbose(bool verbosein);
+    bool getVerbose();
     Eigen::MatrixXd& getCovar();
     void addModes(const std::vector<unsigned int>& modesin);
     std::vector<unsigned int>& getModes();
@@ -83,31 +83,31 @@ class Analyze {
     void setEigenMode(const unsigned int& modein);
     void readCovariance();
     void writeEigenOverlap(Analyze* cmpin, std::vector<unsigned int>& modein);
-		
-		//Virtual functions
+        
+    //Virtual functions
     virtual void readTopology(Molecule* molin, std::string topin="");
-		virtual void setupMolSel(Molecule* molin);
-		virtual void preAnalysis(Molecule* molin, std::string topin=""); 
+    virtual void setupMolSel(Molecule* molin);
+    virtual void preAnalysis(Molecule* molin, std::string topin=""); 
     virtual void preAnalysis();
-		virtual void runAnalysis() =0; //Pure virtual function
-		virtual void postAnalysis();
+    virtual void runAnalysis() =0; //Pure virtual function
+    virtual void postAnalysis();
 
-		//Analysis functions
-		static Coor centerOfGeometry(Molecule* mol, bool selFlag=true);
-		static double rmsd (Molecule* cmpmol, Molecule* refmol);
-		static void rmsf (Molecule* cmpmol, Molecule* refmol, std::vector<double> &tdataIO, int &ndataIO);
-		static void averageMol(Molecule* cmpmol, Molecule* refmol, int &ndataIO);
-		static double distance (const Coor& u, const Coor& v);
-		static double angle (const Coor& u, const Coor& v, const Coor& w);
+    //Analysis functions
+    static Coor centerOfGeometry(Molecule* mol, bool selFlag=true);
+    static double rmsd (Molecule* cmpmol, Molecule* refmol);
+    static void rmsf (Molecule* cmpmol, Molecule* refmol, std::vector<double> &tdataIO, int &ndataIO);
+    static void averageMol(Molecule* cmpmol, Molecule* refmol, int &ndataIO);
+    static double distance (const Coor& u, const Coor& v);
+    static double angle (const Coor& u, const Coor& v, const Coor& w);
     static double dihedral (const Coor& t, const Coor& u, const Coor& v, const Coor& w);
-		static double distance (Molecule* sel1, Molecule* sel2, bool selFlag=true);
-		static double angle (Molecule* sel1, Molecule* sel2, Molecule* sel3, bool selFlag=true);
-	  static double dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecule* sel4,bool selFlag=true);
+    static double distance (Molecule* sel1, Molecule* sel2, bool selFlag=true);
+    static double angle (Molecule* sel1, Molecule* sel2, Molecule* sel3, bool selFlag=true);
+    static double dihedral (Molecule* sel1, Molecule* sel2, Molecule* sel3, Molecule* sel4,bool selFlag=true);
     static void averageCovariance (Molecule* cmpmol, Molecule* refmol, Eigen::MatrixXd& covarin, int &ndataIO);
     static std::vector<double> projectModes(Molecule* cmpmol, Molecule* refmol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int>& modesin);
-		static void pairwiseDistance(Molecule *mol, std::vector<std::vector<double> >& pdin);
-		static void allAnglesDihedrals(Molecule *mol, std::vector<std::vector<double> >& anglesin);
-		static void pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO);
+    static void pairwiseDistance(Molecule *mol, std::vector<std::vector<double> >& pdin);
+    static void allAnglesDihedrals(Molecule *mol, std::vector<std::vector<double> >& anglesin);
+    static void pcasso(Molecule* mol, std::vector<std::vector<double> > &fdataIO);
     //static std::vector<double> gyration(Molecule* mol);
     Eigen::Matrix3d gyrationTensor(Molecule* mol);
     static double quasiharmonicEntropy(Molecule* mol, const Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>& eigenin, const std::vector<unsigned int> modesin, double temp=300);
@@ -117,46 +117,46 @@ class Analyze {
 //Derived classes
 
 class AnalyzeCOG: public Analyze {
-	public:
-		void runAnalysis();
+  public:
+    void runAnalysis();
 };
 
 class AnalyzeRMSD: public Analyze {
-	public:
-		void preAnalysis(Molecule* molin, std::string topin="");
-		void runAnalysis();
+  public:
+    void preAnalysis(Molecule* molin, std::string topin="");
+    void runAnalysis();
 };
 
 class AnalyzeRMSF: public Analyze {
   public:
-		void preAnalysis(Molecule* molin, std::string topin="");
+    void preAnalysis(Molecule* molin, std::string topin="");
     void runAnalysis();
-		void postAnalysis();
+    void postAnalysis();
 };
 
 class AnalyzeAverage: public Analyze {
-	public:
-		void preAnalysis(Molecule* molin, std::string topin="");
-		void runAnalysis();
-		void postAnalysis();
+  public:
+    void preAnalysis(Molecule* molin, std::string topin="");
+    void runAnalysis();
+    void postAnalysis();
 };
 
 class AnalyzeDistance: public Analyze {
   public:
-		void setupMolSel(Molecule* molin);
+    void setupMolSel(Molecule* molin);
     void runAnalysis();
 };
 
 class AnalyzeAngle: public Analyze {
   public:
-		void setupMolSel(Molecule* molin);
+    void setupMolSel(Molecule* molin);
     void runAnalysis();
 };
 
 class AnalyzeDihedral: public Analyze {
-	public:
-		void setupMolSel(Molecule* molin);
-		void runAnalysis();
+  public:
+    void setupMolSel(Molecule* molin);
+    void runAnalysis();
 };
 
 class AnalyzeCovariance: public Analyze {
@@ -194,17 +194,17 @@ class AnalyzePairwiseDistance: public Analyze {
 };
 
 class AnalyzePcasso: public Analyze {
-	private:
-		PcassoOutEnum pout;
-		std::vector<DTree *> t;
+  private:
+    PcassoOutEnum pout;
+    std::vector<DTree *> t;
 
-	public:
-		AnalyzePcasso(std::string delim=":");
-		void setOutType(PcassoOutEnum pin);
-		PcassoOutEnum getOutType();
-		void preAnalysis(Molecule* molin, std::string fin="");
-		void runAnalysis();
-		void postAnalysis();
+  public:
+    AnalyzePcasso(std::string delim=":");
+    void setOutType(PcassoOutEnum pin);
+    PcassoOutEnum getOutType();
+    void preAnalysis(Molecule* molin, std::string fin="");
+    void runAnalysis();
+    void postAnalysis();
 };
 
 #endif
