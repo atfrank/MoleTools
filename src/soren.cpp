@@ -19,6 +19,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "Molecule.hpp"
+#include "Residue.hpp"
 #include "Atom.hpp"
 #include "Misc.hpp"
 #include "Analyze.hpp"
@@ -29,7 +30,7 @@ void usage(){
   std::cerr << std::endl;
   std::cerr << "Usage:   soren [-options] <MOL2files>" << std::endl;
   std::cerr << "Options: [-bins min:max:incr]" << std::endl;
-  std::cerr << "         [-prosel selection] [-ligsel selection]" << std::endl;
+  std::cerr << "         [-sel selection]" << std::endl;
 //  std::cerr << "         [-format type] [-chains]" << std::endl;
 //  std::cerr << "         [-warnings]" << std::endl;
   std::cerr << std::endl;
@@ -43,8 +44,7 @@ int main (int argc, char **argv){
   unsigned int j,k;
   std::vector<std::string> mol2;
   std::string currArg;
-  std::string prosel;
-  std::string ligsel;
+  std::string sel;
   std::string format;
 //  bool chnFlag;
 //  bool warnings;
@@ -58,9 +58,7 @@ int main (int argc, char **argv){
   std::string key;
 
   mol2.clear();
-  prosel=":protein.";
-  ligsel=":^protein.";
-//  chnFlag=false;
+  sel=":ASP+GLU+HIS+HSP+HSD+HSE+CYS+TYR+LYS+ARG.";
   format.clear();
   min=0.0;
   max=10.0;
@@ -98,13 +96,9 @@ int main (int argc, char **argv){
     if (currArg.compare("-h") == 0 || currArg.compare("-help") == 0){
       usage();
     }
-    else if (currArg.compare("-prosel") == 0){
+    else if (currArg.compare("-sel") == 0){
       currArg=argv[++i];
-      prosel=currArg;
-    }
-    else if (currArg.compare("-ligsel") == 0){
-      currArg=argv[++i];
-      ligsel=currArg;
+      sel=currArg;
     }
     else if (currArg.compare("-format") == 0){
       currArg=argv[++i];
@@ -150,32 +144,28 @@ int main (int argc, char **argv){
   Molecule *mol=new Molecule;
 
   for (j=0; j< mol2.size(); j++){
-    mol->cat(Molecule::readMol2(mol2.at(j), format));
+    mol->cat(Molecule::readMol2(mol2.at(j), format, true));
   }
 
-  mol->assignAtmInx();
-  Analyze::pairwiseDistance(mol, pdist);
+  mol->select(sel);
+  Molecule *tmol=mol->copy(true); //Titratable
 
-  //mol->writePDB(chnFlag);
-
-  mol->select(ligsel);
-  Molecule *ligand=mol->copy(true);
-
-  Molecule *protein=NULL;
-
+  Molecule *cmol=NULL;
+  
   //Fill histogram
   for (b=bins; b > 0; b--){
     max=min+b*width; //max gets updated here!
     angstrom.str(""); //Clear stringstream
     angstrom << min+b*width;
-    mol->select(ligsel+"~"+angstrom.str()+"&"+prosel);
-    protein=mol->copy(true); //Contains protein within "max" angstroms of ligand
-    for (j=0; j< ligand->getNAtom(); j++){
-      for (k=0; k< protein->getNAtom(); k++){
-        double dist=pdist.at(ligand->getAtom(j)->getAtmInx()).at(protein->getAtom(k)->getAtmInx());
+    mol->select(sel+"~"+angstrom.str());
+    cmol=mol->copy(true); //Contains protein within "max" angstroms of tmol
+    Residue *res=tmol->getResidue(0);
+    for (j=0; j< res->getAtmVecSize(); j++){
+      for (k=0; k< cmol->getNAtom(); k++){
+        double dist=Analyze::distance(tmol->getAtom(j)->getCoor(), cmol->getAtom(k)->getCoor());
         if (dist <= max && dist > max-width){
-          key=ligand->getAtom(j)->getAtmType()+":";
-          key=key+protein->getAtom(k)->getAtmType()+":";
+          key=tmol->getAtom(j)->getAtmType()+":";
+          key=key+cmol->getAtom(k)->getAtmType()+":";
           key=key+angstrom.str();
           if (histo.find(key) != histo.end()){
             histo.at(key)++;
@@ -185,8 +175,8 @@ int main (int argc, char **argv){
           }
           /*
           std::cerr << max-width << " - " << max << " ";
-          std::cerr << ligand->getAtom(j)->getSummary() << " ";
-          std::cerr << protein->getAtom(k)->getSummary() << std::endl;
+          std::cerr << tmol->getAtom(j)->getSummary() << " ";
+          std::cerr << cmol->getAtom(k)->getSummary() << std::endl;
           */
         }
       }
@@ -218,8 +208,8 @@ int main (int argc, char **argv){
     }
   }
 
-  delete protein;
-  delete ligand;
+  delete cmol;
+  delete tmol;
   delete mol;
 
   return 0;

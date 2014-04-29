@@ -34,7 +34,7 @@ Mol2::Mol2(){
   chnMap.clear();
 }
 
-Molecule* Mol2::readMol2(std::string ifile, std::string format){
+Molecule* Mol2::readMol2(std::string ifile, std::string format, bool stopFlag){
   std::ifstream mol2File;
   std::istream* inp;
   std::string line;
@@ -66,16 +66,14 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
     inp=&mol2File;
   }
 
-  while (inp->good() && !(inp->eof())){
+  while (inp->good()){
 
     getline(*inp,line);
-    if (line.size() >= 14 && line.compare(0,13,"@<TRIPOS>ATOM") == 0){
-      readAtoms=true;
+    if (line.length() == 0){
+      continue;
     }
-    else if (line.compare(0,9,"@<TRIPOS>") == 0){
-      readAtoms=false;
-    }
-    else if (readAtoms == true && line.size() >= 44 ){
+    
+    if (readAtoms == true && line.size() >= 44 ){
       //Atom
       atmEntry=mol2.processAtomLine(line, lastAtom);
       if (atmEntry == NULL){
@@ -117,6 +115,15 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
       //Update for next atom
       lastAtom=atmEntry;
     }
+    else if (line.compare(0,13,"@<TRIPOS>ATOM") == 0){
+      readAtoms=true;
+    }
+    else if (line.compare(0,9,"@<TRIPOS>") == 0){
+      readAtoms=false;
+      if (stopFlag == true){
+        break;
+      }
+    }
     else{
       continue;
     }
@@ -138,6 +145,16 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
     exit(1);
   }
 
+  mol->select("!:PROTEIN+NUCLEIC+ION+METAL+SOLVENT+TERMINI.", false, false);
+  //Rename unknown residues to "UNK"
+  for (unsigned int j=0; j< mol->getNAtom(); j++){
+    if (mol->getAtom(j)->getSel() == true){
+      mol->getAtom(j)->setResName("UNK");
+    }
+  }
+
+  mol->selAll();
+
   return mol;
 }
 
@@ -151,7 +168,6 @@ Atom* Mol2::processAtomLine (std::string line, Atom* lastAtom){
   Atom *atmEntry=new Atom;
   std::vector<std::string> s;
   Select *sel=new Select;
-  std::vector<Atom *> ref;
   Molecule *mol=new Molecule;
   std::vector<Atom *> atmSel;
   double charge;
@@ -174,20 +190,8 @@ Atom* Mol2::processAtomLine (std::string line, Atom* lastAtom){
     atmEntry->setResId(resid);
   }
   if (s.size() >= 7){
-    if (s.at(7).size() > 4){
-      atmEntry->setResName(s.at(7).substr(0,4));
-    }
-    ref.clear();
-    ref.push_back(atmEntry);
-    atmSel=sel->recursiveDescentParser(":PROTEIN+NUCLEIC+ION+METAL+SOLVENT+TERMINI.", ref);
-    if (atmSel.size() == 0){
-      atmEntry->setResName(s.at(7).substr(0,3));  
-      ref.clear();
-      ref.push_back(atmEntry);
-      atmSel=sel->recursiveDescentParser(":PROTEIN+NUCLEIC+ION+METAL+SOLVENT+TERMINI.", ref);
-      if (atmSel.size() == 0){
-        atmEntry->setResName("UNK");  
-      }
+    if (s.at(7).length() >= 3){
+      atmEntry->setResName(s.at(7).substr(0,3));
     }
   }
   if (s.size() >= 8){
