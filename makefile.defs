@@ -1,7 +1,5 @@
 MAKE = make
-CC = gcc
 CXX = g++
-CFLAGS = -Wall
 CXXFLAGS = -Wall
 OPTFLAGS = -O3
 #DEBUG = -g
@@ -9,10 +7,4 @@ OTHERLIBS = ../
 INCFLAGS = -I../lib -I$(OTHERLIBS)
 LINKFLAGS = -L../lib -lmoletools 
 BINDIR = ../bin
-ifeq ($(shell uname -o 2>/dev/null), Cygwin)
-	LIBEXT=dll
-	LIBFLAGS = -shared -I$(OTHERLIBS)
-else
-	LIBEXT=so
-	LIBFLAGS = -fpic -shared -I$(OTHERLIBS)
-endif
+LIBEXT=a

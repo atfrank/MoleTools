@@ -9,7 +9,7 @@ LIBOBJS = cppmine.o mine.o
 all:	libmine.$(LIBEXT)
 
 libmine.$(LIBEXT):	$(LIBOBJS)
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(LIBFLAGS) $^ -o libmine.$(LIBEXT)
+	ar rc libmine.$(LIBEXT) $(LIBOBJS)
 
 clean:
 	rm -rf *.o
@@ -18,4 +18,4 @@ clean:
 	rm -rf *~
 
 %.o:	%.cpp  
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(LIBFLAGS) $(DEBUG) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) -c $< -o $@
