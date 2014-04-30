@@ -177,13 +177,13 @@ Atom* Mol2::processAtomLine (std::string line, Atom* lastAtom){
   Misc::splitStr(Misc::trim(line), " \t", s, false);
   std::stringstream(s.at(0)) >> atmnum;
   atmEntry->setAtmNum(atmnum);
-  atmEntry->setAtmName(s.at(1));
+  atmEntry->setAtmName(Misc::trim(s.at(1)));
   std::stringstream(s.at(2)) >> x;
   std::stringstream(s.at(3)) >> y;
   std::stringstream(s.at(4)) >> z;
   atmEntry->setCoor(Coor(x,y,z));
 
-  atmEntry->setAtmType(s.at(5));
+  atmEntry->setAtmType(Misc::trim(s.at(5)));
 
   if (s.size() >= 6){
     std::stringstream(s.at(6)) >> resid;
@@ -191,7 +191,7 @@ Atom* Mol2::processAtomLine (std::string line, Atom* lastAtom){
   }
   if (s.size() >= 7){
     if (s.at(7).length() >= 3){
-      atmEntry->setResName(s.at(7).substr(0,3));
+      atmEntry->setResName(Misc::trim(s.at(7).substr(0,3)));
     }
   }
   if (s.size() >= 8){
