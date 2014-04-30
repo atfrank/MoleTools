@@ -11,7 +11,9 @@ libmoletools.$(LIBEXT):	$(LIBOBJS)
 
 clean:
 	rm -rf *.o
-	rm -rf *.$(LIBEXT)
+	rm -rf *.a
+	rm -rf *.so
+	rm -rf *.dll
 	rm -rf *stackdump
 	rm -rf *~
 
