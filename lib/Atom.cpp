@@ -49,6 +49,7 @@ Atom::Atom(){
   charge=0.0;
   atminx=std::numeric_limits<unsigned int>::max();
   data.clear();
+  bonds.clear();
 }
 
 Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int residin, Coor coorin, std::string segidin){
@@ -75,6 +76,7 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
   charge=0.0;
   atminx=std::numeric_limits<unsigned int>::max();
   data.clear();
+  bonds.clear();
 }
 
 void Atom::reset(){
@@ -100,6 +102,7 @@ void Atom::reset(){
   mass=1.0;
   charge=0.0;
   data.clear();
+  bonds.clear();
 }
 
 void Atom::clone(Atom* atmin){
@@ -127,6 +130,7 @@ void Atom::clone(Atom* atmin){
   charge=atmin->getCharge();
   atminx=atmin->getAtmInx();
   data=atmin->getData();
+  bonds=atmin->getBonds();
 }
 
 void Atom::dummy(){
@@ -153,6 +157,7 @@ void Atom::dummy(){
   charge=0.0;
   atminx=std::numeric_limits<unsigned int>::max();
   data.clear();
+  bonds.clear();
 }
 
 //Get atom info
@@ -274,6 +279,21 @@ double& Atom::getDataPoint(const unsigned int element){
 
 unsigned int Atom::getDataSize(){
   return data.size();
+}
+
+unsigned int Atom::getBondsSize(){
+  return bonds.size();
+}
+
+std::vector<Atom*>& Atom::getBonds(){
+  return bonds;
+}
+
+Atom* Atom::getBond(const unsigned int &element){
+  if (element >= data.size()){
+    std::cerr << "Error: Atom::getBond Out of Range" << std::endl;
+  }
+  return bonds.at(element);
 }
 
 //Set atom info
@@ -422,3 +442,12 @@ void Atom::addData(const double& din){
 void Atom::clearData(){
   data.clear();
 }
+
+void Atom::addBond(Atom* atmin){
+  bonds.push_back(atmin);
+}
+
+void Atom::clearBonds(){
+  bonds.clear();
+}
+

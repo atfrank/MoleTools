@@ -144,7 +144,7 @@ int main (int argc, char **argv){
   Molecule *mol=new Molecule;
 
   for (j=0; j< mol2.size(); j++){
-    mol->cat(Molecule::readMol2(mol2.at(j), format, true));
+    mol->cat(Molecule::readMol2(mol2.at(j), format));
   }
 
   mol->select(sel);

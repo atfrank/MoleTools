@@ -34,7 +34,7 @@ Mol2::Mol2(){
   chnMap.clear();
 }
 
-Molecule* Mol2::readMol2(std::string ifile, std::string format, bool stopFlag){
+Molecule* Mol2::readMol2(std::string ifile, std::string format){
   std::ifstream mol2File;
   std::istream* inp;
   std::string line;
@@ -45,6 +45,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format, bool stopFlag){
   Atom *lastAtom;
   Mol2 mol2;
   bool readAtoms;
+  bool readBonds;
 
   if (format.compare("CHARMM") == 0){
     mol=new MoleculeCHARMM;
@@ -57,6 +58,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format, bool stopFlag){
   lastAtom=NULL;
   mol->setCopyFlag(false);
   readAtoms=false;
+  readBonds=false;
 
   if (ifile.compare("-") == 0){ //Input from pipe
     inp=&std::cin;
@@ -115,13 +117,20 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format, bool stopFlag){
       //Update for next atom
       lastAtom=atmEntry;
     }
-    else if (line.compare(0,13,"@<TRIPOS>ATOM") == 0){
-      readAtoms=true;
+    else if (readBonds == true){
+      
     }
     else if (line.compare(0,9,"@<TRIPOS>") == 0){
       readAtoms=false;
-      if (stopFlag == true){
-        break;
+      readBonds=false;
+      if (line.compare(9,4,"ATOM") == 0){
+        readAtoms=true;
+      }
+      else if (line.compare(9,4,"BOND") == 0){
+        readBonds=true;
+      }
+      else{
+        //Do Nothing
       }
     }
     else{

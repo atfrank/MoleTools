@@ -56,6 +56,7 @@ class Atom {
     double charge;
     unsigned int atminx; //For easier 2-D lookup tables
     std::vector<double> data;
+    std::vector<Atom*> bonds;
     //All additional fields must also be added to Atom::clone(), Atom::dummy() functions!!
 
   public:
@@ -96,6 +97,9 @@ class Atom {
     double& getDataPoint(const unsigned int element);
     unsigned int& getAtmInx();
     unsigned int getDataSize();
+    unsigned int getBondsSize();
+    std::vector<Atom*>& getBonds();
+    Atom* getBond(const unsigned int &element);
   
     //Set atom info
     void setPdbId(const std::string& pdbidin);
@@ -135,6 +139,8 @@ class Atom {
     void setAtmInx(const unsigned int& atminxin);
     void addData(const double& din);
     void clearData();
+    void addBond(Atom* atmin);
+    void clearBonds();
 };
 
 #endif

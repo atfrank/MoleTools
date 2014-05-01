@@ -33,7 +33,7 @@ class Mol2 {
 
   public:
     Mol2();
-    static Molecule* readMol2 (const std::string ifile, const std::string format="", bool stopFlag=false);
+    static Molecule* readMol2 (const std::string ifile, const std::string format="");
     Atom* processAtomLine (const std::string line, Atom* lastAtom);
 };
 
