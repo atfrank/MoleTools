@@ -58,7 +58,7 @@ class Molecule {
     std::string writePDB (bool selFlag, bool print);
     std::string writePDB (bool chnFlag);
     std::string writePDB ();
-    static Molecule* readMol2 (const std::string ifile, const std::string format="");
+    static Molecule* readMol2 (const std::string ifile, const std::string format="", const bool stopFlag=false);
     Molecule* clone(bool selFlag=true, bool keep=true);
     Molecule* copy(bool selFlag=true);
     void cat (Molecule* catmol, bool selFlag=true, bool keep=true);
@@ -81,7 +81,7 @@ class Molecule {
     void setCharge();
     void selAll();
     void deselAll();
-    void select(std::string sel, bool dieFlag=true);
+    void select(std::string sel, bool dieFlag=true, bool verbose=true);
     unsigned int getNAtom();
     unsigned int getNAtomSelected(); //Determining this on the fly is a good safety measure
     void setCopyFlag(bool copyFlagIn=false);

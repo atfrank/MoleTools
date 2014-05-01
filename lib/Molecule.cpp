@@ -107,7 +107,7 @@ std::string Molecule::writePDB(){
 }
 
 
-Molecule* Molecule::readMol2 (const std::string ifile, const std::string format){
+Molecule* Molecule::readMol2 (const std::string ifile, const std::string format, const bool stopFlag){
   if (ifile.length() == 0){
     std::cerr << "Error: Mol2 file \"" << ifile << "\" cannot be found" << std::endl;
     return new Molecule;
@@ -424,8 +424,8 @@ void Molecule::deselAll(){
   }
 }
 
-void Molecule::select(std::string sel, bool dieFlag){
-  Select::makeSel(this, sel, dieFlag);
+void Molecule::select(std::string sel, bool dieFlag, bool verbose){
+  Select::makeSel(this, sel, dieFlag, verbose);
 }
 
 unsigned int Molecule::getNAtom(){

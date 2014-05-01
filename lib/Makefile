@@ -7,13 +7,15 @@ LIBOBJS = Analyze.o Atom.o Bin.o BTree.o Chain.o DTree.o Histogram.o LinAlg.o Mi
 all:	libmoletools.$(LIBEXT)
 
 libmoletools.$(LIBEXT):	$(LIBOBJS)
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(LIBFLAGS) $^ -o libmoletools.$(LIBEXT)
+	ar rc libmoletools.$(LIBEXT) $(LIBOBJS)
 
 clean:
 	rm -rf *.o
-	rm -rf *.$(LIBEXT)
+	rm -rf *.a
+	rm -rf *.so
+	rm -rf *.dll
 	rm -rf *stackdump
 	rm -rf *~
 
 %.o:	%.cpp
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(LIBFLAGS) $(DEBUG) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(DEBUG) $(INCFLAGS) -c $< -o $@
