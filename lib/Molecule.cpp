@@ -740,6 +740,29 @@ void Molecule::pcasso (std::string dsspin, PcassoOutEnum out){
   delete anin;
 }
 
+void Molecule::renameHis(){
+  Residue* res;
+  Atom* atm;
+
+  std::map<std::string, bool> hisNames;
+
+  hisNames.insert(std::pair<std::string,bool>("HSD",true));
+  hisNames.insert(std::pair<std::string,bool>("HSE",true));
+  hisNames.insert(std::pair<std::string,bool>("HSP",true));
+  hisNames.insert(std::pair<std::string,bool>("HID",true));
+  hisNames.insert(std::pair<std::string,bool>("HIE",true));
+
+  for (unsigned int i=0; i< this->getResVecSize(); i++){
+    res=this->getResidue(i);
+    if (hisNames.find(res->getResName()) != hisNames.end()){
+      for (unsigned int j=0; j< res->getAtmVecSize(); j++){
+        atm=res->getAtom(j);
+        atm->setResName("HIS");
+      }
+    }
+  }
+}
+
 //Virtual Functions
 
 void Molecule::format(){

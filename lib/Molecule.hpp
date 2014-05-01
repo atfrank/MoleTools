@@ -112,6 +112,7 @@ class Molecule {
     void center (bool selFlag=true);
     void modPseudoCenter();
     void pcasso (std::string dsspin="", PcassoOutEnum out=PREDICT);
+    void renameHis();
 
     //Virtual functions
     virtual void format();

@@ -35,6 +35,7 @@ void usage (){
   std::cerr << "         [-format type] [-chains]" << std::endl;
   std::cerr << "         [-nohetero]" << std::endl;
   std::cerr << "         [-cat PDBfile] [-catsel selection]" << std::endl;
+  std::cerr << "         [-his]" << std::endl;
   std::cerr << std::endl << std::endl;
   exit(0);
 }
@@ -66,6 +67,7 @@ int main (int argc, char **argv){
   bool chnFlag;
   bool hetFlag;
   std::vector<std::string> catpdbs;
+  bool hisFlag;
 
   pdb.clear();
   mol=NULL;
@@ -87,6 +89,7 @@ int main (int argc, char **argv){
   chnFlag=false;
   hetFlag=true; //Keep hetero atoms
   catpdbs.clear();
+  hisFlag=false;
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -173,6 +176,9 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       catsel=currArg;
     }
+    else if (currArg.compare("-his") == 0){
+      hisFlag=true;
+    }
     else{
       pdb=currArg;
     }
@@ -188,6 +194,10 @@ int main (int argc, char **argv){
 //  start=std::clock();
 
   mol=Molecule::readPDB(pdb, model, format, hetFlag);
+
+  if (hisFlag == true){
+    mol->renameHis();
+  }
   
   if (sel.length() >0){
     mol->select(sel);
@@ -200,6 +210,9 @@ int main (int argc, char **argv){
   if (catpdbs.size() > 0){
     for (j=0; j< catpdbs.size(); j++){
       catmol=Molecule::readPDB(catpdbs.at(j), model, format, hetFlag);
+      if (hisFlag == true){
+        catmol->renameHis();
+      }
       if (catsel.length() > 0){
         catmol->select(catsel);
         catmol=catmol->clone(true, false); //Clone and delete original
@@ -212,6 +225,9 @@ int main (int argc, char **argv){
   if (fit == true){
     if (fitpdb.length() > 0){
       fitmol=Molecule::readPDB(fitpdb, model, format, hetFlag);
+      if (hisFlag == true){
+        fitmol->renameHis();
+      }
       if (fitsel.length() > 0){
         fitmol->select(fitsel);
         mol->select(fitsel);
