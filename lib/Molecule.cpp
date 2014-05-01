@@ -317,6 +317,15 @@ Atom* Molecule::getAtom(const unsigned int& element){
   }
 }
 
+void Molecule::renameAtom(const std::string &search, const std::string &replace){
+  for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+    Atom *atm=this->getAtom(i);
+    if (atm->getAtmName().compare(0,atm->getAtmName().length(),search) == 0){
+      atm->setAtmName(replace);
+    }
+  }
+}
+
 unsigned int Molecule::getAtmVecSize(){
   return atmVec.size();
 }
@@ -366,6 +375,16 @@ Residue* Molecule::getResidue(const unsigned int& element){
     return resVec.at(element);
   }
 }
+
+void Molecule::renameRes(const std::string &search, const std::string &replace){
+  for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+    Atom *atm=this->getAtom(i);
+    if (atm->getResName().compare(0,atm->getResName().length(),search) == 0){
+      atm->setResName(replace);
+    }
+  }
+}
+
 
 void Molecule::readTopology(const std::string& topin){
   this->toppar.readTopology(topin);
