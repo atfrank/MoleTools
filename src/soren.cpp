@@ -147,14 +147,6 @@ int main (int argc, char **argv){
     mol->cat(Molecule::readMol2(mol2.at(j), format));
   }
 
-  for (j=0; j< mol->getAtmVecSize(); j++){
-    Atom* a=mol->getAtom(j);
-    for (k=0; k< a->getBondsSize(); k++){
-      std::cout << a->getSummary() << " " << a->getBond(k)->getSummary() << std::endl;
-    }
-  }
-  return 0;
-
   mol->select(sel);
   Molecule *tmol=mol->copy(true); //Titratable
 
@@ -170,9 +162,9 @@ int main (int argc, char **argv){
     Residue *res=tmol->getResidue(0);
     for (j=0; j< res->getAtmVecSize(); j++){
       for (k=0; k< cmol->getNAtom(); k++){
-        double dist=Analyze::distance(tmol->getAtom(j)->getCoor(), cmol->getAtom(k)->getCoor());
+        double dist=Analyze::distance(res->getAtom(j)->getCoor(), cmol->getAtom(k)->getCoor());
         if (dist <= max && dist > max-width){
-          key=tmol->getAtom(j)->getAtmType()+":";
+          key=res->getAtom(j)->getAtmType()+":";
           key=key+cmol->getAtom(k)->getAtmType()+":";
           key=key+angstrom.str();
           if (histo.find(key) != histo.end()){
@@ -183,11 +175,15 @@ int main (int argc, char **argv){
           }
           /*
           std::cerr << max-width << " - " << max << " ";
-          std::cerr << tmol->getAtom(j)->getSummary() << " ";
+          std::cerr << res->getAtom(j)->getSummary() << " ";
           std::cerr << cmol->getAtom(k)->getSummary() << std::endl;
           */
         }
       }
+      //Output atoms bonded to this residue
+      //for (unsigned int l=0; l< res->getAtom(j)->getBondsSize(); l++){
+      //  std::cout << res->getAtom(j)->getSummary() << " " << res->getAtom(j)->getBond(l)->getSummary() << std::endl;
+      //}
     }
   }
 
