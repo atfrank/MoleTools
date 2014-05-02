@@ -290,7 +290,7 @@ std::vector<Atom*>& Atom::getBonds(){
 }
 
 Atom* Atom::getBond(const unsigned int &element){
-  if (element >= data.size()){
+  if (element >= bonds.size()){
     std::cerr << "Error: Atom::getBond Out of Range" << std::endl;
   }
   return bonds.at(element);

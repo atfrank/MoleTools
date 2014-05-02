@@ -44,6 +44,9 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
   Atom *atmEntry; //Created in heap by processAtomLine
   Atom *lastAtom;
   Mol2 mol2;
+  std::map<unsigned int, Atom*> atmMap;
+  std::vector<std::string> s;
+  unsigned int anum1, anum2;
   bool readAtoms;
   bool readBonds;
 
@@ -82,6 +85,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
         continue;
       }
       mol->addAtom(atmEntry);
+      atmMap.insert(std::pair<unsigned int, Atom*>(atmEntry->getAtmNum(), atmEntry));
 
       //Residue/Chain
       if (lastAtom != NULL){
@@ -118,7 +122,15 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
       lastAtom=atmEntry;
     }
     else if (readBonds == true){
-      
+      Misc::splitStr(Misc::trim(line), " \t", s, false);
+      if (s.size() >= 3){
+        std::stringstream(s.at(1)) >> anum1;
+        std::stringstream(s.at(2)) >> anum2;
+        if (atmMap.find(anum1) != atmMap.end() && atmMap.find(anum2) != atmMap.end()){
+          atmMap.at(anum1)->addBond(atmMap.at(anum2));
+          atmMap.at(anum2)->addBond(atmMap.at(anum1));
+        }
+      }
     }
     else if (line.compare(0,9,"@<TRIPOS>") == 0){
       readAtoms=false;

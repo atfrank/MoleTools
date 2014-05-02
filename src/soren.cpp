@@ -147,6 +147,14 @@ int main (int argc, char **argv){
     mol->cat(Molecule::readMol2(mol2.at(j), format));
   }
 
+  for (j=0; j< mol->getAtmVecSize(); j++){
+    Atom* a=mol->getAtom(j);
+    for (k=0; k< a->getBondsSize(); k++){
+      std::cout << a->getSummary() << " " << a->getBond(k)->getSummary() << std::endl;
+    }
+  }
+  return 0;
+
   mol->select(sel);
   Molecule *tmol=mol->copy(true); //Titratable
 
