@@ -31,6 +31,7 @@ void usage(){
   std::cerr << "Usage:   soren [-options] <MOL2files>" << std::endl;
   std::cerr << "Options: [-bins min:max:incr]" << std::endl;
   std::cerr << "         [-sel selection]" << std::endl;
+  std::cerr << "         [-add type1[:type2[...[typeN]]] | -use type1[:type2[...[typeN]]]" << std::endl;
 //  std::cerr << "         [-format type] [-chains]" << std::endl;
 //  std::cerr << "         [-warnings]" << std::endl;
   std::cerr << std::endl;
@@ -51,6 +52,7 @@ int main (int argc, char **argv){
   double min, max, width;
   int bins;
   std::vector<double> s;
+  std::vector<std::string> sadd;
   std::vector<std::string> atomTypes;
   std::map<std::string, unsigned int> histo; //Sparse histogram
   std::vector<std::vector<double> > pdist;
@@ -62,34 +64,35 @@ int main (int argc, char **argv){
   format.clear();
   min=0.0;
   max=10.0;
-  width=2.0;
+  width=1.0;
 
   //There might be a cleaner way of doing this
-  //but adding new atom types is easier/more obvious here
-  atomTypes.push_back("C.3");
-  atomTypes.push_back("C.2");
+  //but adding new atom types is easier/more obvious here.
+  //Note that they are in alphanumeric order and sorted later!
+  atomTypes.push_back("Br");
   atomTypes.push_back("C.1");
+  atomTypes.push_back("C.2");
+  atomTypes.push_back("C.3");
   atomTypes.push_back("C.ar");
   atomTypes.push_back("C.cat");
-  atomTypes.push_back("N.3");
-  atomTypes.push_back("N.2");
+  atomTypes.push_back("Cl");
+  atomTypes.push_back("F");
+  atomTypes.push_back("I");
   atomTypes.push_back("N.1");
-  atomTypes.push_back("N.ar");
-  atomTypes.push_back("N.am");
-  atomTypes.push_back("N.pl3");
+  atomTypes.push_back("N.2");
+  atomTypes.push_back("N.3");
   atomTypes.push_back("N.4");
-  atomTypes.push_back("O.3");
+  atomTypes.push_back("N.am");
+  atomTypes.push_back("N.ar");
+  atomTypes.push_back("N.pl3");
   atomTypes.push_back("O.2");
+  atomTypes.push_back("O.3");
   atomTypes.push_back("O.co2");
-  atomTypes.push_back("S.3");
+  atomTypes.push_back("P.3");
   atomTypes.push_back("S.2");
+  atomTypes.push_back("S.3");
   atomTypes.push_back("S.O");
   atomTypes.push_back("S.O2");
-  atomTypes.push_back("P.3");
-  atomTypes.push_back("F");
-  atomTypes.push_back("Cl");
-  atomTypes.push_back("Br");
-  atomTypes.push_back("I");
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -126,6 +129,14 @@ int main (int argc, char **argv){
         std::cerr << "Error: Skipping unknown \"-bins\" format\n" << std::endl;
       }
     }
+    else if (currArg.compare("-add") == 0 || currArg.compare("-use") == 0){
+      if (currArg.compare("-use") == 0){
+        atomTypes.clear();
+      }
+      currArg=argv[++i];
+      Misc::splitStr(currArg, ":", sadd, false);
+      atomTypes.insert(atomTypes.end(), sadd.begin(), sadd.end());
+    }
     else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
@@ -139,6 +150,11 @@ int main (int argc, char **argv){
     usage();
   }
 
+  //Sort, remove duplicates, and resize atom type vector
+  std::sort(atomTypes.begin(), atomTypes.end());
+  std::vector<std::string>::iterator it=std::unique(atomTypes.begin(), atomTypes.end());
+  atomTypes.resize(std::distance(atomTypes.begin(),it));
+
   bins=static_cast<int>((max-min)/width);
 
   Molecule *mol=new Molecule;
@@ -146,14 +162,6 @@ int main (int argc, char **argv){
   for (j=0; j< mol2.size(); j++){
     mol->cat(Molecule::readMol2(mol2.at(j), format));
   }
-
-  for (j=0; j< mol->getAtmVecSize(); j++){
-    Atom* a=mol->getAtom(j);
-    for (k=0; k< a->getBondsSize(); k++){
-      std::cout << a->getSummary() << " " << a->getBond(k)->getSummary() << std::endl;
-    }
-  }
-  return 0;
 
   mol->select(sel);
   Molecule *tmol=mol->copy(true); //Titratable
@@ -165,14 +173,14 @@ int main (int argc, char **argv){
     max=min+b*width; //max gets updated here!
     angstrom.str(""); //Clear stringstream
     angstrom << min+b*width;
-    mol->select(sel+"~"+angstrom.str());
+    mol->select(sel+"~"+angstrom.str(), false, false);
     cmol=mol->copy(true); //Contains protein within "max" angstroms of tmol
-    Residue *res=tmol->getResidue(0);
+    Residue *res=tmol->getResidue(0); //Only look at first residue
     for (j=0; j< res->getAtmVecSize(); j++){
       for (k=0; k< cmol->getNAtom(); k++){
-        double dist=Analyze::distance(tmol->getAtom(j)->getCoor(), cmol->getAtom(k)->getCoor());
+        double dist=Analyze::distance(res->getAtom(j)->getCoor(), cmol->getAtom(k)->getCoor());
         if (dist <= max && dist > max-width){
-          key=tmol->getAtom(j)->getAtmType()+":";
+          key=res->getAtom(j)->getAtmType()+":";
           key=key+cmol->getAtom(k)->getAtmType()+":";
           key=key+angstrom.str();
           if (histo.find(key) != histo.end()){
@@ -183,11 +191,15 @@ int main (int argc, char **argv){
           }
           /*
           std::cerr << max-width << " - " << max << " ";
-          std::cerr << tmol->getAtom(j)->getSummary() << " ";
+          std::cerr << res->getAtom(j)->getSummary() << " ";
           std::cerr << cmol->getAtom(k)->getSummary() << std::endl;
           */
         }
       }
+      //Output atoms bonded to this residue
+      //for (unsigned int l=0; l< res->getAtom(j)->getBondsSize(); l++){
+      //  std::cout << res->getAtom(j)->getSummary() << " " << res->getAtom(j)->getBond(l)->getSummary() << std::endl;
+      //}
     }
   }
 
