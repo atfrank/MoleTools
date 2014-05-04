@@ -64,7 +64,8 @@ class Molecule {
     void cat (Molecule* catmol, bool selFlag=true, bool keep=true);
     void addAtom(Atom* atmEntry);
     Atom* getAtom(const unsigned int& element);
-    void renameAtom(const std::string &search, const std::string &replace); 
+    void renameAtom(const std::string &search, const std::string &replace);
+    void renameAtom(const std::vector<std::string> &search, const std::string &replace); 
     void addChain(Chain* chnEntry);
     void addResidue(Residue* resEntry);
     Chain* getChain(const unsigned int& element);
@@ -75,6 +76,7 @@ class Molecule {
     std::vector<Atom*> getAtmVecClone();
     Residue* getResidue(const unsigned int& element);
     void renameRes(const std::string &search, const std::string &replace);
+    void renameRes(const std::vector<std::string> &search, const std::string &replace);
     void readTopology(const std::string& topin);
     void readParameter(const std::string& prmin);
     void setMass();

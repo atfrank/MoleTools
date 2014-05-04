@@ -326,6 +326,12 @@ void Molecule::renameAtom(const std::string &search, const std::string &replace)
   }
 }
 
+void Molecule::renameAtom(const std::vector<std::string> &search, const std::string &replace){
+  for (unsigned int i=0; i< search.size(); i++){
+    this->renameAtom(search.at(i), replace);
+  }
+}
+
 unsigned int Molecule::getAtmVecSize(){
   return atmVec.size();
 }
@@ -385,6 +391,11 @@ void Molecule::renameRes(const std::string &search, const std::string &replace){
   }
 }
 
+void Molecule::renameRes(const std::vector<std::string> &search, const std::string &replace){
+  for (unsigned int i=0; i< search.size(); i++){
+    this->renameRes(search.at(i), replace);
+  }
+}
 
 void Molecule::readTopology(const std::string& topin){
   this->toppar.readTopology(topin);
