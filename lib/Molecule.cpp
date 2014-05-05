@@ -327,8 +327,11 @@ void Molecule::renameAtom(const std::string &search, const std::string &replace)
 }
 
 void Molecule::renameAtom(const std::vector<std::string> &search, const std::string &replace){
-  for (unsigned int i=0; i< search.size(); i++){
-    this->renameAtom(search.at(i), replace);
+  for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+    Atom *atm=this->getAtom(i);
+    if (std::find(search.begin(), search.end(), atm->getAtmName()) != search.end()){
+      atm->setAtmName(replace);
+    }
   }
 }
 
@@ -394,6 +397,12 @@ void Molecule::renameRes(const std::string &search, const std::string &replace){
 void Molecule::renameRes(const std::vector<std::string> &search, const std::string &replace){
   for (unsigned int i=0; i< search.size(); i++){
     this->renameRes(search.at(i), replace);
+  }
+  for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+    Atom *atm=this->getAtom(i);
+    if (std::find(search.begin(), search.end(), atm->getResName()) != search.end()){
+      atm->setResName(replace);
+    }
   }
 }
 
