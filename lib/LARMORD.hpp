@@ -37,18 +37,26 @@ class LARMORD {
          std::map<std::string,bool> shiftAtoms;
          std::map<std::string,double> randomShifts;
          std::map<std::string,double> alphas;
+         std::map<std::string,int> betas;
+         std::map<std::string,double> intercepts;
          std::map<std::string,double> experimentalCS; 
     public:
-        LARMORD (Molecule *mol=NULL, const std::string fchemshift="");
+        LARMORD (Molecule *mol=NULL, const std::string fchemshift="",const std::string fabfile="",  const std::string finterceptfile="");
         void initializeShitAtoms();
         void initializeRandomShifts();
         void initializeAlpha();
+        void initializeBeta();
+        void initializeIntercept();
         bool getShiftAtom(const std::string &key);
         double getRandomShift(const std::string &key);
         double getAlpha (const std::string &key);
+        double getBeta (const std::string &key);
+        double getIntercept (const std::string &key);
         double getExperimentalCS(const std::string &key);
         int getNShiftAtoms();
         void renameRes(Molecule *mol);
         void loadCSFile(const std::string fchemshift);
+        void loadABFile(const std::string fabfile);
+        void loadInterceptFile(const std::string fparmfile);
 };
 #endif
