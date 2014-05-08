@@ -45,7 +45,8 @@ class Misc {
     static bool isrange (const std::string &str);
     static std::string trim (const std::string &str, const std::string t=" ");
     static std::string processRange (const std::string &start, const std::string &end);
-    static void toupper (std::string &str);
+    static std::string toupper (const std::string &str);
+    static std::string tolower (const std::string &str);
     static int atoi (std::string &str, const unsigned int offset=0);
     static double hypot (const double &a, const double &b);
     template <class First, class Second>

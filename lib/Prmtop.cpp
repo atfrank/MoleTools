@@ -48,8 +48,7 @@ void Prmtop::readTopology(const std::string& topin){
 
     while (topinp->good() && !(topinp->eof())){
       getline(*topinp, line);
-      word=Misc::trim(line).substr(0,4);
-      Misc::toupper(word);
+      word=Misc::toupper(Misc::trim(line).substr(0,4));
       if (word.compare(0,4,"MASS") == 0){
         Misc::splitStr(line, " \t", s, false);
         if (s.size() >= 4){

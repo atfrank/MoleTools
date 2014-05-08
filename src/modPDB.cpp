@@ -159,8 +159,7 @@ int main (int argc, char **argv){
     }
     else if (currArg.compare("-format") == 0){
       currArg=argv[++i];
-      Misc::toupper(currArg);
-      format=currArg;
+      format=Misc::toupper(currArg);
     }
     else if (currArg.compare("-chains") == 0){
       chnFlag=true;

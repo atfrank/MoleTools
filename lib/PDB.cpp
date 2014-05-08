@@ -176,8 +176,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
   else{ //Input from file
     pdbFile.open((ifile).c_str(), std::ios::in);
     inp=&pdbFile;
-    PDBID=ifile.substr(0,4);
-    Misc::toupper(PDBID);
+    PDBID=Misc::toupper(ifile.substr(0,4));
   }
 
   while (inp->good() && !(inp->eof())){
@@ -192,8 +191,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
         mol->setYear(year+1900);
       }
       if (Misc::trim(line.substr(62,4)).length() == 4){
-        PDBID=Misc::trim(line.substr(62,4));
-        Misc::toupper(PDBID);
+        PDBID=Misc::toupper(Misc::trim(line.substr(62,4)));
       }
     }
     else if (line.compare(0,6,"EXPDTA") == 0){

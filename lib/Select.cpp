@@ -34,7 +34,7 @@ void Select::makeSel (Molecule* mol, std::string selin, bool dieFlag, bool verbo
   unsigned int i;
 
   //Convert selection to uppercase
-  Misc::toupper(selin);
+  selin=Misc::toupper(selin);
 
   //Initialize special selection keys
   Select *sel=new Select;
@@ -228,7 +228,7 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     out.clear();
     std::set_intersection(cmpCurr.begin(), cmpCurr.end(), cmpNext.begin(), cmpNext.end(), back_inserter(out));
   }
-  else if ((pos=str.find(".")) != std::string::npos){
+  else if ((pos=str.find(".")) != std::string::npos && group.compare("atom") != 0){
     //Logical AND between Residues and Atoms: :GLY.CA
     out.clear();
     next=str.substr(pos+1, std::string::npos);
@@ -366,6 +366,9 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     else if (group.compare("atom") == 0){
       for (iter=ref.begin(); iter != ref.end(); ++iter){
         if (str.compare(Misc::trim((*iter)->getAtmName())) == 0){
+          out.push_back(*iter);
+        }
+        else if (Misc::toupper(str).compare(Misc::trim(Misc::toupper((*iter)->getAtmType()))) == 0){
           out.push_back(*iter);
         }
         else{
