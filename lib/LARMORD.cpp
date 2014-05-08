@@ -31,7 +31,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 
 LARMORD::LARMORD (Molecule *mol, const std::string fchemshift, const std::string fparmfile){
     /* nuclei for which chemical shifts will be calculated */
-    this->initializeShitAtoms();    
+    this->initializeShiftAtoms();    
 
     /* set random coil chemical shifts */
     this->initializeRandomShifts();
@@ -167,7 +167,7 @@ void LARMORD::renameRes(Molecule *mol){
 }
 
 
-void LARMORD::initializeShitAtoms(){
+void LARMORD::initializeShiftAtoms(){
     this->shiftAtoms.insert(std::pair<std::string,bool>("H1'",true));
     this->shiftAtoms.insert(std::pair<std::string,bool>("H2'",true));
     this->shiftAtoms.insert(std::pair<std::string,bool>("H3'",true));

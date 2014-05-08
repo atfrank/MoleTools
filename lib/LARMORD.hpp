@@ -40,7 +40,7 @@ class LARMORD {
          std::map<std::string,double> experimentalCS; 
     public:
         LARMORD (Molecule *mol=NULL, const std::string fchemshift="",const std::string fparmfile="");
-        void initializeShitAtoms();
+        void initializeShiftAtoms();
         void initializeRandomShifts();
         void initializeAlpha();
         bool getShiftAtom(const std::string &key);
