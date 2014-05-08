@@ -60,7 +60,7 @@ int main (int argc, char **argv){
   std::string key;
 
   mol2.clear();
-  sel=":ASP+GLU+HIS+HSP+HSD+HSE+CYS+TYR+LYS+ARG.";
+  sel=":TITRATABLE.HBOND";
   format.clear();
   min=0.0;
   max=10.0;
@@ -154,12 +154,6 @@ int main (int argc, char **argv){
   std::vector<std::string>::iterator it=std::unique(atomTypes.begin(), atomTypes.end());
   atomTypes.resize(std::distance(atomTypes.begin(),it));
 
-  for (unsigned int m=0; m< atomTypes.size(); m++){
-    atomTypes.at(m)=Misc::toupper(atomTypes.at(m));
-    std::cout << atomTypes.at(m) << std::endl;
-  }
-  return 0;
-
   bins=static_cast<int>((max-min)/width);
 
   Molecule *mol=new Molecule;
@@ -183,9 +177,9 @@ int main (int argc, char **argv){
     Residue *res=tmol->getResidue(0); //Only look at first residue
     for (j=0; j< res->getAtmVecSize(); j++){
       for (k=0; k< cmol->getNAtom(); k++){
-        std::cerr << res->getAtom(j)->getSummary() << " " << res->getAtom(j)->getAtmType() << std::endl;
         double dist=Analyze::distance(res->getAtom(j)->getCoor(), cmol->getAtom(k)->getCoor());
         if (dist <= max && dist > max-width){
+          std::cout << res->getAtom(j)->getSummary() << " " << res->getAtom(j)->getAtmType() << std::endl;
           key=res->getAtom(j)->getAtmType()+":";
           key=key+cmol->getAtom(k)->getAtmType()+":";
           key=key+angstrom.str();

@@ -420,6 +420,9 @@ void Select::initKeys(Molecule *mol){
   //Base Atoms
   selKeysAtm["BASE"]="C2 C4 C5 C5M C6 C8 H1 H2 H21 H22 H3 H41 H42 H5 H51 H52 H53 H6 H61 H62 H8 N1 N2 N3 N4 N6 N7 N9 O2 O4 O6";
 
+  //Hydrogen Bonding Atoms 
+  selKeysAtm["HBOND"]="N.3 N.2 O.2 S.3";
+
   selKeysAtm["HEAVY"]="";
   selKeysAtm["HYDROGEN"]="";
   selKeysAtm["OXYGEN"]="";
@@ -487,6 +490,7 @@ void Select::initKeys(Molecule *mol){
   selKeysRes["CHARGED"]="ARG LYS ASP GLU";
   selKeysRes["HYDROPHOBIC"]="ALA VAL LEU ILE PHE GLY PRO CYS CYX MET TRP";
   selKeysRes["POLAR"]="SER THR TYR ASN GLN";
+  selKeysRes["TITRATABLE"]="ASP GLU HIS HSP HSD HSE CYS TYR LYS ARG";
   selKeysRes["NUCLEIC"]="ADE THY CYT GUA URA A T C G U DA DT DC DG DU RG RG3 RG5 RU RU3 RU5 RA RA3 RA5 RU RU3 RU5 DG3 DG5 DU3 DU5 DA3 DA5 DU3 DU5 DT DT3 DT5";
   selKeysRes["PURINE"]="ADE GUA A G DA DG RG RA RG3 RA3 RG5 RA5 DG3 DA3 DG5 DA5";
   selKeysRes["PYRIMIDINE"]="CYT URA THY C U T DC DU DT RC RU RC3 RU3 RC5 RU5 DC3 DU3 DT3 DC5 DU5 DT5";
@@ -501,6 +505,7 @@ void Select::initKeys(Molecule *mol){
   std::replace(selKeysAtm["SIDECHAIN"].begin(), selKeysAtm["SIDECHAIN"].end(), ' ', '+');
   std::replace(selKeysAtm["SUGAR"].begin(), selKeysAtm["SUGAR"].end(), ' ', '+');
   std::replace(selKeysAtm["BASE"].begin(), selKeysAtm["BASE"].end(), ' ', '+');
+  std::replace(selKeysAtm["HBOND"].begin(), selKeysAtm["HBOND"].end(), ' ', '+');
   std::replace(selKeysAtm["HEAVY"].begin(), selKeysAtm["HEAVY"].end(), ' ', '+');
   std::replace(selKeysAtm["HYDROGEN"].begin(), selKeysAtm["HYDROGEN"].end(), ' ', '+');
   std::replace(selKeysAtm["OXYGEN"].begin(), selKeysAtm["OXYGEN"].end(), ' ', '+');
@@ -519,6 +524,7 @@ void Select::initKeys(Molecule *mol){
   std::replace(selKeysRes["CHARGED"].begin(), selKeysRes["CHARGED"].end(), ' ', '+');
   std::replace(selKeysRes["HYDROPHOBIC"].begin(), selKeysRes["HYDROPHOBIC"].end(), ' ', '+');
   std::replace(selKeysRes["POLAR"].begin(), selKeysRes["POLAR"].end(), ' ', '+');
+  std::replace(selKeysRes["TITRATABLE"].begin(), selKeysRes["TITRATABLE"].end(), ' ', '+');
   std::replace(selKeysRes["NUCLEIC"].begin(), selKeysRes["NUCLEIC"].end(), ' ', '+');
   std::replace(selKeysRes["PURINE"].begin(), selKeysRes["PURINE"].end(), ' ', '+');
   std::replace(selKeysRes["PYRIMIDINE"].begin(), selKeysRes["PYRIMIDINE"].end(), ' ', '+');
