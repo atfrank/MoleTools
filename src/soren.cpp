@@ -60,7 +60,7 @@ int main (int argc, char **argv){
   std::string key;
 
   mol2.clear();
-  sel=":TITRATABLE.HBOND";
+  sel=":.HBOND";
   format.clear();
   min=0.0;
   max=10.0;

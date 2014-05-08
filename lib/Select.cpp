@@ -420,8 +420,10 @@ void Select::initKeys(Molecule *mol){
   //Base Atoms
   selKeysAtm["BASE"]="C2 C4 C5 C5M C6 C8 H1 H2 H21 H22 H3 H41 H42 H5 H51 H52 H53 H6 H61 H62 H8 N1 N2 N3 N4 N6 N7 N9 O2 O4 O6";
 
-  //Hydrogen Bonding Atoms 
-  selKeysAtm["HBOND"]="N.3 N.2 O.2 S.3";
+  //Hydrogen Bonding Atoms
+  selKeysAtm["DONOR"]="N.3 N.2 N.pl3 N.4 N.ar N.am O.2 O.3 S.3";
+  selKeysAtm["ACCEPTOR"]="";
+  selKeysAtm["HBOND"]="N.3 N.2 N.pl3 N.4 N.ar N.am O.2 O.3 S.3";
 
   selKeysAtm["HEAVY"]="";
   selKeysAtm["HYDROGEN"]="";
