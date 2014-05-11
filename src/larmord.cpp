@@ -36,6 +36,7 @@ void usage(){
   std::cerr << "         [-parmfile PARAMfile]" << std::endl;
   std::cerr << "         [-trj TRAJfile]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;  
+  std::cerr << "         [-identification ID]" << std::endl;
   std::cerr << std::endl;
   exit(0);
 }
@@ -187,7 +188,7 @@ int main (int argc, char **argv){
                 cspred = 0.0;
                 expcs = larm->getExperimentalCS(key);
                 //std::cerr << " I am here " << key << " " << expcs << std::endl;
-                if(fchemshift.length() < 0 || expcs != 0.0){
+                if(fchemshift.length() == 0 || expcs != 0.0){
                     key = resname+":"+nucleus;
                     randcs = larm->getRandomShift(key);
                     if(randcs > 0){
@@ -246,7 +247,7 @@ int main (int argc, char **argv){
           cspred = 0.0;
           expcs = larm->getExperimentalCS(key);
           //std::cerr << " I am here " << key << " " << expcs << std::endl;
-          if(fchemshift.length() < 0 || expcs != 0.0){
+          if(fchemshift.length() == 0 || expcs != 0.0){
               key = resname+":"+nucleus;
               randcs = larm->getRandomShift(key);
               if(randcs > 0){

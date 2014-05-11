@@ -191,7 +191,7 @@ void LARMORD::initializeShiftAtoms(){
 }
 
 void LARMORD::initializeRandomShifts(){
-    /* generated using: awk '{print "this->randomShifts.insert(std::pair<std::string,double>(\""$1":"$2"\","$3"));"}' /export/nVerde/users/afrankz/workspace/Larmor-Development/Larmor-Dev-Distances-2/data/initial/2.0/randomcoil.dat */
+    /* generated using: awk '{print "this->randomShifts.insert(std::pair<std::string,double>(\""$1":"$2"\","$3"));"}' randomcoil.dat */
     this->randomShifts.insert(std::pair<std::string,double>("GUA:H5''",3.58));
     this->randomShifts.insert(std::pair<std::string,double>("GUA:C3'",73.9));
     this->randomShifts.insert(std::pair<std::string,double>("GUA:C1'",93.1));
@@ -254,7 +254,7 @@ void LARMORD::initializeRandomShifts(){
 }
 
 void LARMORD::initializeAlpha(){
-    /* generated using: awk '{print "this->alphas.insert(std::pair<std::string,double>(\""$1":"$2":"$3"\","$4"));"}' /export/nVerde/users/afrankz/workspace/Larmor-Development/Larmor-Dev-Distances-2/data/initial/3.0/larmorD_both.dat */
+    /* generated using: awk '{print "this->alphas.insert(std::pair<std::string,double>(\""$1":"$2":"$3"\","$4"));"}' larmorD_both.dat */
     this->alphas.insert(std::pair<std::string,double>("C1':ADE:C1'",17.4279529661));
     this->alphas.insert(std::pair<std::string,double>("C1':ADE:C2",26.3524171316));
     this->alphas.insert(std::pair<std::string,double>("C1':ADE:C2'",-2.8481729701));
