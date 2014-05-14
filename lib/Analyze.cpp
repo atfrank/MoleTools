@@ -28,6 +28,8 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 #include "Constants.hpp"
 #include "DTree.hpp"
 #include "PCASSO.hpp"
+#include "LARMORCA.hpp"
+#include "LARMORCAP.hpp"
 #include "Misc.hpp"
 
 #include <fstream>
@@ -52,7 +54,6 @@ Analyze::~Analyze (){
 
 AnalyzePcasso::AnalyzePcasso (std::string delim){
   std::vector<std::string> tokens;
-
   pout=PREDICT;
   t.clear();
   t.resize(PCASSO::getNTree());
@@ -60,6 +61,66 @@ AnalyzePcasso::AnalyzePcasso (std::string delim){
     t.at(i)=new DTree;
     Misc::splitStr(Misc::trim(PCASSO::getTree(i)), " \t", tokens, false);
     t.at(i)->genDTree(tokens, delim);
+  }
+}
+
+AnalyzeLarmorca::AnalyzeLarmorca (std::string delim){
+  unsigned int ntree;
+  /* Tree - Nucleus
+  t1 - H
+  t2 - HA
+  t3 - CA
+  t4 - C
+  t5 - CB
+  t6 - N 
+  */
+  std::vector<std::string> tokens;
+
+  t1.clear();
+  t2.clear();
+  t3.clear();
+  t4.clear();
+  t5.clear();
+  t6.clear();
+  
+  ntree=LARMORCAP::getNTree();
+  t1.resize(ntree);
+  t2.resize(ntree);
+  t3.resize(ntree);
+  t4.resize(ntree);
+  t5.resize(ntree);
+  t6.resize(ntree);
+  
+  for (unsigned int i=0; i< ntree; i++){
+    t1.at(i)=new DTree;
+    Misc::splitStr(LARMORCAP::getTree(i, "H"), " \t", tokens, false);
+    t1.at(i)->genDTree(tokens, delim);
+    //tokens.clear();
+
+    t2.at(i)=new DTree;
+    Misc::splitStr(LARMORCAP::getTree(i, "HA"), " \t", tokens, false);
+    t2.at(i)->genDTree(tokens, delim);
+    //tokens.clear();
+
+    t3.at(i)=new DTree;
+    Misc::splitStr(LARMORCAP::getTree(i, "CA"), " \t", tokens, false);
+    t3.at(i)->genDTree(tokens, delim);
+    //tokens.clear();
+
+    t4.at(i)=new DTree;
+    Misc::splitStr(LARMORCAP::getTree(i, "C"), " \t", tokens, false);
+    t4.at(i)->genDTree(tokens, delim);
+    //tokens.clear();
+
+    t5.at(i)=new DTree;
+    Misc::splitStr(LARMORCAP::getTree(i, "CB"), " \t", tokens, false);
+    t5.at(i)->genDTree(tokens, delim);
+    //tokens.clear();
+    
+    t6.at(i)=new DTree;
+    Misc::splitStr(LARMORCAP::getTree(i, "N"), " \t", tokens, false);
+    t6.at(i)->genDTree(tokens, delim);
+    //tokens.clear();
   }
 }
 
@@ -482,6 +543,14 @@ void AnalyzePcasso::preAnalysis(Molecule* molin, std::string fin){
 }
 
 
+void AnalyzeLarmorca::preAnalysis(Molecule* molin, std::string fin){
+  this->setupMolSel(molin);
+  this->setInput(fin);
+  
+  //Resize FData in Analyze::pcasso
+}
+
+
 //All runAnalysis Functions
 
 void AnalyzeCOG::runAnalysis(){
@@ -755,6 +824,139 @@ void AnalyzePcasso::runAnalysis(){
     std::cerr << "Warning: Unrecognized PCASSO output type" << std::endl;
   }
 
+}
+
+
+void AnalyzeLarmorca::runAnalysis(){
+  // do nothing
+}
+
+void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift, std::string identification){
+  Molecule *mol;
+  LARMORCA *larm;
+  std::vector<std::vector<double> > &feat=this->getFDataVec();
+  double p1;
+  double p2;
+  double p3;
+  double p4;
+  double p5;
+  double p6;
+  std::vector<double> e1;
+  std::vector<double> e2;
+  std::vector<double> e3;
+  std::vector<double> e4;
+  std::vector<double> e5;
+  std::vector<double> e6;
+  
+  double expcs;
+  double predcs;
+  double randcs;
+  unsigned int natom;
+  std::stringstream resid;
+  unsigned int ntree;
+  std::string resname;
+  std::string key;
+  
+
+  mol = NULL;
+  larm = NULL;
+  e1.clear();
+  e2.clear();
+  e3.clear();
+  e4.clear();
+  e5.clear();
+  e6.clear();
+  
+  ntree=LARMORCAP::getNTree();
+  natom=0;  
+  mol = this->getMol(0);
+  Analyze::pcasso(mol, this->getFDataVec()); //PCASSO features get stored in the second argument (a 2-D vector double)
+  
+  larm = new LARMORCA(mol,fchemshift);
+  
+  for (unsigned int i=0; i< mol->getNAtomSelected(); i++){
+    p1=p2=p3=p4=p5=p6=0.0;
+    for (unsigned int j=0; j< ntree; j++){
+      p1 += atof(t1.at(j)->getDTreeClass(feat.at(i)).c_str());
+      p2 += atof(t2.at(j)->getDTreeClass(feat.at(i)).c_str());
+      p3 += atof(t3.at(j)->getDTreeClass(feat.at(i)).c_str());
+      p4 += atof(t4.at(j)->getDTreeClass(feat.at(i)).c_str());
+      p5 += atof(t5.at(j)->getDTreeClass(feat.at(i)).c_str());
+      p6 += atof(t6.at(j)->getDTreeClass(feat.at(i)).c_str());
+    }
+    p1 /= ntree;
+    p2 /= ntree;
+    p3 /= ntree;
+    p4 /= ntree;
+    p5 /= ntree;
+    p6 /= ntree;
+
+    resname = mol->getResidue(natom)->getResName();
+    resid << mol->getResidue(natom)->getResId();
+    
+    key = resid.str()+":H";
+    expcs = larm->getExperimentalCS(key);
+    randcs = larm->getRandomShift("H:"+resname);
+    predcs = p1+randcs;
+    if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
+      std::cout << frame << " "  << resid.str() << " H " << resname << " " << predcs << " " << expcs << " " << expcs - predcs << " " << identification << std::endl;
+      e1.push_back(expcs - predcs);
+    }
+
+    key = resid.str()+":HA";
+    expcs = larm->getExperimentalCS(key);
+    randcs = larm->getRandomShift("HA:"+resname);
+    predcs = p2+randcs;
+    if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
+      std::cout << frame << " "  << resid.str() << " HA " << resname << " " << predcs << " " << expcs << " " <<  expcs - predcs << " " << identification << std::endl;
+      e2.push_back(expcs - predcs);
+    }
+
+    key = resid.str()+":CA";
+    expcs = larm->getExperimentalCS(key);
+    randcs = larm->getRandomShift("CA:"+resname);
+    predcs = p3+randcs;
+    if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
+      std::cout << frame << " "  << resid.str() << " CA " << resname << " " << predcs << " " << expcs << " " <<  expcs - predcs << " " << identification << std::endl;
+      e3.push_back(expcs - predcs);
+    }
+
+    key = resid.str()+":C";
+    expcs = larm->getExperimentalCS(key);
+    randcs = larm->getRandomShift("C:"+resname);
+    predcs = p4+randcs;
+    if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
+      std::cout << frame << " "  << resid.str() << " C " << resname << " " << predcs << " " << expcs << " " <<   expcs - predcs << " " << identification << std::endl;
+      e4.push_back(expcs - predcs);
+    }
+
+    key = resid.str()+":CB";
+    expcs = larm->getExperimentalCS(key);
+    randcs = larm->getRandomShift("CB:"+resname);
+    predcs = p5+randcs;
+    if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
+      std::cout << frame << " "  << resid.str() << " CB " << resname << " " << predcs << " " << expcs << " " <<   expcs - predcs << " " << identification << std::endl;
+      e5.push_back(expcs - predcs);
+    }
+
+    key = resid.str()+":N";
+    expcs = larm->getExperimentalCS(key);
+    randcs = larm->getRandomShift("N:"+resname);
+    predcs = p6+randcs;
+    if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
+      std::cout << frame << " " << resid.str() << " N " << resname << " " << predcs << " " << expcs << " " <<   expcs - predcs << " " << identification << std::endl;
+      e6.push_back(expcs - predcs);
+    }
+    natom ++;
+    resid.str("");
+  }
+  
+  //std::cout << identification << " Summary >> H: MAE (ppm) and RMSE (ppm) " << Misc::mae(e1) <<" " << Misc::rmse(e1) << std::endl;
+  //std::cout << identification << " Summary >> HA: MAE (ppm) and RMSE (ppm) " << Misc::mae(e2) <<" " << Misc::rmse(e2) << std::endl;
+  //std::cout << identification << " Summary >> CA: MAE (ppm) and RMSE (ppm) " << Misc::mae(e3) <<" " << Misc::rmse(e3) << std::endl;
+  //std::cout << identification << " Summary >> HC MAE (ppm) and RMSE (ppm) " << Misc::mae(e4) <<" " << Misc::rmse(e4) << std::endl;
+  //std::cout << identification << " Summary >> CB: MAE (ppm) and RMSE (ppm) " << Misc::mae(e5) <<" " << Misc::rmse(e5) << std::endl;
+  //std::cout << identification << " Summary >> N: MAE (ppm) and RMSE (ppm) " << Misc::mae(e6) <<" " << Misc::rmse(e6) << std::endl;
 }
 
 //All postAnalysis functions

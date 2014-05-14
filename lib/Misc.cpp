@@ -288,3 +288,19 @@ bool Misc::findUniqueSecond(const std::pair<First, Second> &a, const std::pair<F
 
 template bool Misc::findUniqueSecond(const std::pair<int, int> &a, const std::pair<int, int> &b);
 
+
+double Misc::rmse (std::vector<double> errorVec){
+    double error=0.0;
+    for (unsigned int i=0; i<errorVec.size();i++){
+        error += errorVec.at(i)*errorVec.at(i);
+    }
+    return sqrt(error/errorVec.size());
+}
+
+double Misc::mae (std::vector<double> errorVec){
+    double error=0.0;
+    for (unsigned int i=0; i<errorVec.size();i++){
+        error += fabs(errorVec.at(i));
+    }
+    return error/errorVec.size();
+}
