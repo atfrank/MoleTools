@@ -831,8 +831,24 @@ void AnalyzeLarmorca::runAnalysis(){
   // do nothing
 }
 
-void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift, std::string identification){
+void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift, std::string identification, bool analyzeError){
   Molecule *mol;
+  Molecule *mol1;
+  Molecule *mol2;
+  Molecule *mol3;
+  Molecule *mol4;
+  Molecule *mol5;
+  Molecule *mol6;
+  
+  std::stringstream fout;
+  std::ofstream pdbout1;
+  std::ofstream pdbout2;
+  std::ofstream pdbout3;
+  std::ofstream pdbout4;
+  std::ofstream pdbout5;
+  std::ofstream pdbout6;
+
+  
   LARMORCA *larm;
   std::vector<std::vector<double> > &feat=this->getFDataVec();
   double p1;
@@ -860,6 +876,39 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
 
   mol = NULL;
   larm = NULL;
+  if (analyzeError == true){
+    mol1 = NULL;
+    mol2 = NULL;
+    mol3 = NULL;
+    mol4 = NULL;
+    mol5 = NULL;
+    mol6 = NULL;
+    
+    fout << identification << "_error_H.pdb";
+    pdbout1.open(fout.str().c_str(), std::ios::out);
+    fout.str(std::string());
+
+    fout << identification << "_error_HA.pdb";
+    pdbout2.open(fout.str().c_str(), std::ios::out);
+    fout.str(std::string());
+
+    fout << identification << "_error_CA.pdb";
+    pdbout3.open(fout.str().c_str(), std::ios::out);
+    fout.str(std::string());
+
+    fout << identification << "_error_C.pdb";
+    pdbout4.open(fout.str().c_str(), std::ios::out);
+    fout.str(std::string());
+
+    fout << identification << "_error_CB.pdb";
+    pdbout5.open(fout.str().c_str(), std::ios::out);
+    fout.str(std::string());
+
+    fout << identification << "_error_N.pdb";
+    pdbout6.open(fout.str().c_str(), std::ios::out);
+    fout.str(std::string());
+  }
+
   e1.clear();
   e2.clear();
   e3.clear();
@@ -867,13 +916,22 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
   e5.clear();
   e6.clear();
   
-  ntree=LARMORCAP::getNTree();
-  natom=0;  
+  
+
   mol = this->getMol(0);
+  if (analyzeError == true){
+    mol1 = mol->copy();
+    mol2 = mol->copy();
+    mol3 = mol->copy();
+    mol4 = mol->copy();
+    mol5 = mol->copy();
+    mol6 = mol->copy();
+  }
+  
   Analyze::pcasso(mol, this->getFDataVec()); //PCASSO features get stored in the second argument (a 2-D vector double)
-  
   larm = new LARMORCA(mol,fchemshift);
-  
+  natom=0;
+  ntree=LARMORCAP::getNTree();
   for (unsigned int i=0; i< mol->getNAtomSelected(); i++){
     p1=p2=p3=p4=p5=p6=0.0;
     for (unsigned int j=0; j< ntree; j++){
@@ -901,6 +959,9 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
     if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
       std::cout << frame << " "  << resid.str() << " H " << resname << " " << predcs << " " << expcs << " " << expcs - predcs << " " << identification << std::endl;
       e1.push_back(expcs - predcs);
+      if (analyzeError == true){
+        mol1->getAtom(i)->setBFac(fabs(expcs - predcs));
+      }
     }
 
     key = resid.str()+":HA";
@@ -910,6 +971,9 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
     if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
       std::cout << frame << " "  << resid.str() << " HA " << resname << " " << predcs << " " << expcs << " " <<  expcs - predcs << " " << identification << std::endl;
       e2.push_back(expcs - predcs);
+      if (analyzeError == true){
+        mol2->getAtom(i)->setBFac(fabs(expcs - predcs));
+      }      
     }
 
     key = resid.str()+":CA";
@@ -919,6 +983,9 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
     if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
       std::cout << frame << " "  << resid.str() << " CA " << resname << " " << predcs << " " << expcs << " " <<  expcs - predcs << " " << identification << std::endl;
       e3.push_back(expcs - predcs);
+      if (analyzeError == true){
+        mol3->getAtom(i)->setBFac(fabs(expcs - predcs));
+      }
     }
 
     key = resid.str()+":C";
@@ -928,6 +995,9 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
     if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
       std::cout << frame << " "  << resid.str() << " C " << resname << " " << predcs << " " << expcs << " " <<   expcs - predcs << " " << identification << std::endl;
       e4.push_back(expcs - predcs);
+      if (analyzeError == true){
+        mol4->getAtom(i)->setBFac(fabs(expcs - predcs));
+      }
     }
 
     key = resid.str()+":CB";
@@ -937,6 +1007,9 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
     if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
       std::cout << frame << " "  << resid.str() << " CB " << resname << " " << predcs << " " << expcs << " " <<   expcs - predcs << " " << identification << std::endl;
       e5.push_back(expcs - predcs);
+      if (analyzeError == true){
+        mol5->getAtom(i)->setBFac(fabs(expcs - predcs));
+      }
     }
 
     key = resid.str()+":N";
@@ -946,9 +1019,27 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
     if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
       std::cout << frame << " " << resid.str() << " N " << resname << " " << predcs << " " << expcs << " " <<   expcs - predcs << " " << identification << std::endl;
       e6.push_back(expcs - predcs);
+      if (analyzeError == true){
+        mol6->getAtom(i)->setBFac(fabs(expcs - predcs));
+      }
     }
     natom ++;
     resid.str("");
+  }
+  if (analyzeError == true){
+    pdbout1 << mol1->writePDB(true,false,false);
+    pdbout2 << mol2->writePDB(true,false,false);
+    pdbout3 << mol3->writePDB(true,false,false);
+    pdbout4 << mol4->writePDB(true,false,false);
+    pdbout5 << mol5->writePDB(true,false,false);
+    pdbout6 << mol6->writePDB(true,false,false);
+
+    pdbout1.close();
+    pdbout2.close();
+    pdbout3.close();
+    pdbout4.close();
+    pdbout5.close();
+    pdbout6.close();
   }
   
   //std::cout << identification << " Summary >> H: MAE (ppm) and RMSE (ppm) " << Misc::mae(e1) <<" " << Misc::rmse(e1) << std::endl;

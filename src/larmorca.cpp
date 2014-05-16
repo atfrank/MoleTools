@@ -36,6 +36,7 @@ void usage(){
   std::cerr << "         [-trj TRAJfile]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;  
   std::cerr << "         [-identification ID]" << std::endl;
+  std::cerr << "         [-analyze]" << std::endl;
   std::cerr << std::endl;
   exit(0);
 }
@@ -52,6 +53,7 @@ int main (int argc, char **argv){
   int stop=std::numeric_limits<int>::max();
   int skip=0;
   bool startFlag=false;
+  bool analyzeError=false;
   unsigned int itrj;
   std::ifstream trjin;
   Trajectory *ftrjin;
@@ -99,6 +101,9 @@ int main (int argc, char **argv){
     else if (currArg.compare("-identification") == 0 || currArg.compare("-i") == 0 ){
       currArg=argv[++i];
       identification=currArg;
+    }
+    else if (currArg.compare("-analyze") == 0 || currArg.compare("-a") == 0 ){
+      analyzeError=true;
     }
     else if (currArg.compare("-verbose") == 0){
       verbose=true;
@@ -150,7 +155,7 @@ int main (int argc, char **argv){
             nframe++;
             anin->clearMol();
             anin->preAnalysis(mol, "");
-            anin->runAnalysisTest(nframe,fchemshift,identification);
+            anin->runAnalysisTest(nframe,fchemshift,identification,analyzeError);
           }
         }
         else{
@@ -170,7 +175,7 @@ int main (int argc, char **argv){
         mol=Molecule::readPDB(pdbs.at(j));
         anin->addSel(":.CA");
         anin->preAnalysis(mol, "");
-        anin->runAnalysisTest(j+1,fchemshift,identification);
+        anin->runAnalysisTest(j+1,fchemshift,identification,analyzeError);
         delete mol;
       }
 
