@@ -40,6 +40,7 @@ Molecule::Molecule (){
   iCodeFlag=false;
   year=0;
   exp.clear();
+  tag.clear();
 }
 
 Molecule::~Molecule (){
@@ -142,6 +143,7 @@ Molecule* Molecule::clone (bool selFlag, bool keep){
   mol->setCopyFlag(false); //Not a copy
   mol->setYear(this->getYear());
   mol->setExp(this->getExp());
+  mol->setTag(this->getTag());
   
   for (unsigned int i=0; i< this->getChnVecSize(); i++){
     c=this->getChain(i);
@@ -207,6 +209,7 @@ Molecule* Molecule::copy (bool selFlag){
   mol->setCopyFlag(true); //Is a copy, do not destruct atoms!
   mol->setYear(this->getYear());
   mol->setExp(this->getExp());
+  mol->setTag(this->getTag());
 
   for (unsigned int i=0; i< this->getChnVecSize(); i++){
     c=this->getChain(i);
@@ -262,7 +265,9 @@ void Molecule::cat (Molecule* catmol, bool selFlag, bool keep){
   resEntry=NULL;
   atmEntry=NULL;
   this->setCopyFlag(false); //Not a copy
-  this->setYear(0);
+  this->setYear(catmol->getYear());
+  this->setExp(catmol->getExp());
+  this->setTag(catmol->getTag());
 
   for (unsigned int i=0; i< catmol->getChnVecSize(); i++){
     c=catmol->getChain(i);
