@@ -69,6 +69,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
   else{ //Input from file
     mol2File.open((ifile).c_str());
     inp=&mol2File;
+    mol->setTag(ifile.substr(0,4));
   }
 
   while (inp->good()){

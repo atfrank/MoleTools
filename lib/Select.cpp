@@ -51,6 +51,7 @@ void Select::makeSel (Molecule* mol, std::string selin, bool dieFlag, bool verbo
     if (verbose == true){
       std::cerr << std::endl << "Error: Selection \"";
       std::cerr << selin << "\" did not match any atoms";
+      std::cout << " #" << mol->getTag() << "#" << std::endl;
       std::cerr << std::endl << std::endl;
     }
     if (dieFlag == true){

@@ -965,3 +965,11 @@ void Molecule::setExp(const std::string& expin){
 std::string Molecule::getExp(){
   return exp;
 }
+
+void Molecule::setTag(const std::string& tagin){
+  tag=tagin;
+}
+
+std::string Molecule::getTag(){
+  return tag;
+}

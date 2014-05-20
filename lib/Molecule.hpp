@@ -47,6 +47,7 @@ class Molecule {
     Prmtop toppar;
     unsigned int year;
     std::string exp;
+    std::string tag;
 
   public:
     Molecule(); //Constructor
@@ -105,6 +106,8 @@ class Molecule {
     unsigned int getYear();
     void setExp(const std::string& expin);
     std::string getExp();
+    void setTag(const std::string& tagin);
+    std::string getTag();
 
     double lsqfit (Molecule *refmol, bool transform=true);
     double rmsd (Molecule *refmol);

@@ -32,7 +32,7 @@ class Residue;
 
 class Atom {
   private:
-    std::string pdbid;
+    std::string tag;
     std::string recname; //Record name: "ATOM  ", "HETATM"
     int  atmnum; //Atom serial number
     std::string atmname; //Atom name
@@ -69,7 +69,7 @@ class Atom {
     void dummy();
 
     //Get atom info
-    std::string& getPdbId();
+    std::string& getTag();
     std::string& getRecName();
     int& getAtmNum();
     std::string& getAtmName();
@@ -104,7 +104,7 @@ class Atom {
     Atom* getBond(const unsigned int &element);
   
     //Set atom info
-    void setPdbId(const std::string& pdbidin);
+    void setTag(const std::string& tagin);
     void setRecName(const std::string& recnamein);
     void setAtmNum(const int& atmnumin);
     void setAtmName(const std::string& atmnamein);

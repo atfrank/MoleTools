@@ -178,6 +178,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
     pdbFile.open((ifile).c_str(), std::ios::in);
     inp=&pdbFile;
     PDBID=Misc::toupper(ifile.substr(0,4));
+    mol->setTag(PDBID);
   }
 
   while (inp->good() && !(inp->eof())){
@@ -214,7 +215,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
     else if (modelFlag && line.size() >= 54 && (line.compare(0,4,"ATOM") == 0 || (line.compare(0,6,"HETATM") == 0 && hetFlag == true) || (line.compare(0,5,"HETAT") == 0 && hetFlag == true))){
       //Atom
       atmEntry=pdb.processAtomLine(line, lastAtom);
-      atmEntry->setPdbId(PDBID);
+      atmEntry->setTag(PDBID);
       if (lastAtom != NULL && lastAtom->getResId() == atmEntry->getResId()){
         if (lastAtom->getResName().compare(atmEntry->getResName()) == 0 && lastAtom->getAlt().compare(0,1,atmEntry->getAlt(),0,1) == 0){
           //Eliminate other alternate locations besides first

@@ -26,7 +26,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 #include <limits>
 
 Atom::Atom(){
-  pdbid="NoID";
+  tag="NoID";
   recname="ATOM";
   atmnum=0;
   atmname="    ";
@@ -54,7 +54,7 @@ Atom::Atom(){
 }
 
 Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int residin, Coor coorin, std::string segidin){
-  pdbid="NoID";
+  tag="NoID";
   recname="ATOM";
   atmnum=atmnumin;
   atmname=atmnamein;
@@ -82,7 +82,7 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
 }
 
 void Atom::reset(){
-  pdbid="NoID";
+  tag="NoID";
   recname="ATOM";
   atmnum=0;
   atmname="    ";
@@ -109,7 +109,7 @@ void Atom::reset(){
 }
 
 void Atom::clone(Atom* atmin){
-  pdbid=atmin->getPdbId();
+  tag=atmin->getTag();
   recname=atmin->getRecName();
   atmnum=atmin->getAtmNum();
   atmname=atmin->getAtmName();
@@ -138,7 +138,7 @@ void Atom::clone(Atom* atmin){
 }
 
 void Atom::dummy(){
-  pdbid="NoID";
+  tag="NoID";
   recname="ATOM";
   atmnum=1;
   atmname="CA";
@@ -166,8 +166,8 @@ void Atom::dummy(){
 }
 
 //Get atom info
-std::string& Atom::getPdbId(){
-  return pdbid;
+std::string& Atom::getTag(){
+  return tag;
 }
 
 std::string& Atom::getRecName(){
@@ -306,8 +306,8 @@ Atom* Atom::getBond(const unsigned int &element){
 }
 
 //Set atom info
-void Atom::setPdbId(const std::string& pdbidin){
-  pdbid=pdbidin;
+void Atom::setTag(const std::string& tagin){
+  tag=tagin;
 }
 
 void Atom::setRecName(const std::string& recnamein){
