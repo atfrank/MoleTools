@@ -28,11 +28,12 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 
 void usage(){
   std::cerr << std::endl;
-  std::cerr << "Usage:   soren [-options] <MOL2files>" << std::endl;
+  std::cerr << "Usage:   soren [-options] <MOL2file>" << std::endl;
   std::cerr << "Options: [-bins min:max:incr]" << std::endl;
   std::cerr << "         [-sel selection]" << std::endl;
   std::cerr << "         [-add type1[:type2[...[typeN]]] | -use type1[:type2[...[typeN]]]" << std::endl;
-//  std::cerr << "         [-format type] [-chains]" << std::endl;
+  std::cerr << "         [-response value}" << std::endl;
+  std::cerr << "         [-chains]" << std::endl;
 //  std::cerr << "         [-warnings]" << std::endl;
   std::cerr << std::endl;
   exit(0);
@@ -47,7 +48,7 @@ int main (int argc, char **argv){
   std::string currArg;
   std::string sel;
   std::string format;
-//  bool chnFlag;
+  bool chnFlag;
 //  bool warnings;
   double min, max, width;
   int bins;
@@ -58,28 +59,32 @@ int main (int argc, char **argv){
   std::vector<std::vector<double> > pdist;
   std::stringstream angstrom;
   std::string key;
+  bool responseFlag;
+  double response;
 
   mol2.clear();
-  sel=":.HBOND";
+  sel=":.OD1+OD2+OE1+OE2+NZ+SG+ND1+ND2";
   format.clear();
   min=0.0;
   max=10.0;
   width=1.0;
+  responseFlag=false;
+  response=0.0;
 
   //There might be a cleaner way of doing this
   //but adding new atom types is easier/more obvious here.
   //Note that they are in alphanumeric order and sorted later!
-  atomTypes.push_back("Br");
-  atomTypes.push_back("C.1");
+  //atomTypes.push_back("Br");
+  //atomTypes.push_back("C.1");
   atomTypes.push_back("C.2");
   atomTypes.push_back("C.3");
   atomTypes.push_back("C.ar");
   atomTypes.push_back("C.cat");
-  atomTypes.push_back("Cl");
-  atomTypes.push_back("F");
-  atomTypes.push_back("I");
-  atomTypes.push_back("N.1");
-  atomTypes.push_back("N.2");
+  //atomTypes.push_back("Cl");
+  //atomTypes.push_back("F");
+  //atomTypes.push_back("I");
+  //atomTypes.push_back("N.1");
+  //atomTypes.push_back("N.2");
   atomTypes.push_back("N.3");
   atomTypes.push_back("N.4");
   atomTypes.push_back("N.am");
@@ -88,11 +93,11 @@ int main (int argc, char **argv){
   atomTypes.push_back("O.2");
   atomTypes.push_back("O.3");
   atomTypes.push_back("O.co2");
-  atomTypes.push_back("P.3");
-  atomTypes.push_back("S.2");
+  //atomTypes.push_back("P.3");
+  //atomTypes.push_back("S.2");
   atomTypes.push_back("S.3");
-  atomTypes.push_back("S.O");
-  atomTypes.push_back("S.O2");
+  //atomTypes.push_back("S.O");
+  //atomTypes.push_back("S.O2");
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -107,9 +112,9 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       format=Misc::toupper(currArg);
     }
-//    else if (currArg.compare("-chains") == 0){
-//      chnFlag=true;
-//    }
+    else if (currArg.compare("-chains") == 0){
+      chnFlag=true;
+    }
     else if (currArg.compare("-bins") == 0){
       currArg=argv[++i];
       Misc::splitNum(currArg, ":", s, false);
@@ -135,6 +140,11 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       Misc::splitStr(currArg, ":", sadd, false);
       atomTypes.insert(atomTypes.end(), sadd.begin(), sadd.end());
+    }
+    else if (currArg.compare("-response") == 0){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> response;
+      responseFlag=true;
     }
     else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
@@ -162,6 +172,10 @@ int main (int argc, char **argv){
     mol->cat(Molecule::readMol2(mol2.at(j), format));
   }
 
+  if (chnFlag == true){
+    mol->addMissingChainIds();
+  }
+
   mol->select(sel);
   Molecule *tmol=mol->copy(true); //Titratable
 
@@ -179,7 +193,7 @@ int main (int argc, char **argv){
       for (k=0; k< cmol->getNAtom(); k++){
         double dist=Analyze::distance(res->getAtom(j)->getCoor(), cmol->getAtom(k)->getCoor());
         if (dist <= max && dist > max-width){
-          std::cout << res->getAtom(j)->getSummary() << " " << res->getAtom(j)->getAtmType() << std::endl;
+          //std::cout << res->getAtom(j)->getSummary() << " " << res->getAtom(j)->getAtmType() << " " << cmol->getAtom(k)->getSummary() << " " << cmol->getAtom(k)->getAtmType() << " " << dist << std::endl;
           key=res->getAtom(j)->getAtmType()+":";
           key=key+cmol->getAtom(k)->getAtmType()+":";
           key=key+angstrom.str();
@@ -204,6 +218,9 @@ int main (int argc, char **argv){
   }
 
   //Output feature vector
+  if (responseFlag == true){
+    std::cout << response << ",";
+  }
   for (b=bins; b > 0; b--){
     angstrom.str(""); //Clear stringstream
     angstrom << min+b*width;

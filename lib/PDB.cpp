@@ -39,7 +39,6 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
   Chain *chn;
   Residue *res;
   Atom *atm;
-  std::string lastChain="+";
   int natom=0;
   int catom=0;
   unsigned int i;
@@ -347,7 +346,12 @@ Atom* PDB::processAtomLine (std::string line, Atom* lastAtom){
     atmEntry->setSegId(segid);
   }
   if (line.size() >= 78){
-    atmEntry->setElem(line.substr(77,1));
+    if (line.substr(77,1).compare(" ") == 0){
+      atmEntry->setElem(atmEntry->getAtmName().substr(0,1));
+    }
+    else{
+      atmEntry->setElem(line.substr(77,1));
+    }
   }
   atmEntry->setSel(true);
   std::stringstream ss;

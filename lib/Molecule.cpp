@@ -353,6 +353,41 @@ void Molecule::addChain(Chain* chnEntry){
   }
 }
 
+void Molecule::addMissingChainIds(){
+  Chain *chn;
+  Atom *atm;
+  char currId;
+  std::map<char, int> mapIds;
+  unsigned int i, j;
+  std::string id;
+  std::stringstream ss;
+
+  currId='A';
+
+  //Create map of chainIds
+  for (i=0; i< this->getChnVecSize(); i++){
+    chn=this->getChain(i);
+    if (chn->getChainId().compare(" ") != 0){
+      mapIds[chn->getChainId().at(0)]=1;
+    }
+  }
+
+  for (i=0; i< this->getChnVecSize(); i++){
+    chn=this->getChain(i);
+    for (j=0; j< chn->getAtmVecSize(); j++){
+      atm=chn->getAtom(j);
+      if (atm->getChainId().compare(" ") == 0){
+        while (mapIds.find(currId) != mapIds.end()){
+          currId++;
+        }
+        ss << currId;
+        ss >> id; 
+        atm->setChainId(id);
+      }
+    }
+  }
+}
+
 void Molecule::addResidue(Residue* resEntry){
   if (resEntry->getResId()){
     resVec.push_back(resEntry);

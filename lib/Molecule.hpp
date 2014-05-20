@@ -67,6 +67,7 @@ class Molecule {
     void renameAtom(const std::string &search, const std::string &replace);
     void renameAtom(const std::vector<std::string> &search, const std::string &replace); 
     void addChain(Chain* chnEntry);
+    void addMissingChainIds();
     void addResidue(Residue* resEntry);
     Chain* getChain(const unsigned int& element);
     unsigned int getChnVecSize();
