@@ -124,6 +124,8 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
         out << std::setw(6) << std::right << std::setprecision(2) << atm->getBFac();
         out << "      ";
         out << std::setw(4) << std::left << atm->getSegId();
+        out << " ";
+        out << std::setw(1) << std::left << atm->getElem();
         out << std::endl;
         natom++;
         catom++;
@@ -343,6 +345,9 @@ Atom* PDB::processAtomLine (std::string line, Atom* lastAtom){
   if (line.size() >= 76){
     segid=line.substr(72,4);
     atmEntry->setSegId(segid);
+  }
+  if (line.size() >= 78){
+    atmEntry->setElem(line.substr(77,1));
   }
   atmEntry->setSel(true);
   std::stringstream ss;

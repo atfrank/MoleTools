@@ -41,6 +41,7 @@ Atom::Atom(){
   coor=Coor(0.0, 0.0, 0.0);
   occu=0.0;
   bfac=0.0;
+  elem=" ";
   segid=" ";
   sel=true;
   summary="";
@@ -68,6 +69,7 @@ Atom::Atom(int atmnumin, std::string atmnamein, std::string resnamein, int resid
   coor=coorin;
   occu=0.0;
   bfac=0.0;
+  elem=" ";
   segid=segidin;
   sel=true;
   summary="";
@@ -95,6 +97,7 @@ void Atom::reset(){
   coor=Coor(0.0, 0.0, 0.0);
   occu=0.0;
   bfac=0.0;
+  elem=" ";
   segid="  ";
   sel=true;
   summary="";
@@ -122,6 +125,7 @@ void Atom::clone(Atom* atmin){
   coor=atmin->getCoor();
   occu=atmin->getOccu();
   bfac=atmin->getBFac();
+  elem=atmin->getElem();
   segid=atmin->getSegId();
   sel=atmin->getSel();
   summary=atmin->getSummary();
@@ -149,6 +153,7 @@ void Atom::dummy(){
   coor=Coor(0.0, 0.0, 0.0);
   occu=0.0;
   bfac=0.0;
+  elem=" ";
   segid="DUMY";
   sel=true;
   summary="";
@@ -235,6 +240,10 @@ double& Atom::getOccu(){
 
 double& Atom::getBFac(){
   return bfac;
+}
+
+std::string& Atom::getElem(){
+  return elem;
 }
 
 std::string& Atom::getSegId(){
@@ -401,6 +410,10 @@ void Atom::setOccu(const double& occuin){
 
 void Atom::setBFac(const double& bfacin){
   bfac=bfacin;
+}
+
+void Atom::setElem(const std::string& elemin){
+  elem=elemin;
 }
 
 void Atom::setSegId(const std::string& segidin){

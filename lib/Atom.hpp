@@ -54,6 +54,7 @@ class Atom {
     std::string ss; //Secondary structure
     double mass;
     double charge;
+    std::string elem;
     unsigned int atminx; //For easier 2-D lookup tables
     std::vector<double> data;
     std::vector<Atom*> bonds;
@@ -87,6 +88,7 @@ class Atom {
     double& getZ();
     double& getOccu();
     double& getBFac();
+    std::string& getElem();
     std::string& getSegId();
     bool& getSel();
     std::string& getSummary();
@@ -129,6 +131,7 @@ class Atom {
     void setCoor(const Coor& coorin);
     void setOccu(const double& occuin);
     void setBFac(const double& bfacin);
+    void setElem(const std::string& elemin);
     void setSegId(const std::string& segidin);
     void setSegId(); //Clear
     void setSel(const bool selin);
