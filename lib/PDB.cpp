@@ -217,7 +217,7 @@ Molecule* PDB::readPDB(const std::string ifile, const int model, const std::stri
       atmEntry=pdb.processAtomLine(line, lastAtom);
       atmEntry->setTag(PDBID);
       if (lastAtom != NULL && lastAtom->getResId() == atmEntry->getResId()){
-        if (lastAtom->getResName().compare(atmEntry->getResName()) == 0 && lastAtom->getAlt().compare(0,1,atmEntry->getAlt(),0,1) == 0){
+        if (lastAtom->getResName().compare(atmEntry->getResName()) == 0 && (lastAtom->getAlt().compare(0,1," ") == 0 || lastAtom->getAlt().compare(0,1,atmEntry->getAlt(),0,1) == 0)){
           //Eliminate other alternate locations besides first
           mol->addAtom(atmEntry);
         }
