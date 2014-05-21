@@ -365,7 +365,6 @@ void Molecule::addMissingChainIds(){
   std::map<char, int> mapIds;
   unsigned int i, j;
   std::string id;
-  std::stringstream ss;
 
   currId='A';
 
@@ -385,11 +384,11 @@ void Molecule::addMissingChainIds(){
         while (mapIds.find(currId) != mapIds.end()){
           currId++;
         }
-        ss << currId;
-        ss >> id; 
+        id=currId;
         atm->setChainId(id);
       }
     }
+    mapIds[currId]=1;
   }
 }
 

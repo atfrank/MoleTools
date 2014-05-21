@@ -134,6 +134,7 @@ void PDB::writePDBFormat (Molecule* mol, std::ostringstream &out, bool selFlag, 
       out << "TER" << std::endl;
       if (addIdFlag == true){
         mapIds[currId]=1;
+        addIdFlag=false;
       }
     }
   }

@@ -90,7 +90,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
 
       //Residue/Chain
       if (lastAtom != NULL){
-        if(atmEntry->getChainId().compare(lastAtom->getChainId()) != 0){
+        if(atmEntry->getChainId().compare(lastAtom->getChainId()) != 0 || atmEntry->getResId() < lastAtom->getResId()){
           //Store last
           chnEntry->addResidue(resEntry);
           mol->addResidue(resEntry);
