@@ -38,13 +38,18 @@ class LARMORCA {
          std::map<std::string,double> randomShifts;
          std::map<std::string,double> alphas;
          std::map<std::string,double> experimentalCS; 
+         std::map<std::string,double> accuracyMAE;
+         std::map<std::string,double> accuracyR;
     public:
         LARMORCA (Molecule *mol=NULL, const std::string fchemshift="");
         void initializeShiftAtoms();
+        void initializeExpectedAccuracy();
         void initializeRandomShifts();
         void initializeAlpha();
         double getRandomShift(const std::string &key);
         double getExperimentalCS(const std::string &key);
+        double getR(const std::string &key);
+        double getMAE(const std::string &key);
         int getNShiftAtoms();
         void loadCSFile(const std::string fchemshift);
 };
