@@ -926,6 +926,7 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
   /* rename HID, HIE => HIS */
   mol->renameRes("HID","HIS");
   mol->renameRes("HIE","HIS");
+  mol->renameRes("HSD","HIS");
 
   if (analyzeError == true){
     mol1 = mol->clone();

@@ -38,7 +38,7 @@ void usage(){
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;  
   std::cerr << "         [-identification ID]" << std::endl;
   std::cerr << "         [-analyze]" << std::endl;
-  std::cerr << "         [-printError] [-errorType MAE,W1MAE,W2MAE,RMSE,W1RMSE,W2RMSE]" << std::endl;
+  std::cerr << "         [-printError] [-errorType MAE, W1MAE, W2MAE, RMSE, W1RMSE or W2RMSE]" << std::endl;
   
   std::cerr << std::endl;
   exit(0);
