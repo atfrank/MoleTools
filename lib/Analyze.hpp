@@ -219,7 +219,7 @@ class AnalyzeLarmorca: public Analyze {
     AnalyzeLarmorca(std::string delim=":");
     void preAnalysis(Molecule* molin, std::string fin="");
     void runAnalysis();
-    void runAnalysisTest(unsigned int frame=1, std::string fchemshift="", std::string identification="test", bool analyzeError=false);
+    void runAnalysisTest(unsigned int frame=1, std::string fchemshift="", std::string identification="test", bool analyzeError=false, bool printError=false, std::string errorType="RMSE");
 };
 
 #endif

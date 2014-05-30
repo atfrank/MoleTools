@@ -831,7 +831,7 @@ void AnalyzeLarmorca::runAnalysis(){
   // do nothing
 }
 
-void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift, std::string identification, bool analyzeError){
+void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift, std::string identification, bool analyzeError, bool printError,std::string errorType){
   Molecule *mol;
   Molecule *mol1;
   Molecule *mol2;
@@ -867,6 +867,8 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
   double expcs;
   double predcs;
   double randcs;
+  double errorW;
+  double error;
   unsigned int natom;
   std::stringstream resid;
   unsigned int ntree;
@@ -876,6 +878,7 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
 
   mol = NULL;
   larm = NULL;
+  errorW=1.0;
   if (analyzeError == true){
     mol1 = NULL;
     mol2 = NULL;
@@ -919,13 +922,19 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
   
 
   mol = this->getMol(0);
+
+  /* rename HID, HIE => HIS */
+  mol->renameRes("HID","HIS");
+  mol->renameRes("HIE","HIS");
+  mol->renameRes("HSD","HIS");
+
   if (analyzeError == true){
-    mol1 = mol->copy();
-    mol2 = mol->copy();
-    mol3 = mol->copy();
-    mol4 = mol->copy();
-    mol5 = mol->copy();
-    mol6 = mol->copy();
+    mol1 = mol->clone();
+    mol2 = mol->clone();
+    mol3 = mol->clone();
+    mol4 = mol->clone();
+    mol5 = mol->clone();
+    mol6 = mol->clone();
   }
   
   Analyze::pcasso(mol, this->getFDataVec()); //PCASSO features get stored in the second argument (a 2-D vector double)
@@ -957,8 +966,15 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
     randcs = larm->getRandomShift("H:"+resname);
     predcs = p1+randcs;
     if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
-      std::cout << frame << " "  << resid.str() << " H " << resname << " " << predcs << " " << expcs << " " << expcs - predcs << " " << identification << std::endl;
-      e1.push_back(expcs - predcs);
+      if (printError == false){
+        std::cout << frame << " "  << resid.str() << " H " << resname << " " << predcs << " " << expcs << " " << expcs - predcs << " " << identification << std::endl;
+      } else if (errorType=="W1MAE" || errorType=="W1RMSE" ){
+        errorW = 1.0/larm->getMAE("H:"+resname);
+      } else if (errorType=="W2MAE" || errorType=="W2RMSE" ){
+        errorW = fabs(larm->getR("H:"+resname))/larm->getMAE("H:"+resname);
+      }
+      error = errorW*(expcs - predcs);
+      e1.push_back(error);
       if (analyzeError == true){
         mol1->getAtom(i)->setBFac(fabs(expcs - predcs));
       }
@@ -969,11 +985,18 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
     randcs = larm->getRandomShift("HA:"+resname);
     predcs = p2+randcs;
     if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
-      std::cout << frame << " "  << resid.str() << " HA " << resname << " " << predcs << " " << expcs << " " <<  expcs - predcs << " " << identification << std::endl;
-      e2.push_back(expcs - predcs);
+      if (printError == false){
+        std::cout << frame << " "  << resid.str() << " HA " << resname << " " << predcs << " " << expcs << " " <<  expcs - predcs << " " << identification << std::endl;
+      } else if (errorType=="W1MAE" || errorType=="W1RMSE" ){
+        errorW = 1.0/larm->getMAE("HA:"+resname);
+      } else if (errorType=="W2MAE" || errorType=="W2RMSE" ){
+        errorW = fabs(larm->getR("HA:"+resname))/larm->getMAE("HA:"+resname);
+      }
+      error = errorW*(expcs - predcs);
+      e2.push_back(error);
       if (analyzeError == true){
         mol2->getAtom(i)->setBFac(fabs(expcs - predcs));
-      }      
+      }
     }
 
     key = resid.str()+":CA";
@@ -981,8 +1004,15 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
     randcs = larm->getRandomShift("CA:"+resname);
     predcs = p3+randcs;
     if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
-      std::cout << frame << " "  << resid.str() << " CA " << resname << " " << predcs << " " << expcs << " " <<  expcs - predcs << " " << identification << std::endl;
-      e3.push_back(expcs - predcs);
+      if (printError == false){
+        std::cout << frame << " "  << resid.str() << " CA " << resname << " " << predcs << " " << expcs << " " <<  expcs - predcs << " " << identification << std::endl;
+      } else if (errorType=="W1MAE" || errorType=="W1RMSE" ){
+        errorW = 1.0/larm->getMAE("CA:"+resname);
+      } else if (errorType=="W2MAE" || errorType=="W2RMSE" ){
+        errorW = fabs(larm->getR("CA:"+resname))/larm->getMAE("CA:"+resname);
+      }
+      error = errorW*(expcs - predcs);
+      e3.push_back(error);
       if (analyzeError == true){
         mol3->getAtom(i)->setBFac(fabs(expcs - predcs));
       }
@@ -993,8 +1023,15 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
     randcs = larm->getRandomShift("C:"+resname);
     predcs = p4+randcs;
     if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
-      std::cout << frame << " "  << resid.str() << " C " << resname << " " << predcs << " " << expcs << " " <<   expcs - predcs << " " << identification << std::endl;
-      e4.push_back(expcs - predcs);
+      if (printError == false){
+        std::cout << frame << " "  << resid.str() << " C " << resname << " " << predcs << " " << expcs << " " <<   expcs - predcs << " " << identification << std::endl;
+      } else if (errorType=="W1MAE" || errorType=="W1RMSE" ){
+        errorW = 1.0/larm->getMAE("C:"+resname);
+      } else if (errorType=="W2MAE" || errorType=="W2RMSE" ){
+        errorW = fabs(larm->getR("C:"+resname))/larm->getMAE("C:"+resname);
+      }
+      error = errorW*(expcs - predcs);
+      e4.push_back(error);
       if (analyzeError == true){
         mol4->getAtom(i)->setBFac(fabs(expcs - predcs));
       }
@@ -1005,8 +1042,15 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
     randcs = larm->getRandomShift("CB:"+resname);
     predcs = p5+randcs;
     if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
-      std::cout << frame << " "  << resid.str() << " CB " << resname << " " << predcs << " " << expcs << " " <<   expcs - predcs << " " << identification << std::endl;
-      e5.push_back(expcs - predcs);
+      if (printError == false){
+        std::cout << frame << " "  << resid.str() << " CB " << resname << " " << predcs << " " << expcs << " " <<   expcs - predcs << " " << identification << std::endl;
+      } else if (errorType=="W1MAE" || errorType=="W1RMSE" ){
+        errorW = 1.0/larm->getMAE("CB:"+resname);
+      } else if (errorType=="W2MAE" || errorType=="W2RMSE" ){
+        errorW = fabs(larm->getR("CB:"+resname))/larm->getMAE("CB:"+resname);
+      }
+      error = errorW*(expcs - predcs);
+      e5.push_back(error);
       if (analyzeError == true){
         mol5->getAtom(i)->setBFac(fabs(expcs - predcs));
       }
@@ -1017,8 +1061,15 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
     randcs = larm->getRandomShift("N:"+resname);
     predcs = p6+randcs;
     if((randcs!=999.0) && (fchemshift.length() == 0 || expcs != 0.0)){
-      std::cout << frame << " " << resid.str() << " N " << resname << " " << predcs << " " << expcs << " " <<   expcs - predcs << " " << identification << std::endl;
-      e6.push_back(expcs - predcs);
+      if (printError == false){
+        std::cout << frame << " " << resid.str() << " N " << resname << " " << predcs << " " << expcs << " " <<   expcs - predcs << " " << identification << std::endl;
+      } else if (errorType=="W1MAE" || errorType=="W1RMSE" ){
+        errorW = 1.0/larm->getMAE("N:"+resname);
+      } else if (errorType=="W2MAE" || errorType=="W2RMSE" ){
+        errorW = fabs(larm->getR("N:"+resname))/larm->getMAE("N:"+resname);
+      }
+      error = errorW*(expcs - predcs);
+      e6.push_back(error);
       if (analyzeError == true){
         mol6->getAtom(i)->setBFac(fabs(expcs - predcs));
       }
@@ -1041,13 +1092,13 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
     pdbout5.close();
     pdbout6.close();
   }
-  
-  //std::cout << identification << " Summary >> H: MAE (ppm) and RMSE (ppm) " << Misc::mae(e1) <<" " << Misc::rmse(e1) << std::endl;
-  //std::cout << identification << " Summary >> HA: MAE (ppm) and RMSE (ppm) " << Misc::mae(e2) <<" " << Misc::rmse(e2) << std::endl;
-  //std::cout << identification << " Summary >> CA: MAE (ppm) and RMSE (ppm) " << Misc::mae(e3) <<" " << Misc::rmse(e3) << std::endl;
-  //std::cout << identification << " Summary >> HC MAE (ppm) and RMSE (ppm) " << Misc::mae(e4) <<" " << Misc::rmse(e4) << std::endl;
-  //std::cout << identification << " Summary >> CB: MAE (ppm) and RMSE (ppm) " << Misc::mae(e5) <<" " << Misc::rmse(e5) << std::endl;
-  //std::cout << identification << " Summary >> N: MAE (ppm) and RMSE (ppm) " << Misc::mae(e6) <<" " << Misc::rmse(e6) << std::endl;
+  if (printError == true){
+    if (errorType!="RMSE"){
+      std::cout << frame << " " <<  Misc::mae(e1) << " " << Misc::mae(e2) << " " << Misc::mae(e3)  << " " << Misc::mae(e4)  << " " << Misc::mae(e5)  << " " << Misc::mae(e6) << " " << Misc::mae(e1)+Misc::mae(e2)+Misc::mae(e3)+Misc::mae(e4)+Misc::mae(e5)+Misc::mae(e6) << " " << identification << std::endl;
+    } else {
+      std::cout << frame << " " <<  Misc::rmse(e1) << " " << Misc::rmse(e2) << " " << Misc::rmse(e3)  << " " << Misc::rmse(e4)  << " " << Misc::rmse(e5)  << " " << Misc::rmse(e6) << " " << Misc::rmse(e1)+Misc::rmse(e2)+Misc::rmse(e3)+Misc::rmse(e4)+Misc::rmse(e5)+Misc::rmse(e6) << " " << identification << std::endl;
+    }
+  }
 }
 
 //All postAnalysis functions

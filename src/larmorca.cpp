@@ -20,6 +20,7 @@ Compiled Using: g++ larmorca.cpp -o larmorca -Wall -O3 -I$MoleTools/lib -lmoleto
 
 
 #include "Molecule.hpp"
+#include "Misc.hpp"
 #include "Atom.hpp"
 #include "Analyze.hpp"
 #include "LARMORCA.hpp"
@@ -37,6 +38,8 @@ void usage(){
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;  
   std::cerr << "         [-identification ID]" << std::endl;
   std::cerr << "         [-analyze]" << std::endl;
+  std::cerr << "         [-printError] [-errorType MAE, W1MAE, W2MAE, RMSE, W1RMSE or W2RMSE]" << std::endl;
+  
   std::cerr << std::endl;
   exit(0);
 }
@@ -54,6 +57,7 @@ int main (int argc, char **argv){
   int skip=0;
   bool startFlag=false;
   bool analyzeError=false;
+  bool printError=false;
   unsigned int itrj;
   std::ifstream trjin;
   Trajectory *ftrjin;
@@ -62,6 +66,7 @@ int main (int argc, char **argv){
   bool verbose;
   std::string fchemshift;
   std::string identification;
+  std::string errorType;
   
   trajs.clear();
   ftrjin=NULL;
@@ -70,6 +75,7 @@ int main (int argc, char **argv){
   verbose=false;
   fchemshift="";
   identification="test";
+  errorType="RMSE";
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -105,6 +111,17 @@ int main (int argc, char **argv){
     else if (currArg.compare("-analyze") == 0 || currArg.compare("-a") == 0 ){
       analyzeError=true;
     }
+    else if (currArg.compare("-printError") == 0 || currArg.compare("-p") == 0 ){
+      printError=true;
+    }
+    else if (currArg.compare("-errorType") == 0 || currArg.compare("-e") == 0 ){
+      currArg=argv[++i];
+      errorType=Misc::toupper(currArg);
+      if(errorType != "MAE" && errorType != "RMSE" && errorType != "W1MAE" && errorType != "W1RMSE" && errorType != "W2MAE" && errorType != "W2RMSE"){
+        std::cerr << "-errorType: must be either MAE,W1MAE,W2MAE,RMSE,W1RMSE or W2RMSE" << std::endl;
+        exit(0);
+      }
+    } 
     else if (currArg.compare("-verbose") == 0){
       verbose=true;
     }
@@ -155,7 +172,7 @@ int main (int argc, char **argv){
             nframe++;
             anin->clearMol();
             anin->preAnalysis(mol, "");
-            anin->runAnalysisTest(nframe,fchemshift,identification,analyzeError);
+            anin->runAnalysisTest(nframe,fchemshift,identification,analyzeError,printError,errorType);
           }
         }
         else{
@@ -175,7 +192,7 @@ int main (int argc, char **argv){
         mol=Molecule::readPDB(pdbs.at(j));
         anin->addSel(":.CA");
         anin->preAnalysis(mol, "");
-        anin->runAnalysisTest(j+1,fchemshift,identification,analyzeError);
+        anin->runAnalysisTest(j+1,fchemshift,identification,analyzeError,printError,errorType);
         delete mol;
       }
 
