@@ -291,16 +291,24 @@ template bool Misc::findUniqueSecond(const std::pair<int, int> &a, const std::pa
 
 double Misc::rmse (std::vector<double> errorVec){
     double error=0.0;
-    for (unsigned int i=0; i<errorVec.size();i++){
-        error += errorVec.at(i)*errorVec.at(i);
+    if(errorVec.size()>0){    
+      for (unsigned int i=0; i<errorVec.size();i++){
+          error += errorVec.at(i)*errorVec.at(i);
+      }
+      return sqrt(error/errorVec.size());
+    } else {
+      return 0.0;
     }
-    return sqrt(error/errorVec.size());
 }
 
 double Misc::mae (std::vector<double> errorVec){
     double error=0.0;
-    for (unsigned int i=0; i<errorVec.size();i++){
-        error += fabs(errorVec.at(i));
+    if(errorVec.size()>0){
+      for (unsigned int i=0; i<errorVec.size();i++){
+          error += fabs(errorVec.at(i));
+      }
+      return error/errorVec.size();
+    } else {
+      return 0.0;
     }
-    return error/errorVec.size();
 }

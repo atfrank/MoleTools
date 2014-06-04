@@ -114,7 +114,9 @@ int main (int argc, char **argv){
         std::cerr << "Warning: Atom number mismatch!" << std::endl;
       }
 
-      delete mol;
+      if (j < pdbs.size()-1){
+        delete mol;
+      }
     }
   }
 
@@ -125,6 +127,10 @@ int main (int argc, char **argv){
     if (ftrjout != NULL){
       delete ftrjout;
     }
+  }
+
+  if (mol != NULL){
+    delete mol;
   }
 
   return 0;
