@@ -129,6 +129,9 @@ int main (int argc, char **argv){
   }
   else {
     mol=Molecule::readPDB(pdb, format);
+    if (chnFlag == true){
+      mol->addMissingChainIds();
+    }
     if (sel.length() > 0){
       mol->select(sel); //Selection should match trajectory
       mol=mol->clone(true, false); //Delete original molecule after cloning
@@ -166,7 +169,7 @@ int main (int argc, char **argv){
             pdbout << outmol->writePDB(true, false);
           }
           else{
-            pdbout << ftrjin->getMolecule()->writePDB(true, false, chnFlag);
+            pdbout << ftrjin->getMolecule()->writePDB(true, false);
           }
           pdbout.close();
           fout.str(std::string()); //Clear fout

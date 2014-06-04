@@ -82,11 +82,11 @@ Molecule* Molecule::readPDB (const std::string ifile, const std::string format, 
   return Molecule::readPDB(ifile, 0, format, hetFlag);
 }
 
-std::string Molecule::writePDB(bool selFlag, bool print, bool chnFlag){
+std::string Molecule::writePDB(bool selFlag, bool print){
 
   std::ostringstream out;
 
-  PDB::writePDBFormat(this, out, selFlag, chnFlag);
+  PDB::writePDBFormat(this, out, selFlag);
 
   if (print == true){
     std::cout << out.str();
@@ -95,16 +95,8 @@ std::string Molecule::writePDB(bool selFlag, bool print, bool chnFlag){
   return out.str();
 }
 
-std::string Molecule::writePDB(bool selFlag, bool print){
-  return this->writePDB(selFlag, print, false);
-}
-
-std::string Molecule::writePDB(bool chnFlag){
-  return this->writePDB(true, true, chnFlag);
-}
-
 std::string Molecule::writePDB(){
-  return this->writePDB(true, true, false);
+  return this->writePDB(true, true);
 }
 
 

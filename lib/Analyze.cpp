@@ -1027,12 +1027,12 @@ void AnalyzeLarmorca::runAnalysisTest(unsigned int frame, std::string fchemshift
     resid.str("");
   }
   if (analyzeError == true){
-    pdbout1 << mol1->writePDB(true,false,false);
-    pdbout2 << mol2->writePDB(true,false,false);
-    pdbout3 << mol3->writePDB(true,false,false);
-    pdbout4 << mol4->writePDB(true,false,false);
-    pdbout5 << mol5->writePDB(true,false,false);
-    pdbout6 << mol6->writePDB(true,false,false);
+    pdbout1 << mol1->writePDB(true,false);
+    pdbout2 << mol2->writePDB(true,false);
+    pdbout3 << mol3->writePDB(true,false);
+    pdbout4 << mol4->writePDB(true,false);
+    pdbout5 << mol5->writePDB(true,false);
+    pdbout6 << mol6->writePDB(true,false);
 
     pdbout1.close();
     pdbout2.close();

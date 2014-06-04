@@ -81,11 +81,15 @@ int main (int argc, char **argv){
     mol->cat(Molecule::readMol2(mol2.at(j), format));
   }
 
+  if (chnFlag == true){
+    mol->addMissingChainIds();
+  }
+
   if (sel.length() >0){
     mol->select(sel);
   }
 
-  mol->writePDB(chnFlag);
+  mol->writePDB();
 
   mol=mol->clone();
   for (unsigned int j=0; j< mol->getNAtom(); j++){

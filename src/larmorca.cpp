@@ -59,7 +59,7 @@ int main (int argc, char **argv){
   Trajectory *ftrjin;
   unsigned int nframe;
   AnalyzeLarmorca *anin;
-  bool verbose;
+//  bool verbose;
   std::string fchemshift;
   std::string identification;
   
@@ -67,7 +67,7 @@ int main (int argc, char **argv){
   ftrjin=NULL;
   nframe=0;
   anin=NULL;
-  verbose=false;
+//  verbose=false;
   fchemshift="";
   identification="test";
 
@@ -105,9 +105,9 @@ int main (int argc, char **argv){
     else if (currArg.compare("-analyze") == 0 || currArg.compare("-a") == 0 ){
       analyzeError=true;
     }
-    else if (currArg.compare("-verbose") == 0){
-      verbose=true;
-    }
+//    else if (currArg.compare("-verbose") == 0){
+//      verbose=true;
+//    }
     else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }

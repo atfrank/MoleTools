@@ -194,6 +194,9 @@ int main (int argc, char **argv){
 
   mol=Molecule::readPDB(pdb, model, format, hetFlag);
 
+  if (chnFlag == true){
+    mol->addMissingChainIds();
+  }
   if (hisFlag == true){
     mol->renameHis();
   }
@@ -267,7 +270,7 @@ int main (int argc, char **argv){
   if (outsel.length() >0){
     mol->select(outsel);
   }
-  mol->writePDB(chnFlag);
+  mol->writePDB();
 
   if (mol != NULL){
     delete mol;

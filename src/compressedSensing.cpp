@@ -152,10 +152,14 @@ int main (int argc, char **argv){
     mol->cat(Molecule::readMol2(mol2.at(j), format));
   }
 
+//  if (chnFlag == true){
+//    mol->addMissingChainIds();
+//  }
+
   mol->assignAtmInx();
   Analyze::pairwiseDistance(mol, pdist);
 
-  //mol->writePDB(chnFlag);
+  //mol->writePDB();
 
   mol->select(ligsel);
   Molecule *ligand=mol->copy(true);

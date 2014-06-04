@@ -55,9 +55,7 @@ class Molecule {
     static Molecule* readPDB (const std::string ifile, const int model=0, const std::string format="", const bool hetFlag=true);
     static Molecule* readPDB (const std::string ifile, const std::string format, const bool hetFlag=true);
 //    std::string writePDB (bool selFlag=true, bool print=true, bool chnFlag=false);
-    std::string writePDB (bool selFlag, bool print, bool chnFlag);
     std::string writePDB (bool selFlag, bool print);
-    std::string writePDB (bool chnFlag);
     std::string writePDB ();
     static Molecule* readMol2 (const std::string ifile, const std::string format="", const bool stopFlag=false);
     Molecule* clone(bool selFlag=true, bool keep=true);
