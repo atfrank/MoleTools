@@ -230,7 +230,9 @@ int main (int argc, char **argv){
     }
     for (b=bins; b > 0; b--){
       angstrom.str(""); //Clear stringstream
-      angstrom << min+b*width;
+      angstrom << min+(b-1)*width; //Bin left edge
+      angstrom << "-";
+      angstrom << min+b*width; //Bin right edge
       for (j=0; j< atomTypes.size(); j++){
         for (k=0; k< atomTypes.size(); k++){
           key=atomTypes.at(j)+":";
