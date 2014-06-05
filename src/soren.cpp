@@ -34,6 +34,7 @@ void usage(){
   std::cerr << "         [-add type1[:type2[...[typeN]]] | -use type1[:type2[...[typeN]]]" << std::endl;
   std::cerr << "         [-response value}" << std::endl;
   std::cerr << "         [-chains]" << std::endl;
+  std::cerr << "         [-header]" << std::endl;
 //  std::cerr << "         [-warnings]" << std::endl;
   std::cerr << std::endl;
   exit(0);
@@ -61,6 +62,7 @@ int main (int argc, char **argv){
   std::string key;
   bool responseFlag;
   double response;
+  bool headerFlag;
 
   mol2.clear();
   sel=":.OD1+OD2+OE1+OE2+NZ+SG+ND1+ND2";
@@ -70,6 +72,7 @@ int main (int argc, char **argv){
   width=1.0;
   responseFlag=false;
   response=0.0;
+  headerFlag=false;
 
   //There might be a cleaner way of doing this
   //but adding new atom types is easier/more obvious here.
@@ -146,6 +149,9 @@ int main (int argc, char **argv){
       std::stringstream(currArg) >> response;
       responseFlag=true;
     }
+    else if (currArg.compare("-header") == 0){
+      headerFlag=true;
+    }
     else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
@@ -214,6 +220,31 @@ int main (int argc, char **argv){
       //for (unsigned int l=0; l< res->getAtom(j)->getBondsSize(); l++){
       //  std::cout << res->getAtom(j)->getSummary() << " " << res->getAtom(j)->getBond(l)->getSummary() << std::endl;
       //}
+    }
+  }
+
+  //Output header vector
+  if (headerFlag == true){
+    if (responseFlag == true){
+      std::cout << "pKa,";
+    }
+    for (b=bins; b > 0; b--){
+      angstrom.str(""); //Clear stringstream
+      angstrom << min+b*width;
+      for (j=0; j< atomTypes.size(); j++){
+        for (k=0; k< atomTypes.size(); k++){
+          key=atomTypes.at(j)+":";
+          key=key+atomTypes.at(k)+":";
+          key=key+angstrom.str();
+          std::cout << key;
+          if (b != 1 || j != atomTypes.size()-1 || k != atomTypes.size()-1){
+            std::cout << ",";
+          }
+          else{
+            std::cout << std::endl;
+          }
+        }
+      }  
     }
   }
 
