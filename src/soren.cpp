@@ -23,13 +23,14 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 #include "Atom.hpp"
 #include "Misc.hpp"
 #include "Analyze.hpp"
+#include "Constants.hpp"
 
 #include <sstream>
 
 void usage(){
   std::cerr << std::endl;
   std::cerr << "Usage:   soren [-options] <MOL2file>" << std::endl;
-  std::cerr << "Options: [-bins min:max:incr]" << std::endl;
+  std::cerr << "Options: [-bins min:max:incr] [-norm]" << std::endl;
   std::cerr << "         [-sel selection]" << std::endl;
   std::cerr << "         [-add type1[:type2[...[typeN]]] | -use type1[:type2[...[typeN]]]" << std::endl;
   std::cerr << "         [-response value}" << std::endl;
@@ -63,6 +64,8 @@ int main (int argc, char **argv){
   bool responseFlag;
   double response;
   bool headerFlag;
+  bool normFlag;
+  double surfaceArea;
 
   mol2.clear();
   sel=":.OD1+OD2+OE1+OE2+NZ+SG+ND1+ND2";
@@ -73,6 +76,7 @@ int main (int argc, char **argv){
   responseFlag=false;
   response=0.0;
   headerFlag=false;
+  normFlag=false;
 
   //There might be a cleaner way of doing this
   //but adding new atom types is easier/more obvious here.
@@ -151,6 +155,9 @@ int main (int argc, char **argv){
     }
     else if (currArg.compare("-header") == 0){
       headerFlag=true;
+    }
+    else if (currArg.compare("-norm") == 0){
+      normFlag=true;
     }
     else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
@@ -257,13 +264,21 @@ int main (int argc, char **argv){
   for (b=bins; b > 0; b--){
     angstrom.str(""); //Clear stringstream
     angstrom << min+b*width;
+    //Surface area for the middle of the bin (i.e., between bin left and bin right)
+    surfaceArea=4*PI*(pow(min+(b-0.5)*width, 2.0));
     for (j=0; j< atomTypes.size(); j++){
       for (k=0; k< atomTypes.size(); k++){
         key=atomTypes.at(j)+":";
         key=key+atomTypes.at(k)+":";
         key=key+angstrom.str();
         if (histo.find(key) != histo.end()){
-          std::cout << histo.at(key);
+          if (normFlag == true){
+            //Normalize count by surface area
+            std::cout << histo.at(key)/surfaceArea;
+          }
+          else{
+            std::cout << histo.at(key);
+          }
         }
         else{
           std::cout << "0";
