@@ -26,6 +26,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 #include "Constants.hpp"
 
 #include <sstream>
+#include <fstream>
 
 void usage(){
   std::cerr << std::endl;
@@ -36,6 +37,7 @@ void usage(){
   std::cerr << "         [-response value}" << std::endl;
   std::cerr << "         [-chains]" << std::endl;
   std::cerr << "         [-header]" << std::endl;
+  std::cerr << "         [-pka COEFfile]" << std::endl;
 //  std::cerr << "         [-warnings]" << std::endl;
   std::cerr << std::endl;
   exit(0);
@@ -66,6 +68,11 @@ int main (int argc, char **argv){
   bool headerFlag;
   bool normFlag;
   double surfaceArea;
+  std::string fcoef;
+  std::ifstream coefFile;
+  std::istream* coefinp;
+  std::string line;
+  std::vector<double> coef;
 
   mol2.clear();
   sel=":.OD1+OD2+OE1+OE2+NZ+SG+ND1+ND2";
@@ -77,6 +84,7 @@ int main (int argc, char **argv){
   response=0.0;
   headerFlag=false;
   normFlag=false;
+  fcoef.clear();
 
   //There might be a cleaner way of doing this
   //but adding new atom types is easier/more obvious here.
@@ -159,6 +167,10 @@ int main (int argc, char **argv){
     else if (currArg.compare("-norm") == 0){
       normFlag=true;
     }
+    else if (currArg.compare("-pka") == 0 || currArg.compare("-pkas") == 0){
+      currArg=argv[++i];
+      fcoef=currArg;
+    }
     else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
@@ -178,6 +190,16 @@ int main (int argc, char **argv){
   atomTypes.resize(std::distance(atomTypes.begin(),it));
 
   bins=static_cast<int>((max-min)/width);
+
+  //Read coefficients
+  if (fcoef.length() > 0){
+    coefFile.open(fcoef.c_str(), std::ios::in);
+    coefinp=&coefFile;
+    while (coefinp->good() && !(coefinp->eof())){
+      getline(*coefinp, line);
+      Misc::splitNum(line, ",", coef, false);
+    }
+  }
 
   Molecule *mol=new Molecule;
 
