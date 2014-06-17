@@ -88,9 +88,9 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     next=str.substr(pos+1, std::string::npos);
     cmpNext=Select::recursiveDescentParser(next, ref, group);
     if (cmpNext.size() == 0){
-      std::cerr << std::endl << "Warning: Selection \"";
-      std::cerr << next << "\" did not match any atoms";
-      std::cerr << std::endl << std::endl;
+//      std::cerr << std::endl << "Warning: Selection \"";
+//      std::cerr << next << "\" did not match any atoms";
+//      std::cerr << std::endl << std::endl;
       return out;
     }
     std::sort(cmpNext.begin(), cmpNext.end());    
@@ -109,9 +109,9 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
     next=str.substr(pos+1, std::string::npos);
     cmpNext=Select::recursiveDescentParser(next, ref, group);
     if (cmpNext.size() == 0){
-      std::cerr << std::endl << "Warning: Selection \"";
-      std::cerr << next << "\" did not match any atoms";
-      std::cerr << std::endl << std::endl;
+//      std::cerr << std::endl << "Warning: Selection \"";
+//      std::cerr << next << "\" did not match any atoms";
+//      std::cerr << std::endl << std::endl;
     }
     std::sort(cmpNext.begin(), cmpNext.end());
 

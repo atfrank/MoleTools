@@ -23,5 +23,6 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 
 enum HistoFormatEnum {COUNT, PROBABILITY, DENSITY, ENERGY};
 enum PcassoOutEnum {FEATURE, FEATURES, PREDICT, PREDICTION};
+enum DihedralEnum {GENERAL, PHI, PSI, OMEGA, CHI1, CHI2};
 
 #endif

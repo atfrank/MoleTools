@@ -52,6 +52,10 @@ Analyze::~Analyze (){
   //Do nothing
 }
 
+AnalyzeDihedral::AnalyzeDihedral(DihedralEnum thetain){
+  this->setDihedralType(thetain);
+}
+
 AnalyzePcasso::AnalyzePcasso (std::string delim){
   std::vector<std::string> tokens;
   pout=PREDICT;
@@ -192,12 +196,192 @@ void AnalyzeAngle::setupMolSel(Molecule* molin){
 
 void AnalyzeDihedral::setupMolSel(Molecule* molin){
   unsigned int i;
-  Molecule* tmpmol;
+  Molecule *tmpmol, *mol1, *mol2, *mol3, *mol4;
+  Residue *res;
+  std::string tmpsel;
+  std::stringstream resid, lastResId, nextResId;
 
-  for (i=0; i< this->getNSel(); i++){
-    molin->select(this->getSel(i));
+  if (this->getDihedralType() == GENERAL){
+    for (i=0; i< this->getNSel(); i++){
+      molin->select(this->getSel(i));
+      tmpmol=molin->copy();
+      this->addMol(tmpmol);
+    }
+  }
+  else if (this->getDihedralType() == PHI){
+    molin->select(this->getSel(0));
     tmpmol=molin->copy();
-    this->addMol(tmpmol);
+    for (i=0; i<tmpmol->getResVecSize(); i++){
+      res=tmpmol->getResidue(i);
+      //Construct selection expression
+      resid.str(""); //Clear stringstream
+      lastResId.str(""); //Clear stringstream
+      resid << res->getResId();
+      lastResId << res->getResId()-1;
+      tmpsel=res->getChainId()+":"+lastResId.str()+"."+"C_"+res->getChainId()+":"+resid.str()+"."+"CY";
+      molin->select(tmpsel, false, false);
+      mol1=molin->copy();
+      this->addMol(mol1);
+      tmpsel=res->getChainId()+":"+resid.str()+"."+"N";
+      molin->select(tmpsel, false, false);
+      mol2=molin->copy();
+      this->addMol(mol2);
+      tmpsel=res->getChainId()+":"+resid.str()+"."+"CA";
+      molin->select(tmpsel, false, false);
+      mol3=molin->copy();
+      this->addMol(mol3);
+      tmpsel=res->getChainId()+":"+resid.str()+"."+"C";
+      molin->select(tmpsel, false, false);
+      mol4=molin->copy(); 
+      this->addMol(mol4);
+    }
+  }
+  else if (this->getDihedralType() == PSI){
+    molin->select(this->getSel(0));
+    tmpmol=molin->copy();
+    for (i=0; i<tmpmol->getResVecSize(); i++){
+      res=tmpmol->getResidue(i);
+      //Construct selection expression
+      resid.str(""); //Clear stringstream
+      nextResId.str(""); //Clear stringstream
+      resid << res->getResId();
+      nextResId << res->getResId()+1;
+      tmpsel=res->getChainId()+":"+resid.str()+"."+"N";
+      molin->select(tmpsel, false, false);
+      mol1=molin->copy();
+      this->addMol(mol1);
+      tmpsel=res->getChainId()+":"+resid.str()+"."+"CA";
+      molin->select(tmpsel, false, false);
+      mol2=molin->copy();
+      this->addMol(mol2);
+      tmpsel=res->getChainId()+":"+resid.str()+"."+"C";
+      molin->select(tmpsel, false, false);
+      mol3=molin->copy();
+      this->addMol(mol3);
+      tmpsel=res->getChainId()+":"+nextResId.str()+"."+"N_"+res->getChainId()+":"+resid.str()+"."+"NT";
+      molin->select(tmpsel, false, false);
+      mol4=molin->copy();
+      this->addMol(mol4);
+    }
+  }
+  else if (this->getDihedralType() == OMEGA){
+    molin->select(this->getSel(0));
+    tmpmol=molin->copy();
+    for (i=0; i<tmpmol->getResVecSize(); i++){
+      res=tmpmol->getResidue(i);
+      //Construct selection expression
+      resid.str(""); //Clear stringstream
+      nextResId.str(""); //Clear stringstream
+      resid << res->getResId();
+      nextResId << res->getResId()+1;
+      tmpsel=res->getChainId()+":"+resid.str()+"."+"CA";
+      molin->select(tmpsel, false, false);
+      mol1=molin->copy();
+      this->addMol(mol1);
+      tmpsel=res->getChainId()+":"+resid.str()+"."+"C";
+      molin->select(tmpsel, false, false);
+      mol2=molin->copy();
+      this->addMol(mol2);
+      tmpsel=res->getChainId()+":"+nextResId.str()+"."+"N";
+      molin->select(tmpsel, false, false);
+      mol3=molin->copy();
+      this->addMol(mol3);
+      tmpsel=res->getChainId()+":"+nextResId.str()+"."+"CA";
+      molin->select(tmpsel, false, false);
+      mol4=molin->copy();
+      this->addMol(mol4);
+    }
+  }
+  else if (this->getDihedralType() == CHI1){
+    molin->select(this->getSel(0));
+    tmpmol=molin->copy();
+    for (i=0; i<tmpmol->getResVecSize(); i++){
+      res=tmpmol->getResidue(i);
+      //Construct selection expression
+      resid.str(""); //Clear stringstream
+      resid << res->getResId();
+      tmpsel=res->getChainId()+":"+resid.str()+"."+"N";
+      molin->select(tmpsel, false, false);
+      mol1=molin->copy();
+      this->addMol(mol1);
+      tmpsel=res->getChainId()+":"+resid.str()+"."+"CA";
+      molin->select(tmpsel, false, false);
+      mol2=molin->copy();
+      this->addMol(mol2);
+      tmpsel=res->getChainId()+":"+resid.str()+"."+"CB";
+      molin->select(tmpsel, false, false);
+      mol3=molin->copy();
+      this->addMol(mol3);
+      tmpsel=res->getChainId()+":"+resid.str()+".";
+      if (res->getResName().compare("SER") == 0){
+        tmpsel+="OG";
+      }
+      else if (res->getResName().compare("THR") == 0){
+        tmpsel+="OG1";
+      }
+      else if (res->getResName().compare("VAL") == 0 || res->getResName().compare("ILE") == 0){
+        tmpsel+="CG1";
+      }
+      else if (res->getResName().compare("CYS") == 0){
+        tmpsel+="SG";
+      }
+      else{
+        tmpsel+="CG";
+      } 
+      molin->select(tmpsel, false, false);
+      mol4=molin->copy();
+      this->addMol(mol4);
+    }
+  }
+  else if (this->getDihedralType() == CHI2){
+    molin->select(this->getSel(0));
+    tmpmol=molin->copy();
+    for (i=0; i<tmpmol->getResVecSize(); i++){
+      res=tmpmol->getResidue(i);
+      //Construct selection expression
+      resid.str(""); //Clear stringstream
+      resid << res->getResId();
+      tmpsel=res->getChainId()+":"+resid.str()+"."+"CA";
+      molin->select(tmpsel, false, false);
+      mol1=molin->copy(); 
+      this->addMol(mol1);
+      tmpsel=res->getChainId()+":"+resid.str()+"."+"CB";
+      molin->select(tmpsel, false, false); 
+      mol2=molin->copy();
+      this->addMol(mol2);
+      tmpsel=res->getChainId()+":"+resid.str()+".";
+      if (res->getResName().compare("ILE") == 0){
+        tmpsel+="CG1";
+      }
+      else{
+        tmpsel+="CG";
+      }
+      molin->select(tmpsel, false, false);
+      mol3=molin->copy();
+      this->addMol(mol3);
+      tmpsel=res->getChainId()+":"+resid.str()+".";
+      if (res->getResName().compare("LEU") == 0 || res->getResName().compare("PHE") == 0 || res->getResName().compare("TRP") == 0 || res->getResName().compare("TYR") == 0){
+        tmpsel+="CD1";
+      }
+      else if (res->getResName().compare("ASN") == 0 || res->getResName().compare("ASP") == 0){
+        tmpsel+="OD1";
+      }
+      else if (res->getResName().compare("HIS") == 0 || res->getResName().compare("HSD") == 0 || res->getResName().compare("HSE") == 0 || res->getResName().compare("HSP") == 0){
+        tmpsel+="ND1";
+      }
+      else if (res->getResName().compare("MET") == 0){
+        tmpsel+="SD";
+      }
+      else{
+        tmpsel+="CD";
+      }
+      molin->select(tmpsel, false, false);
+      mol4=molin->copy();
+      this->addMol(mol4);
+    }
+  }
+  else{
+    std::cerr << "Error: Unrecognized dihedral type" << std::endl;
   }
 }
 
@@ -596,8 +780,13 @@ void AnalyzeAngle::runAnalysis(){
 }
 
 void AnalyzeDihedral::runAnalysis(){
+  unsigned int i;
+
   std::cout << std::fixed;
-  std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::dihedral(Analyze::centerOfGeometry(this->getMol(0)), Analyze::centerOfGeometry(this->getMol(1)), Analyze::centerOfGeometry(this->getMol(2)), Analyze::centerOfGeometry(this->getMol(3)));
+
+  for (i=0; i< this->getNMol()-3; i=i+4){
+    std::cout << std::setw(9) << std::right << std::setprecision(3) << Analyze::dihedral(Analyze::centerOfGeometry(this->getMol(i)), Analyze::centerOfGeometry(this->getMol(i+1)), Analyze::centerOfGeometry(this->getMol(i+2)), Analyze::centerOfGeometry(this->getMol(i+3)));
+  }
 }
 
 void AnalyzeCovariance::runAnalysis(){
@@ -2233,3 +2422,10 @@ PcassoOutEnum AnalyzePcasso::getOutType(){
   return pout;
 }
 
+void AnalyzeDihedral::setDihedralType(DihedralEnum thetain){
+  theta=thetain;
+}
+
+DihedralEnum AnalyzeDihedral::getDihedralType(){
+  return theta;
+}

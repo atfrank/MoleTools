@@ -33,6 +33,8 @@ void usage(){
   std::cerr << "         [-tsel selection selection selection] [-angle selection selection selection]" << std::endl;
   std::cerr << "         [-qsel selection selection selection selection]" << std::endl;
   std::cerr << "         [-dihedral selection selection selection selection]" << std::endl;
+  std::cerr << "         [-phi selection] [-psi selection] [-omega selection]" << std::endl;
+  std::cerr << "         [-chi1 selection] [-chi2 selection]" << std::endl;
   std::cerr << "         [-fit fitPDB] [-fitsel selection]" << std::endl;
   std::cerr << "         [-rmsd selection]" << std::endl;
   std::cerr << "         [-rmsf selection]" << std::endl;
@@ -145,6 +147,46 @@ int main (int argc, char **argv){
       anin->addSel(currArg);
       currArg=argv[++i];
       anin->addSel(currArg);
+      currArg=argv[++i];
+      anin->addSel(currArg);
+      analyses.push_back(anin);
+      timeseries=true;
+    }
+    else if (currArg.compare("-phi") == 0){
+      anin=new AnalyzeDihedral;
+      static_cast<AnalyzeDihedral *>(anin)->setDihedralType(PHI);
+      currArg=argv[++i];
+      anin->addSel(currArg);
+      analyses.push_back(anin);
+      timeseries=true;
+    }
+    else if (currArg.compare("-psi") == 0){
+      anin=new AnalyzeDihedral;
+      static_cast<AnalyzeDihedral *>(anin)->setDihedralType(PSI);
+      currArg=argv[++i];
+      anin->addSel(currArg);
+      analyses.push_back(anin);
+      timeseries=true;
+    }
+    else if (currArg.compare("-omega") == 0){
+      anin=new AnalyzeDihedral;
+      static_cast<AnalyzeDihedral *>(anin)->setDihedralType(OMEGA);
+      currArg=argv[++i];
+      anin->addSel(currArg);
+      analyses.push_back(anin);
+      timeseries=true;
+    }
+    else if (currArg.compare("-chi1") == 0){
+      anin=new AnalyzeDihedral;
+      static_cast<AnalyzeDihedral *>(anin)->setDihedralType(CHI1);
+      currArg=argv[++i];
+      anin->addSel(currArg);
+      analyses.push_back(anin);
+      timeseries=true;
+    }
+    else if (currArg.compare("-chi2") == 0){
+      anin=new AnalyzeDihedral;
+      static_cast<AnalyzeDihedral *>(anin)->setDihedralType(CHI2);
       currArg=argv[++i];
       anin->addSel(currArg);
       analyses.push_back(anin);

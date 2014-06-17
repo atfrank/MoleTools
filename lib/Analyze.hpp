@@ -154,7 +154,13 @@ class AnalyzeAngle: public Analyze {
 };
 
 class AnalyzeDihedral: public Analyze {
+  private:
+    DihedralEnum theta;
+
   public:
+    AnalyzeDihedral(DihedralEnum thetain=GENERAL);
+    void setDihedralType(DihedralEnum thetain=GENERAL);
+    DihedralEnum getDihedralType();
     void setupMolSel(Molecule* molin);
     void runAnalysis();
 };
