@@ -72,7 +72,10 @@ int main (int argc, char **argv){
   std::ifstream coefFile;
   std::istream* coefinp;
   std::string line;
-  std::vector<double> coef;
+  std::vector<std::string> r;
+  double tmp;
+  std::map<std::string,double> coef;
+  double prediction;
 
   mol2.clear();
   sel=":.OD1+OD2+OE1+OE2+NZ+SG+ND1+ND2";
@@ -85,6 +88,7 @@ int main (int argc, char **argv){
   headerFlag=false;
   normFlag=false;
   fcoef.clear();
+  coef.clear();
 
   //There might be a cleaner way of doing this
   //but adding new atom types is easier/more obvious here.
@@ -167,7 +171,7 @@ int main (int argc, char **argv){
     else if (currArg.compare("-norm") == 0){
       normFlag=true;
     }
-    else if (currArg.compare("-pka") == 0 || currArg.compare("-pkas") == 0){
+    else if (currArg.compare("-pka") == 0 || currArg.compare("-pkas") == 0 || currArg.compare("-pKa") == 0 || currArg.compare("-pKas") == 0){
       currArg=argv[++i];
       fcoef=currArg;
     }
@@ -193,11 +197,17 @@ int main (int argc, char **argv){
 
   //Read coefficients
   if (fcoef.length() > 0){
+    headerFlag=false;
+    responseFlag=false;
     coefFile.open(fcoef.c_str(), std::ios::in);
     coefinp=&coefFile;
     while (coefinp->good() && !(coefinp->eof())){
       getline(*coefinp, line);
-      Misc::splitNum(line, ",", coef, false);
+      Misc::splitStr(Misc::trim(line), ", \t", r, false);
+      if (r.size() >= 2){
+        std::stringstream(r.at(1)) >> tmp;
+        coef.insert(std::pair<std::string, double>(r.at(0), tmp));
+      }
     }
   }
 
@@ -221,9 +231,17 @@ int main (int argc, char **argv){
     max=min+b*width; //max gets updated here!
     angstrom.str(""); //Clear stringstream
     angstrom << min+b*width;
+    
     mol->select(sel+"~"+angstrom.str(), false, false);
     cmol=mol->copy(true); //Contains protein within "max" angstroms of tmol
     Residue *res=tmol->getResidue(0); //Only look at first residue
+
+    //Add bin left edge to angstrom after selection above for identifying bin
+    angstrom.str(""); //Clear stringstream
+    angstrom << min+(b-1)*width; //Bin left edge
+    angstrom << "-";
+    angstrom << min+b*width;
+
     for (j=0; j< res->getAtmVecSize(); j++){
       for (k=0; k< cmol->getNAtom(); k++){
         double dist=Analyze::distance(res->getAtom(j)->getCoor(), cmol->getAtom(k)->getCoor());
@@ -280,11 +298,17 @@ int main (int argc, char **argv){
   }
 
   //Output feature vector
+  prediction=0.0;
   if (responseFlag == true){
     std::cout << response << ",";
   }
+  if (fcoef.length() > 0){
+    prediction+=coef.at("pKa");
+  }
   for (b=bins; b > 0; b--){
     angstrom.str(""); //Clear stringstream
+    angstrom << min+(b-1)*width; //Bin left edge
+    angstrom << "-";
     angstrom << min+b*width;
     //Surface area for the middle of the bin (i.e., between bin left and bin right)
     surfaceArea=4*PI*(pow(min+(b-0.5)*width, 2.0));
@@ -293,26 +317,37 @@ int main (int argc, char **argv){
         key=atomTypes.at(j)+":";
         key=key+atomTypes.at(k)+":";
         key=key+angstrom.str();
-        if (histo.find(key) != histo.end()){
-          if (normFlag == true){
-            //Normalize count by surface area
-            std::cout << histo.at(key)/surfaceArea;
+        if (fcoef.length() > 0){
+          if (coef.find(key) != coef.end() && histo.find(key) != histo.end()){
+            prediction+=histo.at(key)*coef.at(key);
+          }
+        }
+        else{
+          if (histo.find(key) != histo.end()){
+            if (normFlag == true){
+              //Normalize count by surface area
+              std::cout << histo.at(key)/surfaceArea;
+            }
+            else{
+              std::cout << histo.at(key);
+            }
           }
           else{
-            std::cout << histo.at(key);
+            std::cout << "0";
           }
-        }
-        else{
-          std::cout << "0";
-        }
-        if (b != 1 || j != atomTypes.size()-1 || k != atomTypes.size()-1){
-          std::cout << ",";
-        }
-        else{
-          std::cout << std::endl;
+          if (b != 1 || j != atomTypes.size()-1 || k != atomTypes.size()-1){
+            std::cout << ",";
+          }
+          else{
+            std::cout << std::endl;
+          }
         }
       }
     }
+  }
+
+  if (fcoef.length() > 0){
+    std::cout << prediction << std::endl;
   }
 
   delete cmol;
