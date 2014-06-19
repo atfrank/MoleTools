@@ -93,6 +93,7 @@ int main (int argc, char **argv){
   normFlag=false;
   fcoef.clear();
   coef.clear();
+  modelFlag=false;
   model.clear();
   resName.clear();
 
