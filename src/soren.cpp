@@ -38,6 +38,7 @@ void usage(){
   std::cerr << "         [-chains]" << std::endl;
   std::cerr << "         [-header]" << std::endl;
   std::cerr << "         [-pka COEFfile]" << std::endl;
+  std::cerr << "         [-modelpka]" << std::endl;
 //  std::cerr << "         [-warnings]" << std::endl;
   std::cerr << std::endl;
   exit(0);
@@ -76,6 +77,9 @@ int main (int argc, char **argv){
   double tmp;
   std::map<std::string,double> coef;
   double prediction;
+  bool modelFlag;
+  std::map<std::string, std::string> model;
+  std::string resName;
 
   mol2.clear();
   sel=":.OD1+OD2+OE1+OE2+NZ+SG+ND1+ND2";
@@ -89,6 +93,8 @@ int main (int argc, char **argv){
   normFlag=false;
   fcoef.clear();
   coef.clear();
+  model.clear();
+  resName.clear();
 
   //There might be a cleaner way of doing this
   //but adding new atom types is easier/more obvious here.
@@ -117,6 +123,13 @@ int main (int argc, char **argv){
   atomTypes.push_back("S.3");
   //atomTypes.push_back("S.O");
   //atomTypes.push_back("S.O2");
+
+  model.insert(std::pair<std::string, std::string>("UNK","0,0,0,0,0"));
+  model.insert(std::pair<std::string, std::string>("ASP","1,0,0,0,0"));
+  model.insert(std::pair<std::string, std::string>("GLU","0,1,0,0,0"));
+  model.insert(std::pair<std::string, std::string>("CYS","0,0,1,0,0"));
+  model.insert(std::pair<std::string, std::string>("HIS","0,0,0,1,0"));
+  model.insert(std::pair<std::string, std::string>("LYS","0,0,0,0,1"));
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -174,6 +187,9 @@ int main (int argc, char **argv){
     else if (currArg.compare("-pka") == 0 || currArg.compare("-pkas") == 0 || currArg.compare("-pKa") == 0 || currArg.compare("-pKas") == 0){
       currArg=argv[++i];
       fcoef=currArg;
+    }
+    else if (currArg.compare("-modelpka") == 0 || currArg.compare("-modelpKa") == 0){
+      modelFlag=true;
     }
     else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
@@ -235,6 +251,7 @@ int main (int argc, char **argv){
     mol->select(sel+"~"+angstrom.str(), false, false);
     cmol=mol->copy(true); //Contains protein within "max" angstroms of tmol
     Residue *res=tmol->getResidue(0); //Only look at first residue
+    resName=Misc::toupper(res->getResName());
 
     //Add bin left edge to angstrom after selection above for identifying bin
     angstrom.str(""); //Clear stringstream
@@ -289,12 +306,13 @@ int main (int argc, char **argv){
           if (b != 1 || j != atomTypes.size()-1 || k != atomTypes.size()-1){
             std::cout << ",";
           }
-          else{
-            std::cout << std::endl;
-          }
         }
       }  
     }
+    if (modelFlag == true){
+      std::cout << ",ASP,GLU,CYS,HIS,LYS";
+    }
+    std::cout << std::endl;
   }
 
   //Output feature vector
@@ -338,13 +356,19 @@ int main (int argc, char **argv){
           if (b != 1 || j != atomTypes.size()-1 || k != atomTypes.size()-1){
             std::cout << ",";
           }
-          else{
-            std::cout << std::endl;
-          }
         }
       }
     }
   }
+  if (modelFlag == true){
+    if (model.find(resName) != model.end()){
+      std::cout << "," << model.at(resName);
+    }
+    else{
+      std::cout << "," << model.at("UNK");
+    }
+  }
+  std::cout << std::endl;
 
   if (fcoef.length() > 0){
     std::cout << prediction << std::endl;
