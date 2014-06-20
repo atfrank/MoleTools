@@ -27,6 +27,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <sstream>
 #include <fstream>
+#include <ctime>
 
 void usage(){
   std::cerr << std::endl;
@@ -231,6 +232,12 @@ int main (int argc, char **argv){
 
   Molecule *mol=new Molecule;
 
+/*
+  std::clock_t start;
+  double duration;
+  start=std::clock();
+*/
+
   for (j=0; j< mol2.size(); j++){
     //Only atoms are read, bonds are not read
     mol->cat(Molecule::readMol2(mol2.at(j), format));
@@ -240,20 +247,8 @@ int main (int argc, char **argv){
     mol->addMissingChainIds();
   }
 
-  mol->assignAtmInx();
-  Analyze::pairwiseDistance(mol,pdist); 
-
   mol->select(sel);
   Molecule *tmol=mol->copy(true); //Titratable
-
-  //Alter the distances for the titratable atoms
-  for (j=0; j< tmol->getAtmVecSize(); j++){
-    for (k=0; k< tmol->getAtmVecSize(); k++){
-      pdist.at(tmol->getAtom(j)->getAtmInx()).at(tmol->getAtom(k)->getAtmInx())=9999.0;
-    }
-  }
-
-  Molecule *cmol=NULL;
 
   Residue *res=tmol->getResidue(0); //Only look at first residue
   resName=Misc::toupper(res->getResName());
@@ -261,7 +256,11 @@ int main (int argc, char **argv){
   //Fill histogram
   for (j=0; j< res->getAtmVecSize(); j++){
     for (k=0; k< mol->getAtmVecSize(); k++){
-      dist=pdist.at(res->getAtom(j)->getAtmInx()).at(mol->getAtom(k)->getAtmInx());
+      if (std::find(res->getAtmVec().begin(), res->getAtmVec().end(), mol->getAtom(k)) != res->getAtmVec().end()){
+        //Skip titratable atoms
+        continue;
+      }
+      dist=Analyze::distance(res->getAtom(j)->getCoor(), mol->getAtom(k)->getCoor());
       if (dist >= min && dist <= max){
         if (dist != max){
           b=static_cast<int>((dist-min)/width)+1; //Bin right edge
@@ -285,6 +284,11 @@ int main (int argc, char **argv){
       }
     }
   }
+
+/*
+  duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
+  std::cerr << "* " << mol->getNAtom() << " " << duration << std::endl;
+*/
 
   //Output header vector
   if (headerFlag == true){
@@ -373,7 +377,6 @@ int main (int argc, char **argv){
     std::cout << prediction << std::endl;
   }
 
-  delete cmol;
   delete tmol;
   delete mol;
 
