@@ -34,7 +34,7 @@ Mol2::Mol2(){
   chnMap.clear();
 }
 
-Molecule* Mol2::readMol2(std::string ifile, std::string format){
+Molecule* Mol2::readMol2(std::string ifile, std::string format, bool readBondsFlag){
   std::ifstream mol2File;
   std::istream* inp;
   std::string line;
@@ -139,7 +139,7 @@ Molecule* Mol2::readMol2(std::string ifile, std::string format){
       if (line.compare(9,4,"ATOM") == 0){
         readAtoms=true;
       }
-      else if (line.compare(9,4,"BOND") == 0){
+      else if (line.compare(9,4,"BOND") == 0 && readBondsFlag == true){
         readBonds=true;
       }
       else{

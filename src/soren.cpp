@@ -232,6 +232,7 @@ int main (int argc, char **argv){
   Molecule *mol=new Molecule;
 
   for (j=0; j< mol2.size(); j++){
+    //Only atoms are read, bonds are not read
     mol->cat(Molecule::readMol2(mol2.at(j), format));
   }
 
@@ -258,63 +259,32 @@ int main (int argc, char **argv){
   resName=Misc::toupper(res->getResName());
 
   //Fill histogram
-  /*
-  for (b=bins; b > 0; b--){
-    max=min+b*width; //max gets updated here!
-    angstrom.str(""); //Clear stringstream
-    angstrom << min+b*width;
-    
-    mol->select(sel+"~"+angstrom.str(), false, false);
-    cmol=mol->copy(true); //Contains protein within "max" angstroms of tmol
-
-    //Add bin left edge to angstrom after selection above for identifying bin
-    angstrom.str(""); //Clear stringstream
-    angstrom << min+(b-1)*width; //Bin left edge
-    angstrom << "-";
-    angstrom << min+b*width;
-  */
-    for (j=0; j< res->getAtmVecSize(); j++){
-      //for (k=0; k< cmol->getNAtom(); k++){
-      for (k=0; k< mol->getAtmVecSize(); k++){
-        //dist=Analyze::distance(res->getAtom(j)->getCoor(), cmol->getAtom(k)->getCoor());
-        dist=pdist.at(res->getAtom(j)->getAtmInx()).at(mol->getAtom(k)->getAtmInx());
-        //if (dist <= max && dist > max-width){
-        if (dist >= min && dist <= max){
-          //std::cout << res->getAtom(j)->getSummary() << " " << res->getAtom(j)->getAtmType() << " " << cmol->getAtom(k)->getSummary() << " " << cmol->getAtom(k)->getAtmType() << " " << dist << std::endl;
-          if (dist != max){
-            b=static_cast<int>((dist-min)/width)+1;
-          }
-          else{
-            b=bins;
-          }
-          angstrom.str(""); //Clear stringstream
-          angstrom << min+(b-1)*width; //Bin left edge
-          angstrom << "-";
-          angstrom << min+b*width;
-          key=res->getAtom(j)->getAtmType()+":";
-          //key=key+cmol->getAtom(k)->getAtmType()+":";
-          key=key+mol->getAtom(k)->getAtmType()+":";
-          key=key+angstrom.str();
-          if (histo.find(key) != histo.end()){
-            histo.at(key)++;
-          }
-          else{
-            histo.insert(std::pair<std::string, unsigned int>(key, 1));
-          }
-          /*
-          std::cerr << max-width << " - " << max << " ";
-          std::cerr << res->getAtom(j)->getSummary() << " ";
-          std::cerr << cmol->getAtom(k)->getSummary() << std::endl;
-          */
+  for (j=0; j< res->getAtmVecSize(); j++){
+    for (k=0; k< mol->getAtmVecSize(); k++){
+      dist=pdist.at(res->getAtom(j)->getAtmInx()).at(mol->getAtom(k)->getAtmInx());
+      if (dist >= min && dist <= max){
+        if (dist != max){
+          b=static_cast<int>((dist-min)/width)+1; //Bin right edge
+        }
+        else{
+          b=bins; //Last bin
+        }
+        angstrom.str(""); //Clear stringstream
+        angstrom << min+(b-1)*width; //Bin left edge
+        angstrom << "-";
+        angstrom << min+b*width;
+        key=res->getAtom(j)->getAtmType()+":";
+        key=key+mol->getAtom(k)->getAtmType()+":";
+        key=key+angstrom.str();
+        if (histo.find(key) != histo.end()){
+          histo.at(key)++;
+        }
+        else{
+          histo.insert(std::pair<std::string, unsigned int>(key, 1));
         }
       }
-      //Output atoms bonded to this residue
-      //for (unsigned int l=0; l< res->getAtom(j)->getBondsSize(); l++){
-      //  std::cout << res->getAtom(j)->getSummary() << " " << res->getAtom(j)->getBond(l)->getSummary() << std::endl;
-      //}
     }
-
-  //}
+  }
 
   //Output header vector
   if (headerFlag == true){
