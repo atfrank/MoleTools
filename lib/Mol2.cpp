@@ -189,12 +189,12 @@ Atom* Mol2::processAtomLine (std::string line, Atom* lastAtom){
   std::string segid; //Segment identifier
   Atom *atmEntry=new Atom;
   std::vector<std::string> s;
-  Select *sel=new Select;
-  Molecule *mol=new Molecule;
+  //Select *sel=new Select;
+  //Molecule *mol=new Molecule;
   std::vector<Atom *> atmSel;
   double charge;
 
-  sel->initKeys(mol); //mol is not actually used, needed to initialize selection keys
+  //sel->initKeys(mol); //mol is not actually used, needed to initialize selection keys
 
   Misc::splitStr(Misc::trim(line), " \t", s, false);
   std::stringstream(s.at(0)) >> atmnum;
