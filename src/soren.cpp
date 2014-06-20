@@ -80,6 +80,7 @@ int main (int argc, char **argv){
   bool modelFlag;
   std::map<std::string, std::string> model;
   std::string resName;
+  double dist;
 
   mol2.clear();
   sel=":.OD1+OD2+OE1+OE2+NZ+SG+ND1+ND2";
@@ -238,12 +239,26 @@ int main (int argc, char **argv){
     mol->addMissingChainIds();
   }
 
+  mol->assignAtmInx();
+  Analyze::pairwiseDistance(mol,pdist); 
+
   mol->select(sel);
   Molecule *tmol=mol->copy(true); //Titratable
 
+  //Alter the distances for the titratable atoms
+  for (j=0; j< tmol->getAtmVecSize(); j++){
+    for (k=0; k< tmol->getAtmVecSize(); k++){
+      pdist.at(tmol->getAtom(j)->getAtmInx()).at(tmol->getAtom(k)->getAtmInx())=9999.0;
+    }
+  }
+
   Molecule *cmol=NULL;
-  
+
+  Residue *res=tmol->getResidue(0); //Only look at first residue
+  resName=Misc::toupper(res->getResName());
+
   //Fill histogram
+  /*
   for (b=bins; b > 0; b--){
     max=min+b*width; //max gets updated here!
     angstrom.str(""); //Clear stringstream
@@ -251,22 +266,34 @@ int main (int argc, char **argv){
     
     mol->select(sel+"~"+angstrom.str(), false, false);
     cmol=mol->copy(true); //Contains protein within "max" angstroms of tmol
-    Residue *res=tmol->getResidue(0); //Only look at first residue
-    resName=Misc::toupper(res->getResName());
 
     //Add bin left edge to angstrom after selection above for identifying bin
     angstrom.str(""); //Clear stringstream
     angstrom << min+(b-1)*width; //Bin left edge
     angstrom << "-";
     angstrom << min+b*width;
-
+  */
     for (j=0; j< res->getAtmVecSize(); j++){
-      for (k=0; k< cmol->getNAtom(); k++){
-        double dist=Analyze::distance(res->getAtom(j)->getCoor(), cmol->getAtom(k)->getCoor());
-        if (dist <= max && dist > max-width){
+      //for (k=0; k< cmol->getNAtom(); k++){
+      for (k=0; k< mol->getAtmVecSize(); k++){
+        //dist=Analyze::distance(res->getAtom(j)->getCoor(), cmol->getAtom(k)->getCoor());
+        dist=pdist.at(res->getAtom(j)->getAtmInx()).at(mol->getAtom(k)->getAtmInx());
+        //if (dist <= max && dist > max-width){
+        if (dist >= min && dist <= max){
           //std::cout << res->getAtom(j)->getSummary() << " " << res->getAtom(j)->getAtmType() << " " << cmol->getAtom(k)->getSummary() << " " << cmol->getAtom(k)->getAtmType() << " " << dist << std::endl;
+          if (dist != max){
+            b=static_cast<int>((dist-min)/width)+1;
+          }
+          else{
+            b=bins;
+          }
+          angstrom.str(""); //Clear stringstream
+          angstrom << min+(b-1)*width; //Bin left edge
+          angstrom << "-";
+          angstrom << min+b*width;
           key=res->getAtom(j)->getAtmType()+":";
-          key=key+cmol->getAtom(k)->getAtmType()+":";
+          //key=key+cmol->getAtom(k)->getAtmType()+":";
+          key=key+mol->getAtom(k)->getAtmType()+":";
           key=key+angstrom.str();
           if (histo.find(key) != histo.end()){
             histo.at(key)++;
@@ -286,7 +313,8 @@ int main (int argc, char **argv){
       //  std::cout << res->getAtom(j)->getSummary() << " " << res->getAtom(j)->getBond(l)->getSummary() << std::endl;
       //}
     }
-  }
+
+  //}
 
   //Output header vector
   if (headerFlag == true){
