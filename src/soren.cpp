@@ -371,11 +371,11 @@ int main (int argc, char **argv){
       std::cout << "," << model.at("UNK");
     }
   }
-  std::cout << std::endl;
 
   if (fcoef.length() > 0){
-    std::cout << prediction << std::endl;
-  }
+    std::cout << prediction;
+  }  
+  std::cout << std::endl;
 
   delete tmol;
   delete mol;
