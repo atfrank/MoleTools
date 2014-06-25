@@ -27,6 +27,23 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 Prmtop::Prmtop (){
   mass.clear();
   charge.clear();
+  atmtype.clear();
+  //Hardcode HIS atom types with doubly deprotonated side chain nitrogens
+  atmtype.insert(std::make_pair(std::make_pair("HIS","N"), "NH1"));
+  atmtype.insert(std::make_pair(std::make_pair("HIS","HN"), "H"));
+  atmtype.insert(std::make_pair(std::make_pair("HIS","CA"), "CT1"));
+  atmtype.insert(std::make_pair(std::make_pair("HIS","HA"), "HB1"));
+  atmtype.insert(std::make_pair(std::make_pair("HIS","CB"), "CT2"));
+  atmtype.insert(std::make_pair(std::make_pair("HIS","HB1"), "HA2"));
+  atmtype.insert(std::make_pair(std::make_pair("HIS","HB2"), "HA2"));
+  atmtype.insert(std::make_pair(std::make_pair("HIS","ND1"), "NR2"));
+  atmtype.insert(std::make_pair(std::make_pair("HIS","HD1"), "H"));
+  atmtype.insert(std::make_pair(std::make_pair("HIS","CG"), "CPH1"));
+  atmtype.insert(std::make_pair(std::make_pair("HIS","CE1"), "CPH2"));
+  atmtype.insert(std::make_pair(std::make_pair("HIS","HE1"), "HR1"));
+  atmtype.insert(std::make_pair(std::make_pair("HIS","NE2"), "NR2"));
+  atmtype.insert(std::make_pair(std::make_pair("HIS","CD2"), "CPH1"));
+  atmtype.insert(std::make_pair(std::make_pair("HIS","HD2"), "HR3"));
 }
 
 void Prmtop::readTopology(const std::string& topin){
