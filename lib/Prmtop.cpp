@@ -65,6 +65,7 @@ void Prmtop::readTopology(const std::string& topin){
       else if (word.compare(0,4,"ATOM") == 0){
         Misc::splitStr(line, " \t", s, false);
         if (s.size() >= 3){
+          atmtype.insert(std::make_pair(std::make_pair(resname, s.at(1)), s.at(2)));
           mass.insert(std::make_pair(std::make_pair(resname, s.at(1)), massRef[s.at(2)]));
           std::stringstream(s.at(3)) >> c;
           charge.insert(std::make_pair(std::make_pair(resname, s.at(1)), c));
@@ -81,6 +82,18 @@ void Prmtop::readTopology(const std::string& topin){
 
 void Prmtop::readParameter(const std::string& prmin){
 
+}
+
+
+std::string Prmtop::getAtmType(const std::string& resnamein, const std::string& atmnamein){
+  if (atmtype.find(std::make_pair(resnamein, atmnamein)) != atmtype.end()){
+    return  atmtype[std::make_pair(resnamein, atmnamein)];
+  }
+  else{
+    std::cerr << "Warning: Could not a find an atom type for atom " << resnamein;
+    std::cerr << " " << atmnamein << " and was set to \"DUMB\"" << std::endl;
+    return "DUMB";
+  }
 }
 
 

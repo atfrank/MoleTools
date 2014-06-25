@@ -29,6 +29,7 @@ class Prmtop {
     //Maps are referenced by pair(resname, atmname)
     std::map<std::pair<std::string, std::string>, double> mass;
     std::map<std::pair<std::string, std::string>, double> charge;
+    std::map<std::pair<std::string, std::string>, std::string> atmtype;
 
   public:
     Prmtop(); //Constructor
@@ -36,6 +37,7 @@ class Prmtop {
     void readParameter(const std::string& prmin);
     double getMass(const std::string& resnamein, const std::string& atmnamein);
     double getCharge(const std::string& resnamein, const std::string& atmnamein);
+    std::string getAtmType(const std::string& resnamein, const std::string& atmnamein);
 };
 
 #endif
