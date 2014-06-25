@@ -79,6 +79,7 @@ class Molecule {
     void renameRes(const std::vector<std::string> &search, const std::string &replace);
     void readTopology(const std::string& topin);
     void readParameter(const std::string& prmin);
+    void setAtmType();
     void setMass();
     void setCharge();
     void selAll();

@@ -439,12 +439,21 @@ void Molecule::renameRes(const std::vector<std::string> &search, const std::stri
 
 void Molecule::readTopology(const std::string& topin){
   this->toppar.readTopology(topin);
+  this->setAtmType();
   this->setMass();
   this->setCharge();
 }
 
 void Molecule::readParameter(const std::string& prmin){
   std::cerr << "Warning: Molecule::readParameter() has not been implemented yet!" << std::endl;
+}
+
+void Molecule::setAtmType(){
+  Atom* a;
+  for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+    a=this->getAtom(i);
+    a->setAtmType(this->toppar.getAtmType(Misc::trim(a->getResName()), Misc::trim(a->getAtmName())));
+  }
 }
 
 void Molecule::setMass(){
