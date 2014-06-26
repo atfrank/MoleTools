@@ -40,6 +40,7 @@ void usage(){
   std::cerr << "         [-header]" << std::endl;
   std::cerr << "         [-pka COEFfile]" << std::endl;
   std::cerr << "         [-modelpka]" << std::endl;
+  std::cerr << "         [-top file]" << std::endl; 
 //  std::cerr << "         [-warnings]" << std::endl;
   std::cerr << std::endl;
   exit(0);
@@ -82,6 +83,7 @@ int main (int argc, char **argv){
   std::map<std::string, std::string> model;
   std::string resName;
   double dist;
+  std::string top;
 
   mol2.clear();
   sel=":.OD1+OD2+OE1+OE2+NZ+SG+ND1+ND2";
@@ -98,6 +100,7 @@ int main (int argc, char **argv){
   modelFlag=false;
   model.clear();
   resName.clear();
+  top.clear();
 
   //There might be a cleaner way of doing this
   //but adding new atom types is easier/more obvious here.
@@ -194,6 +197,10 @@ int main (int argc, char **argv){
     else if (currArg.compare("-modelpka") == 0 || currArg.compare("-modelpKa") == 0){
       modelFlag=true;
     }
+    else if (currArg.compare("-top") == 0){
+      currArg=argv[++i];
+      top=currArg;
+    }
     else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
@@ -206,11 +213,6 @@ int main (int argc, char **argv){
     std::cerr << std::endl << "Error: Please provide an input file" << std::endl << std::endl;
     usage();
   }
-
-  //Sort, remove duplicates, and resize atom type vector
-  std::sort(atomTypes.begin(), atomTypes.end());
-  std::vector<std::string>::iterator it=std::unique(atomTypes.begin(), atomTypes.end());
-  atomTypes.resize(std::distance(atomTypes.begin(),it));
 
   bins=static_cast<int>((max-min)/width);
 
@@ -231,7 +233,7 @@ int main (int argc, char **argv){
   }
 
   Molecule *mol=new Molecule;
-
+ 
 /*
   std::clock_t start;
   double duration;
@@ -247,20 +249,35 @@ int main (int argc, char **argv){
     mol->addMissingChainIds();
   }
 
-  mol->select(sel);
-  Molecule *tmol=mol->copy(true); //Titratable
+  
+  mol->select(":.^HYDROGEN");
+  Molecule *cmol=mol->copy(true); //Copy without hydrogens
+
+  if (top.length() > 0){
+    cmol->readTopology(top, false);
+    //atomTypes=cmol->getPrmtop().getAtomTypes();
+    atomTypes=cmol->getAtomTypes(); //Only get atom types in molecule
+  }
+
+  //Sort, remove duplicates, and resize atom type vector
+  std::sort(atomTypes.begin(), atomTypes.end());
+  std::vector<std::string>::iterator it=std::unique(atomTypes.begin(), atomTypes.end());
+  atomTypes.resize(std::distance(atomTypes.begin(),it));
+
+  cmol->select(sel);
+  Molecule *tmol=cmol->copy(true); //Titratable
 
   Residue *res=tmol->getResidue(0); //Only look at first residue
   resName=Misc::toupper(res->getResName());
 
   //Fill histogram
   for (j=0; j< res->getAtmVecSize(); j++){
-    for (k=0; k< mol->getAtmVecSize(); k++){
-      if (std::find(res->getAtmVec().begin(), res->getAtmVec().end(), mol->getAtom(k)) != res->getAtmVec().end()){
+    for (k=0; k< cmol->getAtmVecSize(); k++){
+      if (std::find(res->getAtmVec().begin(), res->getAtmVec().end(), cmol->getAtom(k)) != res->getAtmVec().end()){
         //Skip titratable atoms
         continue;
       }
-      dist=Analyze::distance(res->getAtom(j)->getCoor(), mol->getAtom(k)->getCoor());
+      dist=Analyze::distance(res->getAtom(j)->getCoor(), cmol->getAtom(k)->getCoor());
       if (dist >= min && dist <= max){
         if (dist != max){
           b=static_cast<int>((dist-min)/width)+1; //Bin right edge
@@ -273,7 +290,7 @@ int main (int argc, char **argv){
         angstrom << "-";
         angstrom << min+b*width;
         key=res->getAtom(j)->getAtmType()+":";
-        key=key+mol->getAtom(k)->getAtmType()+":";
+        key=key+cmol->getAtom(k)->getAtmType()+":";
         key=key+angstrom.str();
         if (histo.find(key) != histo.end()){
           histo.at(key)++;
@@ -287,7 +304,7 @@ int main (int argc, char **argv){
 
 /*
   duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
-  std::cerr << "* " << mol->getNAtom() << " " << duration << std::endl;
+  std::cerr << "* " << cmol->getNAtom() << " " << duration << std::endl;
 */
 
   //Output header vector
@@ -378,6 +395,7 @@ int main (int argc, char **argv){
   std::cout << std::endl;
 
   delete tmol;
+  delete cmol;
   delete mol;
 
   return 0;

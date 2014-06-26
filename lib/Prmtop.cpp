@@ -71,6 +71,7 @@ void Prmtop::readTopology(const std::string& topin){
         if (s.size() >= 4){
           std::stringstream(s.at(3)) >> m;
           massRef.insert(std::make_pair(s.at(2), m));
+          atomTypes.push_back(s.at(2));
         }
       }
       else if (word.compare(0,4,"RESI") == 0 || Misc::trim(line).compare(0,4,"PRES") == 0){
@@ -94,6 +95,11 @@ void Prmtop::readTopology(const std::string& topin){
     }
   }
 
+  //Sort, remove duplicates, and resize atom type vector
+  std::sort(atomTypes.begin(), atomTypes.end());
+  std::vector<std::string>::iterator it=std::unique(atomTypes.begin(), atomTypes.end());
+  atomTypes.resize(distance(atomTypes.begin(),it));
+
 }
 
 
@@ -102,37 +108,46 @@ void Prmtop::readParameter(const std::string& prmin){
 }
 
 
-std::string Prmtop::getAtmType(const std::string& resnamein, const std::string& atmnamein){
+std::string Prmtop::getAtmType(const std::string& resnamein, const std::string& atmnamein, bool verboseFlag){
   if (atmtype.find(std::make_pair(resnamein, atmnamein)) != atmtype.end()){
     return  atmtype[std::make_pair(resnamein, atmnamein)];
   }
   else{
-    std::cerr << "Warning: Could not a find an atom type for atom " << resnamein;
-    std::cerr << " " << atmnamein << " and was set to \"DUMB\"" << std::endl;
-    return "DUMB";
+    if (verboseFlag == true){
+      std::cerr << "Warning: Could not a find an atom type for atom " << resnamein;
+      std::cerr << " " << atmnamein << " and was set to \"DUMB\"" << std::endl;
+      return "DUMB";
+    }
   }
 }
 
 
-double Prmtop::getMass(const std::string& resnamein, const std::string& atmnamein){
+double Prmtop::getMass(const std::string& resnamein, const std::string& atmnamein, bool verboseFlag){
   if (mass.find(std::make_pair(resnamein, atmnamein)) != mass.end()){
     return  mass[std::make_pair(resnamein, atmnamein)];
   }
   else{
-    std::cerr << "Warning: Could not a find mass for atom " << resnamein;
-    std::cerr << " " << atmnamein << " and was set to 1.0" << std::endl;
-    return 1.0;
+    if (verboseFlag == true){
+      std::cerr << "Warning: Could not a find mass for atom " << resnamein;
+      std::cerr << " " << atmnamein << " and was set to 1.0" << std::endl;
+      return 1.0;
+    }
   }
 }
 
-double Prmtop::getCharge(const std::string& resnamein, const std::string& atmnamein){
+double Prmtop::getCharge(const std::string& resnamein, const std::string& atmnamein, bool verboseFlag){
   if (charge.find(std::make_pair(resnamein, atmnamein)) != charge.end()){
     return charge[std::make_pair(resnamein, atmnamein)];
   }
   else{
-    std::cerr << "Warning: Could not find a charge for atom " << resnamein;
-    std::cerr << " " << atmnamein << " and was set to 0.0." << std::endl;
-    return 0.0;
+    if (verboseFlag == true){
+      std::cerr << "Warning: Could not find a charge for atom " << resnamein;
+      std::cerr << " " << atmnamein << " and was set to 0.0." << std::endl;
+      return 0.0;
+    }
   }
 }
 
+std::vector<std::string> Prmtop::getAtomTypes(){
+  return atomTypes;
+}

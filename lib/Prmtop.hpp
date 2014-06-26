@@ -23,6 +23,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 #include <map>
+#include <vector>
 
 class Prmtop {
   private:
@@ -30,14 +31,16 @@ class Prmtop {
     std::map<std::pair<std::string, std::string>, double> mass;
     std::map<std::pair<std::string, std::string>, double> charge;
     std::map<std::pair<std::string, std::string>, std::string> atmtype;
+    std::vector<std::string> atomTypes;
 
   public:
     Prmtop(); //Constructor
     void readTopology(const std::string& topin);
     void readParameter(const std::string& prmin);
-    double getMass(const std::string& resnamein, const std::string& atmnamein);
-    double getCharge(const std::string& resnamein, const std::string& atmnamein);
-    std::string getAtmType(const std::string& resnamein, const std::string& atmnamein);
+    std::string getAtmType(const std::string& resnamein, const std::string& atmnamein, bool verboseFlag=true);
+    double getMass(const std::string& resnamein, const std::string& atmnamein, bool verboseFlag=true);
+    double getCharge(const std::string& resnamein, const std::string& atmnamein, bool verboseFlag=true);
+    std::vector<std::string> getAtomTypes();
 };
 
 #endif

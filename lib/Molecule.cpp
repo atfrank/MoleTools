@@ -437,38 +437,68 @@ void Molecule::renameRes(const std::vector<std::string> &search, const std::stri
   }
 }
 
-void Molecule::readTopology(const std::string& topin){
+void Molecule::readTopology(const std::string& topin, bool verboseFlag){
   this->toppar.readTopology(topin);
-  this->setAtmType();
-  this->setMass();
-  this->setCharge();
+  this->setAtmType(verboseFlag);
+  this->setMass(verboseFlag);
+  this->setCharge(verboseFlag);
 }
 
-void Molecule::readParameter(const std::string& prmin){
+void Molecule::readParameter(const std::string& prmin, bool verboseFlag){
   std::cerr << "Warning: Molecule::readParameter() has not been implemented yet!" << std::endl;
 }
 
-void Molecule::setAtmType(){
+void Molecule::setPrmTop(Prmtop topparin){
+  this->setPrmtop(topparin);
+}
+
+void Molecule::setPrmtop(Prmtop topparin){
+  this->toppar=topparin;
+}
+
+Prmtop& Molecule::getPrmTop(){
+  return this->getPrmtop();
+}
+
+Prmtop& Molecule::getPrmtop(){
+  return this->toppar;
+}
+
+void Molecule::setAtmType(bool verboseFlag){
   Atom* a;
   for (unsigned int i=0; i< this->getAtmVecSize(); i++){
     a=this->getAtom(i);
-    a->setAtmType(this->toppar.getAtmType(Misc::trim(a->getResName()), Misc::trim(a->getAtmName())));
+    a->setAtmType(this->toppar.getAtmType(Misc::trim(a->getResName()), Misc::trim(a->getAtmName()), verboseFlag));
   }
 }
 
-void Molecule::setMass(){
+std::vector<std::string> Molecule::getAtomTypes(){
+  std::vector<std::string> atomTypes;
+
+  for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+    atomTypes.push_back(this->getAtom(i)->getAtmType());
+  }
+
+  std::sort(atomTypes.begin(), atomTypes.end());
+  std::vector<std::string>::iterator it=std::unique(atomTypes.begin(), atomTypes.end());
+  atomTypes.resize(std::distance(atomTypes.begin(),it));
+
+  return atomTypes;
+}
+
+void Molecule::setMass(bool verboseFlag){
   Atom* a;
   for (unsigned int i=0; i< this->getAtmVecSize(); i++){
     a=this->getAtom(i);
-    a->setMass(this->toppar.getMass(Misc::trim(a->getResName()), Misc::trim(a->getAtmName())));
+    a->setMass(this->toppar.getMass(Misc::trim(a->getResName()), Misc::trim(a->getAtmName()), verboseFlag));
   }
 }
 
-void Molecule::setCharge(){
+void Molecule::setCharge(bool verboseFlag){
   Atom* a;
   for (unsigned int i=0; i< this->getAtmVecSize(); i++){
     a=this->getAtom(i);
-    a->setCharge(this->toppar.getCharge(Misc::trim(a->getResName()), Misc::trim(a->getAtmName())));
+    a->setCharge(this->toppar.getCharge(Misc::trim(a->getResName()), Misc::trim(a->getAtmName()), verboseFlag));
   }
 }
 
