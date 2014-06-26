@@ -255,8 +255,35 @@ int main (int argc, char **argv){
 
   if (top.length() > 0){
     cmol->readTopology(top, false);
-    //atomTypes=cmol->getPrmtop().getAtomTypes();
-    atomTypes=cmol->getAtomTypes(); //Only get atom types in molecule
+    //atomTypes=cmol->getPrmtop().getAtomTypes(); //Get all atom types
+    //atomTypes=cmol->getAtomTypes(); //Only get atom types in molecule
+    atomTypes.clear();
+    atomTypes.push_back("C");
+    atomTypes.push_back("CA");
+    atomTypes.push_back("CAI");
+    atomTypes.push_back("CC");
+    atomTypes.push_back("CP1");
+    atomTypes.push_back("CP2");
+		atomTypes.push_back("CP3");
+		atomTypes.push_back("CPH1");
+		atomTypes.push_back("CPH2");
+		atomTypes.push_back("CPT");
+		atomTypes.push_back("CT1");
+		atomTypes.push_back("CT2");
+		atomTypes.push_back("CT2A");
+		atomTypes.push_back("CT3");
+		atomTypes.push_back("CY");
+		atomTypes.push_back("N");
+		atomTypes.push_back("NC2");
+		atomTypes.push_back("NH1");
+		atomTypes.push_back("NH2");
+		atomTypes.push_back("NH3");
+		atomTypes.push_back("NR2");
+		atomTypes.push_back("NY");
+		atomTypes.push_back("O");
+		atomTypes.push_back("OC");
+		atomTypes.push_back("OH1");
+		atomTypes.push_back("S");
   }
 
   //Sort, remove duplicates, and resize atom type vector
