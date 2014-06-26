@@ -23,6 +23,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 #include "Misc.hpp"
 
 #include <fstream>
+#include <algorithm>
 
 Prmtop::Prmtop (){
   mass.clear();
@@ -116,8 +117,8 @@ std::string Prmtop::getAtmType(const std::string& resnamein, const std::string& 
     if (verboseFlag == true){
       std::cerr << "Warning: Could not a find an atom type for atom " << resnamein;
       std::cerr << " " << atmnamein << " and was set to \"DUMB\"" << std::endl;
-      return "DUMB";
     }
+    return "DUMB";
   }
 }
 
@@ -130,8 +131,8 @@ double Prmtop::getMass(const std::string& resnamein, const std::string& atmnamei
     if (verboseFlag == true){
       std::cerr << "Warning: Could not a find mass for atom " << resnamein;
       std::cerr << " " << atmnamein << " and was set to 1.0" << std::endl;
-      return 1.0;
     }
+    return 1.0;
   }
 }
 
@@ -143,8 +144,8 @@ double Prmtop::getCharge(const std::string& resnamein, const std::string& atmnam
     if (verboseFlag == true){
       std::cerr << "Warning: Could not find a charge for atom " << resnamein;
       std::cerr << " " << atmnamein << " and was set to 0.0." << std::endl;
-      return 0.0;
     }
+    return 0.0;
   }
 }
 
