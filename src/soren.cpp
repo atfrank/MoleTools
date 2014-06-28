@@ -31,7 +31,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 
 void usage(){
   std::cerr << std::endl;
-  std::cerr << "Usage:   soren [-options] <MOL2file>" << std::endl;
+  std::cerr << "Usage:   soren [-options] <PDBfile>" << std::endl;
   std::cerr << "Options: [-bins min:max:incr] [-norm]" << std::endl;
   std::cerr << "         [-sel selection]" << std::endl;
   std::cerr << "         [-add type1[:type2[...[typeN]]] | -use type1[:type2[...[typeN]]]" << std::endl;
@@ -48,10 +48,9 @@ void usage(){
 
 int main (int argc, char **argv){
 
-
   int i, b;
   unsigned int j,k;
-  std::vector<std::string> mol2;
+  std::vector<std::string> pdbs;
   std::string currArg;
   std::string sel;
   std::string format;
@@ -86,7 +85,7 @@ int main (int argc, char **argv){
   double dist;
   std::string top;
 
-  mol2.clear();
+  pdbs.clear();
   sel=":.OD1+OD2+OE1+OE2+NZ+SG+ND1+ND2";
   format.clear();
   min=0.0;
@@ -206,11 +205,11 @@ int main (int argc, char **argv){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
     else{
-      mol2.push_back(currArg);
+      pdbs.push_back(currArg);
     }
   }
 
-  if (mol2.size() == 0){
+  if (pdbs.size() == 0){
     std::cerr << std::endl << "Error: Please provide an input file" << std::endl << std::endl;
     usage();
   }
@@ -248,9 +247,15 @@ int main (int argc, char **argv){
   start=std::clock();
 */
 
-  for (j=0; j< mol2.size(); j++){
-    //Only atoms are read, bonds are not read
-    mol->cat(Molecule::readMol2(mol2.at(j), format));
+  for (j=0; j< pdbs.size(); j++){
+    if (pdbs.at(j).substr(pdbs.at(j).length()-4).compare("mol2") == 0){
+      //Has ".mol2" extension
+      //Only atoms are read, bonds are not read
+      mol->cat(Molecule::readMol2(pdbs.at(j), format));
+    }
+    else{
+      mol->cat(Molecule::readPDB(pdbs.at(j), format));
+    }
   }
 
   if (chnFlag == true){
