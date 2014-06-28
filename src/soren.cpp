@@ -40,7 +40,8 @@ void usage(){
   std::cerr << "         [-header]" << std::endl;
   std::cerr << "         [-pka COEFfile]" << std::endl;
   std::cerr << "         [-modelpka]" << std::endl;
-  std::cerr << "         [-top file]" << std::endl; 
+  std::cerr << "         [-top file]" << std::endl;
+  std::cerr << "         [-mol2]" << std::endl;
 //  std::cerr << "         [-warnings]" << std::endl;
   std::cerr << std::endl;
   exit(0);
@@ -84,6 +85,7 @@ int main (int argc, char **argv){
   std::string resName;
   double dist;
   std::string top;
+  bool mol2Flag;
 
   pdbs.clear();
   sel=":.OD1+OD2+OE1+OE2+NZ+SG+ND1+ND2";
@@ -101,6 +103,7 @@ int main (int argc, char **argv){
   model.clear();
   resName.clear();
   top.clear();
+  mol2Flag=false;
 
   //There might be a cleaner way of doing this
   //but adding new atom types is easier/more obvious here.
@@ -201,6 +204,9 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       top=currArg;
     }
+    else if (currArg.compare("-mol2") == 0){
+      mol2Flag=true;
+    }
     else if (currArg.compare(0,1,"-") == 0){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
@@ -248,7 +254,7 @@ int main (int argc, char **argv){
 */
 
   for (j=0; j< pdbs.size(); j++){
-    if (pdbs.at(j).substr(pdbs.at(j).length()-4).compare("mol2") == 0){
+    if (mol2Flag == true || pdbs.at(j).substr(pdbs.at(j).length()-4).compare("mol2") == 0){
       //Has ".mol2" extension
       //Only atoms are read, bonds are not read
       mol->cat(Molecule::readMol2(pdbs.at(j), format));
