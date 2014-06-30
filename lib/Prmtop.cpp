@@ -64,6 +64,11 @@ void Prmtop::readTopology(const std::string& topin){
     topFile.open(topin.c_str(), std::ios::in);
     topinp=&topFile;
 
+    if (topinp->good() == false){
+      std::cerr << "Warning: Topology file \"" << topin;
+      std::cerr << " could not be read!" << std::endl;
+    }
+
     while (topinp->good() && !(topinp->eof())){
       getline(*topinp, line);
       word=Misc::toupper(Misc::trim(line).substr(0,4));

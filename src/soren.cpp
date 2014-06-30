@@ -75,7 +75,6 @@ int main (int argc, char **argv){
   std::ifstream coefFile;
   std::istream* coefinp;
   std::string line;
-  unsigned int nline;
   std::vector<std::string> r;
   double tmp;
   std::map<std::string,double> coef;
@@ -228,20 +227,18 @@ int main (int argc, char **argv){
     responseFlag=false;
     coefFile.open(fcoef.c_str(), std::ios::in);
     coefinp=&coefFile;
-    nline=0;
+    if (coefinp->good() == false){
+      std::cerr << "Warning: there was a problem reading file \"" << fcoef << "\"" << std::endl;
+      std::cerr << "Generating features instead" << std::endl;
+      fcoef.clear();
+    }
     while (coefinp->good() && !(coefinp->eof())){
       getline(*coefinp, line);
       Misc::splitStr(Misc::trim(line), ", \t", r, false);
       if (r.size() >= 2){
-        nline++;
         std::stringstream(r.at(1)) >> tmp;
         coef.insert(std::pair<std::string, double>(r.at(0), tmp));
       }
-    }
-    if (nline == 0){
-      std::cerr << "Warning: there was a problem reading file \"" << fcoef << "\"" << std::endl;
-      std::cerr << "Generating features instead" << std::endl;
-      fcoef.clear();
     }
   }
 
