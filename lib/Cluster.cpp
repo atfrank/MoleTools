@@ -20,17 +20,56 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Cluster.hpp"
 
+#include <iostream>
+#include <fstream>
+
+Cluster::Cluster(){
+
+}
+
 Cluster::Cluster(unsigned int Nin){
   this->setN(Nin);
+}
+
+void Cluster::readDMatrix(std::string finp){
+  std::ifstream inpFile;
+  std::istream* inp;
+  std::string line;
+  unsigned int nline;
+  std::vector<double> s;
+
+  inp=NULL;
+  nline=0;
+
+  if (finp.length() == 0){
+    std::cerr << std::endl << "Error: Please provide an input file of pairwise distances" << std::endl << std::endl;
+    return;
+  }
+
+  if (finp.compare("-") == 0){
+    inp=&std::cin;
+  }
+  else{
+    inpFile.open(finp.c_str());
+    inp=&inpFile;
+  }
+  while (inp->good() && !(inp->eof())){
+    getline(*inp, line);
+    if (line.length() > 0){
+      nline++;
+      continue;
+    }
+  }
+
+}
+
+void Cluster::setN(unsigned int Nin){
+  N=Nin;
   cluster.resize(Nin);
   dmatrix.resize(Nin);
   for (unsigned int i=0; i< Nin; i++){
     dmatrix.at(i).resize(Nin);
   }
-}
-
-void Cluster::setN(unsigned int Nin){
-  N=Nin;
 }
 
 unsigned int Cluster::getN(){

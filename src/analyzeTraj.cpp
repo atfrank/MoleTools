@@ -27,7 +27,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 
 void usage(){
   std::cerr << std::endl << std::endl;
-  std::cerr << "Usage:   analyzeTraj [-options] <-pdb PDBFILE> <TRAJfile(s)>" << std::endl;
+  std::cerr << "Usage:   analyzeTraj [-options] <-pdb PDBfile> <TRAJfile(s)>" << std::endl;
   std::cerr << "Options: [-sel selection] [-cog selection]" << std::endl;
   std::cerr << "         [-dsel selection selection ] [-dist selection selection]" << std::endl;
   std::cerr << "         [-tsel selection selection selection] [-angle selection selection selection]" << std::endl;

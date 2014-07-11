@@ -30,7 +30,9 @@ class Cluster {
     std::vector<unsigned int> cluster; //Store cluster numbers for each N datapoints
 
   public:
+    Cluster();
     Cluster(unsigned int Nin);
+    void readDMatrix(std::string finp);
     void setN(unsigned int Nin);
     unsigned int getN();
 
