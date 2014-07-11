@@ -19,15 +19,17 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "Cluster.hpp"
+#include "Misc.hpp"
 
 #include <iostream>
 #include <fstream>
 
 Cluster::Cluster(){
-
+  inx.clear();
 }
 
 Cluster::Cluster(unsigned int Nin){
+  inx.clear();
   this->setN(Nin);
 }
 
@@ -35,11 +37,9 @@ void Cluster::readDMatrix(std::string finp){
   std::ifstream inpFile;
   std::istream* inp;
   std::string line;
-  unsigned int nline;
   std::vector<double> s;
 
   inp=NULL;
-  nline=0;
 
   if (finp.length() == 0){
     std::cerr << std::endl << "Error: Please provide an input file of pairwise distances" << std::endl << std::endl;
@@ -56,8 +56,19 @@ void Cluster::readDMatrix(std::string finp){
   while (inp->good() && !(inp->eof())){
     getline(*inp, line);
     if (line.length() > 0){
-      nline++;
-      continue;
+      Misc::splitNum(line, " \t", s);
+      if (s.size() == 3){
+        if (inx.find(s.at(0)) == inx.end()){
+          inx.insert(std::pair<double, int>(s.at(0), inx.size()));
+        }
+        if (inx.find(s.at(1)) == inx.end()){
+          inx.insert(std::pair<double, int>(s.at(1), inx.size()));
+        }
+        
+      }
+      else{
+        //Unrecognized line format
+      }
     }
   }
 

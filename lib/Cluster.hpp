@@ -22,12 +22,14 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 #define CLUSTER_H
 
 #include <vector>
+#include <map>
 
 class Cluster {
   private:
     unsigned int N;
     std::vector<std::vector <double> > dmatrix; //NxN Distance matrix
     std::vector<unsigned int> cluster; //Store cluster numbers for each N datapoints
+    std::map<double, int> inx;
 
   public:
     Cluster();
