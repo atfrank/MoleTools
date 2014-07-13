@@ -21,6 +21,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 #include "Cluster.hpp"
 
 #include <iostream>
+#include <cstdlib> 
 
 void usage(){
   std::cerr << std::endl << std::endl;

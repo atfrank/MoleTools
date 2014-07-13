@@ -23,6 +23,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 #include <map>
+#include <string>
 
 class Cluster {
   private:
