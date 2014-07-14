@@ -46,7 +46,7 @@ void Select::makeSel (Molecule* mol, std::string selin, bool dieFlag, bool verbo
   //Passing mol->getAtmVec() directly won't work
   //because it is not properly sorted!
   if (selin.find(":") == std::string::npos || selin.find(".") == std::string::npos){
-    std::cerr << std::endl << "Warning: Each selection expression must contain ";
+    std::cerr << std::endl << "Warning: Each selection expression should contain ";
     std::cerr << "both a \":\" and a \".\" in order to be parsed correctly!" << std::endl;
   }
   std::vector<Atom *> atmSel=sel->recursiveDescentParser(selin, ref);
