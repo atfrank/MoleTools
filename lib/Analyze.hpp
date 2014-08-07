@@ -194,11 +194,6 @@ class AnalyzeEllipsoid: public Analyze {
     void runAnalysis();
 };
 
-class AnalyzePairwiseDistance: public Analyze {
-  public:
-    void runAnalysis();
-};
-
 class AnalyzePcasso: public Analyze {
   private:
     PcassoOutEnum pout;
