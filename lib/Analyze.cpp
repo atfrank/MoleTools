@@ -867,26 +867,6 @@ void AnalyzeEllipsoid::runAnalysis(){
   delete cogmol;
 }
 
-void AnalyzePairwiseDistance::runAnalysis(){
-//  std::map<std::pair<Atom*, Atom*>, double> pdist;
-  std::vector<std::vector<double> > pdist;
-  Atom* ai;
-  Atom* aj;
-  
-  this->getMol(0)->assignAtmInx();
-  Analyze::pairwiseDistance(this->getMol(0), pdist);
-
-  for (unsigned int i=0; i< this->getMol(0)->getAtmVecSize(); i++){
-    ai=this->getMol(0)->getAtom(i);
-    for (unsigned int j=i+1; j< this->getMol(0)->getAtmVecSize(); j++){
-      aj=this->getMol(0)->getAtom(j);
-//      std::cout << "  " << ai->getSummary() << "-" << aj->getSummary();
-      std::cout << std::fixed;
-      std::cout << std::setw(9) << std::right << std::setprecision(3) << pdist.at(ai->getAtmInx()).at(aj->getAtmInx());
-    }
-  }
-}
-
 void AnalyzePcasso::runAnalysis(){
   std::ifstream dsspFile;
   std::istream* dsspinp;
