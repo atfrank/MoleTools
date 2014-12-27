@@ -19,6 +19,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "Molecule.hpp"
+#include "Atom.hpp"
 #include "Coor.hpp"
 #include "Misc.hpp"
 
@@ -26,7 +27,8 @@ void usage (){
   std::cerr << std::endl;
   std::cerr << "Usage:   modPDB [-options] <PDBfile>" << std::endl;
   std::cerr << "Options: [-model num]" << std::endl;
-  std::cerr << "         [-sel selection]" << std::endl;
+  std::cerr << "         [-renumber offset]" << std::endl;
+  std::cerr << "         [-sel selection]" << std::endl;  
   std::cerr << "         [-fit fitPDB] [-fitsel selection]" << std::endl;
   std::cerr << "         [-translate dx dy dz]" << std::endl;
   std::cerr << "         [-outsel selection]" << std::endl;
@@ -45,6 +47,7 @@ int main (int argc, char **argv){
   int i;
   unsigned int j;
   int model=0;
+  int residue_offset=0;
   std::string pdb;
   std::string currArg;
   std::string sel;
@@ -99,6 +102,10 @@ int main (int argc, char **argv){
     else if (currArg.compare("-model") == 0){
       currArg=argv[++i];
       std::stringstream(currArg) >> model; //atoi
+    }
+    else if (currArg.compare("-renumber") == 0){
+      currArg=argv[++i];
+      std::stringstream(currArg) >> residue_offset; //atoi
     }
     else if (currArg.compare("-sel") == 0 || currArg.compare("-nsel") == 0){
       currArg=argv[++i];
@@ -263,6 +270,15 @@ int main (int argc, char **argv){
   else if (rotate == true){
     mol->rotate(r1c1, r1c2, r1c3, r2c1, r2c2, r2c3, r3c1, r3c2, r3c3);
   }
+
+  else if (residue_offset!=0){
+  	Atom * atm;
+  	mol->selAll();
+  	for (j=0; j< mol->getAtmVecSize(); j++){
+  		atm=mol->getAtom(j);
+  		atm->setResId(atm->getResId()+residue_offset);
+  	}
+  }  
   else{
     //Do nothing
   }
