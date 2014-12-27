@@ -273,10 +273,13 @@ int main (int argc, char **argv){
 
   else if (residue_offset!=0){
   	Atom * atm;
+  	int atom_num = 1;
   	mol->selAll();
   	for (j=0; j< mol->getAtmVecSize(); j++){
   		atm=mol->getAtom(j);
   		atm->setResId(atm->getResId()+residue_offset);
+  		atm->setAtmNum(atom_num);
+  		atom_num ++;
   	}
   }  
   else{
