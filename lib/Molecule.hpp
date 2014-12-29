@@ -77,6 +77,7 @@ class Molecule {
     Residue* getResidue(const unsigned int& element);
     void renameRes(const std::string &search, const std::string &replace);
     void renameRes(const std::vector<std::string> &search, const std::string &replace);
+    void renameRes(int resid, const std::string &search, const std::string &replace);    
     void readTopology(const std::string& topin, bool verboseFlag=true);
     void readParameter(const std::string& prmin, bool verboseFlag=true);
     void setPrmTop(Prmtop prmtopin);

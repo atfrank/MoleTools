@@ -19,6 +19,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "Molecule.hpp"
+#include "Residue.hpp"
 #include "Atom.hpp"
 #include "Coor.hpp"
 #include "Misc.hpp"
@@ -28,6 +29,7 @@ void usage (){
   std::cerr << "Usage:   modPDB [-options] <PDBfile>" << std::endl;
   std::cerr << "Options: [-model num]" << std::endl;
   std::cerr << "         [-renumber offset]" << std::endl;
+  std::cerr << "         [-match matchPDB]" << std::endl;
   std::cerr << "         [-sel selection]" << std::endl;  
   std::cerr << "         [-fit fitPDB] [-fitsel selection]" << std::endl;
   std::cerr << "         [-translate dx dy dz]" << std::endl;
@@ -48,7 +50,10 @@ int main (int argc, char **argv){
   unsigned int j;
   int model=0;
   int residue_offset=0;
+  bool renumber = false;
+  bool match = false;
   std::string pdb;
+  std::string match_pdb;
   std::string currArg;
   std::string sel;
   std::string fitsel=""; //Default = Fit All
@@ -64,7 +69,7 @@ int main (int argc, char **argv){
   std::string outsel="";
   Molecule *mol;
   Molecule *fitmol;
-  Molecule *catmol;
+  Molecule *catmol;  
   std::string catsel="";
   std::string format;
   bool chnFlag;
@@ -105,6 +110,7 @@ int main (int argc, char **argv){
     }
     else if (currArg.compare("-renumber") == 0){
       currArg=argv[++i];
+      renumber=true;
       std::stringstream(currArg) >> residue_offset; //atoi
     }
     else if (currArg.compare("-sel") == 0 || currArg.compare("-nsel") == 0){
@@ -124,6 +130,11 @@ int main (int argc, char **argv){
       currArg=argv[++i];
       fitpdb=currArg;
       fit=true;
+    }
+    else if (currArg.compare("-match") == 0){
+      currArg=argv[++i];
+      match_pdb=currArg;
+      match=true;
     }
     else if (currArg.compare("-center") == 0){
       center=true;
@@ -271,7 +282,7 @@ int main (int argc, char **argv){
     mol->rotate(r1c1, r1c2, r1c3, r2c1, r2c2, r2c3, r3c1, r3c2, r3c3);
   }
 
-  else if (residue_offset!=0){
+  else if (renumber){
   	Atom * atm;
   	int atom_num = 1;
   	mol->selAll();
@@ -281,6 +292,19 @@ int main (int argc, char **argv){
   		atm->setAtmNum(atom_num);
   		atom_num ++;
   	}
+  }
+  else if (match){
+  	Molecule *matchmol;
+  	matchmol=Molecule::readPDB(match_pdb, model, format, hetFlag);
+  	outsel = ":.CA+CB+C+HA+H+N";
+  	if ( matchmol->getResVecSize() == mol->getResVecSize()){
+  		for (j=0; j< mol->getResVecSize(); j++){ 
+  			mol->renameRes(mol->getResidue(j)->getAtom(0)->getResId(),mol->getResidue(j)->getResName(),matchmol->getResidue(j)->getResName());
+  		}
+  	}
+  	else {
+  		std::cerr << "Warning: match_pdb : " << match_pdb << " and pdb: " << pdb << " do not contain same number of residues" << std::endl;
+  	}
   }  
   else{
     //Do nothing
@@ -289,6 +313,7 @@ int main (int argc, char **argv){
   if (outsel.length() >0){
     mol->select(outsel);
   }
+
   mol->writePDB();
 
   if (mol != NULL){
