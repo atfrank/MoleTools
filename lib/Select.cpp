@@ -375,9 +375,9 @@ std::vector<Atom *> Select::recursiveDescentParser (const std::string &str, cons
         if (str.compare(Misc::trim((*iter)->getAtmName())) == 0){
           out.push_back(*iter);
         }
-        else if (Misc::toupper(str).compare(Misc::trim(Misc::toupper((*iter)->getAtmType()))) == 0){
-          out.push_back(*iter);
-        }
+        //else if (Misc::toupper(str).compare(Misc::trim(Misc::toupper((*iter)->getAtmType()))) == 0){
+        //  out.push_back(*iter);
+        //}
         else{
           continue;
         }
