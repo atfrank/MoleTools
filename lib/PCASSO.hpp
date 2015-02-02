@@ -22,6 +22,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 #define PCASSO_H
 
 #include <string>
+#include <vector>
 
 class PCASSO {
   private:
@@ -29,7 +30,8 @@ class PCASSO {
     //Can't instantiate object when using static call!
 
   public:
-    static std::string getTree (unsigned int elem);
+    //static std::string getTree (unsigned int elem);
+    static std::vector<std::string> getTree (unsigned int elem);
     static unsigned int getNTree();
 
 };
