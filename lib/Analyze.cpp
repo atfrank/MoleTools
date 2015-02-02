@@ -63,8 +63,6 @@ AnalyzePcasso::AnalyzePcasso (std::string delim){
   t.resize(PCASSO::getNTree());
   for (unsigned int i=0; i< PCASSO::getNTree(); i++){
     t.at(i)=new DTree;
-    //Misc::splitStr(Misc::trim(PCASSO::getTree(i)), " \t", tokens, false);
-    //t.at(i)->genDTree(tokens, delim);
     tokens=PCASSO::getTree(i);
     t.at(i)->genDTree(tokens, delim);
   }
