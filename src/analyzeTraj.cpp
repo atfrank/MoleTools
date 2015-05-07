@@ -27,7 +27,7 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 
 void usage(){
   std::cerr << std::endl << std::endl;
-  std::cerr << "Usage:   analyzeTraj [-options] <-pdb PDBfile> <TRAJfile(s)>" << std::endl;
+  std::cerr << "Usage:   analyzeTraj [-options] <-pdb PDBfile> <TRAJfile(s) | PDBfile(s)>" << std::endl;
   std::cerr << "Options: [-sel selection] [-cog selection]" << std::endl;
   std::cerr << "         [-dsel selection selection ] [-dist selection selection]" << std::endl;
   std::cerr << "         [-tsel selection selection selection] [-angle selection selection selection]" << std::endl;
@@ -52,11 +52,11 @@ void usage(){
 int main (int argc, char **argv){
 
   int i;
-  unsigned int itrj, ianalysis, iline, j;
+  unsigned int itrj, ipdb, ianalysis, iline, j;
   std::vector<std::string> trajs;
-  Molecule *mol;
+  Molecule *mol, *tmpmol;
   Molecule *fitmol; //For fitting only
-  std::string pdbs;
+  std::vector<std::string> pdbs;
   std::string refpdb;
   std::string fitpdb;
   bool fit=false;
@@ -307,12 +307,19 @@ int main (int argc, char **argv){
       std::cerr << "Warning: Skipping unknown option \"" << currArg << "\"" << std::endl;
     }
     else{
-      trajs.push_back(currArg);
+      //Check if file extension is ".pdb"
+      if ((currArg.length() > 4) && (currArg.compare(currArg.length()-4, 4, ".pdb") == 0)){
+        pdbs.push_back(currArg);
+        std::cerr << currArg << std::endl;
+      }
+      else{
+        trajs.push_back(currArg);
+      }
     }
   }
 
-  if (trajs.size() == 0){
-    std::cerr << std::endl << "Error: Please provide an input trajectory file" << std::endl << std::endl;
+  if (trajs.size() == 0 && pdbs.size() == 0){
+    std::cerr << std::endl << "Error: Please provide an input trajectory/PDB file" << std::endl << std::endl;
     usage();
   }
 
@@ -456,6 +463,34 @@ int main (int argc, char **argv){
       }
     }
     trjin.close();
+  }
+
+  //Process PDBs
+  for (ipdb=0; ipdb< pdbs.size(); ipdb++){
+    if (verbose == true){
+      std::cerr << "Processing file \"" << pdbs.at(ipdb) << "\"..." << std::endl;
+    }
+    tmpmol = Molecule::readPDB(pdbs.at(ipdb));
+    mol->copyCoor(tmpmol);
+    //Fit if needed
+    if (fit == true){
+      mol->recallSel("fit");
+      mol->lsqfit(fitmol);
+      mol->selAll();
+    }
+    //Start analyses
+    if (timeseries == true){
+      std::cout << iline << "  ";
+      std::cout << "0";
+    }
+    for (ianalysis=0; ianalysis< analyses.size(); ianalysis++){
+      analyses.at(ianalysis)->runAnalysis();
+    }
+    if (timeseries == true){
+      std::cout << std::endl;
+    }
+    iline++;
+    delete tmpmol;
   }
 
   for (ianalysis=0; ianalysis< analyses.size(); ianalysis++){
