@@ -56,7 +56,7 @@ int main (int argc, char **argv){
   std::vector<std::string> trajs;
   Molecule *mol;
   Molecule *fitmol; //For fitting only
-  std::string pdb;
+  std::string pdbs;
   std::string refpdb;
   std::string fitpdb;
   bool fit=false;
@@ -88,7 +88,8 @@ int main (int argc, char **argv){
   Analyze *anin;
 
   iline=1;
-  pdb.clear();
+  pdbs.clear();
+  refpdb.clear();
   fitpdb.clear();
   mol=NULL;
   fitmol=NULL;
@@ -109,7 +110,7 @@ int main (int argc, char **argv){
     }
     else if (currArg.compare("-pdb") == 0){
       currArg=argv[++i];
-      pdb=currArg;
+      refpdb=currArg;
     }
     else if (currArg.compare("-sel") == 0 || currArg.compare("-nsel") == 0 || currArg.compare("-cog") == 0){
       anin=new AnalyzeCOG;
@@ -315,12 +316,12 @@ int main (int argc, char **argv){
     usage();
   }
 
-  if (pdb.length() == 0){
+  if (refpdb.length() == 0){
     std::cerr << std::endl << "Error: Please provide a PDB file via \"-pdb\"" << std::endl;
     usage();
   }
   else {
-    mol=Molecule::readPDB(pdb);
+    mol=Molecule::readPDB(refpdb);
     for (j=0; j< analyses.size(); j++){
       analyses.at(j)->preAnalysis(mol); //Make copies of mol from selection
       analyses.at(j)->setVerbose(verbose);
@@ -331,9 +332,9 @@ int main (int argc, char **argv){
   if (fit == true){
     mol->select(fitsel);
     if (fitpdb.length() > 0){
-      if (fitpdb != pdb){
+      if (fitpdb != refpdb){
         std::cerr << std::endl << "Warning: fitpdb (\"" << fitpdb;
-        std::cerr << "\") is different from pdb (\"" << pdb << "\")!" << std::endl;
+        std::cerr << "\") is different from pdb (\"" << refpdb << "\")!" << std::endl;
       }
       fitmol=Molecule::readPDB(fitpdb);
       fitmol->select(fitsel);

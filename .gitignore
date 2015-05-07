@@ -8,3 +8,5 @@ src/obj
 *.so
 *.dll
 *.a
+*.idea
+*.iml
