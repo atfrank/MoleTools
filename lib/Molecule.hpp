@@ -99,6 +99,7 @@ class Molecule {
     void recallSel(std::string key="tmp");
     void eraseSel(std::string key="tmp");
     void zeroCoor();
+    void copyCoor(Molecule *molin);
     void addRemark(const std::string& remin);
     void clearRemark();
     std::string getRemark();

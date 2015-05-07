@@ -615,7 +615,15 @@ void Molecule::zeroCoor(){
       }
     }
   }
-  
+}
+
+void Molecule::copyCoor(Molecule *molin){
+
+  if (this->getAtmVecSize() == molin->getAtmVecSize()){
+    for (unsigned int i=0; i< this->getAtmVecSize(); i++){
+      this->getAtom(i)->setCoor(molin->getAtom(i)->getCoor());
+    }
+  }
 }
 
 double Molecule::lsqfit (Molecule *refmol, bool transform){
