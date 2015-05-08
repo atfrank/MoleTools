@@ -24,6 +24,12 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 #include "Coor.hpp"
 #include "Misc.hpp"
 
+#include <iostream>
+#include <cstdlib>
+#include <fstream>
+
+
+
 void usage (){
   std::cerr << std::endl;
   std::cerr << "Usage:   modPDB [-options] <PDBfile>" << std::endl;
@@ -32,6 +38,7 @@ void usage (){
   std::cerr << "         [-match matchPDB]" << std::endl;
   std::cerr << "         [-sel selection]" << std::endl;  
   std::cerr << "         [-fit fitPDB] [-fitsel selection]" << std::endl;
+  std::cerr << "         [-data dataFile] [-bfac|occup] [-residue|atom] [-reset]" << std::endl;
   std::cerr << "         [-translate dx dy dz]" << std::endl;
   std::cerr << "         [-outsel selection]" << std::endl;
   std::cerr << "         [-rotate r1c1 r1c2 r1c3 r2c1 r2c2 r2c3 r3c1 r3c2 r3c3]" << std::endl;
@@ -72,10 +79,17 @@ int main (int argc, char **argv){
   Molecule *catmol;  
   std::string catsel="";
   std::string format;
+  std::string datafile="";
   bool chnFlag;
   bool hetFlag;
   std::vector<std::string> catpdbs;
   bool hisFlag;
+  bool data=false;
+  bool data_bfac=true;
+  bool data_occup=false;
+  bool data_residue=true;
+  bool data_atom=false;
+  bool data_reset=false;
 
   pdb.clear();
   mol=NULL;
@@ -136,6 +150,28 @@ int main (int argc, char **argv){
       match_pdb=currArg;
       match=true;
     }
+    else if (currArg.compare("-data") == 0){
+      currArg=argv[++i];
+      datafile=currArg;
+      data=true;
+    }
+    else if (currArg.compare("-bfac") == 0){
+      data_bfac=true;
+    }
+    else if (currArg.compare("-occup") == 0){
+      data_occup=true;
+      data_bfac=false;
+    }    
+    else if (currArg.compare("-residue") == 0){
+      data_residue=true;      
+    }    
+    else if (currArg.compare("-atom") == 0){
+      data_atom=true;
+      data_residue=false;
+    }    
+    else if (currArg.compare("-reset") == 0){
+      data_reset=true;
+    }    
     else if (currArg.compare("-center") == 0){
       center=true;
     }
@@ -306,6 +342,52 @@ int main (int argc, char **argv){
   		std::cerr << "Warning: match_pdb : " << match_pdb << " and pdb: " << pdb << " do not contain same number of residues" << std::endl;
   	}
   }  
+  else if(data){
+    std::string line;
+    std::vector<std::string> s;  
+		if (datafile.length() > 0){
+		  std::ifstream datainp(datafile);
+			while ( std::getline(datainp, line) ){
+				Misc::splitStr(line, " ", s, true);
+				if (s.size() >= 2){
+					for (unsigned int j=0; j< mol->getAtmVecSize(); j++){
+						if (data_residue){
+							if (mol->getAtom(j)->getResId()==atoi(Misc::trim(s.at(0)).c_str())){
+								if (data_occup){
+									mol->getAtom(j)->setOccu(atof(Misc::trim(s.at(1)).c_str()));
+								} 
+								else {
+									mol->getAtom(j)->setBFac(atof(Misc::trim(s.at(1)).c_str()));							
+								}
+							} else if(data_reset){
+								if (data_occup){
+									mol->getAtom(j)->setOccu(0.0);
+								} else {
+									mol->getAtom(j)->setBFac(0.0);
+								}
+							}
+						}
+						if (data_atom){
+							if (mol->getAtom(j)->getAtmNum()==atoi(Misc::trim(s.at(0)).c_str())){
+								if (data_occup){
+									mol->getAtom(j)->setOccu(atof(Misc::trim(s.at(1)).c_str()));
+								} 
+								else {
+									mol->getAtom(j)->setBFac(atof(Misc::trim(s.at(1)).c_str()));							
+								}
+							} else if(data_reset){
+								if (data_occup){
+									mol->getAtom(j)->setOccu(0.0);
+								} else {
+									mol->getAtom(j)->setBFac(0.0);
+								}
+							}
+						}
+					}						
+				}					
+			}
+		} 	
+  }
   else{
     //Do nothing
   }
