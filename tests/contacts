@@ -1,2 +1,14 @@
 A:1.CA B:88.CA 20
 A:2.CA B:89.CA 20
+
+chain_As=`seq 1 169`
+chain_Bs=`seq 170 241`
+rm -f contacts
+for A in $chain_As
+do
+	for B in $chain_Bs
+	do
+		echo "A:${A}.CA B:${B}.CA 20"
+	done
+done
+
