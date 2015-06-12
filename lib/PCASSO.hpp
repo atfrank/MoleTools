@@ -23,7 +23,6 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 #include <vector>
-#include <iterator>
 
 class PCASSO {
   private:

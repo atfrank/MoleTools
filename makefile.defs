@@ -1,6 +1,6 @@
 MAKE = make
 CXX = g++
-CXXFLAGS = -Wall -Wno-deprecated
+CXXFLAGS = -Wall
 OPTFLAGS = -O3
 #DEBUG = -g
 OTHERLIBS = ../
