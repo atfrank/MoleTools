@@ -39,7 +39,7 @@ WHAM::WHAM (){
   fMeta.clear();
   bins.clear();
   tol=1E-5;
-  maxIter=1E6;
+  maxIter=1000000;
   B.clear();
   defaultT=300;
   B.push_back(1.0/(kB*defaultT));

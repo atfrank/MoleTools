@@ -90,6 +90,10 @@ int main (int argc, char **argv){
   bool data_residue=true;
   bool data_atom=false;
   bool data_reset=false;
+  std::string line;
+  std::vector<std::string> s;
+  std::ifstream datainp;
+
 
   pdb.clear();
   mol=NULL;
@@ -343,10 +347,8 @@ int main (int argc, char **argv){
   	}
   }  
   else if(data){
-    std::string line;
-    std::vector<std::string> s;  
 		if (datafile.length() > 0){
-		  std::ifstream datainp(datafile);
+		  datainp.open(datafile.c_str(), std::ios::in);
 			while ( std::getline(datainp, line) ){
 				Misc::splitStr(line, " ", s, true);
 				if (s.size() >= 2){

@@ -27,7 +27,6 @@ along with MoleTools.  If not, see <http://www.gnu.org/licenses/>.
 #include "Mol2.hpp"
 #include "Select.hpp"
 #include "Analyze.hpp"
-#include "LinAlg.hpp"
 #include "Misc.hpp"
 
 Molecule::Molecule (){

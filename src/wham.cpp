@@ -47,7 +47,7 @@ int main (int argc, char **argv){
   std::string fval;
  
   tol=1E-5;
-  maxIter=1E6;
+  maxIter=1000000;
   wham=new WHAM;
   fguess.clear();
   fval.clear();
