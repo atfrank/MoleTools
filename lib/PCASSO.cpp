@@ -79,154 +79,154 @@ std::vector<std::string> PCASSO::getTree(unsigned int elem){
 
   switch (elem){
     case 0:
-      s.assign(std::begin(t0), std::end(t0));
+      s.assign(t0, t0+6173);
       break;
     case 1:
-      s.assign(std::begin(t1), std::end(t1));
+      s.assign(t1, t1+6081);
       break;
     case 2:
-      s.assign(std::begin(t2), std::end(t2));
+      s.assign(t2, t2+6185);
       break;
     case 3:
-      s.assign(std::begin(t3), std::end(t3));
+      s.assign(t3, t3+5929);
       break;
     case 4:
-      s.assign(std::begin(t4), std::end(t4));
+      s.assign(t4, t4+5945);
       break;
     case 5:
-      s.assign(std::begin(t5), std::end(t5));
+      s.assign(t5, t5+5953);
       break;
     case 6:
-      s.assign(std::begin(t6), std::end(t6));
+      s.assign(t6, t6+6049);
       break;
     case 7:
-      s.assign(std::begin(t7), std::end(t7));
+      s.assign(t7, t7+5973);
       break;
     case 8:
-      s.assign(std::begin(t8), std::end(t8));
+      s.assign(t8, t8+5735);
       break;
     case 9:
-      s.assign(std::begin(t9), std::end(t9));
+      s.assign(t9, t9+5693);
       break;
     case 10:
-      s.assign(std::begin(t10), std::end(t10));
+      s.assign(t10, t10+5713);
       break;
     case 11:
-      s.assign(std::begin(t11), std::end(t11));
+      s.assign(t11, t11+5933);
       break;
     case 12:
-      s.assign(std::begin(t12), std::end(t12));
+      s.assign(t12, t12+5783);
       break;
     case 13:
-      s.assign(std::begin(t13), std::end(t13));
+      s.assign(t13, t13+5737);
       break;
     case 14:
-      s.assign(std::begin(t14), std::end(t14));
+      s.assign(t14, t14+5837);
       break;
     case 15:
-      s.assign(std::begin(t15), std::end(t15));
+      s.assign(t15, t15+6071);
       break;
     case 16:
-      s.assign(std::begin(t16), std::end(t16));
+      s.assign(t16, t16+5991);
       break;
     case 17:
-      s.assign(std::begin(t17), std::end(t17));
+      s.assign(t17, t17+5965);
       break;
     case 18:
-      s.assign(std::begin(t18), std::end(t18));
+      s.assign(t18, t18+6193);
       break;
     case 19:
-      s.assign(std::begin(t19), std::end(t19));
+      s.assign(t19, t19+6041);
       break;
     case 20:
-      s.assign(std::begin(t20), std::end(t20));
+      s.assign(t20, t20+6037);
       break;
     case 21:
-      s.assign(std::begin(t21), std::end(t21));
+      s.assign(t21, t21+5977);
       break;
     case 22:
-      s.assign(std::begin(t22), std::end(t22));
+      s.assign(t22, t22+6185);
       break;
     case 23:
-      s.assign(std::begin(t23), std::end(t23));
+      s.assign(t23, t23+5897);
       break;
     case 24:
-      s.assign(std::begin(t24), std::end(t24));
+      s.assign(t24, t24+6047);
       break;
     case 25:
-      s.assign(std::begin(t25), std::end(t25));
+      s.assign(t25, t25+6021);
       break;
     case 26:
-      s.assign(std::begin(t26), std::end(t26));
+      s.assign(t26, t26+5999);
       break;
     case 27:
-      s.assign(std::begin(t27), std::end(t27));
+      s.assign(t27, t27+5975);
       break;
     case 28:
-      s.assign(std::begin(t28), std::end(t28));
+      s.assign(t28, t28+5885);
       break;
     case 29:
-      s.assign(std::begin(t29), std::end(t29));
+      s.assign(t29, t29+5965);
       break;
     case 30:
-      s.assign(std::begin(t30), std::end(t30));
+      s.assign(t30, t30+5879);
       break;
     case 31:
-      s.assign(std::begin(t31), std::end(t31));
+      s.assign(t31, t31+5915);
       break;
     case 32:
-      s.assign(std::begin(t32), std::end(t32));
+      s.assign(t32, t32+6091);
       break;
     case 33:
-      s.assign(std::begin(t33), std::end(t33));
+      s.assign(t33, t33+5875);
       break;
     case 34:
-      s.assign(std::begin(t34), std::end(t34));
+      s.assign(t34, t34+6161);
       break;
     case 35:
-      s.assign(std::begin(t35), std::end(t35));
+      s.assign(t35, t35+5973);
       break;
     case 36:
-      s.assign(std::begin(t36), std::end(t36));
+      s.assign(t36, t36+6147);
       break;
     case 37:
-      s.assign(std::begin(t37), std::end(t37));
+      s.assign(t37, t37+5999);
       break;
     case 38:
-      s.assign(std::begin(t38), std::end(t38));
+      s.assign(t38, t38+5893);
       break;
     case 39:
-      s.assign(std::begin(t39), std::end(t39));
+      s.assign(t39, t39+6077);
       break;
     case 40:
-      s.assign(std::begin(t40), std::end(t40));
+      s.assign(t40, t40+5703);
       break;
     case 41:
-      s.assign(std::begin(t41), std::end(t41));
+      s.assign(t41, t41+6085);
       break;
     case 42:
-      s.assign(std::begin(t42), std::end(t42));
+      s.assign(t42, t42+5997);
       break;
     case 43:
-      s.assign(std::begin(t43), std::end(t43));
+      s.assign(t43, t43+6003);
       break;
     case 44:
-      s.assign(std::begin(t44), std::end(t44));
+      s.assign(t44, t44+5931);
       break;
     case 45:
-      s.assign(std::begin(t45), std::end(t45));
+      s.assign(t45, t45+5845);
       break;
     case 46:
-      s.assign(std::begin(t46), std::end(t46));
+      s.assign(t46, t46+6009);
       break;
     case 47:
-      s.assign(std::begin(t47), std::end(t47));
+      s.assign(t47, t47+5917);
       break;
     case 48:
-      s.assign(std::begin(t48), std::end(t48));
+      s.assign(t48, t48+6045);
       break;
     case 49:
-      s.assign(std::begin(t49), std::end(t49));
+      s.assign(t49, t49+6087);
       break;
     default:
       break;
