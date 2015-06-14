@@ -16,4 +16,4 @@ analyzeTraj -average :.CA -pdb tests/file.pdb t.dcd | grep ATOM > avg2.pdb
 analyzeTraj -covariance :1-5.CA covar.out -pdb tests/file.pdb tests/file.dcd tests/file.dcd tests/file.dcd tests/file.dcd tests/file.dcd
 
 ContactPDB
-bin/contactPDB -buffer 0 -rij_mins data/rij_mins.txt  -sel1 "A:." -sel2 "B:." tests/contactPDB.pdb
+bin/contactPDB -buffer 1 -rij_mins data/rij_mins.txt  -sel "A:." -sel "B:." tests/contactPDB.pdb

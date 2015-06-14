@@ -30,7 +30,7 @@ void usage()
   std::cerr << "CONTACTPDB  v1.00" << std::endl;
   std::cerr << "(c) 2014 Aaron T. Frank and University of Michigan." << std::endl;
   std::cerr << "====================================================" << std::endl;
-  std::cerr << "Usage:   contactPDB [-options] <-sel1 (selection)> <-sel2(selection)> <PDBfile>" << std::endl;
+  std::cerr << "Usage:   contactPDB [-options] <-sel (selection) -sel(selection) ...> <PDBfile>" << std::endl;
   std::cerr << "Options: [-cutoff distance]" << std::endl;
   std::cerr << "         [-buffer distance]" << std::endl;
   std::cerr << "         [-rij_mins file]" << std::endl;
@@ -312,11 +312,11 @@ int main (int argc, char **argv)
   std::string nucleus;
   std::string resname;
   std::string atomname;
-  std::string sel1;
-  std::string sel2;
   std::string frij_mins;
   
   std::vector<std::string> trajs;
+  std::vector<std::string> selections;
+  std::vector<Molecule*> molecules;
   std::map<std::string,double> rij_mins;
   int start;
   int stop=std::numeric_limits<int>::max();
@@ -347,9 +347,9 @@ int main (int argc, char **argv)
   buffer=1.0;
   cutoff=10.0;
   rij_min=cutoff;
-  sel1 = "A:.CA";
-  sel1 = "B:.CA";   
   pdbs.clear();
+  selections.clear();
+  molecules.clear();
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -357,15 +357,10 @@ int main (int argc, char **argv)
     {
       usage();
     }
-    else if (currArg.compare("-sel1") == 0 )
+    else if (currArg.compare("-sel") == 0 )
     {
       currArg=argv[++i];    
-      sel1=currArg;     
-    }      
-    else if (currArg.compare("-sel2") == 0 )
-    {
-      currArg=argv[++i];    
-      sel2=currArg;     
+      selections.push_back(currArg);
     }      
     else if (currArg.compare("-cutoff") == 0)
     {
@@ -423,9 +418,9 @@ int main (int argc, char **argv)
     usage();
   }
  
-  if (sel1.size() == 0 || sel2.size() == 0)
+  if (selections.size() < 2 )
   {
-    std::cerr << std::endl << "Error: supply two selection via -sel1 and -sel2" << std::endl << std::endl;
+    std::cerr << std::endl << " Error: supply at least two selection via -sel" << std::endl << std::endl;
     usage();
   }
 
@@ -437,12 +432,13 @@ int main (int argc, char **argv)
 	{
 		load_rij_mins_file(frij_mins,rij_mins);
 	}
+
    
   if (trajs.size() > 0)
   {
     if (pdbs.size() > 1)
     {
-      std::cerr << std::endl << "Warning: Only the first PDB structure is used for trajectory analysis" << std::endl << std::endl;
+      std::cerr << std::endl  << "Warning: Only the first PDB structure is used for trajectory analysis" << std::endl << std::endl;
     }
     
     /* Trajectory analysis */
@@ -476,24 +472,35 @@ int main (int argc, char **argv)
             cmol->select(":.CA");
             Amol = cmol->copy(true);
 
-            Amol->select(sel1);
-            Bmol=cmol->copy(true);
-
-            Amol->select(sel2);
-            Cmol=cmol->copy(true); 
-                      
-            for (unsigned int j=0; j< Bmol->getAtmVecSize(); j++)
+						for (unsigned int k=0; k< selections.size(); k++)
+						{
+							Amol->select(selections.at(k));
+							molecules.push_back(Amol->copy(true));
+						}
+                                  
+            for (unsigned int j=0; j < molecules.size(); j++)
             {
-              for (unsigned int k=0; k< Cmol->getAtmVecSize(); k++)
-              {
-                atmB = Bmol->getAtom(j);
-                atmC = Cmol->getAtom(k);
-								rij_min = buffer + get_rij_min(atmB->getResName(),atmC->getResName(),cutoff,rij_mins);
-								dist = Analyze::distance(atmB->getCoor(), atmC->getCoor());					
-								if (dist <= rij_min){ 
-									 std::cout << f+1 << " " << atmB->getResId() << " " << atmB->getResName() << " " << atmC->getResId() << " "  << atmC->getResName() << std::endl;
+							Bmol = molecules.at(j);
+							for (unsigned int k=0; k < molecules.size(); k++)
+							{								
+								if(k>j)
+								{
+									Cmol = molecules.at(k);
+									for (unsigned int l=0; l< Bmol->getAtmVecSize(); l++)
+									{
+										for (unsigned int m=0; m< Cmol->getAtmVecSize(); m++)
+										{
+											atmB = Bmol->getAtom(l);
+											atmC = Cmol->getAtom(m);
+											rij_min = buffer + get_rij_min(atmB->getResName(),atmC->getResName(),cutoff,rij_mins);
+											dist = Analyze::distance(atmB->getCoor(), atmC->getCoor());					
+											if (dist <= rij_min){ 
+												 std::cout << nframe << " " << atmB->getResId() << " " << atmB->getResName() << " " << selections.at(j) << " " << atmC->getResId() << " "  << atmC->getResName() << " " << selections.at(k) << std::endl;
+											}
+										}
+									}
 								}
-              }
+							}
             }
           }
         }
@@ -511,36 +518,46 @@ int main (int argc, char **argv)
   }
   else 
   { 
-    /* instantiate LARMORD */
     for (f=0; f< pdbs.size(); f++)
     {  
       cmol = Molecule::readPDB(pdbs.at(f));
-      cmol->select(":.CA");
-      Amol = cmol->copy(true);
-  
-      Amol->select(sel1);
-      Bmol=cmol->copy(true);
+			cmol->select(":.CA");
+			Amol = cmol->copy(true);
 
-      Amol->select(sel2);
-      Cmol=cmol->copy(true); 
-            
-			for (unsigned int j=0; j< Bmol->getAtmVecSize(); j++)
+			for (unsigned int k=0; k< selections.size(); k++)
 			{
-				for (unsigned int k=0; k< Cmol->getAtmVecSize(); k++)
-				{
-					atmB = Bmol->getAtom(j);
-					atmC = Cmol->getAtom(k);
-					rij_min = buffer + get_rij_min(atmB->getResName(),atmC->getResName(),cutoff,rij_mins);
-					dist = Analyze::distance(atmB->getCoor(), atmC->getCoor());					
-					if (dist <= rij_min){ 
-						 std::cout << f+1 << " " << rij_min << " " << dist << " " << atmB->getResId() << " " << atmB->getResName() << " " << atmC->getResId() << " "  << atmC->getResName() << std::endl;
+				Amol->select(selections.at(k));
+				molecules.push_back(Amol->copy(true));
+				
+			}
+													
+			for (unsigned int j=0; j < molecules.size(); j++)
+			{
+				Bmol = molecules.at(j);
+				for (unsigned int k=0; k < molecules.size(); k++)
+				{								
+					if(k>j)
+					{
+						Cmol = molecules.at(k);
+						for (unsigned int l=0; l< Bmol->getAtmVecSize(); l++)
+						{
+							for (unsigned int m=0; m< Cmol->getAtmVecSize(); m++)
+							{
+								atmB = Bmol->getAtom(l);
+								atmC = Cmol->getAtom(m);
+								rij_min = buffer + get_rij_min(atmB->getResName(),atmC->getResName(),cutoff,rij_mins);
+								dist = Analyze::distance(atmB->getCoor(), atmC->getCoor());					
+								if (dist <= rij_min){ 
+									 std::cout << f+1 << " " << atmB->getResId() << " " << atmB->getResName() << " " << selections.at(j) << " " << atmC->getResId() << " "  << atmC->getResName() << " " << selections.at(k) << std::endl;
+								}
+							}
+						}
 					}
 				}
 			}
       delete cmol;
       delete Amol;
-      delete Bmol;
-      delete Cmol;
+      molecules.clear();
     }
   }  
   return 0;
