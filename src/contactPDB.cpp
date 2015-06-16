@@ -35,11 +35,14 @@ void usage(){
   std::cerr << "         [-buffer distance]" << std::endl;
   std::cerr << "         [-rij_mins file]" << std::endl;
   std::cerr << "         [-csfile file]" << std::endl;
+  std::cerr << "         [-identification tag]" << std::endl;
   std::cerr << "         [-trj TRAJfile]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;  
   std::cerr << std::endl;
   exit(0);
 }
+
+
 
 std::string print_value(Chain *chn, int j){
 	if (chn->getResidue(j) == NULL){
@@ -49,12 +52,36 @@ std::string print_value(Chain *chn, int j){
 	}
 }
 
+std::string print_value_i(std::string key, std::vector<std::string> &vector){
+  if( std::find(vector.begin(), vector.end(), key)!= vector.end()){
+		return "1";
+	} else {
+		return "0";
+	}	
+}
+
+double print_value_d(const std::string &key, std::map<std::string,double> &map){
+	if (map.find (key) == map.end()){
+		return 0.0;
+	} else {
+		return (map.at(key));
+	}
+}
+
+std::string print_key(Atom *atm){
+	std::stringstream resid;
+	resid.str("");
+	resid << atm->getResId();
+	return(resid.str()+":"+atm->getResName()+":"+atm->getChainId());
+}
+
 std::string print_key(Chain *chn, int j){
 	std::stringstream resid;
 	resid.str("");
 	resid << chn->getResidue(j)->getResId();
 	return(resid.str()+":"+chn->getResidue(j)->getResName()+":"+chn->getChainId());
 }
+
 
 void setup_nearset_neighbors(Molecule *molin, std::map<std::string,std::string> &nearset_neighbors){
   Chain *chn;
@@ -64,19 +91,40 @@ void setup_nearset_neighbors(Molecule *molin, std::map<std::string,std::string> 
     chn=molin->getChain(i);
     for ( int j=0; j< chn->getResVecSize(); j++){
       key=print_key(chn,j);
-      value=print_value(chn,j-1)+" "+print_value(chn,j+1);
+      value=print_value(chn,j-2)+" "+print_value(chn,j-1)+" "+print_value(chn,j+1)+" "+print_value(chn,j+2);
       nearset_neighbors.insert(std::pair<std::string,std::string>(key,value));
-      //std::cout << key << " " << value << std::endl;
+      //std::cout << "NN " << key << " " << value << std::endl;
     }
   }
 }
 
-void load_chem_shift_file(const std::string fcsfile, std::map<std::string,double> &cs_data){
+void print_data(Molecule *molin, std::map<std::string,std::string> &nearset_neighbors,std::map<std::string,double> &cs_data, std::vector<std::string> &contacts, std::string ID){
+  Chain *chn;
+  std::string key, value;
+	//loop over residue
+  for ( int i=0; i< molin->getChnVecSize(); i++){
+    chn=molin->getChain(i);
+    for ( int j=0; j< chn->getResVecSize(); j++){
+      key=print_key(chn,j);      
+      std::cout << ID << " " << print_value_i(key, contacts) << " " << key << " " << nearset_neighbors.at(key) << " " ;
+      std::cout << print_value_d(key+":"+"CA",cs_data) << " ";
+      std::cout << print_value_d(key+":"+"CB",cs_data) << " ";
+      std::cout << print_value_d(key+":"+"C",cs_data) << " ";
+      std::cout << print_value_d(key+":"+"N",cs_data) << " ";
+      std::cout << print_value_d(key+":"+"HA",cs_data) << " ";
+      std::cout << print_value_d(key+":"+"H",cs_data) << " ";
+      std::cout << print_value_d(key+":"+"HN",cs_data) << std::endl;
+    }
+  }
+}
+
+void load_chem_shift_file(const std::string fcsfile, std::map<std::string,double> &cs_data, std::map<std::string,double> &randomShifts){
 	std::ifstream csFile;
 	std::istream* csinp;
 	std::string line, key;
 	std::vector<std::string> s;	
 	double exp_cs;
+	double ran_cs;
 	if (fcsfile.length() > 0){
 		csFile.open(fcsfile.c_str(), std::ios::in);
 		csinp=&csFile;
@@ -85,11 +133,15 @@ void load_chem_shift_file(const std::string fcsfile, std::map<std::string,double
 				getline(*csinp, line);
 				Misc::splitStr(line, "     ", s, false);
 				if (s.size() > 20){					
-					//resid+resname+nucleus
-					key = Misc::trim(s.at(5))+":"+Misc::trim(s.at(6))+":"+Misc::trim(s.at(7));
-					exp_cs = atof(Misc::trim(s.at(10)).c_str());
+					//nucleus:resname
+					key = Misc::trim(s.at(6))+":"+Misc::trim(s.at(5));
+					ran_cs = print_value_d(key,randomShifts);
+					exp_cs = atof(Misc::trim(s.at(9)).c_str()) - ran_cs;
+					//resid:resname:chain:nucleus
+					key = Misc::trim(s.at(17))+":"+Misc::trim(s.at(5))+":"+Misc::trim(s.at(16))+":"+Misc::trim(s.at(6));
 					cs_data.insert(std::pair<std::string,double>(key,exp_cs));
-					//std::cout << key << " " << exp_cs << std::endl;	
+					
+					//std::cout << "CS data "<< key << " " << exp_cs << " " << ran_cs << std::endl;	
 				}
 			}
 		}
@@ -359,6 +411,143 @@ double get_rij_min(const std::string &resnameA, const std::string &resnameB, dou
 	}
 }
 
+
+void initializeRandomShifts(std::map<std::string,double> &randomShifts){
+	randomShifts.insert(std::pair<std::string,double>("C:ILE",176.4));
+	randomShifts.insert(std::pair<std::string,double>("C:GLN",176.0));
+	randomShifts.insert(std::pair<std::string,double>("C:GLY",174.9));
+	randomShifts.insert(std::pair<std::string,double>("C:GLU",176.6));
+	randomShifts.insert(std::pair<std::string,double>("C:CYS",174.6));
+	randomShifts.insert(std::pair<std::string,double>("C:ASP",176.3));
+	randomShifts.insert(std::pair<std::string,double>("C:SER",174.6));
+	randomShifts.insert(std::pair<std::string,double>("C:LYS",176.6));
+	randomShifts.insert(std::pair<std::string,double>("C:PRO",177.3));
+	randomShifts.insert(std::pair<std::string,double>("C:HID",174.1));
+	randomShifts.insert(std::pair<std::string,double>("C:HIE",174.1));
+	randomShifts.insert(std::pair<std::string,double>("C:ASN",175.2));
+	randomShifts.insert(std::pair<std::string,double>("C:VAL",176.3));
+	randomShifts.insert(std::pair<std::string,double>("C:THR",174.7));
+	randomShifts.insert(std::pair<std::string,double>("C:HIS",174.1));
+	randomShifts.insert(std::pair<std::string,double>("C:TRP",176.1));
+	randomShifts.insert(std::pair<std::string,double>("C:PHE",175.8));
+	randomShifts.insert(std::pair<std::string,double>("C:ALA",177.8));
+	randomShifts.insert(std::pair<std::string,double>("C:MET",173.6));
+	randomShifts.insert(std::pair<std::string,double>("C:LEU",177.6));
+	randomShifts.insert(std::pair<std::string,double>("C:ARG",176.3));
+	randomShifts.insert(std::pair<std::string,double>("C:TYR",175.9));
+	randomShifts.insert(std::pair<std::string,double>("CB:ILE",38.8));
+	randomShifts.insert(std::pair<std::string,double>("CB:GLN",29.4));
+	randomShifts.insert(std::pair<std::string,double>("CB:GLY",999));
+	randomShifts.insert(std::pair<std::string,double>("CB:GLU",29.9));
+	randomShifts.insert(std::pair<std::string,double>("CB:CYS",34.5));
+	randomShifts.insert(std::pair<std::string,double>("CB:ASP",41.1));
+	randomShifts.insert(std::pair<std::string,double>("CB:SER",63.8));
+	randomShifts.insert(std::pair<std::string,double>("CB:LYS",33.1));
+	randomShifts.insert(std::pair<std::string,double>("CB:PRO",33.3));
+	randomShifts.insert(std::pair<std::string,double>("CB:HID",29.0));
+	randomShifts.insert(std::pair<std::string,double>("CB:HIE",29.0));
+	randomShifts.insert(std::pair<std::string,double>("CB:ASN",38.9));
+	randomShifts.insert(std::pair<std::string,double>("CB:VAL",32.9));
+	randomShifts.insert(std::pair<std::string,double>("CB:THR",69.8));
+	randomShifts.insert(std::pair<std::string,double>("CB:HIS",29.0));
+	randomShifts.insert(std::pair<std::string,double>("CB:TRP",29.6));
+	randomShifts.insert(std::pair<std::string,double>("CB:PHE",39.6));
+	randomShifts.insert(std::pair<std::string,double>("CB:ALA",19.1));
+	randomShifts.insert(std::pair<std::string,double>("CB:MET",32.9));
+	randomShifts.insert(std::pair<std::string,double>("CB:LEU",42.4));
+	randomShifts.insert(std::pair<std::string,double>("CB:ARG",30.9));
+	randomShifts.insert(std::pair<std::string,double>("CB:TYR",37.8));
+	randomShifts.insert(std::pair<std::string,double>("CA:ILE",61.1));
+	randomShifts.insert(std::pair<std::string,double>("CA:GLN",55.7));
+	randomShifts.insert(std::pair<std::string,double>("CA:GLY",45.1));
+	randomShifts.insert(std::pair<std::string,double>("CA:GLU",56.6));
+	randomShifts.insert(std::pair<std::string,double>("CA:CYS",56.8));
+	randomShifts.insert(std::pair<std::string,double>("CA:ASP",54.2));
+	randomShifts.insert(std::pair<std::string,double>("CA:SER",58.3));
+	randomShifts.insert(std::pair<std::string,double>("CA:LYS",56.2));
+	randomShifts.insert(std::pair<std::string,double>("CA:PRO",58.05));
+	randomShifts.insert(std::pair<std::string,double>("CA:HID",55.0));
+	randomShifts.insert(std::pair<std::string,double>("CA:HIE",55.0));
+	randomShifts.insert(std::pair<std::string,double>("CA:ASN",53.1));
+	randomShifts.insert(std::pair<std::string,double>("CA:VAL",62.2));
+	randomShifts.insert(std::pair<std::string,double>("CA:THR",61.8));
+	randomShifts.insert(std::pair<std::string,double>("CA:HIS",55.0));
+	randomShifts.insert(std::pair<std::string,double>("CA:TRP",57.5));
+	randomShifts.insert(std::pair<std::string,double>("CA:PHE",57.7));
+	randomShifts.insert(std::pair<std::string,double>("CA:ALA",52.5));
+	randomShifts.insert(std::pair<std::string,double>("CA:MET",55.4));
+	randomShifts.insert(std::pair<std::string,double>("CA:LEU",55.1));
+	randomShifts.insert(std::pair<std::string,double>("CA:ARG",56.0));
+	randomShifts.insert(std::pair<std::string,double>("CA:TYR",57.9));
+	randomShifts.insert(std::pair<std::string,double>("N:ILE",119.9));
+	randomShifts.insert(std::pair<std::string,double>("N:GLN",119.8));
+	randomShifts.insert(std::pair<std::string,double>("N:GLY",108.8));
+	randomShifts.insert(std::pair<std::string,double>("N:GLU",120.2));
+	randomShifts.insert(std::pair<std::string,double>("N:CYS",118.7));
+	randomShifts.insert(std::pair<std::string,double>("N:ASP",120.4));
+	randomShifts.insert(std::pair<std::string,double>("N:SER",115.7));
+	randomShifts.insert(std::pair<std::string,double>("N:LYS",120.4));
+	randomShifts.insert(std::pair<std::string,double>("N:PRO",999));
+	randomShifts.insert(std::pair<std::string,double>("N:HID",118.2));
+	randomShifts.insert(std::pair<std::string,double>("N:HIE",118.2));
+	randomShifts.insert(std::pair<std::string,double>("N:ASN",118.7));
+	randomShifts.insert(std::pair<std::string,double>("N:VAL",119.2));
+	randomShifts.insert(std::pair<std::string,double>("N:THR",113.6));
+	randomShifts.insert(std::pair<std::string,double>("N:HIS",118.2));
+	randomShifts.insert(std::pair<std::string,double>("N:TRP",121.3));
+	randomShifts.insert(std::pair<std::string,double>("N:PHE",120.3));
+	randomShifts.insert(std::pair<std::string,double>("N:ALA",123.8));
+	randomShifts.insert(std::pair<std::string,double>("N:MET",119.6));
+	randomShifts.insert(std::pair<std::string,double>("N:LEU",121.8));
+	randomShifts.insert(std::pair<std::string,double>("N:ARG",120.5));
+	randomShifts.insert(std::pair<std::string,double>("N:TYR",120.3));
+	randomShifts.insert(std::pair<std::string,double>("H:ILE",8.0));
+	randomShifts.insert(std::pair<std::string,double>("H:GLN",8.32));
+	randomShifts.insert(std::pair<std::string,double>("H:GLY",8.3));
+	randomShifts.insert(std::pair<std::string,double>("H:GLU",8.42));
+	randomShifts.insert(std::pair<std::string,double>("H:CYS",8.375));
+	randomShifts.insert(std::pair<std::string,double>("H:ASP",8.34));
+	randomShifts.insert(std::pair<std::string,double>("H:SER",8.31));
+	randomShifts.insert(std::pair<std::string,double>("H:LYS",8.29));
+	randomShifts.insert(std::pair<std::string,double>("H:PRO",999));
+	randomShifts.insert(std::pair<std::string,double>("H:HID",8.42));
+	randomShifts.insert(std::pair<std::string,double>("H:HIE",8.42));
+	randomShifts.insert(std::pair<std::string,double>("H:ASN",8.4));
+	randomShifts.insert(std::pair<std::string,double>("H:VAL",8.03));
+	randomShifts.insert(std::pair<std::string,double>("H:THR",8.15));
+	randomShifts.insert(std::pair<std::string,double>("H:HIS",8.42));
+	randomShifts.insert(std::pair<std::string,double>("H:TRP",8.25));
+	randomShifts.insert(std::pair<std::string,double>("H:PHE",8.3));
+	randomShifts.insert(std::pair<std::string,double>("H:ALA",8.24));
+	randomShifts.insert(std::pair<std::string,double>("H:MET",8.28));
+	randomShifts.insert(std::pair<std::string,double>("H:LEU",8.16));
+	randomShifts.insert(std::pair<std::string,double>("H:ARG",8.23));
+	randomShifts.insert(std::pair<std::string,double>("H:TYR",8.12));
+	randomShifts.insert(std::pair<std::string,double>("HA:ILE",4.17));
+	randomShifts.insert(std::pair<std::string,double>("HA:GLN",4.34));
+	randomShifts.insert(std::pair<std::string,double>("HA:GLY",3.96));
+	randomShifts.insert(std::pair<std::string,double>("HA:GLU",4.35));
+	randomShifts.insert(std::pair<std::string,double>("HA:CYS",4.55));
+	randomShifts.insert(std::pair<std::string,double>("HA:ASP",4.64));
+	randomShifts.insert(std::pair<std::string,double>("HA:SER",4.47));
+	randomShifts.insert(std::pair<std::string,double>("HA:LYS",4.32));
+	randomShifts.insert(std::pair<std::string,double>("HA:PRO",4.42));
+	randomShifts.insert(std::pair<std::string,double>("HA:HID",4.73));
+	randomShifts.insert(std::pair<std::string,double>("HA:HIE",4.73));
+	randomShifts.insert(std::pair<std::string,double>("HA:ASN",4.74));
+	randomShifts.insert(std::pair<std::string,double>("HA:VAL",4.12));
+	randomShifts.insert(std::pair<std::string,double>("HA:THR",4.35));
+	randomShifts.insert(std::pair<std::string,double>("HA:HIS",4.73));
+	randomShifts.insert(std::pair<std::string,double>("HA:TRP",4.66));
+	randomShifts.insert(std::pair<std::string,double>("HA:PHE",4.62));
+	randomShifts.insert(std::pair<std::string,double>("HA:ALA",4.32));
+	randomShifts.insert(std::pair<std::string,double>("HA:MET",4.48));
+	randomShifts.insert(std::pair<std::string,double>("HA:LEU",4.34));
+	randomShifts.insert(std::pair<std::string,double>("HA:ARG",4.34));
+	randomShifts.insert(std::pair<std::string,double>("HA:TYR",4.55));
+}
+
+
 int main (int argc, char **argv){
   int i;
   unsigned int f;
@@ -370,13 +559,17 @@ int main (int argc, char **argv){
   std::string atomname;
   std::string frij_mins;
   std::string fcsfile;
+  std::string identification;
   
   std::vector<std::string> trajs;
   std::vector<std::string> selections;
   std::vector<Molecule*> molecules;
   std::map<std::string,double> cs_data;
   std::map<std::string,std::string> nearset_neighbors;
+  std::vector<std::string> contacts;
   std::map<std::string,double> rij_mins;
+  std::map<std::string,double> randomShifts;
+  
   int start;
   int stop=std::numeric_limits<int>::max();
   int skip;
@@ -396,6 +589,7 @@ int main (int argc, char **argv){
   start=0;
   fcsfile="";
   frij_mins="";
+  identification="None";
   skip=0;
   nframe=0;
   process=0;
@@ -411,6 +605,7 @@ int main (int argc, char **argv){
   pdbs.clear();
   selections.clear();
   molecules.clear();
+  randomShifts.clear();
 
   for (i=1; i<argc; i++){
     currArg=argv[i];
@@ -443,6 +638,12 @@ int main (int argc, char **argv){
       currArg=argv[++i];    
       fcsfile=currArg;     
     }          
+    else if (currArg.compare("-identification") == 0 )
+    {
+      currArg=argv[++i];    
+      identification=currArg;     
+    }          
+
     else if (currArg.compare("-trj") == 0 || currArg.compare("-traj") == 0)
     {
       currArg=argv[++i];
@@ -502,8 +703,9 @@ int main (int argc, char **argv){
 
   // loading chemical shift data
   cs_data.clear();
+  initializeRandomShifts(randomShifts);
   if(fcsfile.length()>0){
-  	load_chem_shift_file(fcsfile,cs_data);
+  	load_chem_shift_file(fcsfile,cs_data,randomShifts);
 	}
 	
 	// generate nearest neighbors map
@@ -511,7 +713,7 @@ int main (int argc, char **argv){
 	cmol->selAll();	
 	nearset_neighbors.clear();
 	setup_nearset_neighbors(cmol,nearset_neighbors);
-  return(0);
+
   if (trajs.size() > 0)
   {
     if (pdbs.size() > 1)
@@ -569,11 +771,14 @@ int main (int argc, char **argv){
 										for (unsigned int m=0; m< Cmol->getAtmVecSize(); m++)
 										{
 											atmB = Bmol->getAtom(l);
-											atmC = Cmol->getAtom(m);
+											atmC = Cmol->getAtom(m);											
 											rij_min = buffer + get_rij_min(atmB->getResName(),atmC->getResName(),cutoff,rij_mins);
 											dist = Analyze::distance(atmB->getCoor(), atmC->getCoor());					
-											if (dist <= rij_min){ 
-												 std::cout << nframe << " " << atmB->getResId() << " " << atmB->getResName() << " " << selections.at(j) << " " << atmC->getResId() << " "  << atmC->getResName() << " " << selections.at(k) << std::endl;
+											if (dist <= rij_min){											   
+												contacts.push_back(print_key(atmB));
+												contacts.push_back(print_key(atmC));
+												std::cout << f+1 << " " << atmB->getResId() << " " << atmB->getResName() << " " << selections.at(j) << " " << atmC->getResId() << " "  << atmC->getResName() << " " << selections.at(k) << std::endl;
+												//std::cout << nframe << " " << atmB->getResId() << " " << atmB->getResName() << " " << selections.at(j) << " " << atmC->getResId() << " "  << atmC->getResName() << " " << selections.at(k) << std::endl;
 											}
 										}
 									}
@@ -625,14 +830,18 @@ int main (int argc, char **argv){
 								atmC = Cmol->getAtom(m);
 								rij_min = buffer + get_rij_min(atmB->getResName(),atmC->getResName(),cutoff,rij_mins);
 								dist = Analyze::distance(atmB->getCoor(), atmC->getCoor());					
-								if (dist <= rij_min){ 
-									 std::cout << f+1 << " " << atmB->getResId() << " " << atmB->getResName() << " " << selections.at(j) << " " << atmC->getResId() << " "  << atmC->getResName() << " " << selections.at(k) << std::endl;
+								if (dist <= rij_min){
+									contacts.push_back(print_key(atmB));
+									contacts.push_back(print_key(atmC));
+									//std::cout << f+1 << " " << atmB->getResId() << " " << atmB->getResName() << " " << selections.at(j) << " " << atmC->getResId() << " "  << atmC->getResName() << " " << selections.at(k) << std::endl;
 								}
 							}
 						}
 					}
 				}
 			}
+			//print 
+			print_data(cmol,nearset_neighbors,cs_data,contacts,identification);
       delete cmol;
       delete Amol;
       molecules.clear();
