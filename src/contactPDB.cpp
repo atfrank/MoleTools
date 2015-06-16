@@ -24,8 +24,7 @@
 #include <algorithm>
 
 
-void usage()
-{
+void usage(){
   std::cerr << "====================================================" << std::endl;
   std::cerr << "CONTACTPDB  v1.00" << std::endl;
   std::cerr << "(c) 2014 Aaron T. Frank and University of Michigan." << std::endl;
@@ -34,14 +33,43 @@ void usage()
   std::cerr << "Options: [-cutoff distance]" << std::endl;
   std::cerr << "         [-buffer distance]" << std::endl;
   std::cerr << "         [-rij_mins file]" << std::endl;
+  std::cerr << "         [-csfile file]" << std::endl;
   std::cerr << "         [-trj TRAJfile]" << std::endl;
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;  
   std::cerr << std::endl;
   exit(0);
 }
 
-void load_rij_mins_file(const std::string frij_mins, std::map<std::string,double> &rij_mins)
-{
+void load_chem_shift_file(const std::string fcsfile, std::map<std::string,double> &cs_data){
+	std::ifstream csFile;
+	std::istream* csinp;
+	std::string line, key;
+	std::vector<std::string> s;	
+	double exp_cs;
+	if (fcsfile.length() > 0){
+		csFile.open(fcsfile.c_str(), std::ios::in);
+		csinp=&csFile;
+		if (csFile.is_open()) {
+			while (csinp->good() && !(csinp->eof())){
+				getline(*csinp, line);
+				Misc::splitStr(line, "     ", s, false);
+				if (s.size() > 20){					
+					//resid+resname+nucleus
+					key = Misc::trim(s.at(5))+":"+Misc::trim(s.at(6))+":"+Misc::trim(s.at(7));
+					exp_cs = atof(Misc::trim(s.at(10)).c_str());
+					cs_data.insert(std::pair<std::string,double>(key,exp_cs));
+					//std::cout << key << " " << exp_cs << std::endl;	
+				}
+			}
+		}
+		else {
+			std::cerr << "Error: Unable to open file: " << fcsfile << std::endl;	
+			exit(0);		                
+		}
+	}
+}
+
+void load_rij_mins_file(const std::string frij_mins, std::map<std::string,double> &rij_mins){
 	std::ifstream rijFile;
 	std::istream* rijinp;
 	std::string line, key;
@@ -69,8 +97,7 @@ void load_rij_mins_file(const std::string frij_mins, std::map<std::string,double
 	}
 }
 
-void load_rij_mins(std::map<std::string,double> &rij_mins)
-{
+void load_rij_mins(std::map<std::string,double> &rij_mins){
 	rij_mins.insert(std::pair<std::string,double>("ALA:ALA",5.53016896037621));
 	rij_mins.insert(std::pair<std::string,double>("ALA:ARG",7.99282937428693));
 	rij_mins.insert(std::pair<std::string,double>("ALA:ASN",6.42209730753677));
@@ -283,8 +310,7 @@ void load_rij_mins(std::map<std::string,double> &rij_mins)
 	rij_mins.insert(std::pair<std::string,double>("VAL:VAL",7.10756468404602));
 }
 
-double get_rij_min(const std::string &resnameA, const std::string &resnameB, double cutoff, std::map<std::string,double> &rij_mins)
-{
+double get_rij_min(const std::string &resnameA, const std::string &resnameB, double cutoff, std::map<std::string,double> &rij_mins){
 	std::string key;
 	key = resnameA+":"+resnameB;
 	if (rij_mins.find (key) == rij_mins.end()){
@@ -302,8 +328,7 @@ double get_rij_min(const std::string &resnameA, const std::string &resnameB, dou
 	}
 }
 
-int main (int argc, char **argv)
-{
+int main (int argc, char **argv){
   int i;
   unsigned int f;
   std::stringstream resid;
@@ -313,10 +338,12 @@ int main (int argc, char **argv)
   std::string resname;
   std::string atomname;
   std::string frij_mins;
+  std::string fcsfile;
   
   std::vector<std::string> trajs;
   std::vector<std::string> selections;
   std::vector<Molecule*> molecules;
+  std::map<std::string,double> cs_data;
   std::map<std::string,double> rij_mins;
   int start;
   int stop=std::numeric_limits<int>::max();
@@ -335,6 +362,8 @@ int main (int argc, char **argv)
   Atom *atmB, *atmC;  
 
   start=0;
+  fcsfile="";
+  frij_mins="";
   skip=0;
   nframe=0;
   process=0;
@@ -376,6 +405,11 @@ int main (int argc, char **argv)
     {
       currArg=argv[++i];    
       frij_mins=currArg;     
+    }          
+    else if (currArg.compare("-csfile") == 0 )
+    {
+      currArg=argv[++i];    
+      fcsfile=currArg;     
     }          
     else if (currArg.compare("-trj") == 0 || currArg.compare("-traj") == 0)
     {
@@ -424,6 +458,7 @@ int main (int argc, char **argv)
     usage();
   }
 
+  // loading rij_mins
   rij_mins.clear();
   if(frij_mins.length()==0){
   	load_rij_mins(rij_mins);
@@ -433,6 +468,11 @@ int main (int argc, char **argv)
 		load_rij_mins_file(frij_mins,rij_mins);
 	}
 
+  // loading chemical shift data
+  cs_data.clear();
+  if(fcsfile.length()>0){
+  	load_chem_shift_file(fcsfile,cs_data);
+	}
    
   if (trajs.size() > 0)
   {
