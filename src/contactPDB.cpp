@@ -9,6 +9,7 @@
 */
 
 #include "Molecule.hpp"
+#include "Chain.hpp"
 #include "Residue.hpp"
 #include "Atom.hpp"
 #include "Misc.hpp"
@@ -38,6 +39,36 @@ void usage(){
   std::cerr << "         [-skip frames] [-start frame] [-stop frame]" << std::endl;  
   std::cerr << std::endl;
   exit(0);
+}
+
+std::string print_value(Chain *chn, int j){
+	if (chn->getResidue(j) == NULL){
+		return("TER");
+	} else {
+		return(chn->getResidue(j)->getResName());
+	}
+}
+
+std::string print_key(Chain *chn, int j){
+	std::stringstream resid;
+	resid.str("");
+	resid << chn->getResidue(j)->getResId();
+	return(resid.str()+":"+chn->getResidue(j)->getResName()+":"+chn->getChainId());
+}
+
+void setup_nearset_neighbors(Molecule *molin, std::map<std::string,std::string> &nearset_neighbors){
+  Chain *chn;
+  std::string key, value;
+	//loop over residue
+  for ( int i=0; i< molin->getChnVecSize(); i++){
+    chn=molin->getChain(i);
+    for ( int j=0; j< chn->getResVecSize(); j++){
+      key=print_key(chn,j);
+      value=print_value(chn,j-1)+" "+print_value(chn,j+1);
+      nearset_neighbors.insert(std::pair<std::string,std::string>(key,value));
+      //std::cout << key << " " << value << std::endl;
+    }
+  }
 }
 
 void load_chem_shift_file(const std::string fcsfile, std::map<std::string,double> &cs_data){
@@ -344,6 +375,7 @@ int main (int argc, char **argv){
   std::vector<std::string> selections;
   std::vector<Molecule*> molecules;
   std::map<std::string,double> cs_data;
+  std::map<std::string,std::string> nearset_neighbors;
   std::map<std::string,double> rij_mins;
   int start;
   int stop=std::numeric_limits<int>::max();
@@ -473,7 +505,13 @@ int main (int argc, char **argv){
   if(fcsfile.length()>0){
   	load_chem_shift_file(fcsfile,cs_data);
 	}
-   
+	
+	// generate nearest neighbors map
+	cmol=Molecule::readPDB(pdbs.at(0));
+	cmol->selAll();	
+	nearset_neighbors.clear();
+	setup_nearset_neighbors(cmol,nearset_neighbors);
+  return(0);
   if (trajs.size() > 0)
   {
     if (pdbs.size() > 1)

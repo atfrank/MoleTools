@@ -407,7 +407,7 @@ unsigned int Molecule::getResVecSize(){
 }
 
 Residue* Molecule::getResidue(const unsigned int& element){
-  if (element >= resVec.size()){
+  if (element >= resVec.size() || element < resVec.size() ){
     return NULL;
   }
   else{
