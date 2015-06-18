@@ -68,6 +68,23 @@ double print_value_d(const std::string &key, std::map<std::string,double> &map){
 	}
 }
 
+double print_value_d(const std::string &key, std::map<std::string,double> &map1, std::map<std::string,double> &map2){
+	std::vector<std::string> s;
+	std::string key_ran="";
+	if (map1.find (key) == map1.end()){		
+		Misc::splitStr(key, ":", s, false);
+		key_ran = Misc::trim(s.at(3)+":"+s.at(1));
+		//std::cout << "Rand" << s.at(0) << " " << s.at(1) << " " << s.at(2) << " " << s.at(3) << " " << Misc::trim(s.at(3))+":"+Misc::trim(s.at(1)) << std::endl;		
+		if (map2.find (key_ran) == map2.end()){	
+			return(0.0);
+		} else {
+			return (0.0);
+		}		
+	} else {
+		return (map1.at(key));
+	}
+}
+
 std::string print_key(Atom *atm){
 	std::stringstream resid;
 	resid.str("");
@@ -77,9 +94,18 @@ std::string print_key(Atom *atm){
 
 std::string print_key(Chain *chn, int j){
 	std::stringstream resid;
-	resid.str("");
-	resid << chn->getResidue(j)->getResId();
-	return(resid.str()+":"+chn->getResidue(j)->getResName()+":"+chn->getChainId());
+	std::string key="";
+	if (chn->getResidue(j)==NULL){
+		resid.str("-9999");	
+		key = resid.str()+":TER:"+chn->getChainId();
+	} else {
+		resid.str("");
+		resid << chn->getResidue(j)->getResId();
+		key = resid.str()+":"+chn->getResidue(j)->getResName()+":"+chn->getChainId();
+	}
+	return(key);
+	
+	
 }
 
 
@@ -98,22 +124,41 @@ void setup_nearset_neighbors(Molecule *molin, std::map<std::string,std::string> 
   }
 }
 
-void print_data(Molecule *molin, std::map<std::string,std::string> &nearset_neighbors,std::map<std::string,double> &cs_data, std::vector<std::string> &contacts, std::string ID){
+void print_data(Molecule *molin, std::map<std::string,std::string> &nearset_neighbors,std::map<std::string,double> &cs_data, std::vector<std::string> &contacts, std::vector<std::string> &contacts_intra, std::string ID,std::map<std::string,double> &randomShifts){
   Chain *chn;
   std::string key, value;
 	//loop over residue
   for ( int i=0; i< molin->getChnVecSize(); i++){
     chn=molin->getChain(i);
-    for ( int j=0; j< chn->getResVecSize(); j++){
-      key=print_key(chn,j);      
-      std::cout << ID << " " << print_value_i(key, contacts) << " " << key << " " << nearset_neighbors.at(key) << " " ;
-      std::cout << print_value_d(key+":"+"CA",cs_data) << " ";
-      std::cout << print_value_d(key+":"+"CB",cs_data) << " ";
-      std::cout << print_value_d(key+":"+"C",cs_data) << " ";
-      std::cout << print_value_d(key+":"+"N",cs_data) << " ";
-      std::cout << print_value_d(key+":"+"HA",cs_data) << " ";
-      std::cout << print_value_d(key+":"+"H",cs_data) << " ";
-      std::cout << print_value_d(key+":"+"HN",cs_data) << std::endl;
+    for ( int j=0; j< chn->getResVecSize(); j++){                
+      key=print_key(chn,j); 
+      std::cout << ID << " " << print_value_i(key, contacts) << " " << print_value_i(key, contacts_intra) << " " << key << " " << nearset_neighbors.at(key) << " " ;
+      std::cout << print_value_d(key+":"+"CA",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"CB",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"C",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"N",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"HA",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"H",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"HN",cs_data,randomShifts) << " ";
+      
+      key=print_key(chn,j-1); 
+      std::cout << print_value_d(key+":"+"CA",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"CB",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"C",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"N",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"HA",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"H",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"HN",cs_data,randomShifts) << " ";
+
+      key=print_key(chn,j+1); 
+      std::cout << print_value_d(key+":"+"CA",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"CB",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"C",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"N",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"HA",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"H",cs_data,randomShifts) << " ";
+      std::cout << print_value_d(key+":"+"HN",cs_data,randomShifts) << std::endl;
+
     }
   }
 }
@@ -567,6 +612,7 @@ int main (int argc, char **argv){
   std::map<std::string,double> cs_data;
   std::map<std::string,std::string> nearset_neighbors;
   std::vector<std::string> contacts;
+  std::vector<std::string> contacts_intra;
   std::map<std::string,double> rij_mins;
   std::map<std::string,double> randomShifts;
   
@@ -754,7 +800,7 @@ int main (int argc, char **argv){
 
 						for (unsigned int k=0; k< selections.size(); k++)
 						{
-							Amol->select(selections.at(k));
+							Amol->select(selections.at(k),false);
 							molecules.push_back(Amol->copy(true));
 						}
                                   
@@ -809,7 +855,7 @@ int main (int argc, char **argv){
 
 			for (unsigned int k=0; k< selections.size(); k++)
 			{
-				Amol->select(selections.at(k));
+				Amol->select(selections.at(k),false);
 				molecules.push_back(Amol->copy(true));
 				
 			}
@@ -817,6 +863,25 @@ int main (int argc, char **argv){
 			for (unsigned int j=0; j < molecules.size(); j++)
 			{
 				Bmol = molecules.at(j);
+				//intra_contacts
+				for (unsigned int l=0; l< Bmol->getAtmVecSize(); l++)
+				{
+					for (unsigned int m=0; m< Bmol->getAtmVecSize(); m++)
+					{
+						atmB = Bmol->getAtom(l);
+						atmC = Bmol->getAtom(m);											
+						rij_min = buffer + get_rij_min(atmB->getResName(),atmC->getResName(),cutoff,rij_mins);
+						dist = Analyze::distance(atmB->getCoor(), atmC->getCoor());					
+					
+						if (dist <= rij_min &&  dist == 0 && abs(atmC->getResId() - atmB->getResId()) > 1 ){											   
+							contacts_intra.push_back(print_key(atmB));
+							contacts_intra.push_back(print_key(atmC));
+							//std::cout << f+1 << " " << atmB->getResId() << " " << atmB->getResName() << " " << selections.at(j) << " " << atmC->getResId() << " "  << atmC->getResName() << " " << selections.at(k) << std::endl;
+							//std::cout << nframe << " " << atmB->getResId() << " " << atmB->getResName() << " " << selections.at(j) << " " << atmC->getResId() << " "  << atmC->getResName() << " " << selections.at(k) << std::endl;
+						}
+					}
+				}
+				
 				for (unsigned int k=0; k < molecules.size(); k++)
 				{								
 					if(k>j)
@@ -841,7 +906,7 @@ int main (int argc, char **argv){
 				}
 			}
 			//print 
-			print_data(cmol,nearset_neighbors,cs_data,contacts,identification);
+			print_data(cmol,nearset_neighbors,cs_data,contacts,contacts_intra,identification,randomShifts);
       delete cmol;
       delete Amol;
       molecules.clear();
