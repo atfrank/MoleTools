@@ -1,6 +1,6 @@
 MAKE = make
 CXX = g++
-CXXFLAGS = -Wall
+CXXFLAGS = -Wall -Wno-unused-local-typedefs
 OPTFLAGS = -O3
 #DEBUG = -g
 OTHERLIBS = ../
