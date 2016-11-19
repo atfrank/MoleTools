@@ -118,11 +118,11 @@ int main (int argc, char **argv){
         // get angle between comparison normal and ref normal
         double tempVectorMag = sqrt(testCorNorm.dot(testCorNorm));
         double tempVectorDotRefVector = testCorNorm.dot(refNormal);
-        double angleBtwnAndRef = acos(tempVectorDotRefVector/(tempVectorMag * refMag)) * (180.0 / PI);
+        double angleBtwnTempAndRef = acos(tempVectorDotRefVector/(tempVectorMag * refMag)) * (180.0 / PI);
         cout << endl
              << " temp vector magnitude: " << tempVectorMag
              << endl << " ref magnitude: " << refMag
-             << endl << " angle between temp and ref normals: "<< angleBtwnAndRef << endl << endl;
+             << endl << " angle between temp and ref normals: "<< angleBtwnTempAndRef << endl << endl;
 
         // cout the number of bases within a certain distance and angle from reference
         if(diffDistance < DISTANCE_LIMIT && angleBtwnAndRef < ANGLE_LIMIT){
